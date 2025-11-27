@@ -1,62 +1,94 @@
-// G:\renovation-system\frontend\src\App.tsx
-import { useState, useEffect } from "react";
-import supabase from "./utils/supabase"; // Poprawny import, jeśli export default
+import React from "react";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import Layout from "./components/Layout";
+import Projects from "./pages/Projects";
+import ClientForm from "./pages/ClientForm";
+import RoomForm from "./pages/RoomForm";
+import OfferSummary from "./pages/OfferSummary";
+import Calendar from "./pages/Calendar";
+import Inventory from "./pages/Inventory";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
-interface Todo {
-  id: number;
-  task: string; // Zakładamy, że masz kolumnę 'task'
-  // Dodaj inne właściwości, jeśli Twoja tabela 'todos' je posiada
-}
+const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
+  const { user, loading } = useAuth();
 
-function App() {
-  // Zmieniłem nazwę funkcji z Page na App
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">Ładowanie...</div>
+    );
+  }
 
-  useEffect(() => {
-    async function getTodos() {
-      // Funkcja musi być async, aby użyć await
-      setLoading(true);
-      setError(null);
-      try {
-        const { data, error } = await supabase.from("todos").select("*"); // Zamiast select(), użyj select('*') lub konkretnych kolumn
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
-        if (error) {
-          throw error;
-        }
+  return children;
+};
 
-        if (data) {
-          setTodos(data);
-        }
-      } catch (err: any) {
-        setError(err.message);
-        console.error("Błąd podczas pobierania zadań:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
+const PublicRoute = ({ children }: { children: React.ReactElement }) => {
+  const { user, loading } = useAuth();
 
-    getTodos();
-  }, []); // Pusta tablica zależności, aby efekt uruchomił się tylko raz po zamontowaniu
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">Ładowanie...</div>
+    );
+  }
 
-  if (loading) return <div>Ładowanie zadań...</div>;
-  if (error) return <div>Błąd: {error}</div>;
+  if (user) {
+    return <Navigate to="/projects" replace />;
+  }
 
+  return children;
+};
+
+const App: React.FC = () => {
   return (
-    <div>
-      <h1>Lista zadań (Todos)</h1>
-      {todos.length === 0 ? (
-        <p>Brak zadań. Dodaj coś w Supabase!</p>
-      ) : (
-        <ul>
-          {todos.map((todo) => (
-            <li key={todo.id}>{todo.task}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
+    <AuthProvider>
+      <HashRouter>
+        <Routes>
+          {/* Public Routes */}
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            }
+          />
 
-export default App; // Zmieniono na App
+          {/* Protected Routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="/projects" replace />} />
+            <Route path="projects" element={<Projects />} />
+            <Route path="projects/new/client" element={<ClientForm />} />
+            <Route path="projects/new/room" element={<RoomForm />} />
+            <Route path="projects/new/offer" element={<OfferSummary />} />
+            <Route path="inventory" element={<Inventory />} />
+            <Route path="calendar" element={<Calendar />} />
+            <Route path="clients" element={<div className="p-10 text-center text-xl text-gray-500">Moduł Klientów (W budowie)</div>} />
+            <Route path="settings" element={<div className="p-10 text-center text-xl text-gray-500">Ustawienia (W budowie)</div>} />
+          </Route>
+        </Routes>
+      </HashRouter>
+    </AuthProvider>
+  );
+};
+
+export default App;
