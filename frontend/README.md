@@ -1,27 +1,20 @@
-# Renovation System - Aplikacja do zarządzania ekipą budowlaną
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-Zintegrowana, responsywna aplikacja webowa dedykowana małym i średnim ekipom budowlano-remontowym. Celem jest automatyzacja i centralizacja kluczowych procesów biznesowych, od pomiarów, przez kalkulację, ofertowanie, aż po zarządzanie kalendarzem.
+# Run and deploy your AI Studio app
 
-## Struktura Projektu
+This contains everything you need to run your app locally.
 
-Projekt składa się z dwóch głównych części:
+View your app in AI Studio: https://ai.studio/apps/drive/1SoVwpTtLEAFl3TDgUflsErDsvRy7s9GD
 
-1.  **Frontend (SPA - Single Page Application)**: Zbudowany w React z TypeScriptem, wykorzystując Vite.
-2.  **Backend (REST API)**: Zbudowany w Node.js z Express.
+## Run Locally
 
-## Uruchamianie Projektu
+**Prerequisites:**  Node.js
 
-### Wymagania
 
-- Node.js (LTS)
-- npm (z Node.js)
-
-### 1. Uruchamianie Backendu
-
-Otwórz nowy terminal, przejdź do katalogu `backend` i uruchom serwer:
-
-```bash
-cd backend
-npm install # Uruchom tylko raz lub gdy dodajesz nowe zależności
-npm start
-```
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

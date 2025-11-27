@@ -1,0 +1,5 @@
+{
+  "name": "Renovation Manager Pro",
+  "description": "A comprehensive management system for renovation teams. Features include project tracking, room measurements with auto-calculation, client management, inventory control, and calendar scheduling.",
+  "requestFramePermissions": []
+}
