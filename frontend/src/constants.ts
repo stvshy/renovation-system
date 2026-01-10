@@ -1,35 +1,5 @@
-export const MOCK_PROJECTS = [
-    {
-        id: '1',
-        name: 'Remont kuchni',
-        clientName: 'Jan Kowalski',
-        clientId: 'c1',
-        address: 'ul. Przykładowa 1, 00-001 Warszawa',
-        value: 15000,
-        area: 50,
-        status: 'In Progress'
-    },
-    {
-        id: '2',
-        name: 'Malowanie salonu',
-        clientName: 'Anna Nowak',
-        clientId: 'c2',
-        address: 'ul. Testowa 2, 00-002 Warszawa',
-        value: 5000,
-        area: 30,
-        status: 'In Progress'
-    },
-    {
-        id: '3',
-        name: 'Wymiana podłóg',
-        clientName: 'Piotr Zieliński',
-        clientId: 'c3',
-        address: 'ul. Inna 3, 00-003 Warszawa',
-        value: 10000,
-        area: 70,
-        status: 'Planned'
-    }
-] as const;
+
+export const MOCK_PROJECTS = [] as const;
 
 export const MOCK_MATERIALS = [
     { id: 'm1', name: 'Farba biała lateksowa', quantity: 50, unit: 'L', pricePerUnit: 25 },

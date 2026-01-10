@@ -2,16 +2,21 @@ import React from "react";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Projects from "./pages/Projects";
+import ProjectDetails from "./pages/ProjectDetails";
 import ClientForm from "./pages/ClientForm";
 import RoomForm from "./pages/RoomForm";
+import ServiceForm from "./pages/ServiceForm";
 import OfferSummary from "./pages/OfferSummary";
 import Calendar from "./pages/Calendar";
 import Inventory from "./pages/Inventory";
+import Clients from "./pages/Clients";
+import ClientDetails from "./pages/ClientDetails";
+import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
-const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
+const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -24,10 +29,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 };
 
-const PublicRoute = ({ children }: { children: React.ReactElement }) => {
+const PublicRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -40,7 +45,7 @@ const PublicRoute = ({ children }: { children: React.ReactElement }) => {
     return <Navigate to="/projects" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 };
 
 const App: React.FC = () => {
@@ -77,13 +82,16 @@ const App: React.FC = () => {
           >
             <Route index element={<Navigate to="/projects" replace />} />
             <Route path="projects" element={<Projects />} />
+            <Route path="projects/:id" element={<ProjectDetails />} />
             <Route path="projects/new/client" element={<ClientForm />} />
             <Route path="projects/new/room" element={<RoomForm />} />
+            <Route path="projects/new/services" element={<ServiceForm />} />
             <Route path="projects/new/offer" element={<OfferSummary />} />
             <Route path="inventory" element={<Inventory />} />
             <Route path="calendar" element={<Calendar />} />
-            <Route path="clients" element={<div className="p-10 text-center text-xl text-gray-500">Moduł Klientów (W budowie)</div>} />
-            <Route path="settings" element={<div className="p-10 text-center text-xl text-gray-500">Ustawienia (W budowie)</div>} />
+            <Route path="clients" element={<Clients />} />
+            <Route path="clients/:id" element={<ClientDetails />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       </HashRouter>

@@ -1,5 +1,8 @@
+import { Room } from "./lib/renovationLogic";
+
 export interface Client {
     id: string;
+    user_id?: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -9,47 +12,36 @@ export interface Client {
     zipCode: string;
 }
 
-export interface Material {
+export interface InventoryItem {
     id: string;
+    user_id?: string;
     name: string;
+    quantity: number;
     unit: string;
     pricePerUnit: number;
-    quantity: number;
     category?: string;
+    minLevel?: number; // Optional: for low stock warnings
 }
 
 export interface Project {
     id: string;
+    user_id?: string;
     name: string;
     clientName: string;
     clientId: string;
     address: string;
-    status: 'In Progress' | 'Archived' | 'Planned';
+    status: 'In Progress' | 'Archived' | 'Planned' | 'Completed';
     value: number;
     area: number;
     startDate?: string;
     endDate?: string;
+    color?: string; // Hex code for calendar
+    rooms?: Room[]; // Persisted room data for details view
+    clientData?: any; // Snapshot of client data
 }
 
 export interface RoomDimensions {
     length: number;
     width: number;
     height: number;
-}
-
-export interface Wall {
-    id: string;
-    name: string;
-    area: number;
-    windows: { id: string; width: number; height: number }[];
-}
-
-export interface Room {
-    id: string;
-    name: string;
-    dimensions: RoomDimensions;
-    walls: Wall[];
-    floorArea: number;
-    ceilingArea: number;
-    totalPaintArea: number;
 }

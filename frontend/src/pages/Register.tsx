@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
@@ -10,6 +9,10 @@ const Register: React.FC = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // State for password visibility
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -74,13 +77,19 @@ const Register: React.FC = () => {
                                         <input 
                                             className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-gray-300 bg-white p-3 pr-10 text-base font-normal text-slate-900 placeholder:text-gray-500 focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/20 dark:border-gray-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-gray-400" 
                                             placeholder="Wprowadź swoje hasło" 
-                                            type="password" 
+                                            type={showPassword ? "text" : "password"}
                                             required
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                         />
-                                        <button className="absolute right-3 text-gray-500 dark:text-gray-400" type="button">
-                                            <span className="material-symbols-outlined text-xl">visibility</span>
+                                        <button 
+                                            className="absolute right-3 text-gray-500 dark:text-gray-400 outline-none focus:text-primary" 
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                        >
+                                            <span className="material-symbols-outlined text-xl">
+                                                {showPassword ? 'visibility_off' : 'visibility'}
+                                            </span>
                                         </button>
                                     </div>
                                 </label>
@@ -90,13 +99,19 @@ const Register: React.FC = () => {
                                         <input 
                                             className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-gray-300 bg-white p-3 pr-10 text-base font-normal text-slate-900 placeholder:text-gray-500 focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/20 dark:border-gray-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-gray-400" 
                                             placeholder="Potwierdź swoje hasło" 
-                                            type="password" 
+                                            type={showConfirmPassword ? "text" : "password"}
                                             required
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                         />
-                                        <button className="absolute right-3 text-gray-500 dark:text-gray-400" type="button">
-                                            <span className="material-symbols-outlined text-xl">visibility</span>
+                                        <button 
+                                            className="absolute right-3 text-gray-500 dark:text-gray-400 outline-none focus:text-primary" 
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        >
+                                            <span className="material-symbols-outlined text-xl">
+                                                {showConfirmPassword ? 'visibility_off' : 'visibility'}
+                                            </span>
                                         </button>
                                     </div>
                                 </label>

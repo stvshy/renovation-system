@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -13,7 +12,7 @@ const Sidebar: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col w-64 bg-white dark:bg-background-dark shadow-md h-screen sticky top-0 border-r border-gray-200 dark:border-gray-800">
+        <div className="flex flex-col w-64 bg-white dark:bg-background-dark shadow-md h-screen sticky top-0 border-r border-gray-200 dark:border-gray-800 print:hidden">
             <div className="flex flex-col flex-1">
                 {/* Profile Section - Static */}
                 <div className="border-b border-gray-200 dark:border-gray-700 shrink-0 p-4">
@@ -35,7 +34,6 @@ const Sidebar: React.FC = () => {
                 </div>
 
                 <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto custom-scrollbar">
-                    <NavItem to="/" icon="dashboard" label="Pulpit" />
                     <NavItem to="/projects" icon="folder" label="Projekty" />
                     <NavItem to="/inventory" icon="warehouse" label="Magazyn" />
                     <NavItem to="/clients" icon="groups" label="Klienci" />

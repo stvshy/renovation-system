@@ -8,6 +8,9 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Password visibility state
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,17 +68,28 @@ const Login: React.FC = () => {
                   <label className="text-text-dark dark:text-off-white text-base font-medium leading-normal pb-2 block" htmlFor="password">
                     Hasło
                   </label>
-                  <input
-                    autoComplete="current-password"
-                    className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-off-white dark:placeholder:text-neutral-gray focus:outline-0 focus:ring-0 border border-neutral-gray/50 dark:border-neutral-gray/70 bg-off-white dark:bg-background-dark focus:border-dependable-blue dark:focus:border-primary h-14 placeholder:text-neutral-gray p-[15px] text-base font-normal leading-normal"
-                    id="password"
-                    name="password"
-                    placeholder="Wprowadź swoje hasło"
-                    required
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
+                  <div className="relative flex w-full items-center">
+                    <input
+                        autoComplete="current-password"
+                        className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-dark dark:text-off-white dark:placeholder:text-neutral-gray focus:outline-0 focus:ring-0 border border-neutral-gray/50 dark:border-neutral-gray/70 bg-off-white dark:bg-background-dark focus:border-dependable-blue dark:focus:border-primary h-14 placeholder:text-neutral-gray p-[15px] pr-10 text-base font-normal leading-normal"
+                        id="password"
+                        name="password"
+                        placeholder="Wprowadź swoje hasło"
+                        required
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button 
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
+                    >
+                        <span className="material-symbols-outlined text-xl">
+                            {showPassword ? 'visibility_off' : 'visibility'}
+                        </span>
+                    </button>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="text-sm">
