@@ -9,8 +9,7 @@
 
 The system handles the entire lifecycle of a renovation project: from client acquisition and precise room measurements to intelligent material calculation and inventory deduction.
 
-🔗 **[Live Demo](https://placeholder-url.com)** *(Link to be updated after hosting)*
-
+🔗 **[Live Demo](https://stvshy.github.io/renovation-system/)** 
 <br>
 
 ## 📸 Application Overview
