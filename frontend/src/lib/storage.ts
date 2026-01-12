@@ -4,28 +4,27 @@ import { Room, ServiceTemplate, DEFAULT_SERVICE_CATALOG } from "./renovationLogi
 
 // Helper to get current user ID
 const getCurrentUserId = async (): Promise<string | null> => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
     return session?.user?.id || null;
 };
 
 // --- PROJECTS ---
 
 export const getProjects = async (): Promise<Project[]> => {
-  try {
-    const userId = await getCurrentUserId();
-    if (!userId) return [];
+    try {
+        const userId = await getCurrentUserId();
+        if (!userId) return [];
 
-    const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('user_id', userId);
+        const { data, error } = await supabase.from("projects").select("*").eq("user_id", userId);
 
-    if (error) throw error;
-    return data || [];
-  } catch (error: any) {
-    console.error("Error reading projects from Supabase", error.message || error);
-    return [];
-  }
+        if (error) throw error;
+        return data || [];
+    } catch (error: any) {
+        console.error("Error reading projects from Supabase", error.message || error);
+        return [];
+    }
 };
 
 export const getProjectById = async (id: string): Promise<Project | undefined> => {
@@ -33,12 +32,7 @@ export const getProjectById = async (id: string): Promise<Project | undefined> =
         const userId = await getCurrentUserId();
         if (!userId) return undefined;
 
-        const { data, error } = await supabase
-            .from('projects')
-            .select('*')
-            .eq('id', id)
-            .eq('user_id', userId)
-            .single();
+        const { data, error } = await supabase.from("projects").select("*").eq("id", id).eq("user_id", userId).single();
 
         if (error) throw error;
         return data;
@@ -49,25 +43,25 @@ export const getProjectById = async (id: string): Promise<Project | undefined> =
 };
 
 export const saveProject = async (project: Project): Promise<void> => {
-  try {
-    const userId = await getCurrentUserId();
-    if (!userId) throw new Error("User not authenticated");
+    try {
+        const userId = await getCurrentUserId();
+        if (!userId) throw new Error("User not authenticated");
 
-    if (!project.color) {
-        // Simple random color generator if missing
-        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8'];
-        project.color = colors[Math.floor(Math.random() * colors.length)];
+        if (!project.color) {
+            // Simple random color generator if missing
+            const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8"];
+            project.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Attach user_id to the project object
+        const projectWithUser = { ...project, user_id: userId };
+
+        const { error } = await supabase.from("projects").upsert(projectWithUser);
+        if (error) throw error;
+    } catch (error: any) {
+        console.error("Error saving project to Supabase", error.message || error);
+        alert("Błąd zapisu projektu do bazy danych: " + (error.message || "Nieznany błąd"));
     }
-
-    // Attach user_id to the project object
-    const projectWithUser = { ...project, user_id: userId };
-
-    const { error } = await supabase.from('projects').upsert(projectWithUser);
-    if (error) throw error;
-  } catch (error: any) {
-    console.error("Error saving project to Supabase", error.message || error);
-    alert("Błąd zapisu projektu do bazy danych: " + (error.message || "Nieznany błąd"));
-  }
 };
 
 export const updateProject = async (updatedProject: Project): Promise<void> => {
@@ -76,11 +70,7 @@ export const updateProject = async (updatedProject: Project): Promise<void> => {
         if (!userId) throw new Error("User not authenticated");
 
         // Ensure we only update if user_id matches
-        const { error } = await supabase
-            .from('projects')
-            .update(updatedProject)
-            .eq('id', updatedProject.id)
-            .eq('user_id', userId);
+        const { error } = await supabase.from("projects").update(updatedProject).eq("id", updatedProject.id).eq("user_id", userId);
 
         if (error) throw error;
     } catch (error: any) {
@@ -95,10 +85,7 @@ export const getClients = async (): Promise<Client[]> => {
         const userId = await getCurrentUserId();
         if (!userId) return [];
 
-        const { data, error } = await supabase
-            .from('clients')
-            .select('*')
-            .eq('user_id', userId);
+        const { data, error } = await supabase.from("clients").select("*").eq("user_id", userId);
 
         if (error) throw error;
         return data || [];
@@ -113,12 +100,7 @@ export const getClientById = async (id: string): Promise<Client | undefined> => 
         const userId = await getCurrentUserId();
         if (!userId) return undefined;
 
-        const { data, error } = await supabase
-            .from('clients')
-            .select('*')
-            .eq('id', id)
-            .eq('user_id', userId)
-            .single();
+        const { data, error } = await supabase.from("clients").select("*").eq("id", id).eq("user_id", userId).single();
 
         if (error) throw error;
         return data;
@@ -135,7 +117,7 @@ export const saveClient = async (client: Client): Promise<void> => {
 
         const clientWithUser = { ...client, user_id: userId };
 
-        const { error } = await supabase.from('clients').upsert(clientWithUser);
+        const { error } = await supabase.from("clients").upsert(clientWithUser);
         if (error) throw error;
     } catch (error: any) {
         console.error("Error saving client", error.message || error);
@@ -150,10 +132,7 @@ export const getInventory = async (): Promise<InventoryItem[]> => {
         const userId = await getCurrentUserId();
         if (!userId) return [];
 
-        const { data, error } = await supabase
-            .from('inventory')
-            .select('*')
-            .eq('user_id', userId);
+        const { data, error } = await supabase.from("inventory").select("*").eq("user_id", userId);
 
         if (error) throw error;
         return data || [];
@@ -170,7 +149,7 @@ export const saveInventoryItem = async (item: InventoryItem): Promise<void> => {
 
         const itemWithUser = { ...item, user_id: userId };
 
-        const { error } = await supabase.from('inventory').upsert(itemWithUser);
+        const { error } = await supabase.from("inventory").upsert(itemWithUser);
         if (error) throw error;
     } catch (error: any) {
         console.error("Error saving inventory item", error.message || error);
@@ -182,11 +161,7 @@ export const deleteInventoryItem = async (id: string): Promise<void> => {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
 
-        const { error } = await supabase
-            .from('inventory')
-            .delete()
-            .eq('id', id)
-            .eq('user_id', userId);
+        const { error } = await supabase.from("inventory").delete().eq("id", id).eq("user_id", userId);
 
         if (error) throw error;
     } catch (error: any) {
@@ -204,13 +179,13 @@ export const deductInventoryFromProject = async (rooms: Room[]) => {
 
         // getInventory is already filtered by user
         const inventory = await getInventory();
-        
+
         // Map updates needed
-        const inventoryMap = new Map(inventory.map(i => [i.id, i]));
+        const inventoryMap = new Map(inventory.map((i) => [i.id, i]));
         let hasChanges = false;
 
-        rooms.forEach(room => {
-            room.tasks.forEach(task => {
+        rooms.forEach((room) => {
+            room.tasks.forEach((task) => {
                 if (task.material.inventoryId) {
                     const item = inventoryMap.get(task.material.inventoryId);
                     if (item) {
@@ -225,12 +200,12 @@ export const deductInventoryFromProject = async (rooms: Room[]) => {
         if (hasChanges) {
             // Push updates to Supabase
             // We need to ensure we send the user_id with the updates
-            const updatedItems = Array.from(inventoryMap.values()).map(item => ({
+            const updatedItems = Array.from(inventoryMap.values()).map((item) => ({
                 ...item,
-                user_id: userId
+                user_id: userId,
             }));
-            
-            const { error } = await supabase.from('inventory').upsert(updatedItems);
+
+            const { error } = await supabase.from("inventory").upsert(updatedItems);
             if (error) throw error;
         }
     } catch (error: any) {
@@ -243,30 +218,27 @@ export const deductInventoryFromProject = async (rooms: Room[]) => {
 export const getServiceCatalog = async (): Promise<ServiceTemplate[]> => {
     try {
         const userId = await getCurrentUserId();
-        
+
         // Always start with hardcoded defaults
         const defaults = [...DEFAULT_SERVICE_CATALOG];
 
         if (!userId) return defaults;
 
         // Fetch user's custom services (and overrides of defaults) from DB
-        const { data, error } = await supabase
-            .from('services')
-            .select('*')
-            .eq('user_id', userId);
-        
+        const { data, error } = await supabase.from("services").select("*").eq("user_id", userId);
+
         if (error) throw error;
-        
-        const userServices = data || [];
+
+        const userServices = (data as unknown as ServiceTemplate[]) || [];
 
         // 1. Map user services by ID for fast lookup
-        const userServiceMap = new Map(userServices.map(s => [s.id, s]));
+        const userServiceMap = new Map(userServices.map((s) => [s.id, s]));
 
         // 2. Prepare the result list
         const resultCatalog: ServiceTemplate[] = [];
 
         // 3. Add Defaults (checking for overrides)
-        defaults.forEach(def => {
+        defaults.forEach((def) => {
             if (userServiceMap.has(def.id)) {
                 // User has modified this default template, use the DB version
                 resultCatalog.push(userServiceMap.get(def.id)!);
@@ -279,7 +251,7 @@ export const getServiceCatalog = async (): Promise<ServiceTemplate[]> => {
         });
 
         // 4. Add remaining user services (purely custom new items)
-        userServiceMap.forEach(service => {
+        userServiceMap.forEach((service) => {
             resultCatalog.push(service);
         });
 
@@ -297,7 +269,7 @@ export const saveServiceTemplate = async (template: ServiceTemplate): Promise<vo
 
         const templateWithUser = { ...template, user_id: userId };
 
-        const { error } = await supabase.from('services').upsert(templateWithUser);
+        const { error } = await supabase.from("services").upsert(templateWithUser);
         if (error) throw error;
     } catch (error: any) {
         console.error("Error saving service template", error.message || error);
@@ -309,11 +281,7 @@ export const deleteServiceTemplate = async (id: string): Promise<void> => {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
 
-        const { error } = await supabase
-            .from('services')
-            .delete()
-            .eq('id', id)
-            .eq('user_id', userId);
+        const { error } = await supabase.from("services").delete().eq("id", id).eq("user_id", userId);
 
         if (error) throw error;
     } catch (error: any) {

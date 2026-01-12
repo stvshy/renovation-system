@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getProjectById, updateProject } from '../lib/storage';
-import { Project } from '../types';
-import { RenovationTask, Room, Surface, Opening, ConsumptionStrategy, WasteFactorStrategy, LinearStrategy, ItemCountStrategy, Material } from '../lib/renovationLogic';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getProjectById, updateProject } from "../lib/storage";
+import { Project } from "../types";
+import {
+    RenovationTask,
+    Room,
+    Surface,
+    Opening,
+    ConsumptionStrategy,
+    WasteFactorStrategy,
+    LinearStrategy,
+    ItemCountStrategy,
+    Material,
+} from "../lib/renovationLogic";
 
 // Helper to rehydrate rooms (same as in OfferSummary)
 const rehydrateRoom = (plainRoom: any): Room => {
     const room = new Room(plainRoom.name);
-    
+
     if (plainRoom.surfaces && Array.isArray(plainRoom.surfaces)) {
         plainRoom.surfaces.forEach((s: any) => {
             const surface = new Surface(s.name, s.type, s.width, s.height, s.customArea);
@@ -21,14 +31,26 @@ const rehydrateRoom = (plainRoom: any): Room => {
     if (plainRoom.tasks && Array.isArray(plainRoom.tasks)) {
         plainRoom.tasks.forEach((t: any) => {
             let strategy;
-            if (t.strategyParams?.wastePercentage !== undefined && t.material?.unit === 'mb') strategy = new LinearStrategy();
+            if (t.strategyParams?.wastePercentage !== undefined && t.material?.unit === "mb") strategy = new LinearStrategy();
             else if (t.strategyParams?.wastePercentage !== undefined) strategy = new WasteFactorStrategy();
-            else if (t.strategyParams?.itemCount !== undefined || t.description.includes('Montaż') || t.inputDimension % 1 === 0 && t.inputDimension < 50 && t.material.unit === 'szt') strategy = new ItemCountStrategy();
+            else if (
+                t.strategyParams?.itemCount !== undefined ||
+                t.description.includes("Montaż") ||
+                (t.inputDimension % 1 === 0 && t.inputDimension < 50 && t.material.unit === "szt")
+            )
+                strategy = new ItemCountStrategy();
             else strategy = new ConsumptionStrategy();
 
             // Rehydrate material with inventoryId and category
-            const material = new Material(t.material.name, t.material.unitPrice, t.material.unit, t.material.defaultCoverage, t.material.inventoryId, t.material.category);
-            
+            const material = new Material(
+                t.material.name,
+                t.material.unitPrice,
+                t.material.unit,
+                t.material.defaultCoverage,
+                t.material.inventoryId,
+                t.material.category
+            );
+
             const task = new RenovationTask(t.description, material, t.laborRate, strategy, t.strategyParams, t.inputDimension);
             room.addTask(task);
         });
@@ -42,7 +64,11 @@ const ProjectDetails: React.FC = () => {
     const [project, setProject] = useState<Project | null>(null);
     const [hydratedRooms, setHydratedRooms] = useState<Room[]>([]);
     const [loading, setLoading] = useState(true);
-    
+
+    // Payment Edit State
+    const [isEditingPaid, setIsEditingPaid] = useState(false);
+    const [paidInput, setPaidInput] = useState("");
+
     useEffect(() => {
         const load = async () => {
             if (id) {
@@ -50,10 +76,10 @@ const ProjectDetails: React.FC = () => {
                 if (foundProject) {
                     setProject(foundProject);
                     if (foundProject.rooms) {
-                        setHydratedRooms(foundProject.rooms.map(r => rehydrateRoom(r)));
+                        setHydratedRooms(foundProject.rooms.map((r) => rehydrateRoom(r)));
                     }
                 } else {
-                    navigate('/projects');
+                    navigate("/projects");
                 }
             }
             setLoading(false);
@@ -61,7 +87,7 @@ const ProjectDetails: React.FC = () => {
         load();
     }, [id, navigate]);
 
-    const handleStatusChange = async (newStatus: Project['status']) => {
+    const handleStatusChange = async (newStatus: Project["status"]) => {
         if (project) {
             const updated = { ...project, status: newStatus };
             await updateProject(updated);
@@ -69,32 +95,62 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
+    const handleEditPaidClick = () => {
+        if (project) {
+            setPaidInput((project.paidAmount || 0).toString());
+            setIsEditingPaid(true);
+        }
+    };
+
+    const handleSavePaidAmount = async () => {
+        if (project) {
+            const amount = parseFloat(paidInput);
+            if (!isNaN(amount) && amount >= 0) {
+                const updated = { ...project, paidAmount: amount };
+                await updateProject(updated);
+                setProject(updated);
+                setIsEditingPaid(false);
+            }
+        }
+    };
+
     if (loading) return <div>Ładowanie...</div>;
     if (!project) return <div>Projekt nie znaleziony.</div>;
 
     const getStatusColor = (status: string) => {
-        switch(status) {
-            case 'Planned': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-            case 'In Progress': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-            case 'Completed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-            case 'Archived': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
-            default: return 'bg-gray-100 text-gray-800';
+        switch (status) {
+            case "Planned":
+                return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+            case "In Progress":
+                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+            case "Completed":
+                return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+            case "Archived":
+                return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+            default:
+                return "bg-gray-100 text-gray-800";
         }
     };
+
+    const paidAmount = project.paidAmount || 0;
+    const remainingAmount = project.value - paidAmount;
 
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="layout-content-container flex flex-col w-full max-w-6xl gap-6">
-                
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-200 dark:border-gray-700 pb-6">
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">{project.name}</h1>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
-                                {project.status === 'In Progress' ? 'W trakcie' : 
-                                 project.status === 'Planned' ? 'Planowany' : 
-                                 project.status === 'Completed' ? 'Zakończony' : project.status}
+                                {project.status === "In Progress"
+                                    ? "W trakcie"
+                                    : project.status === "Planned"
+                                    ? "Planowany"
+                                    : project.status === "Completed"
+                                    ? "Zakończony"
+                                    : project.status}
                             </span>
                         </div>
                         <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
@@ -102,9 +158,9 @@ const ProjectDetails: React.FC = () => {
                             {project.address}
                         </p>
                     </div>
-                    
+
                     <div className="flex gap-2">
-                        <select 
+                        <select
                             value={project.status}
                             onChange={(e) => handleStatusChange(e.target.value as any)}
                             className="form-select rounded-lg border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-sm py-2 pl-3 pr-8"
@@ -114,7 +170,10 @@ const ProjectDetails: React.FC = () => {
                             <option value="Completed">Zakończony</option>
                             <option value="Archived">Zarchiwizowany</option>
                         </select>
-                        <button onClick={() => navigate('/calendar')} className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 font-bold text-sm transition-colors">
+                        <button
+                            onClick={() => navigate("/calendar")}
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 font-bold text-sm transition-colors"
+                        >
                             <span className="material-symbols-outlined text-sm">calendar_month</span>
                             Kalendarz
                         </button>
@@ -137,7 +196,7 @@ const ProjectDetails: React.FC = () => {
                                 <p className="text-sm text-gray-500 italic mt-2">{project.address}</p>
                             </div>
                         ) : (
-                             <p className="text-gray-500">Brak szczegółowych danych klienta</p>
+                            <p className="text-gray-500">Brak szczegółowych danych klienta</p>
                         )}
                     </div>
 
@@ -150,31 +209,70 @@ const ProjectDetails: React.FC = () => {
                         <div className="flex flex-col justify-center h-full pb-6">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-xs text-gray-500">Start</span>
-                                <span className="font-bold text-gray-800 dark:text-white">{project.startDate || '-'}</span>
+                                <span className="font-bold text-gray-800 dark:text-white">{project.startDate || "-"}</span>
                             </div>
                             <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full mb-2 overflow-hidden">
                                 <div className="h-full bg-primary opacity-50 w-full"></div>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-gray-500">Koniec</span>
-                                <span className="font-bold text-gray-800 dark:text-white">{project.endDate || '-'}</span>
+                                <span className="font-bold text-gray-800 dark:text-white">{project.endDate || "-"}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Finances */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-lg">attach_money</span>
-                            Finanse
-                        </h3>
-                        <div className="space-y-1">
-                            <p className="text-sm text-gray-500">Wartość całkowita</p>
-                            <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} zł</p>
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
+                        <div>
+                            <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-lg">attach_money</span>
+                                Finanse
+                            </h3>
+                            <div className="space-y-1">
+                                <p className="text-sm text-gray-500">Wartość całkowita</p>
+                                <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} zł</p>
+                            </div>
                         </div>
-                        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                             <span className="text-xs text-gray-500">Powierzchnia: {project.area.toFixed(0)} m²</span>
-                             <span className="text-xs text-green-600 font-bold">Opłacono: 0 zł</span>
+
+                        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-2">
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-gray-500">Powierzchnia:</span>
+                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{project.area.toFixed(0)} m²</span>
+                            </div>
+
+                            <div className="flex justify-between items-center h-8">
+                                <span className="text-xs text-gray-500">Opłacono:</span>
+                                {isEditingPaid ? (
+                                    <div className="flex items-center gap-1 animate-fade-in">
+                                        <input
+                                            type="number"
+                                            value={paidInput}
+                                            onChange={(e) => setPaidInput(e.target.value)}
+                                            className="w-20 py-0 px-1 text-xs h-6 rounded border-gray-300 dark:bg-slate-900 dark:border-gray-600 focus:border-primary focus:ring-0"
+                                        />
+                                        <button onClick={handleSavePaidAmount} className="text-green-600 hover:text-green-700 dark:text-green-400">
+                                            <span className="material-symbols-outlined text-lg">check</span>
+                                        </button>
+                                        <button onClick={() => setIsEditingPaid(false)} className="text-red-500 hover:text-red-600">
+                                            <span className="material-symbols-outlined text-lg">close</span>
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2 group cursor-pointer" onClick={handleEditPaidClick}>
+                                        <span className="text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} zł</span>
+                                        <span className="material-symbols-outlined text-[14px] text-gray-300 group-hover:text-primary transition-colors">
+                                            edit
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {remainingAmount > 0 && (
+                                <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
+                                    <span className="text-xs text-gray-400">Pozostało:</span>
+                                    <span className="text-xs font-bold text-orange-500">{remainingAmount.toLocaleString()} zł</span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -210,7 +308,10 @@ const ProjectDetails: React.FC = () => {
                                             </thead>
                                             <tbody>
                                                 {room.tasks.map((task, tIdx) => (
-                                                    <tr key={tIdx} className="border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30">
+                                                    <tr
+                                                        key={tIdx}
+                                                        className="border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30"
+                                                    >
                                                         <td className="px-6 py-3 font-medium text-gray-900 dark:text-white">{task.description}</td>
                                                         <td className="px-6 py-3">{task.material.name}</td>
                                                         <td className="px-6 py-3 text-right">{task.calculateTotalCost().toFixed(2)} zł</td>
