@@ -387,11 +387,20 @@ const ServiceForm: React.FC = () => {
 
     const currentDimension = calculateDimension();
 
-    // Helper to display unit currently selected (for the quantity input label)
-    const getCurrentUnit = () => {
-        if (isAddingNewMaterial) return customMatUnit;
-        const item = filteredInventory.find((i) => i.id === selectedMaterialId);
-        return item ? item.unit : "-";
+    // Helper to display unit for the scope input based on strategy
+    const getInputDimensionUnit = () => {
+        if (!selectedTemplate) return "-";
+        switch (selectedTemplate.defaultStrategy) {
+            case "consumption":
+            case "waste":
+                return Unit.M2;
+            case "linear":
+                return Unit.LM;
+            case "item":
+                return Unit.PCS;
+            default:
+                return "-";
+        }
     };
 
     return (
@@ -724,7 +733,7 @@ const ServiceForm: React.FC = () => {
                                             onChange={(e) => setManualQuantity(e.target.value)}
                                         />
                                         <span className="bg-slate-100 dark:bg-slate-800 px-4 py-2 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-xl text-sm font-bold text-slate-500">
-                                            {getCurrentUnit()}
+                                            {getInputDimensionUnit()}
                                         </span>
                                     </div>
                                 </div>
