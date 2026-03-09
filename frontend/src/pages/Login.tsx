@@ -49,7 +49,7 @@ const Login: React.FC = () => {
                             <form className="space-y-6" onSubmit={handleLogin}>
                                 {error && <div className="p-3 text-sm text-red-500 bg-red-100 dark:bg-red-900/30 rounded-lg">{error}</div>}
                                 <div>
-                                    <label className="text-text-dark dark:text-off-white text-base font-medium leading-normal pb-2 block" htmlFor="email">
+                                    <label className="text-sm font-semibold uppercase tracking-wide text-primary pb-2 block dark:text-slate-100" htmlFor="email">
                                         E-mail
                                     </label>
                                     <input
@@ -65,7 +65,7 @@ const Login: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-text-dark dark:text-off-white text-base font-medium leading-normal pb-2 block" htmlFor="password">
+                                    <label className="text-sm font-semibold uppercase tracking-wide text-primary pb-2 block dark:text-slate-100" htmlFor="password">
                                         Hasło
                                     </label>
                                     <div className="relative flex w-full items-center">
@@ -90,7 +90,7 @@ const Login: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div>
+                                <div className="pt-4 sm:pt-5">
                                     <button
                                         className="flex h-12 w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-dependable-blue px-5 font-display text-base font-bold leading-normal tracking-[0.015em] text-off-white transition-all hover:scale-[0.995] hover:bg-dependable-blue/90 disabled:opacity-50 dark:bg-primary dark:hover:bg-primary/90"
                                         type="submit"

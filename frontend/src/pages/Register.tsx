@@ -76,7 +76,7 @@ const Register: React.FC = () => {
                                     )}
 
                                     <label className="flex flex-col gap-2">
-                                        <p className="text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100">Nazwa użytkownika / E-mail</p>
+                                        <p className="text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100">E-mail</p>
                                         <input
                                             autoComplete="email"
                                             className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 bg-white/95 p-3 text-base font-medium text-slate-900 placeholder:text-slate-500 focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/25 dark:border-slate-500 dark:bg-slate-800/95 dark:text-white dark:placeholder:text-slate-300 sm:h-[3.25rem]"
@@ -133,7 +133,7 @@ const Register: React.FC = () => {
                                     </label>
 
                                     <button
-                                        className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-primary px-6 font-display text-base font-semibold text-white transition-all hover:scale-[0.995] hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark disabled:opacity-50 sm:mt-7 sm:h-[3.25rem]"
+                                        className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-primary px-6 font-display text-base font-bold tracking-[0.015em] text-white transition-all hover:scale-[0.995] hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark disabled:opacity-50 sm:mt-7 sm:h-[3.25rem]"
                                         type="submit"
                                         disabled={loading}
                                     >
