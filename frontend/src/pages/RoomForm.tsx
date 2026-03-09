@@ -215,15 +215,15 @@ const RoomForm: React.FC = () => {
     };
 
     return (
-        <div className="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+        <div className="px-3 sm:px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-4 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[960px] flex-1">
                 {/* Header with Project Context */}
                 <div className="flex flex-col gap-2 p-4 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between items-center">
-                        <p className="text-text-dark dark:text-off-white text-3xl font-black leading-tight tracking-[-0.033em]">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                        <p className="text-text-dark dark:text-off-white text-2xl sm:text-3xl font-black leading-tight tracking-[-0.033em]">
                             {editingRoomIndex !== null ? t("Edycja Pokoju", "Edit Room") : t("Definicja Pokoju", "Room Definition")}
                         </p>
-                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">{t('Krok 2: Dodawanie pomieszczeń', 'Step 2: Adding rooms')}</span>
+                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full w-fit">{t('Krok 2: Dodawanie pomieszczeń', 'Step 2: Adding rooms')}</span>
                     </div>
                     {clientData && (
                         <p className="text-sm text-gray-500">
@@ -276,7 +276,7 @@ const RoomForm: React.FC = () => {
                         />
                     </div>
 
-                    <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-lg self-start">
+                    <div className="flex flex-col sm:flex-row p-1 bg-slate-100 dark:bg-slate-800 rounded-lg self-stretch sm:self-start">
                         <button
                             onClick={() => setMode("standard")}
                             disabled={editingRoomIndex !== null}
@@ -340,7 +340,7 @@ const RoomForm: React.FC = () => {
 
                 {/* 3. Surface List & Management */}
                 <div className="p-4 mt-4 space-y-4">
-                    <div className="flex justify-between items-end border-b border-gray-200 dark:border-gray-700 pb-2">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
                         <h2 className="text-xl font-bold text-dependable-blue dark:text-primary">{t("Lista Powierzchni", "Surface List")}</h2>
                         <div className="text-right text-sm text-gray-500">
                             <p>{t("Ściany", "Walls")}: {getTotalArea(SurfaceType.WALL).toFixed(2)} m²</p>
@@ -349,7 +349,7 @@ const RoomForm: React.FC = () => {
                     </div>
 
                     {mode === "custom" && (
-                        <div className="flex gap-2 mb-4 animate-fade-in">
+                        <div className="flex flex-wrap gap-2 mb-4 animate-fade-in">
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.WALL)}
                                 className="btn-secondary text-xs px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
@@ -476,7 +476,7 @@ const RoomForm: React.FC = () => {
 
                                     {/* Add Opening Form - Improved Styling */}
                                     {activeSurfaceIndex === index ? (
-                                        <div className="flex flex-wrap items-center gap-2 mt-2 bg-gray-50 dark:bg-gray-700 p-2 rounded animate-fade-in w-fit">
+                                        <div className="flex flex-wrap items-center gap-2 mt-2 bg-gray-50 dark:bg-gray-700 p-2 rounded animate-fade-in w-full sm:w-fit">
                                             <select
                                                 value={openingDims.type}
                                                 onChange={(e) => setOpeningDims({ ...openingDims, type: e.target.value as OpeningType })}

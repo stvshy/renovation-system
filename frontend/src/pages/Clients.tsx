@@ -54,16 +54,16 @@ const Clients: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 relative">
             <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
-                <header className="flex items-center justify-between border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
+                <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
                     <div className="flex items-center text-slate-900 dark:text-slate-50">
                         <div className="size-9 mr-4 mt-0.5 text-primary flex items-center justify-center">
                             <span className="material-symbols-outlined text-[42px] leading-none">groups</span>
                         </div>
-                        <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Klienci', 'Clients')}</h1>
+                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Klienci', 'Clients')}</h1>
                     </div>
                     <button 
                         onClick={() => setIsModalOpen(true)}
-                        className="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors"
+                        className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors"
                     >
                         <span className="material-symbols-outlined text-[18px] leading-none">person_add</span>
                         <span className="hidden sm:inline">{t('Dodaj Klienta', 'Add Client')}</span>
@@ -136,7 +136,7 @@ const Clients: React.FC = () => {
                             </button>
                         </div>
                         <form onSubmit={handleSaveClient} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Imie', 'First name')}</span>
                                     <input required className="form-input rounded-lg dark:bg-slate-800" value={newClient.firstName} onChange={e => setNewClient({...newClient, firstName: e.target.value})} />
@@ -146,7 +146,7 @@ const Clients: React.FC = () => {
                                     <input required className="form-input rounded-lg dark:bg-slate-800" value={newClient.lastName} onChange={e => setNewClient({...newClient, lastName: e.target.value})} />
                                 </label>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Telefon', 'Phone')}</span>
                                     <input required className="form-input rounded-lg dark:bg-slate-800" type="tel" value={newClient.phone} onChange={e => setNewClient({...newClient, phone: e.target.value})} />
@@ -160,7 +160,7 @@ const Clients: React.FC = () => {
                                 <span className="text-xs font-bold text-gray-500 uppercase">{t('Ulica i numer', 'Street and number')}</span>
                                 <input className="form-input rounded-lg dark:bg-slate-800" value={newClient.address} onChange={e => setNewClient({...newClient, address: e.target.value})} />
                             </label>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Miasto', 'City')}</span>
                                     <input className="form-input rounded-lg dark:bg-slate-800" value={newClient.city} onChange={e => setNewClient({...newClient, city: e.target.value})} />

@@ -182,16 +182,16 @@ const ClientForm: React.FC = () => {
     };
 
     return (
-        <div className="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
+        <div className="px-3 sm:px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-4 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[960px] flex-1">
                 <div className="flex flex-wrap justify-between gap-3 p-4">
-                    <p className="text-slate-800 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] min-w-72">{t('Nowy Projekt', 'New Project')}</p>
+                    <p className="text-slate-800 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">{t('Nowy Projekt', 'New Project')}</p>
                 </div>
                 
                 <div className="flex flex-col gap-6 p-4">
                     
                     {/* Mode Selection */}
-                    <div className="flex gap-4 border-b border-gray-200 dark:border-gray-700 pb-4">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 border-b border-gray-200 dark:border-gray-700 pb-4">
                          <button 
                             onClick={() => { setMode('new'); setSelectedClientId(''); setFirstName(''); setLastName(''); setErrors({}); }}
                             className={`flex-1 py-3 rounded-lg font-bold transition-all ${mode === 'new' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400'}`}
@@ -229,7 +229,7 @@ const ClientForm: React.FC = () => {
 
                     <div className={`transition-opacity duration-300 ${mode === 'existing' && !selectedClientId ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
                         <div className="flex flex-col md:flex-row gap-4">
-                            <label className="flex flex-col min-w-40 flex-1">
+                            <label className="flex flex-col flex-1">
                                 <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Imię*', 'First name*')}</p>
                                 <input 
                                     value={firstName} 
@@ -241,7 +241,7 @@ const ClientForm: React.FC = () => {
                                 />
                                 {errors.firstName && <p className="mt-1 text-xs text-red-500 font-medium">{errors.firstName}</p>}
                             </label>
-                            <label className="flex flex-col min-w-40 flex-1">
+                            <label className="flex flex-col flex-1">
                                 <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Nazwisko*', 'Last name*')}</p>
                                 <input 
                                     value={lastName} 
@@ -269,7 +269,7 @@ const ClientForm: React.FC = () => {
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-4 mt-4">
-                            <label className="flex flex-col min-w-40 flex-1">
+                            <label className="flex flex-col flex-1">
                                 <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Miasto', 'City')}</p>
                                 <input 
                                     value={city} 
@@ -279,7 +279,7 @@ const ClientForm: React.FC = () => {
                                     placeholder={t('Warszawa', 'London')} 
                                 />
                             </label>
-                            <label className="flex flex-col min-w-40 flex-1">
+                            <label className="flex flex-col flex-1">
                                 <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Kod pocztowy', 'Postal code')}</p>
                                 <input 
                                     value={zipCode} 
@@ -320,7 +320,7 @@ const ClientForm: React.FC = () => {
                     {/* Section: Project Dates */}
                     <h2 className="text-xl font-bold text-primary border-b border-gray-200 dark:border-gray-700 pb-2 mt-4">{t('Czas trwania projektu', 'Project timeline')}</h2>
                     <div className="flex flex-col md:flex-row gap-4">
-                        <label className="flex flex-col min-w-40 flex-1">
+                        <label className="flex flex-col flex-1">
                             <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Data rozpoczęcia*', 'Start date*')}</p>
                             <input 
                                 type="date" 
@@ -331,7 +331,7 @@ const ClientForm: React.FC = () => {
                             />
                             {errors.startDate && <p className="mt-1 text-xs text-red-500 font-medium">{errors.startDate}</p>}
                         </label>
-                        <label className="flex flex-col min-w-40 flex-1">
+                        <label className="flex flex-col flex-1">
                             <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Data zakończenia*', 'End date*')}</p>
                             <input 
                                 type="date" 

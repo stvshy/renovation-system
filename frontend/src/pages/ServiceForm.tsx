@@ -465,17 +465,17 @@ const ServiceForm: React.FC = () => {
     };
 
     return (
-        <div className="px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-5">
+        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[1200px] flex-1 gap-6">
                 {/* Header */}
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
-                    <div className="flex justify-between items-center">
-                        <p className="text-text-dark dark:text-off-white text-3xl font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
-                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider">{t('Krok 3 z 4', 'Step 3 of 4')}</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                        <p className="text-text-dark dark:text-off-white text-2xl sm:text-3xl font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
+                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider w-fit">{t('Krok 3 z 4', 'Step 3 of 4')}</span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8">
                     {/* LEFT COLUMN: Configuration */}
                     <div className="lg:col-span-7 flex flex-col gap-6">
                         {/* Room Tabs - Modified Style with Hidden Scrollbar */}
@@ -894,7 +894,7 @@ const ServiceForm: React.FC = () => {
                 </div>
 
                 {/* Footer Navigation */}
-                <div className="flex justify-between items-center mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
                     <button
                         onClick={() =>
                             navigate("/projects/new/room", {
@@ -905,7 +905,7 @@ const ServiceForm: React.FC = () => {
                                 },
                             })
                         }
-                        className="flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                        className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                     >
                         <span className="material-symbols-outlined">arrow_back</span>
                         {t('Edytuj Pokoje', 'Edit Rooms')}
@@ -913,7 +913,7 @@ const ServiceForm: React.FC = () => {
 
                     <button
                         onClick={handleFinish}
-                        className="flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                        className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
                     >
                         <span className="material-symbols-outlined">assignment_turned_in</span>
                         {t('Przejdź do podsumowania', 'Go to Summary')}

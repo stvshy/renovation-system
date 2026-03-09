@@ -128,19 +128,19 @@ const Settings: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6 sm:mb-8">
                     <div>
                         <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
                             <div className="size-8 mb-1 text-primary -mt-1">
                                 <span className="material-symbols-outlined !text-4xl">settings</span>
                             </div>
-                            <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Ustawienia', 'Settings')}</h1>
+                            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Ustawienia', 'Settings')}</h1>
                         </div>
                         <p className="text-gray-500 mt-2">{t('Definiuj rodzaje prac i stawki robocizny.', 'Define service types and labor rates.')}</p>
                     </div>
                     <button
                         onClick={openAddModal}
-                        className="flex min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
+                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
                     >
                         <Grid2x2Plus size={18} strokeWidth={2.2} />
                         {t('Dodaj Rodzaj Prac', 'Add Service Type')}
@@ -159,7 +159,7 @@ const Settings: React.FC = () => {
                                         key={service.id}
                                         className="p-4 rounded-lg bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-gray-700 hover:border-primary/50 transition-colors relative group"
                                     >
-                                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="absolute top-2 right-2 flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => openEditModal(service)}
                                                 className="p-1 text-blue-600 bg-white dark:bg-slate-800 rounded shadow-sm hover:bg-blue-50"
@@ -219,7 +219,7 @@ const Settings: React.FC = () => {
                                 />
                             </label>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Kategoria', 'Category')}</span>
                                     <select
@@ -246,7 +246,7 @@ const Settings: React.FC = () => {
                                 </label>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block relative z-10">
                                         <div className="flex items-center gap-2 mb-1">

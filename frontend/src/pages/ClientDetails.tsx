@@ -78,30 +78,30 @@ const ClientDetails: React.FC = () => {
                             {client.firstName[0]}
                             {client.lastName[0]}
                         </div>
-                        <div>
-                            <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">
+                        <div className="min-w-0">
+                            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white break-words">
                                 {client.firstName} {client.lastName}
                             </h1>
-                            <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400 mt-1">
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-gray-500 dark:text-gray-400 mt-1">
                                 <span className="flex items-center gap-1 text-sm">
                                     <span className="material-symbols-outlined text-sm">location_on</span> {client.city}
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-gray-400"></span>
-                                <span className="text-sm">ID: {client.id}</span>
+                                <span className="text-sm break-all">ID: {client.id}</span>
                             </div>
                         </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                         <button
                             onClick={() => setIsEditModalOpen(true)}
-                            className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-slate-600 transition-all"
+                            className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-slate-600 transition-all"
                         >
                             <span className="material-symbols-outlined">edit</span>
                             {t('Edytuj Dane', 'Edit Details')}
                         </button>
                         <button
                             onClick={handleNewProject}
-                            className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
+                            className="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
                         >
                             <span className="material-symbols-outlined">add_circle</span>
                             {t('Nowy Projekt', 'New Project')}
@@ -164,7 +164,7 @@ const ClientDetails: React.FC = () => {
                                     <div
                                         key={project.id}
                                         onClick={() => navigate(`/projects/${project.id}`)}
-                                        className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer group"
+                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer group"
                                     >
                                         <div className="flex items-center gap-4">
                                             <div
@@ -182,7 +182,7 @@ const ClientDetails: React.FC = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="text-right">
+                                        <div className="text-left sm:text-right w-full sm:w-auto">
                                             <p className="font-bold text-gray-800 dark:text-white">{project.value.toLocaleString()} {t('zl', 'PLN')}</p>
                                             <span className="material-symbols-outlined text-gray-300 group-hover:text-primary">arrow_forward</span>
                                         </div>
@@ -208,7 +208,7 @@ const ClientDetails: React.FC = () => {
                             </button>
                         </div>
                         <form onSubmit={handleSaveEdit} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Imie', 'First name')}</span>
                                     <input
@@ -226,7 +226,7 @@ const ClientDetails: React.FC = () => {
                                     />
                                 </label>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Telefon', 'Phone')}</span>
                                     <input
@@ -254,7 +254,7 @@ const ClientDetails: React.FC = () => {
                                     onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
                                 />
                             </label>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Miasto', 'City')}</span>
                                     <input

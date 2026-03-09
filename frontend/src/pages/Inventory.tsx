@@ -101,12 +101,12 @@ const Inventory: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6 sm:mb-8">
                     <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
                         <div className="size-8 mb-1 mr-1 text-primary">
                             <span className="material-symbols-outlined !text-4xl">warehouse</span>
                         </div>
-                        <h1 className="text-4xl font-black tracking-tight pt-1 text-gray-900 dark:text-white">{t('Magazyn', 'Inventory')}</h1>
+                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight pt-1 text-gray-900 dark:text-white">{t('Magazyn', 'Inventory')}</h1>
                     </div>
                 </div>
 
@@ -229,7 +229,7 @@ const Inventory: React.FC = () => {
                                 />
                             </label>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Ilość', 'Quantity')}</span>
                                     <input
@@ -256,7 +256,7 @@ const Inventory: React.FC = () => {
                                 </label>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Cena jedn.', 'Unit price')} ({currencyCode})</span>
                                     <input

@@ -133,12 +133,12 @@ const OfferSummary: React.FC = () => {
     };
 
     return (
-        <div className="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
+        <div className="px-3 sm:px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-4 sm:py-5">
             <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
                 {/* Header */}
                 <div className="flex flex-wrap justify-between gap-4 p-4 items-center">
                     <div>
-                        <p className="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
+                        <p className="text-[#0d141b] dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
                         {clientData && (
                             <p className="text-sm text-gray-500 mt-1">
                                 {t('Klient:', 'Client:')} {clientData.firstName} {clientData.lastName}
@@ -147,7 +147,7 @@ const OfferSummary: React.FC = () => {
                     </div>
                     <button
                         onClick={handlePrint}
-                        className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors print:hidden"
+                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors print:hidden"
                     >
                         <span className="truncate">{t('Drukuj / Pobierz PDF', 'Print / Download PDF')}</span>
                     </button>
@@ -157,7 +157,7 @@ const OfferSummary: React.FC = () => {
                 <div className="p-4 @container">
                     <div className="flex flex-col items-center justify-center rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white dark:bg-background-dark/50 p-8 border border-gray-200 dark:border-gray-700">
                         <p className="text-gray-500 dark:text-gray-400 text-lg font-normal leading-normal font-display">{t('Szacowany koszt calkowity', 'Estimated total cost')}</p>
-                        <p className="text-accent text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display">{grandTotal.toFixed(2)} {currencyCode}</p>
+                        <p className="text-accent text-4xl sm:text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display">{grandTotal.toFixed(2)} {currencyCode}</p>
                         <p className="text-sm text-gray-400 mt-2">{t('Robocizna + Materiały (Wszystkie pokoje)', 'Labor + Materials (All rooms)')}</p>
                         {projectDates && (
                             <p className="text-xs text-primary mt-4 font-bold bg-primary/10 px-3 py-1 rounded-full">
@@ -253,7 +253,7 @@ const OfferSummary: React.FC = () => {
                 })}
 
                 {/* Action Buttons */}
-                <div className="flex flex-wrap justify-end gap-4 p-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-end gap-3 sm:gap-4 p-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
                     <button
                         onClick={() =>
                             navigate("/projects/new/services", {
@@ -264,14 +264,14 @@ const OfferSummary: React.FC = () => {
                                 },
                             })
                         }
-                        className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                     >
                         <span className="truncate">{t('Wróć do edycji usług', 'Back to services')}</span>
                     </button>
                     <button
                         onClick={handleSubmitProject}
                         disabled={isSaving}
-                        className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
+                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
                     >
                         <span className="truncate">{isSaving ? t('Zapisywanie...', 'Saving...') : t('Zatwierdz i Zapisz Projekt', 'Confirm and Save Project')}</span>
                     </button>

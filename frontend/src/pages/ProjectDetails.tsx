@@ -142,9 +142,9 @@ const ProjectDetails: React.FC = () => {
             <div className="layout-content-container flex flex-col w-full max-w-6xl gap-6">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-200 dark:border-gray-700 pb-6">
-                    <div>
+                    <div className="min-w-0 w-full">
                         <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">{project.name}</h1>
+                            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white break-words">{project.name}</h1>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
                                 {project.status === "In Progress"
                                     ? t('W trakcie', 'In Progress')
@@ -155,17 +155,17 @@ const ProjectDetails: React.FC = () => {
                                     : project.status}
                             </span>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
+                        <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-start sm:items-center gap-2 break-words">
                             <span className="material-symbols-outlined text-sm">location_on</span>
                             {project.address}
                         </p>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                         <select
                             value={project.status}
                             onChange={(e) => handleStatusChange(e.target.value as any)}
-                            className="form-select rounded-lg border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-sm py-2 pl-3 pr-8"
+                            className="form-select w-full sm:w-auto rounded-lg border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-sm py-2 pl-3 pr-8"
                         >
                             <option value="Planned">{t('Planowany', 'Planned')}</option>
                             <option value="In Progress">{t('W trakcie', 'In Progress')}</option>
@@ -314,8 +314,8 @@ const ProjectDetails: React.FC = () => {
                                                         key={tIdx}
                                                         className="border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30"
                                                     >
-                                                        <td className="px-6 py-3 font-medium text-gray-900 dark:text-white">{task.description}</td>
-                                                        <td className="px-6 py-3">{task.material.name}</td>
+                                                        <td className="px-6 py-3 font-medium text-gray-900 dark:text-white min-w-[180px]">{task.description}</td>
+                                                        <td className="px-6 py-3 min-w-[140px]">{task.material.name}</td>
                                                         <td className="px-6 py-3 text-right">{task.calculateTotalCost().toFixed(2)} {t('zl', 'PLN')}</td>
                                                     </tr>
                                                 ))}

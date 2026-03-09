@@ -37,17 +37,17 @@ const Projects: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
-                <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
+                <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
                     <div className="flex items-center text-slate-900 dark:text-slate-50">
                         <div className="size-8 mr-3 mt-1 text-primary flex items-center justify-center">
                             <span className="material-symbols-outlined text-[34px] leading-none">folder</span>
                         </div>
-                        <h1 className="text-4xl font-black tracking-tight leading-none pt-1 text-gray-900 dark:text-white">{t('Projekty', 'Projects')}</h1>
+                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-none pt-1 text-gray-900 dark:text-white">{t('Projekty', 'Projects')}</h1>
                     </div>
-                    <div className="flex flex-1 justify-end gap-2 sm:gap-4">
+                    <div className="flex w-full sm:w-auto sm:flex-1 sm:justify-end gap-2 sm:gap-4">
                         <button 
                             onClick={() => navigate('/projects/new/client')}
-                            className="flex min-w-[120px] items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors"
+                            className="flex w-full sm:w-auto min-w-[120px] items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors"
                         >
                             <span className="material-symbols-outlined text-lg mr-2">add</span>
                             <span className="truncate">{t('Nowy Projekt', 'New Project')}</span>
