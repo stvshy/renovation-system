@@ -16,6 +16,7 @@ import {
 import { getInventory, saveInventoryItem, getServiceCatalog } from "../lib/storage";
 import { InventoryItem } from "../types";
 import { useLanguage } from "../context/LanguageContext";
+import ScrollableSelect from "../components/ScrollableSelect";
 
 // Helper to rehydrate objects
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -546,7 +547,7 @@ const ServiceForm: React.FC = () => {
                             {/* Service Selection */}
                             <div className="mb-6">
                                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('Rodzaj prac', 'Type of work')}</label>
-                                <select
+                                <ScrollableSelect
                                     className="form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                     value={selectedTemplateId}
                                     onChange={(e) => setSelectedTemplateId(e.target.value)}
@@ -556,7 +557,7 @@ const ServiceForm: React.FC = () => {
                                             {localizeServiceName(s.name)}
                                         </option>
                                     ))}
-                                </select>
+                                </ScrollableSelect>
 
                                 {selectedTemplate && (
                                     <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 rounded-lg text-xs animate-fade-in">
@@ -649,7 +650,7 @@ const ServiceForm: React.FC = () => {
                                                 </button>
                                             </div>
                                         ) : (
-                                            <select
+                                            <ScrollableSelect
                                                 className="form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                                 value={selectedMaterialId}
                                                 onChange={(e) => setSelectedMaterialId(e.target.value)}
@@ -659,7 +660,7 @@ const ServiceForm: React.FC = () => {
                                                         {item.name} — {item.pricePerUnit.toFixed(2)} {currencyCode}/{item.unit} ({t('Stan', 'Stock')}: {item.quantity})
                                                     </option>
                                                 ))}
-                                            </select>
+                                            </ScrollableSelect>
                                         )}
                                     </>
                                 ) : (
@@ -704,7 +705,7 @@ const ServiceForm: React.FC = () => {
                                                 />
                                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">{currencySymbol}</span>
                                             </div>
-                                            <select
+                                            <ScrollableSelect
                                                 value={customMatUnit}
                                                 onChange={(e) => setCustomMatUnit(e.target.value as Unit)}
                                                 className="form-select w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm"
@@ -714,7 +715,7 @@ const ServiceForm: React.FC = () => {
                                                         {u}
                                                     </option>
                                                 ))}
-                                            </select>
+                                            </ScrollableSelect>
                                         </div>
 
                                         {newMatScope === "inventory" && (
@@ -755,7 +756,7 @@ const ServiceForm: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('Miejsce prac', 'Work area')}</label>
-                                    <select
+                                    <ScrollableSelect
                                         className="form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                         value={scopeType === "specific" ? `s-${specificSurfaceIndex}` : scopeType}
                                         onChange={(e) => {
@@ -790,7 +791,7 @@ const ServiceForm: React.FC = () => {
                                         )}
 
                                         <option value="manual">{t('Wartość niestandardowa', 'Custom value')}</option>
-                                    </select>
+                                    </ScrollableSelect>
                                 </div>
 
                                 <div>

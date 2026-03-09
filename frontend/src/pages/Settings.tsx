@@ -3,6 +3,7 @@ import { Grid2x2Plus } from "lucide-react";
 import { getServiceCatalog, saveServiceTemplate, deleteServiceTemplate } from "../lib/storage";
 import { ServiceTemplate, Unit, CATEGORIES } from "../lib/renovationLogic";
 import { useLanguage } from "../context/LanguageContext";
+import ScrollableSelect from "../components/ScrollableSelect";
 
 const Settings: React.FC = () => {
     const { t, language } = useLanguage();
@@ -198,7 +199,7 @@ const Settings: React.FC = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     {/* Removed overflow-hidden to allow tooltip to pop out */}
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg animate-fade-in relative">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in relative">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800 rounded-t-2xl">
                             <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editingItem ? t('Edytuj usługę', 'Edit Service') : t('Nowa usługa', 'New Service')}</h2>
                             <button
@@ -222,7 +223,7 @@ const Settings: React.FC = () => {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Kategoria', 'Category')}</span>
-                                    <select
+                                    <ScrollableSelect
                                         className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newService.category}
                                         onChange={(e) => setNewService({ ...newService, category: e.target.value })}
@@ -232,7 +233,7 @@ const Settings: React.FC = () => {
                                                 {localizeCategory(cat)}
                                             </option>
                                         ))}
-                                    </select>
+                                    </ScrollableSelect>
                                 </label>
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Stawka Robocizny', 'Labor Rate')}</span>
@@ -285,7 +286,7 @@ const Settings: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <select
+                                        <ScrollableSelect
                                             className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
                                             value={newService.defaultStrategy}
                                             onChange={(e) => setNewService({ ...newService, defaultStrategy: e.target.value as any })}
@@ -294,12 +295,12 @@ const Settings: React.FC = () => {
                                             <option value="waste">{t('Odpad (%)', 'Waste (%)')}</option>
                                             <option value="linear">{t('Liniowy (mb)', 'Linear (lm)')}</option>
                                             <option value="item">{t('Na sztuki', 'Per item')}</option>
-                                        </select>
+                                        </ScrollableSelect>
                                     </label>
                                 </div>
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Domyślny zakres', 'Default scope')}</span>
-                                    <select
+                                    <ScrollableSelect
                                         className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newService.suggestedScope}
                                         onChange={(e) => setNewService({ ...newService, suggestedScope: e.target.value as any })}
@@ -309,7 +310,7 @@ const Settings: React.FC = () => {
                                         <option value="ceiling">{t('Sufit', 'Ceiling')}</option>
                                         <option value="perimeter">{t('Obwód', 'Perimeter')}</option>
                                         <option value="manual">{t('Ręczny', 'Manual')}</option>
-                                    </select>
+                                    </ScrollableSelect>
                                 </label>
                             </div>
 

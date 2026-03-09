@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getClients, saveClient, getClientById } from '../lib/storage';
 import { Client } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import ScrollableSelect from '../components/ScrollableSelect';
 
 const ClientForm: React.FC = () => {
     const navigate = useNavigate();
@@ -212,7 +213,7 @@ const ClientForm: React.FC = () => {
                     {mode === 'existing' && (
                         <div className="mb-4">
                             <label className="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">{t('Wybierz klienta', 'Select client')}</label>
-                            <select 
+                            <ScrollableSelect 
                                 value={selectedClientId}
                                 onChange={handleChange(setSelectedClientId, 'clientSelection')}
                                 className={`form-select w-full rounded-lg border bg-background-light dark:bg-slate-800 p-3 
@@ -222,7 +223,7 @@ const ClientForm: React.FC = () => {
                                 {existingClients.map(c => (
                                     <option key={c.id} value={c.id}>{c.lastName} {c.firstName} ({c.city})</option>
                                 ))}
-                            </select>
+                            </ScrollableSelect>
                             {errors.clientSelection && <p className="mt-1 text-sm text-red-500 font-medium animate-pulse">{errors.clientSelection}</p>}
                         </div>
                     )}

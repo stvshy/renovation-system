@@ -23,3 +23,61 @@ input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
+
+@layer components {
+  .form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    min-height: 2.75rem;
+    border-width: 1px;
+    border-color: rgb(203 213 225);
+    border-radius: 0.75rem;
+    padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+    background-color: rgb(248 250 252);
+    color: rgb(15 23 42);
+    line-height: 1.25rem;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23475569' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+  }
+
+  .form-select:focus {
+    outline: none;
+    border-color: #1173d4;
+    box-shadow: 0 0 0 3px rgba(17, 115, 212, 0.2);
+    background-color: rgb(255 255 255);
+  }
+
+  .form-select::-ms-expand {
+    display: none;
+  }
+
+  .form-select option,
+  .form-select optgroup {
+    background-color: rgb(255 255 255);
+    color: rgb(15 23 42);
+  }
+
+  .dark .form-select {
+    border-color: rgb(51 65 85);
+    background-color: rgb(30 41 59);
+    color: rgb(241 245 249);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23cbd5e1' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+
+  .dark .form-select:focus {
+    border-color: #1173d4;
+    box-shadow: 0 0 0 3px rgba(17, 115, 212, 0.28);
+    background-color: rgb(15 23 42);
+  }
+
+  .dark .form-select option,
+  .dark .form-select optgroup {
+    background-color: rgb(15 23 42);
+    color: rgb(241 245 249);
+  }
+}

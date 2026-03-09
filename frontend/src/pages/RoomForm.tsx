@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Room, Surface, SurfaceType, Opening, OpeningType } from "../lib/renovationLogic";
 import { useLanguage } from "../context/LanguageContext";
+import ScrollableSelect from "../components/ScrollableSelect";
 
 type Mode = "standard" | "custom";
 
@@ -477,14 +478,14 @@ const RoomForm: React.FC = () => {
                                     {/* Add Opening Form - Improved Styling */}
                                     {activeSurfaceIndex === index ? (
                                         <div className="flex flex-wrap items-center gap-2 mt-2 bg-gray-50 dark:bg-gray-700 p-2 rounded animate-fade-in w-full sm:w-fit">
-                                            <select
+                                            <ScrollableSelect
                                                 value={openingDims.type}
                                                 onChange={(e) => setOpeningDims({ ...openingDims, type: e.target.value as OpeningType })}
-                                                className="text-xs px-2 py-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800 min-w-[90px]"
+                                                className="form-select text-xs px-2 py-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800 min-w-[90px]"
                                             >
                                                 <option value="okno">{t("Okno", "Window")}</option>
                                                 <option value="drzwi">{t("Drzwi", "Door")}</option>
-                                            </select>
+                                            </ScrollableSelect>
                                             <input
                                                 type="number"
                                                 placeholder={t("Szer", "W")}
@@ -547,7 +548,7 @@ const RoomForm: React.FC = () => {
                         onClick={() => navigate("/projects")}
                         className="px-6 py-3 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-300 transition-colors"
                     >
-                        {t('Wyjdz', 'Exit')}
+                        {t('Wyjdź', 'Exit')}
                     </button>
 
                     <button

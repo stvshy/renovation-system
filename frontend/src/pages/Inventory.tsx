@@ -4,6 +4,7 @@ import { getInventory, saveInventoryItem, deleteInventoryItem } from "../lib/sto
 import { InventoryItem } from "../types";
 import { Unit, CATEGORIES } from "../lib/renovationLogic";
 import { useLanguage } from "../context/LanguageContext";
+import ScrollableSelect from "../components/ScrollableSelect";
 
 const Inventory: React.FC = () => {
     const { t, language } = useLanguage();
@@ -208,7 +209,7 @@ const Inventory: React.FC = () => {
             {/* Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800">
                             <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editingItem ? t('Edytuj materiał', 'Edit Material') : t('Nowy materiał', 'New Material')}</h2>
                             <button
@@ -242,7 +243,7 @@ const Inventory: React.FC = () => {
                                 </label>
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Jednostka', 'Unit')}</span>
-                                    <select
+                                    <ScrollableSelect
                                         className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newItem.unit}
                                         onChange={(e) => setNewItem({ ...newItem, unit: e.target.value as any })}
@@ -252,7 +253,7 @@ const Inventory: React.FC = () => {
                                                 {localizeUnit(u)}
                                             </option>
                                         ))}
-                                    </select>
+                                    </ScrollableSelect>
                                 </label>
                             </div>
 
@@ -270,7 +271,7 @@ const Inventory: React.FC = () => {
                                 </label>
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Kategoria', 'Category')}</span>
-                                    <select
+                                    <ScrollableSelect
                                         className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newItem.category}
                                         onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
@@ -281,7 +282,7 @@ const Inventory: React.FC = () => {
                                                 {localizeCategory(cat)}
                                             </option>
                                         ))}
-                                    </select>
+                                    </ScrollableSelect>
                                 </label>
                             </div>
 
