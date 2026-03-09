@@ -101,7 +101,12 @@ const Inventory: React.FC = () => {
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="max-w-7xl w-full mx-auto">
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-                    <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Magazyn', 'Inventory')}</h1>
+                    <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
+                        <div className="size-8 mb-1 mr-1 text-primary">
+                            <span className="material-symbols-outlined !text-4xl">warehouse</span>
+                        </div>
+                        <h1 className="text-4xl font-black tracking-tight pt-1 text-gray-900 dark:text-white">{t('Magazyn', 'Inventory')}</h1>
+                    </div>
                 </div>
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">

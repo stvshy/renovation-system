@@ -129,7 +129,12 @@ const Settings: React.FC = () => {
             <div className="max-w-7xl w-full mx-auto">
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
                     <div>
-                        <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Ustawienia', 'Settings')}</h1>
+                        <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
+                            <div className="size-8 mb-1 text-primary -mt-1">
+                                <span className="material-symbols-outlined !text-4xl">settings</span>
+                            </div>
+                            <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Ustawienia', 'Settings')}</h1>
+                        </div>
                         <p className="text-gray-500 mt-2">{t('Definiuj rodzaje prac i stawki robocizny.', 'Define service types and labor rates.')}</p>
                     </div>
                     <button

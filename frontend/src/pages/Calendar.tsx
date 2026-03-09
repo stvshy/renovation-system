@@ -60,10 +60,15 @@ const Calendar: React.FC = () => {
     };
 
     return (
-        <div className="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
-            <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
-                <div className="flex flex-wrap justify-between gap-4 p-4 items-center">
-                    <p className="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kalendarz', 'Calendar')}</p>
+        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
+            <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
+                <div className="flex flex-wrap justify-between gap-4 p-2 sm:p-0 items-center mb-6">
+                    <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
+                        <div className="size-8 mb-1 mr-1 text-primary -mt-1">
+                            <span className="material-symbols-outlined !text-4xl">calendar_month</span>
+                        </div>
+                        <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Kalendarz', 'Calendar')}</h1>
+                    </div>
                     <div className="flex items-center gap-2">
                         <button onClick={handlePrevMonth} className="flex items-center justify-center rounded-lg h-10 w-10 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <span className="material-symbols-outlined">chevron_left</span>
@@ -75,7 +80,7 @@ const Calendar: React.FC = () => {
                             <span className="material-symbols-outlined">chevron_right</span>
                         </button>
                     </div>
-                    <button 
+                    <button
                         onClick={() => navigate('/projects/new/client')}
                         className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors"
                     >
@@ -83,7 +88,7 @@ const Calendar: React.FC = () => {
                     </button>
                 </div>
                 
-                <div className="p-4">
+                <div>
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
                         {/* Header Row */}
                         <div className="grid grid-cols-7 text-center border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-800">

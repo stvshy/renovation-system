@@ -53,13 +53,13 @@ const Clients: React.FC = () => {
 
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 relative">
-            <div className="layout-content-container flex flex-col w-full max-w-5xl">
+            <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
                 <header className="flex items-center justify-between border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
-                    <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
-                        <div className="size-8 text-primary">
-                            <span className="material-symbols-outlined !text-4xl">groups</span>
+                    <div className="flex items-center text-slate-900 dark:text-slate-50">
+                        <div className="size-9 mr-4 mt-0.5 text-primary flex items-center justify-center">
+                            <span className="material-symbols-outlined text-[42px] leading-none">groups</span>
                         </div>
-                        <h1 className="text-2xl font-bold tracking-tight">{t('Klienci', 'Clients')}</h1>
+                        <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Klienci', 'Clients')}</h1>
                     </div>
                     <button 
                         onClick={() => setIsModalOpen(true)}
