@@ -1,0 +1,17 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    # Uruchamia się o 8:00 rano w każdy poniedziałek i czwartek
+    - cron: "0 8 * * 1,4"
+  workflow_dispatch: # Pozwala na ręczne odpalenie skryptu z panelu GitHuba
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase API
+        run: |
+          curl -X GET "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/clients?limit=1" \
+          -H "apikey: ${{ secrets.VITE_SUPABASE_ANON_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_ANON_KEY }}"
