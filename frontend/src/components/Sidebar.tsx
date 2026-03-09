@@ -1,9 +1,12 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageToggleButton from './LanguageToggleButton';
 
 const Sidebar: React.FC = () => {
     const { user, signOut } = useAuth();
+    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -24,7 +27,7 @@ const Sidebar: React.FC = () => {
                         </div>
                         <div className="flex flex-col overflow-hidden">
                             <h1 className="text-gray-800 dark:text-gray-200 text-base font-medium truncate w-40" title={user?.email}>
-                                {user?.email?.split('@')[0] || 'Użytkownik'}
+                                {user?.email?.split('@')[0] || t('Użytkownik', 'User')}
                             </h1>
                             <p className="text-gray-500 dark:text-gray-400 text-xs truncate w-40" title={user?.email}>
                                 {user?.email}
@@ -34,17 +37,17 @@ const Sidebar: React.FC = () => {
                 </div>
 
                 <nav className="flex-1 px-2 py-4 space-y-2 overflow-y-auto custom-scrollbar">
-                    <NavItem to="/projects" icon="folder" label="Projekty" />
-                    <NavItem to="/inventory" icon="warehouse" label="Magazyn" />
-                    <NavItem to="/clients" icon="groups" label="Klienci" />
-                    <NavItem to="/calendar" icon="calendar_month" label="Kalendarz" />
-                    <NavItem to="/settings" icon="settings" label="Ustawienia" />
+                    <NavItem to="/projects" icon="folder" label={t('Projekty', 'Projects')} />
+                    <NavItem to="/inventory" icon="warehouse" label={t('Magazyn', 'Inventory')} />
+                    <NavItem to="/clients" icon="groups" label={t('Klienci', 'Clients')} />
+                    <NavItem to="/calendar" icon="calendar_month" label={t('Kalendarz', 'Calendar')} />
+                    <NavItem to="/settings" icon="settings" label={t('Ustawienia', 'Settings')} />
                 </nav>
                 
                 <div className="p-4 mt-auto border-t border-gray-200 dark:border-gray-700 shrink-0 flex flex-col gap-3">
                     <NavLink to="/projects/new/client" className="w-full flex items-center justify-center gap-2 min-w-[84px] cursor-pointer rounded-lg h-10 px-4 bg-primary hover:bg-primary/90 transition-colors text-white text-sm font-bold tracking-wide">
                         <span className="material-symbols-outlined text-lg">add</span>
-                        <span className="truncate">Nowy Projekt</span>
+                        <span className="truncate">{t('Nowy Projekt', 'New Project')}</span>
                     </NavLink>
                     
                     <button 
@@ -52,8 +55,12 @@ const Sidebar: React.FC = () => {
                         className="w-full flex items-center justify-center gap-2 min-w-[84px] cursor-pointer rounded-lg h-10 px-4 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-200 text-sm font-bold tracking-wide"
                     >
                         <span className="material-symbols-outlined text-lg">logout</span>
-                        <span className="truncate">Wyloguj</span>
+                        <span className="truncate">{t('Wyloguj', 'Sign out')}</span>
                     </button>
+
+                    <div className="flex justify-center pt-1">
+                        <LanguageToggleButton size="sm" />
+                    </div>
                 </div>
             </div>
         </div>

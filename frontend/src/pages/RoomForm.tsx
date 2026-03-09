@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Room, Surface, SurfaceType, Opening, OpeningType } from "../lib/renovationLogic";
+import { useLanguage } from "../context/LanguageContext";
 
 type Mode = "standard" | "custom";
 
@@ -19,6 +20,21 @@ const rehydrateSurface = (s: any): Surface => {
 const RoomForm: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useLanguage();
+
+    const localizeSurfaceName = (name: string) => {
+        if (name === "Podłoga") return t("Podłoga", "Floor");
+        if (name === "Sufit") return t("Sufit", "Ceiling");
+        if (name.startsWith("Ściana ")) return name.replace("Ściana", t("Ściana", "Wall"));
+        if (name.startsWith("Nowa ")) return name.replace("Nowa", t("Nowa", "New"));
+        return name;
+    };
+
+    const localizeSurfaceType = (type: SurfaceType) => {
+        if (type === SurfaceType.WALL) return t("Ściana", "Wall");
+        if (type === SurfaceType.FLOOR) return t("Podłoga", "Floor");
+        return t("Sufit", "Ceiling");
+    };
 
     // Retrieve passed data
     const existingRooms: any[] = location.state?.rooms || [];
@@ -29,7 +45,7 @@ const RoomForm: React.FC = () => {
     const [editingRoomIndex, setEditingRoomIndex] = useState<number | null>(null);
 
     // Basic Info
-    const [roomName, setRoomName] = useState(`Pokój ${existingRooms.length + 1}`);
+    const [roomName, setRoomName] = useState(`${t("Pokój", "Room")} ${existingRooms.length + 1}`);
     const [mode, setMode] = useState<Mode>("standard");
 
     // Standard Mode Dimensions
@@ -66,7 +82,8 @@ const RoomForm: React.FC = () => {
     }, [length, width, height, mode, editingRoomIndex]);
 
     const handleAddSurface = (type: SurfaceType) => {
-        setSurfaces([...surfaces, new Surface(`Nowa ${type}`, type, 0, 0)]);
+        const typeLabel = type === SurfaceType.WALL ? t("Ściana", "Wall") : type === SurfaceType.FLOOR ? t("Podłoga", "Floor") : t("Sufit", "Ceiling");
+        setSurfaces([...surfaces, new Surface(`${t("Nowa", "New")} ${typeLabel}`, type, 0, 0)]);
     };
 
     const handleUpdateSurface = (index: number, field: "name" | "width" | "height" | "area", value: string) => {
@@ -128,7 +145,7 @@ const RoomForm: React.FC = () => {
 
     const handleCancelEdit = () => {
         setEditingRoomIndex(null);
-        setRoomName(`Pokój ${existingRooms.length + 1}`);
+        setRoomName(`${t("Pokój", "Room")} ${existingRooms.length + 1}`);
         setSurfaces([]);
         setMode("standard");
         setLength("");
@@ -164,7 +181,7 @@ const RoomForm: React.FC = () => {
         });
 
         setEditingRoomIndex(null);
-        setRoomName(`Pokój ${updatedRooms.length + 1}`);
+        setRoomName(`${t("Pokój", "Room")} ${updatedRooms.length + 1}`);
         setLength("");
         setWidth("");
         setHeight("");
@@ -204,13 +221,13 @@ const RoomForm: React.FC = () => {
                 <div className="flex flex-col gap-2 p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between items-center">
                         <p className="text-text-dark dark:text-off-white text-3xl font-black leading-tight tracking-[-0.033em]">
-                            {editingRoomIndex !== null ? "Edycja Pokoju" : "Definicja Pokoju"}
+                            {editingRoomIndex !== null ? t("Edycja Pokoju", "Edit Room") : t("Definicja Pokoju", "Room Definition")}
                         </p>
-                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">Krok 2: Dodawanie pomieszczeń</span>
+                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">{t('Krok 2: Dodawanie pomieszczeń', 'Step 2: Adding rooms')}</span>
                     </div>
                     {clientData && (
                         <p className="text-sm text-gray-500">
-                            Projekt dla:{" "}
+                            {t("Projekt dla", "Project for")}:{" "}
                             <span className="font-semibold">
                                 {clientData.firstName} {clientData.lastName}
                             </span>
@@ -220,7 +237,7 @@ const RoomForm: React.FC = () => {
                     {/* List of Existing Rooms */}
                     {existingRooms.length > 0 && (
                         <div className="mt-4">
-                            <p className="text-xs font-bold text-gray-500 uppercase mb-2">Pokoje w projekcie:</p>
+                            <p className="text-xs font-bold text-gray-500 uppercase mb-2">{t("Pokoje w projekcie", "Rooms in project")}:</p>
                             <div className="flex flex-wrap gap-2">
                                 {existingRooms.map((r, idx) => (
                                     <button
@@ -239,7 +256,7 @@ const RoomForm: React.FC = () => {
                                 ))}
                                 {editingRoomIndex === null && (
                                     <div className="flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-slate-800 text-gray-400 border border-dashed border-gray-300">
-                                        <span>Nowy Pokój...</span>
+                                        <span>{t("Nowy Pokój", "New room")}...</span>
                                     </div>
                                 )}
                             </div>
@@ -250,12 +267,12 @@ const RoomForm: React.FC = () => {
                 {/* 1. Room Name & Mode */}
                 <div className="p-4 flex flex-col gap-6">
                     <div className="flex flex-col">
-                        <label className="text-text-dark dark:text-off-white text-base font-medium leading-normal pb-2">Nazwa Pokoju</label>
+                        <label className="text-text-dark dark:text-off-white text-base font-medium leading-normal pb-2">{t("Nazwa Pokoju", "Room Name")}</label>
                         <input
                             value={roomName}
                             onChange={(e) => setRoomName(e.target.value)}
                             className="form-input w-full rounded-lg border border-neutral-gray/50 dark:border-neutral-gray/70 bg-off-white dark:bg-background-dark p-3"
-                            placeholder="np. Salon, Sypialnia"
+                            placeholder={t("np. Salon, Sypialnia", "e.g. Living room, Bedroom")}
                         />
                     </div>
 
@@ -268,9 +285,9 @@ const RoomForm: React.FC = () => {
                                     ? "bg-white dark:bg-slate-600 shadow-sm text-primary"
                                     : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                             } ${editingRoomIndex !== null ? "opacity-50 cursor-not-allowed" : ""}`}
-                            title={editingRoomIndex !== null ? "Podczas edycji dostępny jest tylko tryb nieregularny" : ""}
+                            title={editingRoomIndex !== null ? t("Podczas edycji dostępny jest tylko tryb nieregularny", "Only custom mode is available while editing") : ""}
                         >
-                            Standardowy (Prostokąt)
+                            {t("Standardowy (Prostokąt)", "Standard (Rectangle)")}
                         </button>
                         <button
                             onClick={() => setMode("custom")}
@@ -280,7 +297,7 @@ const RoomForm: React.FC = () => {
                                     : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                             } ${editingRoomIndex !== null ? "opacity-50 cursor-not-allowed" : ""}`}
                         >
-                            Nieregularny (Własny)
+                            {t("Nieregularny (Własny)", "Irregular (Custom)")}
                         </button>
                     </div>
                 </div>
@@ -288,10 +305,10 @@ const RoomForm: React.FC = () => {
                 {/* 2. Dimensions Input (Standard Mode) */}
                 {mode === "standard" && (
                     <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl mx-4 border border-slate-200 dark:border-slate-700 animate-fade-in">
-                        <h2 className="text-lg font-bold text-dependable-blue dark:text-primary mb-4">Wymiary całkowite</h2>
+                        <h2 className="text-lg font-bold text-dependable-blue dark:text-primary mb-4">{t("Wymiary całkowite", "Overall dimensions")}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <label className="flex flex-col">
-                                <span className="mb-1 text-sm font-medium">Długość (m)</span>
+                                <span className="mb-1 text-sm font-medium">{t("Długość (m)", "Length (m)")}</span>
                                 <input
                                     type="number"
                                     value={length}
@@ -300,7 +317,7 @@ const RoomForm: React.FC = () => {
                                 />
                             </label>
                             <label className="flex flex-col">
-                                <span className="mb-1 text-sm font-medium">Szerokość (m)</span>
+                                <span className="mb-1 text-sm font-medium">{t("Szerokość (m)", "Width (m)")}</span>
                                 <input
                                     type="number"
                                     value={width}
@@ -309,7 +326,7 @@ const RoomForm: React.FC = () => {
                                 />
                             </label>
                             <label className="flex flex-col">
-                                <span className="mb-1 text-sm font-medium">Wysokość (m)</span>
+                                <span className="mb-1 text-sm font-medium">{t("Wysokość (m)", "Height (m)")}</span>
                                 <input
                                     type="number"
                                     value={height}
@@ -324,10 +341,10 @@ const RoomForm: React.FC = () => {
                 {/* 3. Surface List & Management */}
                 <div className="p-4 mt-4 space-y-4">
                     <div className="flex justify-between items-end border-b border-gray-200 dark:border-gray-700 pb-2">
-                        <h2 className="text-xl font-bold text-dependable-blue dark:text-primary">Lista Powierzchni</h2>
+                        <h2 className="text-xl font-bold text-dependable-blue dark:text-primary">{t("Lista Powierzchni", "Surface List")}</h2>
                         <div className="text-right text-sm text-gray-500">
-                            <p>Ściany: {getTotalArea(SurfaceType.WALL).toFixed(2)} m²</p>
-                            <p>Podłoga: {getTotalArea(SurfaceType.FLOOR).toFixed(2)} m²</p>
+                            <p>{t("Ściany", "Walls")}: {getTotalArea(SurfaceType.WALL).toFixed(2)} m²</p>
+                            <p>{t("Podłoga", "Floor")}: {getTotalArea(SurfaceType.FLOOR).toFixed(2)} m²</p>
                         </div>
                     </div>
 
@@ -337,19 +354,19 @@ const RoomForm: React.FC = () => {
                                 onClick={() => handleAddSurface(SurfaceType.WALL)}
                                 className="btn-secondary text-xs px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
-                                + Ściana
+                                + {t("Ściana", "Wall")}
                             </button>
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.FLOOR)}
                                 className="btn-secondary text-xs px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
-                                + Podłoga
+                                + {t("Podłoga", "Floor")}
                             </button>
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.CEILING)}
                                 className="btn-secondary text-xs px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
-                                + Sufit
+                                + {t("Sufit", "Ceiling")}
                             </button>
                         </div>
                     )}
@@ -378,16 +395,16 @@ const RoomForm: React.FC = () => {
                                                             ? "check_box_outline_blank"
                                                             : "roofing"}
                                                     </span>
-                                                    {surface.name}
+                                                    {localizeSurfaceName(surface.name)}
                                                 </span>
                                             )}
-                                            <span className="text-xs text-gray-400 block mt-1">{surface.type}</span>
+                                            <span className="text-xs text-gray-400 block mt-1">{localizeSurfaceType(surface.type)}</span>
                                         </div>
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
                                         <div className="md:col-span-7 flex flex-row items-center gap-2 md:gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide">
                                             <div className="flex items-center gap-2 shrink-0">
-                                                <label className="text-xs text-gray-500 whitespace-nowrap">Szer:</label>
+                                                <label className="text-xs text-gray-500 whitespace-nowrap">{t("Szer", "W")}: </label>
                                                 <input
                                                     type="number"
                                                     disabled={mode === "standard"}
@@ -397,7 +414,7 @@ const RoomForm: React.FC = () => {
                                                 />
                                             </div>
                                             <div className="flex items-center gap-2 shrink-0">
-                                                <label className="text-xs text-gray-500 whitespace-nowrap">Wys/Dł:</label>
+                                                <label className="text-xs text-gray-500 whitespace-nowrap">{t("Wys/Dł", "H/L")}: </label>
                                                 <input
                                                     type="number"
                                                     disabled={mode === "standard"}
@@ -440,7 +457,7 @@ const RoomForm: React.FC = () => {
                                 {/* Openings Section */}
                                 <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
                                     <div className="flex flex-wrap gap-2 items-center mb-2">
-                                        <span className="text-xs font-semibold text-gray-500">Otwory:</span>
+                                        <span className="text-xs font-semibold text-gray-500">{t("Otwory", "Openings")}:</span>
                                         {surface.openings.map((op, opIdx) => (
                                             <div
                                                 key={opIdx}
@@ -454,7 +471,7 @@ const RoomForm: React.FC = () => {
                                                 </button>
                                             </div>
                                         ))}
-                                        {surface.openings.length === 0 && <span className="text-xs text-gray-400 italic">Brak otworów</span>}
+                                        {surface.openings.length === 0 && <span className="text-xs text-gray-400 italic">{t("Brak otworów", "No openings")}</span>}
                                     </div>
 
                                     {/* Add Opening Form - Improved Styling */}
@@ -465,19 +482,19 @@ const RoomForm: React.FC = () => {
                                                 onChange={(e) => setOpeningDims({ ...openingDims, type: e.target.value as OpeningType })}
                                                 className="text-xs px-2 py-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800 min-w-[90px]"
                                             >
-                                                <option value="okno">Okno</option>
-                                                <option value="drzwi">Drzwi</option>
+                                                <option value="okno">{t("Okno", "Window")}</option>
+                                                <option value="drzwi">{t("Drzwi", "Door")}</option>
                                             </select>
                                             <input
                                                 type="number"
-                                                placeholder="Szer"
+                                                placeholder={t("Szer", "W")}
                                                 value={openingDims.w}
                                                 onChange={(e) => setOpeningDims({ ...openingDims, w: e.target.value })}
                                                 className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
                                             />
                                             <input
                                                 type="number"
-                                                placeholder="Wys"
+                                                placeholder={t("Wys", "H")}
                                                 value={openingDims.h}
                                                 onChange={(e) => setOpeningDims({ ...openingDims, h: e.target.value })}
                                                 className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
@@ -486,10 +503,10 @@ const RoomForm: React.FC = () => {
                                                 onClick={() => handleAddOpening(index)}
                                                 className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 h-8 rounded font-bold"
                                             >
-                                                Dodaj
+                                                {t("Dodaj", "Add")}
                                             </button>
                                             <button onClick={() => setActiveSurfaceIndex(null)} className="text-gray-500 hover:text-gray-700 text-xs px-2">
-                                                Anuluj
+                                                {t("Anuluj", "Cancel")}
                                             </button>
                                         </div>
                                     ) : (
@@ -498,7 +515,7 @@ const RoomForm: React.FC = () => {
                                             className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full flex items-center gap-1 transition-colors mt-2"
                                         >
                                             <span className="material-symbols-outlined text-base">add_circle</span>
-                                            Dodaj okno/drzwi
+                                            {t("Dodaj okno/drzwi", "Add window/door")}
                                         </button>
                                     )}
                                 </div>
@@ -509,7 +526,7 @@ const RoomForm: React.FC = () => {
                     {surfaces.length === 0 && (
                         <div className="text-center py-10 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-dashed border-gray-300">
                             <p className="text-gray-500">
-                                Brak zdefiniowanych powierzchni. {mode === "standard" ? "Wprowadź wymiary powyżej." : "Dodaj ściany ręcznie."}
+                                {t('Brak zdefiniowanych powierzchni.', 'No surfaces defined.')} {mode === "standard" ? t('Wprowadź wymiary powyżej.', 'Enter dimensions above.') : t('Dodaj ściany ręcznie.', 'Add walls manually.')}
                             </p>
                         </div>
                     )}
@@ -522,7 +539,7 @@ const RoomForm: React.FC = () => {
                             onClick={handleCancelEdit}
                             className="px-6 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-300 font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         >
-                            Anuluj edycję
+                            {t('Anuluj edycje', 'Cancel editing')}
                         </button>
                     )}
 
@@ -530,7 +547,7 @@ const RoomForm: React.FC = () => {
                         onClick={() => navigate("/projects")}
                         className="px-6 py-3 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-300 transition-colors"
                     >
-                        Wyjdź
+                        {t('Wyjdz', 'Exit')}
                     </button>
 
                     <button
@@ -541,7 +558,7 @@ const RoomForm: React.FC = () => {
                         }`}
                     >
                         <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
-                        {editingRoomIndex !== null ? "Zapisz zmiany i dodaj kolejny" : "Zapisz i dodaj kolejny pokój"}
+                        {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
                     </button>
 
                     <button
@@ -550,7 +567,7 @@ const RoomForm: React.FC = () => {
                         className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <span className="material-symbols-outlined">handyman</span>
-                        {editingRoomIndex !== null ? "Zapisz i przejdź do usług" : "Zapisz i przejdź do usług"}
+                        {t('Zapisz i przejdź do usług', 'Save and proceed to services')}
                     </button>
                 </div>
             </div>

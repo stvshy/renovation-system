@@ -16,6 +16,7 @@ import {
 } from "../lib/renovationLogic";
 import { saveProject, deductInventoryFromProject } from "../lib/storage";
 import { Project } from "../types";
+import { useLanguage } from "../context/LanguageContext";
 
 // Helper to restore class methods if data was serialized via state
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -68,7 +69,10 @@ const rehydrateRoom = (plainRoom: any): Room => {
 const OfferSummary: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { t, language } = useLanguage();
     const [isSaving, setIsSaving] = useState(false);
+
+    const currencyCode = language === "en" ? "EUR" : "PLN";
 
     // Data passed from previous steps
     const clientData = location.state?.clientData;
@@ -94,7 +98,7 @@ const OfferSummary: React.FC = () => {
 
     const handleSubmitProject = async () => {
         if (!clientData || !projectDates) {
-            alert("Brak danych klienta lub dat projektu. Nie można zapisać.");
+            alert(t("Brak danych klienta lub dat projektu. Nie można zapisać.", "Missing client data or project dates. Cannot save."));
             return;
         }
         setIsSaving(true);
@@ -134,10 +138,10 @@ const OfferSummary: React.FC = () => {
                 {/* Header */}
                 <div className="flex flex-wrap justify-between gap-4 p-4 items-center">
                     <div>
-                        <p className="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] font-display">Kosztorys Projektu</p>
+                        <p className="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
                         {clientData && (
                             <p className="text-sm text-gray-500 mt-1">
-                                Klient: {clientData.firstName} {clientData.lastName}
+                                {t('Klient:', 'Client:')} {clientData.firstName} {clientData.lastName}
                             </p>
                         )}
                     </div>
@@ -145,19 +149,19 @@ const OfferSummary: React.FC = () => {
                         onClick={handlePrint}
                         className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors print:hidden"
                     >
-                        <span className="truncate">Drukuj / Pobierz PDF</span>
+                        <span className="truncate">{t('Drukuj / Pobierz PDF', 'Print / Download PDF')}</span>
                     </button>
                 </div>
 
                 {/* Grand Total Card */}
                 <div className="p-4 @container">
                     <div className="flex flex-col items-center justify-center rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white dark:bg-background-dark/50 p-8 border border-gray-200 dark:border-gray-700">
-                        <p className="text-gray-500 dark:text-gray-400 text-lg font-normal leading-normal font-display">Szacowany koszt całkowity</p>
-                        <p className="text-accent text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display">{grandTotal.toFixed(2)} zł</p>
-                        <p className="text-sm text-gray-400 mt-2">Robocizna + Materiały (Wszystkie pokoje)</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-lg font-normal leading-normal font-display">{t('Szacowany koszt calkowity', 'Estimated total cost')}</p>
+                        <p className="text-accent text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display">{grandTotal.toFixed(2)} {currencyCode}</p>
+                        <p className="text-sm text-gray-400 mt-2">{t('Robocizna + Materiały (Wszystkie pokoje)', 'Labor + Materials (All rooms)')}</p>
                         {projectDates && (
                             <p className="text-xs text-primary mt-4 font-bold bg-primary/10 px-3 py-1 rounded-full">
-                                Realizacja: {projectDates.startDate} — {projectDates.endDate}
+                                {t('Realizacja:', 'Execution:')} {projectDates.startDate} — {projectDates.endDate}
                             </p>
                         )}
                     </div>
@@ -174,7 +178,7 @@ const OfferSummary: React.FC = () => {
                                     <span className="material-symbols-outlined">meeting_room</span>
                                     {room.name}
                                 </span>
-                                <span className="text-lg text-primary">{roomTotal.toFixed(2)} zł</span>
+                                <span className="text-lg text-primary">{roomTotal.toFixed(2)} {currencyCode}</span>
                             </h2>
 
                             {/* Detailed Table for Room */}
@@ -183,22 +187,22 @@ const OfferSummary: React.FC = () => {
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
                                             <th scope="col" className="px-6 py-3">
-                                                Opis Zadania
+                                                {t('Opis Zadania', 'Task Description')}
                                             </th>
                                             <th scope="col" className="px-6 py-3">
-                                                Materiał
+                                                {t('Materiał', 'Material')}
                                             </th>
                                             <th scope="col" className="px-6 py-3 text-right">
-                                                Ilość
+                                                {t('Ilość', 'Quantity')}
                                             </th>
                                             <th scope="col" className="px-6 py-3 text-right">
-                                                Koszt Mat.
+                                                {t('Koszt Mat.', 'Material Cost')}
                                             </th>
                                             <th scope="col" className="px-6 py-3 text-right">
-                                                Robocizna
+                                                {t('Robocizna', 'Labor')}
                                             </th>
                                             <th scope="col" className="px-6 py-3 text-right">
-                                                Razem
+                                                {t('Razem', 'Total')}
                                             </th>
                                         </tr>
                                     </thead>
@@ -220,16 +224,16 @@ const OfferSummary: React.FC = () => {
                                                     <td className="px-6 py-4">
                                                         {task.material.name}
                                                         {task.material.inventoryId && (
-                                                            <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-1 rounded print:hidden">Magazyn</span>
+                                                            <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-1 rounded print:hidden">{t('Magazyn', 'Inventory')}</span>
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
                                                         {quantity.toFixed(2)} {task.material.unit}
                                                     </td>
-                                                    <td className="px-6 py-4 text-right text-green-600 dark:text-green-400">{materialCost.toFixed(2)} zł</td>
-                                                    <td className="px-6 py-4 text-right text-blue-600 dark:text-blue-400">{laborCost.toFixed(2)} zł</td>
+                                                    <td className="px-6 py-4 text-right text-green-600 dark:text-green-400">{materialCost.toFixed(2)} {currencyCode}</td>
+                                                    <td className="px-6 py-4 text-right text-blue-600 dark:text-blue-400">{laborCost.toFixed(2)} {currencyCode}</td>
                                                     <td className="px-6 py-4 text-right font-bold text-gray-900 dark:text-white">
-                                                        {totalTaskCost.toFixed(2)} zł
+                                                        {totalTaskCost.toFixed(2)} {currencyCode}
                                                     </td>
                                                 </tr>
                                             );
@@ -237,7 +241,7 @@ const OfferSummary: React.FC = () => {
                                         {room.tasks.length === 0 && (
                                             <tr>
                                                 <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                                                    Brak zdefiniowanych zadań dla tego pokoju.
+                                                    {t('Brak zdefiniowanych zadań dla tego pokoju.', 'No tasks defined for this room.')}
                                                 </td>
                                             </tr>
                                         )}
@@ -262,14 +266,14 @@ const OfferSummary: React.FC = () => {
                         }
                         className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                     >
-                        <span className="truncate">Wróć do edycji usług</span>
+                        <span className="truncate">{t('Wróć do edycji usług', 'Back to services')}</span>
                     </button>
                     <button
                         onClick={handleSubmitProject}
                         disabled={isSaving}
                         className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
                     >
-                        <span className="truncate">{isSaving ? "Zapisywanie..." : "Zatwierdź i Zapisz Projekt"}</span>
+                        <span className="truncate">{isSaving ? t('Zapisywanie...', 'Saving...') : t('Zatwierdz i Zapisz Projekt', 'Confirm and Save Project')}</span>
                     </button>
                 </div>
             </div>

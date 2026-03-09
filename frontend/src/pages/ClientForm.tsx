@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getClients, saveClient, getClientById } from '../lib/storage';
 import { Client } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 const ClientForm: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useLanguage();
 
     const [mode, setMode] = useState<'new' | 'existing'>('new');
     const [existingClients, setExistingClients] = useState<Client[]>([]);
@@ -81,27 +83,27 @@ const ClientForm: React.FC = () => {
         // Mode specific validation
         if (mode === 'existing') {
             if (!selectedClientId) {
-                newErrors.clientSelection = "Proszę wybrać klienta z listy.";
+                newErrors.clientSelection = t('Proszę wybrać klienta z listy.', 'Please select a client from the list.');
                 isValid = false;
             }
         } else {
             if (!firstName.trim()) {
-                newErrors.firstName = "Imię jest wymagane.";
+                newErrors.firstName = t('Imię jest wymagane.', 'First name is required.');
                 isValid = false;
             }
             if (!lastName.trim()) {
-                newErrors.lastName = "Nazwisko jest wymagane.";
+                newErrors.lastName = t('Nazwisko jest wymagane.', 'Last name is required.');
                 isValid = false;
             }
         }
 
         // Date validation
         if (!startDate) {
-            newErrors.startDate = "Data rozpoczęcia jest wymagana.";
+            newErrors.startDate = t('Data rozpoczęcia jest wymagana.', 'Start date is required.');
             isValid = false;
         }
         if (!endDate) {
-            newErrors.endDate = "Data zakończenia jest wymagana.";
+            newErrors.endDate = t('Data zakończenia jest wymagana.', 'End date is required.');
             isValid = false;
         }
 
@@ -110,7 +112,7 @@ const ClientForm: React.FC = () => {
             const start = new Date(startDate);
             const end = new Date(endDate);
             if (end < start) {
-                newErrors.endDate = "Data zakończenia nie może być wcześniejsza niż rozpoczęcia.";
+                newErrors.endDate = t('Data zakończenia nie może być wcześniejsza niż rozpoczęcia.', 'End date cannot be earlier than start date.');
                 isValid = false;
             }
         }
@@ -183,7 +185,7 @@ const ClientForm: React.FC = () => {
         <div className="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[960px] flex-1">
                 <div className="flex flex-wrap justify-between gap-3 p-4">
-                    <p className="text-slate-800 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] min-w-72">Nowy Projekt</p>
+                    <p className="text-slate-800 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] min-w-72">{t('Nowy Projekt', 'New Project')}</p>
                 </div>
                 
                 <div className="flex flex-col gap-6 p-4">
@@ -194,29 +196,29 @@ const ClientForm: React.FC = () => {
                             onClick={() => { setMode('new'); setSelectedClientId(''); setFirstName(''); setLastName(''); setErrors({}); }}
                             className={`flex-1 py-3 rounded-lg font-bold transition-all ${mode === 'new' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400'}`}
                         >
-                            Nowy Klient
+                            {t('Nowy Klient', 'New Client')}
                         </button>
                         <button 
                             onClick={() => { setMode('existing'); setErrors({}); }}
                             className={`flex-1 py-3 rounded-lg font-bold transition-all ${mode === 'existing' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400'}`}
                         >
-                            Wybierz z listy
+                            {t('Wybierz z listy', 'Select from list')}
                         </button>
                     </div>
 
                     {/* Section: Client Data */}
-                    <h2 className="text-xl font-bold text-primary pb-2">Dane Klienta</h2>
+                    <h2 className="text-xl font-bold text-primary pb-2">{t('Dane Klienta', 'Client Details')}</h2>
                     
                     {mode === 'existing' && (
                         <div className="mb-4">
-                            <label className="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">Wybierz klienta</label>
+                            <label className="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">{t('Wybierz klienta', 'Select client')}</label>
                             <select 
                                 value={selectedClientId}
                                 onChange={handleChange(setSelectedClientId, 'clientSelection')}
                                 className={`form-select w-full rounded-lg border bg-background-light dark:bg-slate-800 p-3 
                                     ${errors.clientSelection ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                             >
-                                <option value="">-- Wybierz klienta --</option>
+                                <option value="">-- {t('Wybierz klienta', 'Select client')} --</option>
                                 {existingClients.map(c => (
                                     <option key={c.id} value={c.id}>{c.lastName} {c.firstName} ({c.city})</option>
                                 ))}
@@ -228,26 +230,26 @@ const ClientForm: React.FC = () => {
                     <div className={`transition-opacity duration-300 ${mode === 'existing' && !selectedClientId ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
                         <div className="flex flex-col md:flex-row gap-4">
                             <label className="flex flex-col min-w-40 flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">Imię*</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Imię*', 'First name*')}</p>
                                 <input 
                                     value={firstName} 
                                     onChange={handleChange(setFirstName, 'firstName')} 
                                     disabled={mode === 'existing'}
                                     className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900 
                                         ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
-                                    placeholder="Jan" 
+                                    placeholder={t('Jan', 'John')} 
                                 />
                                 {errors.firstName && <p className="mt-1 text-xs text-red-500 font-medium">{errors.firstName}</p>}
                             </label>
                             <label className="flex flex-col min-w-40 flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">Nazwisko*</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Nazwisko*', 'Last name*')}</p>
                                 <input 
                                     value={lastName} 
                                     onChange={handleChange(setLastName, 'lastName')}
                                     disabled={mode === 'existing'}
                                     className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900 
                                         ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
-                                    placeholder="Kowalski" 
+                                    placeholder={t('Kowalski', 'Doe')} 
                                 />
                                 {errors.lastName && <p className="mt-1 text-xs text-red-500 font-medium">{errors.lastName}</p>}
                             </label>
@@ -255,30 +257,30 @@ const ClientForm: React.FC = () => {
                         
                         <div className="flex flex-col mt-4">
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">Ulica i numer domu</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Ulica i numer domu', 'Street and house number')}</p>
                                 <input 
                                     value={address} 
                                     onChange={(e) => setAddress(e.target.value)} 
                                     disabled={mode === 'existing'}
                                     className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
-                                    placeholder="ul. Kwiatowa 15" 
+                                    placeholder={t('ul. Kwiatowa 15', '123 Main St')} 
                                 />
                             </label>
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-4 mt-4">
                             <label className="flex flex-col min-w-40 flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">Miasto</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Miasto', 'City')}</p>
                                 <input 
                                     value={city} 
                                     onChange={(e) => setCity(e.target.value)} 
                                     disabled={mode === 'existing'}
                                     className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
-                                    placeholder="Warszawa" 
+                                    placeholder={t('Warszawa', 'London')} 
                                 />
                             </label>
                             <label className="flex flex-col min-w-40 flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">Kod pocztowy</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Kod pocztowy', 'Postal code')}</p>
                                 <input 
                                     value={zipCode} 
                                     onChange={(e) => setZipCode(e.target.value)} 
@@ -291,7 +293,7 @@ const ClientForm: React.FC = () => {
 
                         <div className="flex flex-col md:flex-row gap-4 mt-4">
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">Telefon</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Telefon', 'Phone')}</p>
                                 <input 
                                     value={phone} 
                                     onChange={(e) => setPhone(e.target.value)} 
@@ -302,13 +304,13 @@ const ClientForm: React.FC = () => {
                                 />
                             </label>
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">E-mail</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('E-mail', 'Email')}</p>
                                 <input 
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
                                     disabled={mode === 'existing'}
                                     className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
-                                    placeholder="jan.kowalski@example.com" 
+                                    placeholder={t('jan.kowalski@example.com', 'john.doe@example.com')} 
                                     type="email" 
                                 />
                             </label>
@@ -316,10 +318,10 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {/* Section: Project Dates */}
-                    <h2 className="text-xl font-bold text-primary border-b border-gray-200 dark:border-gray-700 pb-2 mt-4">Czas trwania projektu</h2>
+                    <h2 className="text-xl font-bold text-primary border-b border-gray-200 dark:border-gray-700 pb-2 mt-4">{t('Czas trwania projektu', 'Project timeline')}</h2>
                     <div className="flex flex-col md:flex-row gap-4">
                         <label className="flex flex-col min-w-40 flex-1">
-                            <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">Data rozpoczęcia*</p>
+                            <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Data rozpoczęcia*', 'Start date*')}</p>
                             <input 
                                 type="date" 
                                 value={startDate} 
@@ -330,7 +332,7 @@ const ClientForm: React.FC = () => {
                             {errors.startDate && <p className="mt-1 text-xs text-red-500 font-medium">{errors.startDate}</p>}
                         </label>
                         <label className="flex flex-col min-w-40 flex-1">
-                            <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">Data zakończenia*</p>
+                            <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Data zakończenia*', 'End date*')}</p>
                             <input 
                                 type="date" 
                                 value={endDate} 
@@ -344,10 +346,10 @@ const ClientForm: React.FC = () => {
 
                     <div className="flex flex-wrap justify-end gap-4 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6">
                         <button onClick={() => navigate('/projects')} className="flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
-                            Anuluj
+                            {t('Anuluj', 'Cancel')}
                         </button>
                         <button onClick={handleNext} className="flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary text-white font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
-                            Zapisz i Dalej
+                            {t('Zapisz i Dalej', 'Save and Continue')}
                         </button>
                     </div>
                 </div>

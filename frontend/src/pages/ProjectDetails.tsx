@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProjectById, updateProject } from "../lib/storage";
 import { Project } from "../types";
+import { useLanguage } from "../context/LanguageContext";
 import {
     RenovationTask,
     Room,
@@ -59,6 +60,7 @@ const rehydrateRoom = (plainRoom: any): Room => {
 };
 
 const ProjectDetails: React.FC = () => {
+    const { t } = useLanguage();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [project, setProject] = useState<Project | null>(null);
@@ -114,8 +116,8 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
-    if (loading) return <div>Ładowanie...</div>;
-    if (!project) return <div>Projekt nie znaleziony.</div>;
+    if (loading) return <div>{t('Ładowanie...', 'Loading...')}</div>;
+    if (!project) return <div>{t('Projekt nie znaleziony.', 'Project not found.')}</div>;
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -145,11 +147,11 @@ const ProjectDetails: React.FC = () => {
                             <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">{project.name}</h1>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
                                 {project.status === "In Progress"
-                                    ? "W trakcie"
+                                    ? t('W trakcie', 'In Progress')
                                     : project.status === "Planned"
-                                    ? "Planowany"
+                                    ? t('Planowany', 'Planned')
                                     : project.status === "Completed"
-                                    ? "Zakończony"
+                                    ? t('Zakończony', 'Completed')
                                     : project.status}
                             </span>
                         </div>
@@ -165,17 +167,17 @@ const ProjectDetails: React.FC = () => {
                             onChange={(e) => handleStatusChange(e.target.value as any)}
                             className="form-select rounded-lg border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-sm py-2 pl-3 pr-8"
                         >
-                            <option value="Planned">Planowany</option>
-                            <option value="In Progress">W trakcie</option>
-                            <option value="Completed">Zakończony</option>
-                            <option value="Archived">Zarchiwizowany</option>
+                            <option value="Planned">{t('Planowany', 'Planned')}</option>
+                            <option value="In Progress">{t('W trakcie', 'In Progress')}</option>
+                            <option value="Completed">{t('Zakończony', 'Completed')}</option>
+                            <option value="Archived">{t('Zarchiwizowany', 'Archived')}</option>
                         </select>
                         <button
                             onClick={() => navigate("/calendar")}
                             className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 font-bold text-sm transition-colors"
                         >
                             <span className="material-symbols-outlined text-sm">calendar_month</span>
-                            Kalendarz
+                            {t('Kalendarz', 'Calendar')}
                         </button>
                     </div>
                 </div>
@@ -186,7 +188,7 @@ const ProjectDetails: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                         <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined text-lg">person</span>
-                            Dane Klienta
+                            {t('Dane Klienta', 'Client Details')}
                         </h3>
                         {project.clientData ? (
                             <div className="space-y-2">
@@ -196,7 +198,7 @@ const ProjectDetails: React.FC = () => {
                                 <p className="text-sm text-gray-500 italic mt-2">{project.address}</p>
                             </div>
                         ) : (
-                            <p className="text-gray-500">Brak szczegółowych danych klienta</p>
+                            <p className="text-gray-500">{t('Brak szczegółowych danych klienta', 'No detailed client data')}</p>
                         )}
                     </div>
 
@@ -204,18 +206,18 @@ const ProjectDetails: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                         <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined text-lg">schedule</span>
-                            Termin Realizacji
+                            {t('Termin Realizacji', 'Project Timeline')}
                         </h3>
                         <div className="flex flex-col justify-center h-full pb-6">
                             <div className="flex justify-between items-center mb-2">
-                                <span className="text-xs text-gray-500">Start</span>
+                                <span className="text-xs text-gray-500">{t('Start', 'Start')}</span>
                                 <span className="font-bold text-gray-800 dark:text-white">{project.startDate || "-"}</span>
                             </div>
                             <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full mb-2 overflow-hidden">
                                 <div className="h-full bg-primary opacity-50 w-full"></div>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-gray-500">Koniec</span>
+                                <span className="text-xs text-gray-500">{t('Koniec', 'End')}</span>
                                 <span className="font-bold text-gray-800 dark:text-white">{project.endDate || "-"}</span>
                             </div>
                         </div>
@@ -226,22 +228,22 @@ const ProjectDetails: React.FC = () => {
                         <div>
                             <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
                                 <span className="material-symbols-outlined text-lg">attach_money</span>
-                                Finanse
+                                {t('Finanse', 'Finances')}
                             </h3>
                             <div className="space-y-1">
-                                <p className="text-sm text-gray-500">Wartość całkowita</p>
-                                <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} zł</p>
+                                <p className="text-sm text-gray-500">{t('Wartosc calkowita', 'Total value')}</p>
+                                <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} {t('zl', 'PLN')}</p>
                             </div>
                         </div>
 
                         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-2">
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-gray-500">Powierzchnia:</span>
+                                <span className="text-xs text-gray-500">{t('Powierzchnia:', 'Area:')}</span>
                                 <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{project.area.toFixed(0)} m²</span>
                             </div>
 
                             <div className="flex justify-between items-center h-8">
-                                <span className="text-xs text-gray-500">Opłacono:</span>
+                                <span className="text-xs text-gray-500">{t('Oplacono:', 'Paid:')}</span>
                                 {isEditingPaid ? (
                                     <div className="flex items-center gap-1 animate-fade-in">
                                         <input
@@ -259,7 +261,7 @@ const ProjectDetails: React.FC = () => {
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2 group cursor-pointer" onClick={handleEditPaidClick}>
-                                        <span className="text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} zł</span>
+                                        <span className="text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} {t('zl', 'PLN')}</span>
                                         <span className="material-symbols-outlined text-[14px] text-gray-300 group-hover:text-primary transition-colors">
                                             edit
                                         </span>
@@ -269,8 +271,8 @@ const ProjectDetails: React.FC = () => {
 
                             {remainingAmount > 0 && (
                                 <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
-                                    <span className="text-xs text-gray-400">Pozostało:</span>
-                                    <span className="text-xs font-bold text-orange-500">{remainingAmount.toLocaleString()} zł</span>
+                                    <span className="text-xs text-gray-400">{t('Pozostalo:', 'Remaining:')}</span>
+                                    <span className="text-xs font-bold text-orange-500">{remainingAmount.toLocaleString()} {t('zl', 'PLN')}</span>
                                 </div>
                             )}
                         </div>
@@ -279,10 +281,10 @@ const ProjectDetails: React.FC = () => {
 
                 {/* Rooms Breakdown */}
                 <div className="mt-4">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Zakres Prac</h2>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('Zakres Prac', 'Scope of Work')}</h2>
                     {hydratedRooms.length === 0 ? (
                         <div className="p-10 text-center bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 text-gray-500">
-                            Brak szczegółowych danych o pokojach dla tego projektu.
+                            {t('Brak szczegółowych danych o pokojach dla tego projektu.', 'No detailed room data for this project.')}
                         </div>
                     ) : (
                         <div className="space-y-6">
@@ -301,9 +303,9 @@ const ProjectDetails: React.FC = () => {
                                         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                             <thead className="text-xs text-gray-700 uppercase bg-gray-50/50 dark:bg-gray-800 dark:text-gray-400">
                                                 <tr>
-                                                    <th className="px-6 py-2">Zadanie</th>
-                                                    <th className="px-6 py-2">Materiał</th>
-                                                    <th className="px-6 py-2 text-right">Koszt</th>
+                                                    <th className="px-6 py-2">{t('Zadanie', 'Task')}</th>
+                                                    <th className="px-6 py-2">{t('Materiał', 'Material')}</th>
+                                                    <th className="px-6 py-2 text-right">{t('Koszt', 'Cost')}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -314,7 +316,7 @@ const ProjectDetails: React.FC = () => {
                                                     >
                                                         <td className="px-6 py-3 font-medium text-gray-900 dark:text-white">{task.description}</td>
                                                         <td className="px-6 py-3">{task.material.name}</td>
-                                                        <td className="px-6 py-3 text-right">{task.calculateTotalCost().toFixed(2)} zł</td>
+                                                        <td className="px-6 py-3 text-right">{task.calculateTotalCost().toFixed(2)} {t('zl', 'PLN')}</td>
                                                     </tr>
                                                 ))}
                                             </tbody>

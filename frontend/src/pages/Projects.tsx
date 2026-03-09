@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProjects } from '../lib/storage';
 import { Project } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 const Projects: React.FC = () => {
     const navigate = useNavigate();
+    const { t, language } = useLanguage();
     const [projects, setProjects] = useState<Project[]>([]);
     const [statusFilter, setStatusFilter] = useState<string>('All');
     const [isLoading, setIsLoading] = useState(true);
+
+    const currencyCode = language === 'en' ? 'EUR' : 'PLN';
 
     useEffect(() => {
         const load = async () => {
@@ -23,11 +27,11 @@ const Projects: React.FC = () => {
         : projects.filter(p => p.status === statusFilter);
 
     const statuses = [
-        { label: 'Wszystkie', value: 'All' },
-        { label: 'Planowane', value: 'Planned' },
-        { label: 'W trakcie', value: 'In Progress' },
-        { label: 'Zakończone', value: 'Completed' },
-        { label: 'Archiwum', value: 'Archived' }
+        { label: t('Wszystkie', 'All'), value: 'All' },
+        { label: t('Planowane', 'Planned'), value: 'Planned' },
+        { label: t('W trakcie', 'In Progress'), value: 'In Progress' },
+        { label: t('Zakończone', 'Completed'), value: 'Completed' },
+        { label: t('Archiwum', 'Archive'), value: 'Archived' }
     ];
 
     return (
@@ -38,14 +42,14 @@ const Projects: React.FC = () => {
                         <div className="size-8 text-primary">
                             <span className="material-symbols-outlined !text-4xl">home_work</span>
                         </div>
-                        <h1 className="text-2xl font-bold tracking-tight">Projekty</h1>
+                        <h1 className="text-2xl font-bold tracking-tight">{t('Projekty', 'Projects')}</h1>
                     </div>
                     <div className="flex flex-1 justify-end gap-2 sm:gap-4">
                         <button 
                             onClick={() => navigate('/projects/new/client')}
                             className="flex min-w-[120px] items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors"
                         >
-                            <span className="truncate">Nowy Projekt</span>
+                            <span className="truncate">{t('Nowy Projekt', 'New Project')}</span>
                         </button>
                     </div>
                 </header>
@@ -71,12 +75,12 @@ const Projects: React.FC = () => {
 
                 <div className="flex flex-col gap-4 px-2">
                     {isLoading ? (
-                        <div className="text-center py-10">Ładowanie projektów...</div>
+                        <div className="text-center py-10">{t('Ładowanie projektów...', 'Loading projects...')}</div>
                     ) : filteredProjects.length === 0 ? (
                          <div className="text-center py-20 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700">
-                            <p className="text-slate-500 text-lg mb-2">Brak projektów w tej kategorii</p>
+                            <p className="text-slate-500 text-lg mb-2">{t('Brak projektów w tej kategorii', 'No projects in this category')}</p>
                             {statusFilter === 'All' && (
-                                <button onClick={() => navigate('/projects/new/client')} className="text-primary font-bold hover:underline">Utwórz pierwszy projekt</button>
+                                <button onClick={() => navigate('/projects/new/client')} className="text-primary font-bold hover:underline">{t('Utwórz pierwszy projekt', 'Create your first project')}</button>
                             )}
                          </div>
                     ) : (
@@ -105,7 +109,7 @@ const Projects: React.FC = () => {
                                         </span>
                                     </div>
                                     <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">
-                                        {project.value.toLocaleString()} PLN | {project.area.toFixed(0)} m² | {project.address}
+                                        {project.value.toLocaleString()} {currencyCode} | {project.area.toFixed(0)} m² | {project.address}
                                     </p>
                                     {project.startDate && project.endDate && (
                                         <p className="text-xs text-slate-400 mt-1">

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import LanguageToggleButton from "../components/LanguageToggleButton";
+import { useLanguage } from "../context/LanguageContext";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -12,10 +15,40 @@ const Login: React.FC = () => {
     // Password visibility state
     const [showPassword, setShowPassword] = useState(false);
 
+    const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+
+    const getLocalizedLoginError = (errorMessage: string) => {
+        const normalizedMessage = errorMessage.toLowerCase();
+
+        if (normalizedMessage.includes("invalid login credentials")) {
+            return t("Nieprawidłowy e-mail lub hasło.", "Invalid email or password.");
+        }
+
+        if (normalizedMessage.includes("email not confirmed")) {
+            return t("Potwierdź adres e-mail przed zalogowaniem.", "Please confirm your email address before signing in.");
+        }
+
+        if (normalizedMessage.includes("invalid email")) {
+            return t("Podaj poprawny adres e-mail.", "Please provide a valid email address.");
+        }
+
+        if (normalizedMessage.includes("too many requests")) {
+            return t("Zbyt wiele prób logowania. Spróbuj ponownie za chwilę.", "Too many sign-in attempts. Please try again in a moment.");
+        }
+
+        return t("Nie udało się zalogować. Spróbuj ponownie.", "Could not sign in. Please try again.");
+    };
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+
+        if (!isValidEmail(email)) {
+            setError(t("Podaj poprawny adres e-mail.", "Please provide a valid email address."));
+            setLoading(false);
+            return;
+        }
 
         const { error } = await supabase.auth.signInWithPassword({
             email,
@@ -23,7 +56,7 @@ const Login: React.FC = () => {
         });
 
         if (error) {
-            setError(error.message);
+            setError(getLocalizedLoginError(error.message));
             setLoading(false);
         } else {
             // AuthContext will detect the change and App.tsx will redirect
@@ -43,7 +76,7 @@ const Login: React.FC = () => {
 
             <div className="layout-container relative z-10 flex h-full grow flex-col">
                 <div className="flex flex-1 items-center justify-center px-4 py-8 sm:px-6 sm:py-10 lg:py-14">
-                    <div className="w-full max-w-md space-y-6 sm:space-y-8">
+                    <div className="w-full max-w-md space-y-5 pt-1 sm:space-y-7 sm:pt-2">
                         <div className="flex flex-col items-center gap-3 sm:gap-4">
                             <div className="flex items-center justify-center gap-3">
                                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-dependable-blue shadow-lg shadow-dependable-blue/25 dark:bg-primary sm:h-12 sm:w-12">
@@ -51,14 +84,14 @@ const Login: React.FC = () => {
                                 </div>
                                 <h1 className="font-display text-3xl font-bold tracking-tight text-text-dark dark:text-off-white sm:text-4xl">Renovation System</h1>
                             </div>
-                            <p className="px-4 text-center text-sm text-neutral-gray sm:text-base">Zaloguj się, aby zarządzać swoimi projektami.</p>
+                            <p className="mt-1 px-4 text-center text-sm text-neutral-gray sm:text-base">{t("Zaloguj się, aby zarządzać swoimi projektami.", "Sign in to manage your projects.")}</p>
                         </div>
                         <div className="rounded-2xl border border-slate-300/70 bg-white/85 p-5 shadow-xl backdrop-blur-sm sm:p-8 dark:border-slate-700 dark:bg-slate-900/70">
                             <form className="space-y-6" onSubmit={handleLogin}>
                                 {error && <div className="p-3 text-sm text-red-500 bg-red-100 dark:bg-red-900/30 rounded-lg">{error}</div>}
                                 <div>
                                     <label className="text-sm font-semibold uppercase tracking-wide text-primary pb-2 block dark:text-slate-100" htmlFor="email">
-                                        E-mail
+                                        {t("E-mail", "Email")}
                                     </label>
                                     <input
                                         autoComplete="email"
@@ -74,7 +107,7 @@ const Login: React.FC = () => {
                                 </div>
                                 <div>
                                     <label className="text-sm font-semibold uppercase tracking-wide text-primary pb-2 block dark:text-slate-100" htmlFor="password">
-                                        Hasło
+                                        {t("Hasło", "Password")}
                                     </label>
                                     <div className="relative flex w-full items-center">
                                         <input
@@ -82,7 +115,7 @@ const Login: React.FC = () => {
                                             className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-neutral-gray/45 bg-off-white p-[13px] pr-10 text-base font-medium leading-normal text-text-dark placeholder:text-neutral-gray focus:border-dependable-blue focus:outline-0 focus:ring-2 focus:ring-dependable-blue/20 dark:border-neutral-gray/70 dark:bg-background-dark dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:border-primary dark:focus:ring-primary/25 sm:h-14 sm:p-[15px]"
                                             id="password"
                                             name="password"
-                                            placeholder="Wprowadź swoje hasło"
+                                            placeholder={t("Wprowadź swoje hasło", "Enter your password")}
                                             required
                                             type={showPassword ? "text" : "password"}
                                             value={password}
@@ -104,19 +137,22 @@ const Login: React.FC = () => {
                                         type="submit"
                                         disabled={loading}
                                     >
-                                        <span className="truncate">{loading ? "Logowanie..." : "Zaloguj się"}</span>
+                                        <span className="truncate">{loading ? t("Logowanie...", "Signing in...") : t("Zaloguj się", "Sign in")}</span>
                                     </button>
                                 </div>
                             </form>
                         </div>
                         <div className="text-center text-sm text-neutral-gray sm:text-base">
-                            Nie masz jeszcze konta?{" "}
+                            {t("Nie masz jeszcze konta?", "Don't have an account yet?")}{" "}
                             <Link
                                 className="font-semibold text-dependable-blue transition-colors hover:text-dependable-blue/80 dark:text-primary dark:hover:text-primary/80"
                                 to="/register"
                             >
-                                Zarejestruj się
+                                {t("Zarejestruj się", "Register")}
                             </Link>
+                        </div>
+                        <div className="flex justify-center pt-0">
+                            <LanguageToggleButton size="xxs" />
                         </div>
                     </div>
                 </div>

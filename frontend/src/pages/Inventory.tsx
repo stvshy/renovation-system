@@ -2,8 +2,34 @@ import React, { useEffect, useState } from "react";
 import { getInventory, saveInventoryItem, deleteInventoryItem } from "../lib/storage";
 import { InventoryItem } from "../types";
 import { Unit, CATEGORIES } from "../lib/renovationLogic";
+import { useLanguage } from "../context/LanguageContext";
 
 const Inventory: React.FC = () => {
+    const { t, language } = useLanguage();
+
+    const currencyCode = language === "en" ? "EUR" : "PLN";
+
+    const localizeCategory = (category: string) => {
+        const map: Record<string, string> = {
+            Malowanie: "Painting",
+            Podłogi: "Flooring",
+            Sufity: "Ceilings",
+            Elektryka: "Electrical",
+            Stolarka: "Carpentry",
+            Glazurnictwo: "Tiling",
+            Inne: "Other",
+        };
+        return language === "en" ? map[category] || category : category;
+    };
+
+    const localizeUnit = (unit: Unit | string) => {
+        if (unit === Unit.PCS) return language === "en" ? "pcs" : "szt";
+        if (unit === Unit.LM) return language === "en" ? "lm" : "mb";
+        if (unit === Unit.M2) return "m2";
+        if (unit === Unit.LITER) return "l";
+        if (unit === Unit.KG) return "kg";
+        return unit;
+    };
     const [items, setItems] = useState<InventoryItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
@@ -41,7 +67,7 @@ const Inventory: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (window.confirm("Czy na pewno chcesz usunąć ten materiał?")) {
+        if (window.confirm(t("Czy na pewno chcesz usunąć ten materiał?", "Are you sure you want to delete this material?"))) {
             await deleteInventoryItem(id);
             const data = await getInventory();
             setItems(data);
@@ -75,7 +101,7 @@ const Inventory: React.FC = () => {
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="max-w-7xl w-full mx-auto">
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-                    <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">Magazyn</h1>
+                    <h1 className="text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Magazyn', 'Inventory')}</h1>
                 </div>
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
@@ -89,7 +115,7 @@ const Inventory: React.FC = () => {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="form-input w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary shadow-sm"
-                                    placeholder="Wyszukaj materiał..."
+                                    placeholder={t('Wyszukaj materiał...', 'Search material...')}
                                 />
                             </div>
                         </div>
@@ -99,7 +125,7 @@ const Inventory: React.FC = () => {
                                 className="flex w-full md:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-12 px-6 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
                             >
                                 <span className="material-symbols-outlined">add</span>
-                                <span className="truncate">Dodaj materiał</span>
+                                <span className="truncate">{t('Dodaj materiał', 'Add material')}</span>
                             </button>
                         </div>
                     </div>
@@ -108,26 +134,26 @@ const Inventory: React.FC = () => {
                         <table className="w-full text-left">
                             <thead className="bg-gray-50 dark:bg-gray-900/50">
                                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400">Nazwa materiału</th>
-                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400">Kategoria</th>
-                                    <th className="hidden sm:table-cell px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">Ilość</th>
+                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400">{t('Nazwa materiału', 'Material name')}</th>
+                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400">{t('Kategoria', 'Category')}</th>
+                                    <th className="hidden sm:table-cell px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">{t('Ilość', 'Quantity')}</th>
                                     <th className="hidden md:table-cell px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">
-                                        Cena jedn.
+                                        {t('Cena jedn.', 'Unit price')}
                                     </th>
-                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">Akcje</th>
+                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">{t('Akcje', 'Actions')}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {isLoading ? (
                                     <tr>
                                         <td colSpan={5} className="px-4 py-8 text-center">
-                                            Ładowanie...
+                                            {t('Ładowanie...', 'Loading...')}
                                         </td>
                                     </tr>
                                 ) : filteredItems.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
-                                            Brak materiałów w magazynie.
+                                            {t('Brak materiałów w magazynie.', 'No materials in inventory.')}
                                         </td>
                                     </tr>
                                 ) : (
@@ -138,27 +164,27 @@ const Inventory: React.FC = () => {
                                         >
                                             <td className="px-4 py-4 text-sm font-bold text-gray-900 dark:text-white">{item.name}</td>
                                             <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
-                                                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs">{item.category}</span>
+                                                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs">{localizeCategory(item.category || "")}</span>
                                             </td>
                                             <td className="hidden sm:table-cell px-4 py-4 text-sm text-gray-700 dark:text-gray-300 text-right font-mono">
-                                                {item.quantity} {item.unit}
+                                                {item.quantity} {localizeUnit(item.unit)}
                                             </td>
                                             <td className="hidden md:table-cell px-4 py-4 text-sm text-gray-700 dark:text-gray-300 text-right">
-                                                {item.pricePerUnit.toFixed(2)} zł
+                                                {item.pricePerUnit.toFixed(2)} {currencyCode}
                                             </td>
                                             <td className="px-4 py-4 text-sm text-right">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => openEditModal(item)}
                                                         className="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                                        title="Edytuj"
+                                                        title={t('Edytuj', 'Edit')}
                                                     >
                                                         <span className="material-symbols-outlined text-lg">edit</span>
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(item.id)}
                                                         className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors"
-                                                        title="Usuń"
+                                                        title={t('Usuń', 'Delete')}
                                                     >
                                                         <span className="material-symbols-outlined text-lg">delete</span>
                                                     </button>
@@ -178,7 +204,7 @@ const Inventory: React.FC = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800">
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editingItem ? "Edytuj Materiał" : "Nowy Materiał"}</h2>
+                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editingItem ? t('Edytuj materiał', 'Edit Material') : t('Nowy materiał', 'New Material')}</h2>
                             <button
                                 onClick={() => setIsModalOpen(false)}
                                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
@@ -188,7 +214,7 @@ const Inventory: React.FC = () => {
                         </div>
                         <form onSubmit={handleSave} className="p-6 space-y-4">
                             <label className="block">
-                                <span className="text-xs font-bold text-gray-500 uppercase">Nazwa materiału</span>
+                                <span className="text-xs font-bold text-gray-500 uppercase">{t('Nazwa materiału', 'Material name')}</span>
                                 <input
                                     required
                                     className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
@@ -199,7 +225,7 @@ const Inventory: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <label className="block">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Ilość</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Ilość', 'Quantity')}</span>
                                     <input
                                         type="number"
                                         required
@@ -209,7 +235,7 @@ const Inventory: React.FC = () => {
                                     />
                                 </label>
                                 <label className="block">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Jednostka</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Jednostka', 'Unit')}</span>
                                     <select
                                         className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newItem.unit}
@@ -217,7 +243,7 @@ const Inventory: React.FC = () => {
                                     >
                                         {Object.values(Unit).map((u) => (
                                             <option key={u} value={u}>
-                                                {u}
+                                                {localizeUnit(u)}
                                             </option>
                                         ))}
                                     </select>
@@ -226,7 +252,7 @@ const Inventory: React.FC = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <label className="block">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Cena jedn. (zł)</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Cena jedn.', 'Unit price')} ({currencyCode})</span>
                                     <input
                                         type="number"
                                         step="0.01"
@@ -237,19 +263,18 @@ const Inventory: React.FC = () => {
                                     />
                                 </label>
                                 <label className="block">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Kategoria</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Kategoria', 'Category')}</span>
                                     <select
                                         className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newItem.category}
                                         onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
                                     >
-                                        <option value="">Wybierz kategorię</option>
+                                        <option value="">{t('Wybierz kategorię', 'Choose category')}</option>
                                         {CATEGORIES.map((cat) => (
                                             <option key={cat} value={cat}>
-                                                {cat}
+                                                {localizeCategory(cat)}
                                             </option>
                                         ))}
-                                        <option value="Inne">Inne</option>
                                     </select>
                                 </label>
                             </div>
@@ -260,10 +285,10 @@ const Inventory: React.FC = () => {
                                     onClick={() => setIsModalOpen(false)}
                                     className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
                                 >
-                                    Anuluj
+                                    {t('Anuluj', 'Cancel')}
                                 </button>
                                 <button type="submit" className="px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90">
-                                    Zapisz
+                                    {t('Zapisz', 'Save')}
                                 </button>
                             </div>
                         </form>

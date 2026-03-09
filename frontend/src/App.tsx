@@ -15,13 +15,15 @@ import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">Ładowanie...</div>
+      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">{t("Ładowanie...", "Loading...")}</div>
     );
   }
 
@@ -34,10 +36,11 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 
 const PublicRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const { t } = useLanguage();
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">Ładowanie...</div>
+      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">{t("Ładowanie...", "Loading...")}</div>
     );
   }
 
@@ -50,52 +53,54 @@ const PublicRoute = ({ children }: { children?: React.ReactNode }) => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <HashRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <PublicRoute>
-                <Register />
-              </PublicRoute>
-            }
-          />
+    <LanguageProvider>
+      <AuthProvider>
+        <HashRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              }
+            />
 
-          {/* Protected Routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="/projects" replace />} />
-            <Route path="projects" element={<Projects />} />
-            <Route path="projects/:id" element={<ProjectDetails />} />
-            <Route path="projects/new/client" element={<ClientForm />} />
-            <Route path="projects/new/room" element={<RoomForm />} />
-            <Route path="projects/new/services" element={<ServiceForm />} />
-            <Route path="projects/new/offer" element={<OfferSummary />} />
-            <Route path="inventory" element={<Inventory />} />
-            <Route path="calendar" element={<Calendar />} />
-            <Route path="clients" element={<Clients />} />
-            <Route path="clients/:id" element={<ClientDetails />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-        </Routes>
-      </HashRouter>
-    </AuthProvider>
+            {/* Protected Routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/projects" replace />} />
+              <Route path="projects" element={<Projects />} />
+              <Route path="projects/:id" element={<ProjectDetails />} />
+              <Route path="projects/new/client" element={<ClientForm />} />
+              <Route path="projects/new/room" element={<RoomForm />} />
+              <Route path="projects/new/services" element={<ServiceForm />} />
+              <Route path="projects/new/offer" element={<OfferSummary />} />
+              <Route path="inventory" element={<Inventory />} />
+              <Route path="calendar" element={<Calendar />} />
+              <Route path="clients" element={<Clients />} />
+              <Route path="clients/:id" element={<ClientDetails />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </HashRouter>
+      </AuthProvider>
+    </LanguageProvider>
   );
 };
 

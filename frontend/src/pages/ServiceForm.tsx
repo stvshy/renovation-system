@@ -15,6 +15,7 @@ import {
 } from "../lib/renovationLogic";
 import { getInventory, saveInventoryItem, getServiceCatalog } from "../lib/storage";
 import { InventoryItem } from "../types";
+import { useLanguage } from "../context/LanguageContext";
 
 // Helper to rehydrate objects
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -50,6 +51,63 @@ const rehydrateRoom = (plainRoom: any): Room => {
 const ServiceForm: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { t, language } = useLanguage();
+
+    const currencyCode = language === "en" ? "EUR" : "PLN";
+    const currencySymbol = language === "en" ? "EUR" : "zł";
+
+    const localizeCategory = (category: string) => {
+        const map: Record<string, string> = {
+            Malowanie: "Painting",
+            Podłogi: "Flooring",
+            Sufity: "Ceilings",
+            Elektryka: "Electrical",
+            Stolarka: "Carpentry",
+            Glazurnictwo: "Tiling",
+            Inne: "Other",
+        };
+        return language === "en" ? map[category] || category : category;
+    };
+
+    const localizeServiceName = (name: string) => {
+        const map: Record<string, string> = {
+            Gruntowanie: "Priming",
+            "Malowanie (2 warstwy)": "Painting (2 coats)",
+            "Gładź gipsowa (2x)": "Gypsum skim coat (2x)",
+            "Układanie paneli": "Laminate floor installation",
+            "Listwy przypodłogowe": "Baseboards",
+            "Wylewka samopoziomująca": "Self-leveling screed",
+            "Malowanie sufitu": "Ceiling painting",
+            "Montaż osprzętu": "Fittings installation",
+            "Montaż drzwi": "Door installation",
+            "Układanie płytek": "Tile installation",
+            Fugowanie: "Grouting",
+            "Prace ogólnobudowlane": "General construction work",
+        };
+        if (language !== "en") return name;
+
+        const direct = map[name];
+        if (direct) return direct;
+
+        const matchedKey = Object.keys(map).find((key) => name.startsWith(`${key} (`));
+        if (!matchedKey) return name;
+
+        const translatedPrefix = map[matchedKey];
+        const suffix = name.slice(matchedKey.length);
+        const translatedSuffix = suffix
+            .replace("Ściana", "Wall")
+            .replace("Podłoga", "Floor")
+            .replace("Sufit", "Ceiling");
+        return `${translatedPrefix}${translatedSuffix}`;
+    };
+
+    const localizeSurfaceName = (name: string) => {
+        if (language !== "en") return name;
+        if (name === "Podłoga") return "Floor";
+        if (name === "Sufit") return "Ceiling";
+        if (name.startsWith("Ściana ")) return name.replace("Ściana", "Wall");
+        return name;
+    };
 
     // --- State ---
     const [rooms, setRooms] = useState<Room[]>(() => {
@@ -237,13 +295,13 @@ const ServiceForm: React.FC = () => {
         // Use user edited param instead of hidden calculation
         const userParam = parseFloat(strategyParam);
         if (isNaN(userParam) || userParam < 0) {
-            setErrorMessage("Nieprawidłowy parametr (wydajność/odpad).");
+            setErrorMessage(t("Nieprawidlowy parametr (wydajnosc/odpad).", "Invalid parameter (coverage/waste)."));
             return;
         }
 
         if (isAddingNewMaterial) {
             if (!customMatName || !customMatPrice) {
-                setErrorMessage("Proszę uzupełnić nazwę i cenę własnego materiału.");
+                setErrorMessage(t("Prosze uzupelnic nazwe i cene wlasnego materialu.", "Please enter custom material name and price."));
                 return;
             }
 
@@ -277,7 +335,7 @@ const ServiceForm: React.FC = () => {
             const inventoryItem = filteredInventory.find((i) => i.id === targetId);
 
             if (!inventoryItem) {
-                setErrorMessage("Proszę wybrać materiał z magazynu lub dodać nowy.");
+                setErrorMessage(t("Prosze wybrac material z magazynu lub dodac nowy.", "Please select a material from inventory or add a new one."));
                 return;
             }
 
@@ -296,7 +354,7 @@ const ServiceForm: React.FC = () => {
 
         const inputDim = calculateDimension();
         if (inputDim <= 0) {
-            setErrorMessage("Wartość powierzchni/ilości musi być większa od 0.");
+            setErrorMessage(t("Wartosc powierzchni/ilosci musi byc wieksza od 0.", "Area/quantity value must be greater than 0."));
             return;
         }
 
@@ -345,7 +403,10 @@ const ServiceForm: React.FC = () => {
                 if (invItem.quantity < requiredQty) {
                     // Show on-page error instead of alert
                     setErrorMessage(
-                        `Zbyt mała ilość w magazynie! Potrzebujesz: ${requiredQty.toFixed(2)} ${material.unit}, dostępne: ${invItem.quantity} ${invItem.unit}.`
+                        t(
+                            `Zbyt mala ilosc w magazynie! Potrzebujesz: ${requiredQty.toFixed(2)} ${material.unit}, dostepne: ${invItem.quantity} ${invItem.unit}.`,
+                            `Insufficient inventory! Required: ${requiredQty.toFixed(2)} ${material.unit}, available: ${invItem.quantity} ${invItem.unit}.`
+                        )
                     );
                     return; // STOP execution
                 }
@@ -383,7 +444,7 @@ const ServiceForm: React.FC = () => {
         });
     };
 
-    if (rooms.length === 0) return <div className="p-10 text-center">Brak danych pokoi.</div>;
+    if (rooms.length === 0) return <div className="p-10 text-center">{t('Brak danych pokoi.', 'No room data.')}</div>;
 
     const currentDimension = calculateDimension();
 
@@ -409,8 +470,8 @@ const ServiceForm: React.FC = () => {
                 {/* Header */}
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
                     <div className="flex justify-between items-center">
-                        <p className="text-text-dark dark:text-off-white text-3xl font-black leading-tight">Konfiguracja Prac</p>
-                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider">Krok 3 z 4</span>
+                        <p className="text-text-dark dark:text-off-white text-3xl font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
+                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider">{t('Krok 3 z 4', 'Step 3 of 4')}</span>
                     </div>
                 </div>
 
@@ -440,19 +501,19 @@ const ServiceForm: React.FC = () => {
                             <div className="flex items-center gap-2">
                                 <span className="material-symbols-outlined text-primary">grid_view</span>
                                 <span>
-                                    Ściany: <b>{activeRoom.getTotalWallArea().toFixed(2)} m²</b>
+                                    {t("Ściany", "Walls")}: <b>{activeRoom.getTotalWallArea().toFixed(2)} m²</b>
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="material-symbols-outlined text-primary">check_box_outline_blank</span>
                                 <span>
-                                    Podłoga: <b>{activeRoom.getFloorArea().toFixed(2)} m²</b>
+                                    {t("Podłoga", "Floor")}: <b>{activeRoom.getFloorArea().toFixed(2)} m²</b>
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="material-symbols-outlined text-primary">roofing</span>
                                 <span>
-                                    Sufit: <b>{activeRoom.getCeilingArea().toFixed(2)} m²</b>
+                                    {t("Sufit", "Ceiling")}: <b>{activeRoom.getCeilingArea().toFixed(2)} m²</b>
                                 </span>
                             </div>
                         </div>
@@ -461,7 +522,7 @@ const ServiceForm: React.FC = () => {
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-lg">
                             <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
                                 <span className="material-symbols-outlined">settings_suggest</span>
-                                Parametry usługi
+                                {t('Parametry usługi', 'Service parameters')}
                             </h3>
 
                             {/* Categories */}
@@ -477,14 +538,14 @@ const ServiceForm: React.FC = () => {
                                                     : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                                             }`}
                                     >
-                                        {cat}
+                                        {localizeCategory(cat)}
                                     </button>
                                 ))}
                             </div>
 
                             {/* Service Selection */}
                             <div className="mb-6">
-                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Rodzaj prac</label>
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('Rodzaj prac', 'Type of work')}</label>
                                 <select
                                     className="form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                     value={selectedTemplateId}
@@ -492,7 +553,7 @@ const ServiceForm: React.FC = () => {
                                 >
                                     {categoryServices.map((s) => (
                                         <option key={s.id} value={s.id}>
-                                            {s.name}
+                                            {localizeServiceName(s.name)}
                                         </option>
                                     ))}
                                 </select>
@@ -503,24 +564,36 @@ const ServiceForm: React.FC = () => {
                                             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-base mt-0.5">info</span>
                                             <div>
                                                 <p className="font-bold text-blue-700 dark:text-blue-300 mb-1">
-                                                    Strategia:{" "}
+                                                    {t("Strategia", "Strategy")}:{" "}
                                                     {selectedTemplate.defaultStrategy === "consumption"
-                                                        ? "Wydajność (Zużycie)"
+                                                        ? t("Wydajność (Zużycie)", "Coverage (Consumption)")
                                                         : selectedTemplate.defaultStrategy === "waste"
-                                                        ? "Powierzchnia + Odpad"
+                                                        ? t("Powierzchnia + Odpad", "Area + Waste")
                                                         : selectedTemplate.defaultStrategy === "linear"
-                                                        ? "Liniowa (mb)"
-                                                        : "Na sztuki"}
+                                                        ? t("Liniowa (mb)", "Linear (lm)")
+                                                        : t("Na sztuki", "Per item")}
                                                 </p>
                                                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                                                     {selectedTemplate.defaultStrategy === "consumption" &&
-                                                        `System obliczy ilość materiału dzieląc powierzchnię przez wydajność (np. m²/litr). Robocizna naliczana za m². Domyślna wydajność: ${selectedTemplate.defaultParam} jednostek/m².`}
+                                                        t(
+                                                            `System obliczy ilość materiału dzieląc powierzchnię przez wydajność (np. m²/litr). Robocizna naliczana za m². Domyślna wydajność: ${selectedTemplate.defaultParam} jednostek/m².`,
+                                                            `The system calculates required material by dividing area by coverage (for example m²/liter). Labor is charged per m². Default coverage: ${selectedTemplate.defaultParam} units/m².`
+                                                        )}
                                                     {selectedTemplate.defaultStrategy === "waste" &&
-                                                        `System obliczy ilość materiału dodając ${selectedTemplate.defaultParam}% zapasu na docinki (odpad) do całkowitej powierzchni. Robocizna naliczana za m².`}
+                                                        t(
+                                                            `System obliczy ilość materiału dodając ${selectedTemplate.defaultParam}% zapasu na docinki (odpad) do całkowitej powierzchni. Robocizna naliczana za m².`,
+                                                            `The system calculates required material by adding ${selectedTemplate.defaultParam}% extra waste allowance to the total area. Labor is charged per m².`
+                                                        )}
                                                     {selectedTemplate.defaultStrategy === "linear" &&
-                                                        `Obliczenia dla elementów liniowych (np. listwy). Dodaje ${selectedTemplate.defaultParam}% zapasu do długości obwodu. Robocizna za mb.`}
+                                                        t(
+                                                            `Obliczenia dla elementów liniowych (np. listwy). Dodaje ${selectedTemplate.defaultParam}% zapasu do długości obwodu. Robocizna za mb.`,
+                                                            `Calculations for linear elements (for example skirting). Adds ${selectedTemplate.defaultParam}% allowance to perimeter length. Labor is charged per lm.`
+                                                        )}
                                                     {selectedTemplate.defaultStrategy === "item" &&
-                                                        `Proste mnożenie: Ilość sztuk × Cena. Robocizna naliczana od sztuki (punktu).`}
+                                                        t(
+                                                            `Proste mnożenie: Ilość sztuk × Cena. Robocizna naliczana od sztuki (punktu).`,
+                                                            `Simple multiplication: Quantity × Price. Labor is charged per item.`
+                                                        )}
                                                 </p>
                                             </div>
                                         </div>
@@ -532,7 +605,7 @@ const ServiceForm: React.FC = () => {
                             {selectedTemplate && selectedTemplate.defaultStrategy !== "item" && (
                                 <div className="mb-6 animate-fade-in">
                                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        {selectedTemplate.defaultStrategy === "consumption" ? "Wydajność materiału" : "Naddatek materiałowy"}
+                                        {selectedTemplate.defaultStrategy === "consumption" ? t("Wydajność materiału", "Material coverage") : t("Naddatek materiałowy", "Material waste allowance")}
                                     </label>
                                     <div className="flex items-center">
                                         <input
@@ -542,7 +615,7 @@ const ServiceForm: React.FC = () => {
                                             onChange={(e) => setStrategyParam(e.target.value)}
                                         />
                                         <span className="bg-slate-100 dark:bg-slate-800 px-4 py-2 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-xl text-sm font-bold text-slate-500 min-w-[60px] text-center">
-                                            {selectedTemplate.defaultStrategy === "consumption" ? "m²/jedn" : "%"}
+                                            {selectedTemplate.defaultStrategy === "consumption" ? t("m²/jedn", "m²/unit") : "%"}
                                         </span>
                                     </div>
                                 </div>
@@ -552,7 +625,7 @@ const ServiceForm: React.FC = () => {
                             <div className="mb-6 space-y-4">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                        Wybór materiału {isAddingNewMaterial ? "(Dodawanie)" : "(Magazyn)"}
+                                        {t('Wybór materiału', 'Material selection')} {isAddingNewMaterial ? t('(Dodawanie)', '(Adding)') : t('(Magazyn)', '(Inventory)')}
                                     </label>
                                     <button
                                         onClick={() => setIsAddingNewMaterial(!isAddingNewMaterial)}
@@ -560,7 +633,7 @@ const ServiceForm: React.FC = () => {
                                             isAddingNewMaterial ? "bg-gray-200 text-gray-700" : "bg-primary/10 text-primary hover:bg-primary/20"
                                         }`}
                                     >
-                                        {isAddingNewMaterial ? "Wróć do listy" : "+ Dodaj materiał"}
+                                        {isAddingNewMaterial ? t('Wróć do listy', 'Back to list') : t('+ Dodaj materiał', '+ Add material')}
                                     </button>
                                 </div>
 
@@ -569,10 +642,10 @@ const ServiceForm: React.FC = () => {
                                         {filteredInventory.length === 0 ? (
                                             <div className="flex flex-col gap-2 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center">
                                                 <p className="text-sm text-slate-500">
-                                                    Brak materiałów w magazynie dla kategorii <b>{selectedCategory}</b>.
+                                                    {t('Brak materiałów w magazynie dla kategorii', 'No inventory materials for category')} <b>{selectedCategory}</b>.
                                                 </p>
                                                 <button onClick={() => setIsAddingNewMaterial(true)} className="text-primary font-bold text-sm hover:underline">
-                                                    Dodaj nowy materiał
+                                                    {t('Dodaj nowy materiał', 'Add new material')}
                                                 </button>
                                             </div>
                                         ) : (
@@ -583,7 +656,7 @@ const ServiceForm: React.FC = () => {
                                             >
                                                 {filteredInventory.map((item) => (
                                                     <option key={item.id} value={item.id}>
-                                                        {item.name} — {item.pricePerUnit.toFixed(2)} zł/{item.unit} (Stan: {item.quantity})
+                                                        {item.name} — {item.pricePerUnit.toFixed(2)} {currencyCode}/{item.unit} ({t('Stan', 'Stock')}: {item.quantity})
                                                     </option>
                                                 ))}
                                             </select>
@@ -599,7 +672,7 @@ const ServiceForm: React.FC = () => {
                                                     newMatScope === "inventory" ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                 }`}
                                             >
-                                                Dodaj do magazynu
+                                                {t('Dodaj do magazynu', 'Add to inventory')}
                                             </button>
                                             <button
                                                 onClick={() => setNewMatScope("project")}
@@ -607,14 +680,14 @@ const ServiceForm: React.FC = () => {
                                                     newMatScope === "project" ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                 }`}
                                             >
-                                                Tylko w projekcie
+                                                {t('Tylko w projekcie', 'Project only')}
                                             </button>
                                         </div>
 
                                         <div>
                                             <input
                                                 type="text"
-                                                placeholder="Nazwa materiału"
+                                                placeholder={t('Nazwa materiału', 'Material name')}
                                                 value={customMatName}
                                                 onChange={(e) => setCustomMatName(e.target.value)}
                                                 className="form-input w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm"
@@ -624,12 +697,12 @@ const ServiceForm: React.FC = () => {
                                             <div className="relative">
                                                 <input
                                                     type="number"
-                                                    placeholder="Cena"
+                                                    placeholder={t('Cena', 'Price')}
                                                     value={customMatPrice}
                                                     onChange={(e) => setCustomMatPrice(e.target.value)}
                                                     className="form-input w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm pr-12"
                                                 />
-                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">zł</span>
+                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">{currencySymbol}</span>
                                             </div>
                                             <select
                                                 value={customMatUnit}
@@ -646,10 +719,10 @@ const ServiceForm: React.FC = () => {
 
                                         {newMatScope === "inventory" && (
                                             <div>
-                                                <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Stan początkowy</label>
+                                                <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">{t('Stan początkowy', 'Initial stock')}</label>
                                                 <input
                                                     type="number"
-                                                    placeholder="Ilość w magazynie"
+                                                    placeholder={t('Ilość w magazynie', 'Quantity in inventory')}
                                                     value={customMatInitialStock}
                                                     onChange={(e) => setCustomMatInitialStock(e.target.value)}
                                                     className="form-input w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm"
@@ -659,11 +732,11 @@ const ServiceForm: React.FC = () => {
 
                                         {selectedTemplate?.defaultStrategy === "consumption" && (
                                             <div>
-                                                <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">Wydajność (opcjonalnie)</label>
+                                                <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">{t('Wydajność (opcjonalnie)', 'Coverage (optional)')}</label>
                                                 <div className="relative">
                                                     <input
                                                         type="number"
-                                                        placeholder="np. 10"
+                                                        placeholder={t('np. 10', 'e.g. 10')}
                                                         value={customMatCoverage}
                                                         onChange={(e) => setCustomMatCoverage(e.target.value)}
                                                         className="form-input w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm pr-16"
@@ -681,7 +754,7 @@ const ServiceForm: React.FC = () => {
                             {/* Scope & Quantity */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Miejsce prac</label>
+                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('Miejsce prac', 'Work area')}</label>
                                     <select
                                         className="form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                         value={scopeType === "specific" ? `s-${specificSurfaceIndex}` : scopeType}
@@ -696,33 +769,33 @@ const ServiceForm: React.FC = () => {
                                     >
                                         <option value="global">
                                             {selectedTemplate?.suggestedScope === "walls"
-                                                ? "Wszystkie Ściany"
+                                                ? t('Wszystkie Ściany', 'All walls')
                                                 : selectedTemplate?.suggestedScope === "floor"
-                                                ? "Cała Podłoga"
+                                                ? t('Cała Podłoga', 'Entire floor')
                                                 : selectedTemplate?.suggestedScope === "ceiling"
-                                                ? "Cały Sufit"
+                                                ? t('Cały Sufit', 'Entire ceiling')
                                                 : selectedTemplate?.suggestedScope === "perimeter"
-                                                ? "Cały Obwód"
-                                                : "Obszar domyślny"}
+                                                ? t('Cały Obwód', 'Entire perimeter')
+                                                : t('Obszar domyślny', 'Default area')}
                                         </option>
 
                                         {compatibleSurfaces.length > 0 && (
-                                            <optgroup label="Wybrana płaszczyzna">
+                                            <optgroup label={t('Wybrana płaszczyzna', 'Selected surface')}>
                                                 {compatibleSurfaces.map((item, idx) => (
                                                     <option key={idx} value={`s-${idx}`}>
-                                                        {item.surface.name} ({item.surface.getNetArea().toFixed(2)} m²)
+                                                        {localizeSurfaceName(item.surface.name)} ({item.surface.getNetArea().toFixed(2)} m²)
                                                     </option>
                                                 ))}
                                             </optgroup>
                                         )}
 
-                                        <option value="manual">Wartość niestandardowa</option>
+                                        <option value="manual">{t('Wartość niestandardowa', 'Custom value')}</option>
                                     </select>
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                                        {scopeType === "manual" ? "Ilość robót" : "Powierzchnia/Długość"}
+                                        {scopeType === "manual" ? t('Ilość robót', 'Work quantity') : t('Powierzchnia/Długość', 'Area/Length')}
                                     </label>
                                     <div className="flex items-center">
                                         <input
@@ -744,7 +817,7 @@ const ServiceForm: React.FC = () => {
                                 <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3 animate-fade-in">
                                     <span className="material-symbols-outlined text-red-600 dark:text-red-400 mt-0.5">error</span>
                                     <div>
-                                        <p className="font-bold text-red-700 dark:text-red-300 text-sm">Nie można dodać usługi</p>
+                                        <p className="font-bold text-red-700 dark:text-red-300 text-sm">{t('Nie można dodać usługi', 'Cannot add service')}</p>
                                         <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
                                     </div>
                                 </div>
@@ -755,7 +828,7 @@ const ServiceForm: React.FC = () => {
                                 className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-2 active:scale-[0.98]"
                             >
                                 <span className="material-symbols-outlined">add_task</span>
-                                Dodaj do kosztorysu pokoju
+                                {t('Dodaj do kosztorysu pokoju', 'Add to room estimate')}
                             </button>
                         </div>
                     </div>
@@ -769,8 +842,8 @@ const ServiceForm: React.FC = () => {
                                     {activeRoom.name}
                                 </h3>
                                 <div className="flex justify-between items-end mt-2">
-                                    <p className="text-xs text-slate-500">{activeRoom.tasks.length} pozycji w kosztorysie</p>
-                                    <p className="text-xl font-black text-primary">{activeRoom.calculateTotalRoomCost().toFixed(2)} zł</p>
+                                    <p className="text-xs text-slate-500">{activeRoom.tasks.length} {t('pozycji w kosztorysie', 'items in estimate')}</p>
+                                    <p className="text-xl font-black text-primary">{activeRoom.calculateTotalRoomCost().toFixed(2)} {currencyCode}</p>
                                 </div>
                             </div>
 
@@ -779,9 +852,9 @@ const ServiceForm: React.FC = () => {
                                     <div className="text-center text-slate-400 py-20 flex flex-col items-center gap-3">
                                         <span className="material-symbols-outlined text-5xl text-slate-200 dark:text-slate-800">playlist_add</span>
                                         <p className="text-sm">
-                                            Lista zadań dla tego pokoju jest pusta.
+                                            {t('Lista zadań dla tego pokoju jest pusta.', 'Task list for this room is empty.')}
                                             <br />
-                                            Użyj konfiguratora, aby dodać prace.
+                                            {t('Uzyj konfiguratora, aby dodac prace.', 'Use the configurator to add work items.')}
                                         </p>
                                     </div>
                                 ) : (
@@ -791,23 +864,23 @@ const ServiceForm: React.FC = () => {
                                             className="flex justify-between items-start p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl group border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all"
                                         >
                                             <div className="flex-1 min-w-0 pr-4">
-                                                <p className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{task.description}</p>
+                                                <p className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{localizeServiceName(task.description)}</p>
                                                 <p className="text-xs text-slate-500 italic mt-0.5">{task.material.name}</p>
                                                 <div className="flex gap-4 mt-2">
                                                     <span className="text-[10px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border dark:border-slate-600 text-slate-600 dark:text-slate-300">
-                                                        Mat: {task.calculateMaterialCost().toFixed(2)} zł
+                                                        {t('Mat:', 'Mat:')} {task.calculateMaterialCost().toFixed(2)} {currencyCode}
                                                     </span>
                                                     <span className="text-[10px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border dark:border-slate-600 text-slate-600 dark:text-slate-300">
-                                                        Rob: {task.calculateLaborCost().toFixed(2)} zł
+                                                        {t('Rob:', 'Lab:')} {task.calculateLaborCost().toFixed(2)} {currencyCode}
                                                     </span>
                                                 </div>
                                             </div>
                                             <div className="flex flex-col items-end shrink-0">
-                                                <p className="text-sm font-black text-slate-900 dark:text-white">{task.calculateTotalCost().toFixed(2)} zł</p>
+                                                <p className="text-sm font-black text-slate-900 dark:text-white">{task.calculateTotalCost().toFixed(2)} {currencyCode}</p>
                                                 <button
                                                     onClick={() => handleRemoveTask(idx)}
                                                     className="mt-2 text-slate-300 hover:text-red-500 transition-colors"
-                                                    title="Usuń pozycję"
+                                                    title={t('Usuń pozycję', 'Remove item')}
                                                 >
                                                     <span className="material-symbols-outlined text-lg">delete</span>
                                                 </button>
@@ -835,7 +908,7 @@ const ServiceForm: React.FC = () => {
                         className="flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                     >
                         <span className="material-symbols-outlined">arrow_back</span>
-                        Edytuj Pokoje
+                        {t('Edytuj Pokoje', 'Edit Rooms')}
                     </button>
 
                     <button
@@ -843,7 +916,7 @@ const ServiceForm: React.FC = () => {
                         className="flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
                     >
                         <span className="material-symbols-outlined">assignment_turned_in</span>
-                        Przejdź do Podsumowania
+                        {t('Przejdź do podsumowania', 'Go to Summary')}
                     </button>
                 </div>
             </div>

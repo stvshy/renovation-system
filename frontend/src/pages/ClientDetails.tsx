@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getClientById, getProjects, saveClient } from "../lib/storage";
 import { Client, Project } from "../types";
+import { useLanguage } from "../context/LanguageContext";
 
 const ClientDetails: React.FC = () => {
+    const { t } = useLanguage();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [client, setClient] = useState<Client | undefined>(undefined);
@@ -42,8 +44,8 @@ const ClientDetails: React.FC = () => {
         }
     }, [isEditModalOpen, client]);
 
-    if (loading) return <div>Ładowanie...</div>;
-    if (!client) return <div>Nie znaleziono klienta.</div>;
+    if (loading) return <div>{t("Ladowanie...", "Loading...")}</div>;
+    if (!client) return <div>{t("Nie znaleziono klienta.", "Client not found.")}</div>;
 
     const handleNewProject = () => {
         // Navigate to project creation but pre-fill client data
@@ -95,14 +97,14 @@ const ClientDetails: React.FC = () => {
                             className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-slate-600 transition-all"
                         >
                             <span className="material-symbols-outlined">edit</span>
-                            Edytuj Dane
+                            {t('Edytuj Dane', 'Edit Details')}
                         </button>
                         <button
                             onClick={handleNewProject}
                             className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
                         >
                             <span className="material-symbols-outlined">add_circle</span>
-                            Nowy Projekt
+                            {t('Nowy Projekt', 'New Project')}
                         </button>
                     </div>
                 </div>
@@ -112,27 +114,27 @@ const ClientDetails: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-1 h-fit">
                         <h2 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined">contact_page</span>
-                            Dane kontaktowe
+                            {t('Dane kontaktowe', 'Contact details')}
                         </h2>
                         <div className="space-y-4">
                             <div className="flex items-start gap-3">
                                 <span className="material-symbols-outlined text-gray-400 mt-1">call</span>
                                 <div>
-                                    <p className="text-xs text-gray-500">Telefon</p>
+                                    <p className="text-xs text-gray-500">{t('Telefon', 'Phone')}</p>
                                     <p className="font-medium text-gray-800 dark:text-gray-200">{client.phone}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
                                 <span className="material-symbols-outlined text-gray-400 mt-1">mail</span>
                                 <div>
-                                    <p className="text-xs text-gray-500">E-mail</p>
+                                    <p className="text-xs text-gray-500">Email</p>
                                     <p className="font-medium text-gray-800 dark:text-gray-200 break-all">{client.email}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
                                 <span className="material-symbols-outlined text-gray-400 mt-1">home</span>
                                 <div>
-                                    <p className="text-xs text-gray-500">Adres</p>
+                                    <p className="text-xs text-gray-500">{t('Adres', 'Address')}</p>
                                     <p className="font-medium text-gray-800 dark:text-gray-200">{client.address}</p>
                                     <p className="font-medium text-gray-800 dark:text-gray-200">
                                         {client.zipCode} {client.city}
@@ -146,14 +148,14 @@ const ClientDetails: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-2">
                         <h2 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined">folder</span>
-                            Historia Projektów
+                            {t('Historia projektów', 'Project history')}
                         </h2>
 
                         {clientProjects.length === 0 ? (
                             <div className="text-center py-10 border border-dashed border-gray-200 dark:border-gray-700 rounded-xl">
-                                <p className="text-gray-500 mb-2">Brak projektów dla tego klienta</p>
+                                <p className="text-gray-500 mb-2">{t('Brak projektów dla tego klienta', 'No projects for this client')}</p>
                                 <button onClick={handleNewProject} className="text-primary font-bold text-sm hover:underline">
-                                    Utwórz pierwszy projekt
+                                    {t('Utwórz pierwszy projekt', 'Create first project')}
                                 </button>
                             </div>
                         ) : (
@@ -176,12 +178,12 @@ const ClientDetails: React.FC = () => {
                                                     {project.name}
                                                 </h3>
                                                 <p className="text-xs text-gray-500">
-                                                    {project.startDate || "Brak daty"} — {project.status}
+                                                    {project.startDate || t('Brak daty', 'No date')} — {project.status}
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-bold text-gray-800 dark:text-white">{project.value.toLocaleString()} zł</p>
+                                            <p className="font-bold text-gray-800 dark:text-white">{project.value.toLocaleString()} {t('zl', 'PLN')}</p>
                                             <span className="material-symbols-outlined text-gray-300 group-hover:text-primary">arrow_forward</span>
                                         </div>
                                     </div>
@@ -197,7 +199,7 @@ const ClientDetails: React.FC = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800">
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Edytuj Klienta</h2>
+                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('Edytuj Klienta', 'Edit Client')}</h2>
                             <button
                                 onClick={() => setIsEditModalOpen(false)}
                                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
@@ -208,7 +210,7 @@ const ClientDetails: React.FC = () => {
                         <form onSubmit={handleSaveEdit} className="p-6 space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Imię</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Imie', 'First name')}</span>
                                     <input
                                         className="form-input rounded-lg dark:bg-slate-800"
                                         value={editForm.firstName || ""}
@@ -216,7 +218,7 @@ const ClientDetails: React.FC = () => {
                                     />
                                 </label>
                                 <label className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Nazwisko</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Nazwisko', 'Last name')}</span>
                                     <input
                                         className="form-input rounded-lg dark:bg-slate-800"
                                         value={editForm.lastName || ""}
@@ -226,7 +228,7 @@ const ClientDetails: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Telefon</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Telefon', 'Phone')}</span>
                                     <input
                                         className="form-input rounded-lg dark:bg-slate-800"
                                         type="tel"
@@ -245,7 +247,7 @@ const ClientDetails: React.FC = () => {
                                 </label>
                             </div>
                             <label className="flex flex-col gap-1">
-                                <span className="text-xs font-bold text-gray-500 uppercase">Ulica i numer</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Ulica i numer', 'Street and number')}</span>
                                 <input
                                     className="form-input rounded-lg dark:bg-slate-800"
                                     value={editForm.address || ""}
@@ -254,7 +256,7 @@ const ClientDetails: React.FC = () => {
                             </label>
                             <div className="grid grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Miasto</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Miasto', 'City')}</span>
                                     <input
                                         className="form-input rounded-lg dark:bg-slate-800"
                                         value={editForm.city || ""}
@@ -262,7 +264,7 @@ const ClientDetails: React.FC = () => {
                                     />
                                 </label>
                                 <label className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">Kod pocztowy</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Kod pocztowy', 'Postal code')}</span>
                                     <input
                                         className="form-input rounded-lg dark:bg-slate-800"
                                         value={editForm.zipCode || ""}
@@ -276,10 +278,10 @@ const ClientDetails: React.FC = () => {
                                     onClick={() => setIsEditModalOpen(false)}
                                     className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
                                 >
-                                    Anuluj
+                                    {t('Anuluj', 'Cancel')}
                                 </button>
                                 <button type="submit" className="px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90">
-                                    Zapisz Zmiany
+                                    {t('Zapisz Zmiany', 'Save Changes')}
                                 </button>
                             </div>
                         </form>

@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProjects } from '../lib/storage';
 import { Project } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 const Calendar: React.FC = () => {
     const navigate = useNavigate();
+    const { language, t } = useLanguage();
     const [projects, setProjects] = useState<Project[]>([]);
     const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -27,7 +29,10 @@ const Calendar: React.FC = () => {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-    const monthNames = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
+    const monthNames = language === 'pl'
+        ? ["Styczen", "Luty", "Marzec", "Kwiecien", "Maj", "Czerwiec", "Lipiec", "Sierpien", "Wrzesien", "Pazdziernik", "Listopad", "Grudzien"]
+        : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const dayNames = language === 'pl' ? ['Pon', 'Wt', 'Sr', 'Czw', 'Pt', 'Sob', 'Ndz'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     const handlePrevMonth = () => {
         setCurrentDate(new Date(year, month - 1, 1));
@@ -58,7 +63,7 @@ const Calendar: React.FC = () => {
         <div className="px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
             <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
                 <div className="flex flex-wrap justify-between gap-4 p-4 items-center">
-                    <p className="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] font-display">Kalendarz</p>
+                    <p className="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kalendarz', 'Calendar')}</p>
                     <div className="flex items-center gap-2">
                         <button onClick={handlePrevMonth} className="flex items-center justify-center rounded-lg h-10 w-10 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <span className="material-symbols-outlined">chevron_left</span>
@@ -74,7 +79,7 @@ const Calendar: React.FC = () => {
                         onClick={() => navigate('/projects/new/client')}
                         className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors"
                     >
-                        <span className="truncate">Dodaj nowy projekt</span>
+                        <span className="truncate">{t('Dodaj nowy projekt', 'Add new project')}</span>
                     </button>
                 </div>
                 
@@ -82,7 +87,7 @@ const Calendar: React.FC = () => {
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
                         {/* Header Row */}
                         <div className="grid grid-cols-7 text-center border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-800">
-                            {['Pon', 'Wt', 'Śr', 'Czw', 'Pt', 'Sob', 'Ndz'].map(day => (
+                            {dayNames.map(day => (
                                 <div key={day} className="py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
                                     {day}
                                 </div>
