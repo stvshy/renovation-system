@@ -191,16 +191,16 @@ const ClientForm: React.FC = () => {
                 <div className="flex flex-col gap-6 p-4">
                     
                     {/* Mode Selection */}
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 border-b border-gray-200 dark:border-gray-700 pb-4">
+                    <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
                          <button 
                             onClick={() => { setMode('new'); setSelectedClientId(''); setFirstName(''); setLastName(''); setErrors({}); }}
-                            className={`flex-1 py-3 rounded-lg font-bold transition-all ${mode === 'new' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400'}`}
+                            className={`flex-1 py-2 rounded-lg text-sm font-bold border transition-all ${mode === 'new' ? 'border-primary bg-primary/10 text-primary shadow-sm' : 'border-slate-300 dark:border-slate-600 bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
                         >
                             {t('Nowy Klient', 'New Client')}
                         </button>
                         <button 
                             onClick={() => { setMode('existing'); setErrors({}); }}
-                            className={`flex-1 py-3 rounded-lg font-bold border transition-all ${mode === 'existing' ? 'border-primary bg-primary/10 text-primary shadow-sm' : 'border-slate-300 dark:border-slate-600 bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
+                            className={`flex-1 py-2 rounded-lg text-sm font-bold border transition-all ${mode === 'existing' ? 'border-primary bg-primary/10 text-primary shadow-sm' : 'border-slate-300 dark:border-slate-600 bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
                         >
                             {t('Wybierz z listy', 'Select from list')}
                         </button>
@@ -344,11 +344,11 @@ const ClientForm: React.FC = () => {
                         </label>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-4 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6">
-                        <button onClick={() => navigate('/projects')} className="flex items-center justify-center gap-2 h-12 min-w-[150px] px-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                    <div className="flex flex-col gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full max-w-md mx-auto sm:flex-row sm:flex-wrap sm:justify-center sm:max-w-none">
+                        <button onClick={() => navigate('/projects')} className="w-full flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
                             {t('Anuluj', 'Cancel')}
                         </button>
-                        <button onClick={handleNext} className="flex items-center justify-center gap-2 h-12 min-w-[150px] px-6 rounded-lg bg-primary text-white font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+                        <button onClick={handleNext} className="w-full flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary text-white font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
                             {t('Zapisz i Dalej', 'Save and Continue')}
                         </button>
                     </div>

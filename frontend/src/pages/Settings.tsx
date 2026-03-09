@@ -128,7 +128,7 @@ const Settings: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6 sm:mb-8">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6">
                     <div>
                         <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
                             <div className="size-8 mb-1 text-primary -mt-1">
@@ -140,7 +140,7 @@ const Settings: React.FC = () => {
                     </div>
                     <button
                         onClick={openAddModal}
-                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
+                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-10 sm:h-12 px-4 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
                     >
                         <Grid2x2Plus size={18} strokeWidth={2.2} />
                         {t('Dodaj Rodzaj Prac', 'Add Service Type')}

@@ -101,7 +101,7 @@ const Inventory: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6 sm:mb-8">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-3 sm:mb-5">
                     <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
                         <div className="size-8 mb-1 mr-1 text-primary">
                             <span className="material-symbols-outlined !text-4xl">warehouse</span>
@@ -128,7 +128,7 @@ const Inventory: React.FC = () => {
                         <div className="flex gap-3 w-full md:w-auto">
                             <button
                                 onClick={openAddModal}
-                                className="flex w-full md:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-12 px-6 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
+                                className="flex w-full md:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-10 sm:h-12 px-6 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
                             >
                                 <PackagePlus size={18} strokeWidth={2.2} />
                                 <span className="truncate">{t('Dodaj materiał', 'Add material')}</span>

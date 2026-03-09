@@ -62,7 +62,7 @@ const Calendar: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
-                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-4 p-2 sm:p-0 sm:items-center mb-6">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-4 p-2 sm:p-0 sm:items-center mb-3 sm:mb-4">
                     <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
                         <div className="size-8 mb-1 mr-1 text-primary -mt-1">
                             <span className="material-symbols-outlined !text-4xl">calendar_month</span>

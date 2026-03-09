@@ -37,7 +37,7 @@ const Projects: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
-                <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
+                <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-3 border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
                     <div className="flex items-center text-slate-900 dark:text-slate-50">
                         <div className="size-8 mr-3 mt-1 text-primary flex items-center justify-center">
                             <span className="material-symbols-outlined text-[34px] leading-none">folder</span>
