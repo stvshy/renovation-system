@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Grid2x2Plus } from "lucide-react";
 import { getServiceCatalog, saveServiceTemplate, deleteServiceTemplate } from "../lib/storage";
 import { ServiceTemplate, Unit, CATEGORIES } from "../lib/renovationLogic";
 import { useLanguage } from "../context/LanguageContext";
@@ -141,7 +142,7 @@ const Settings: React.FC = () => {
                         onClick={openAddModal}
                         className="flex min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
                     >
-                        <span className="material-symbols-outlined">add</span>
+                        <Grid2x2Plus size={18} strokeWidth={2.2} />
                         {t('Dodaj Rodzaj Prac', 'Add Service Type')}
                     </button>
                 </div>

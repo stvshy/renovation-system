@@ -49,6 +49,7 @@ const Projects: React.FC = () => {
                             onClick={() => navigate('/projects/new/client')}
                             className="flex min-w-[120px] items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors"
                         >
+                            <span className="material-symbols-outlined text-lg mr-2">add</span>
                             <span className="truncate">{t('Nowy Projekt', 'New Project')}</span>
                         </button>
                     </div>

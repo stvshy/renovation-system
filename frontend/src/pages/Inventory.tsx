@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { PackagePlus } from "lucide-react";
 import { getInventory, saveInventoryItem, deleteInventoryItem } from "../lib/storage";
 import { InventoryItem } from "../types";
 import { Unit, CATEGORIES } from "../lib/renovationLogic";
@@ -129,7 +130,7 @@ const Inventory: React.FC = () => {
                                 onClick={openAddModal}
                                 className="flex w-full md:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-12 px-6 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
                             >
-                                <span className="material-symbols-outlined">add</span>
+                                <PackagePlus size={18} strokeWidth={2.2} />
                                 <span className="truncate">{t('Dodaj materiał', 'Add material')}</span>
                             </button>
                         </div>

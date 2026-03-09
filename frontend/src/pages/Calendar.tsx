@@ -84,6 +84,7 @@ const Calendar: React.FC = () => {
                         onClick={() => navigate('/projects/new/client')}
                         className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors"
                     >
+                        <span className="material-symbols-outlined text-lg mr-2">add</span>
                         <span className="truncate">{t('Dodaj nowy projekt', 'Add new project')}</span>
                     </button>
                 </div>

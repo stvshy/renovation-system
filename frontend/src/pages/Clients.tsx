@@ -65,7 +65,7 @@ const Clients: React.FC = () => {
                         onClick={() => setIsModalOpen(true)}
                         className="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors"
                     >
-                        <span className="material-symbols-outlined">person_add</span>
+                        <span className="material-symbols-outlined text-[18px] leading-none">person_add</span>
                         <span className="hidden sm:inline">{t('Dodaj Klienta', 'Add Client')}</span>
                     </button>
                 </header>
