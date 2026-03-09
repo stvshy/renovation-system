@@ -89,13 +89,13 @@ const Calendar: React.FC = () => {
                     </button>
                 </div>
                 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto -mx-2 px-2 [touch-action:pan-x]" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
-                        <div className="min-w-[700px]">
+                        <div className="min-w-[560px] sm:min-w-[700px]">
                         {/* Header Row */}
                         <div className="grid grid-cols-7 text-center border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-800">
                             {dayNames.map(day => (
-                                <div key={day} className="py-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                <div key={day} className="py-2 sm:py-3 text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300">
                                     {day}
                                 </div>
                             ))}
@@ -106,7 +106,7 @@ const Calendar: React.FC = () => {
                             
                             {/* Empty cells for previous month padding */}
                             {Array.from({ length: startDayOffset }).map((_, i) => (
-                                <div key={`empty-${i}`} className="bg-white dark:bg-slate-900/50 min-h-[120px]"></div>
+                                <div key={`empty-${i}`} className="bg-white dark:bg-slate-900/50 min-h-[96px] sm:min-h-[120px]"></div>
                             ))}
 
                             {/* Days */}
@@ -118,10 +118,10 @@ const Calendar: React.FC = () => {
                                     year === new Date().getFullYear();
 
                                 return (
-                                    <div key={day} className={`bg-white dark:bg-slate-900 min-h-[120px] p-2 flex flex-col relative group transition-colors hover:bg-gray-50 dark:hover:bg-slate-800/50`}>
+                                    <div key={day} className={`bg-white dark:bg-slate-900 min-h-[96px] sm:min-h-[120px] p-1.5 sm:p-2 flex flex-col relative group transition-colors hover:bg-gray-50 dark:hover:bg-slate-800/50`}>
                                         <div className="flex justify-between items-start mb-1">
                                             <span 
-                                                className={`text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full 
+                                                className={`text-xs sm:text-sm font-medium w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-full 
                                                 ${isToday 
                                                     ? 'bg-primary text-white' 
                                                     : 'text-gray-700 dark:text-gray-300'}`}
@@ -130,7 +130,7 @@ const Calendar: React.FC = () => {
                                             </span>
                                         </div>
                                         
-                                        <div className="flex flex-col gap-1 overflow-y-auto max-h-[100px] custom-scrollbar">
+                                        <div className="flex flex-col gap-1 overflow-y-auto max-h-[72px] sm:max-h-[100px] custom-scrollbar">
                                             {activeProjects.map((proj, idx) => (
                                                 <div 
                                                     key={idx}
@@ -138,7 +138,7 @@ const Calendar: React.FC = () => {
                                                         e.stopPropagation();
                                                         navigate(`/projects/${proj.id}`);
                                                     }}
-                                                    className="px-2 py-1 text-[10px] font-bold rounded shadow-sm border-l-4 truncate cursor-pointer hover:opacity-80 transition-opacity text-slate-800"
+                                                    className="px-1.5 sm:px-2 py-1 text-[9px] sm:text-[10px] font-bold rounded shadow-sm border-l-4 truncate cursor-pointer hover:opacity-80 transition-opacity text-slate-800"
                                                     style={{ 
                                                         backgroundColor: proj.color ? `${proj.color}40` : '#e2e8f0', // 25% opacity
                                                         borderLeftColor: proj.color || '#94a3b8',
@@ -156,7 +156,7 @@ const Calendar: React.FC = () => {
                             
                             {/* Fill remaining cells to complete the row if necessary (optional) */}
                             {Array.from({ length: (7 - (startDayOffset + daysInMonth) % 7) % 7 }).map((_, i) => (
-                                <div key={`empty-end-${i}`} className="bg-white dark:bg-slate-900/50 min-h-[120px]"></div>
+                                <div key={`empty-end-${i}`} className="bg-white dark:bg-slate-900/50 min-h-[96px] sm:min-h-[120px]"></div>
                             ))}
                         </div>
                         </div>

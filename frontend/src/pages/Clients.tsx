@@ -66,7 +66,7 @@ const Clients: React.FC = () => {
                         className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors"
                     >
                         <span className="material-symbols-outlined text-[18px] leading-none">person_add</span>
-                        <span className="hidden sm:inline">{t('Dodaj Klienta', 'Add Client')}</span>
+                        <span>{t('Dodaj Klienta', 'Add Client')}</span>
                     </button>
                 </header>
 

@@ -74,7 +74,7 @@ const ClientDetails: React.FC = () => {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center text-2xl font-black">
+                        <div className="size-14 aspect-square rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-black leading-none shrink-0">
                             {client.firstName[0]}
                             {client.lastName[0]}
                         </div>
@@ -94,7 +94,7 @@ const ClientDetails: React.FC = () => {
                     <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                         <button
                             onClick={() => setIsEditModalOpen(true)}
-                            className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-slate-600 transition-all"
+                            className="flex items-center justify-center gap-2 px-4 py-3 bg-transparent border border-gray-400 dark:border-gray-500 text-gray-700 dark:text-gray-200 rounded-xl font-bold hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
                         >
                             <span className="material-symbols-outlined">edit</span>
                             {t('Edytuj Dane', 'Edit Details')}

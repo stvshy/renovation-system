@@ -56,8 +56,9 @@ const Projects: React.FC = () => {
                 </header>
                 
                 {/* Status Tabs */}
-                <div className="flex px-2 py-4 overflow-x-auto">
-                    <div className="flex h-10 items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1">
+                <div className="flex justify-center px-2 py-4">
+                    <div className="w-full max-w-md overflow-x-auto rounded-xl">
+                    <div className="inline-flex min-w-max h-10 items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 mx-auto">
                         {statuses.map((status) => (
                             <label key={status.value} className="flex cursor-pointer h-full items-center justify-center rounded-lg px-4 has-[:checked]:bg-white dark:has-[:checked]:bg-slate-700 has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-slate-50 text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal transition-all duration-200 whitespace-nowrap">
                                 <span className="truncate">{status.label}</span>
@@ -72,6 +73,7 @@ const Projects: React.FC = () => {
                             </label>
                         ))}
                     </div>
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-4 px-2">
@@ -79,9 +81,9 @@ const Projects: React.FC = () => {
                         <div className="text-center py-10">{t('Ładowanie projektów...', 'Loading projects...')}</div>
                     ) : filteredProjects.length === 0 ? (
                          <div className="text-center py-20 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700">
-                            <p className="text-slate-500 text-lg mb-2">{t('Brak projektów w tej kategorii', 'No projects in this category')}</p>
+                            <p className="text-slate-500 text-base mb-2">{t('Brak projektów w tej kategorii', 'No projects in this category')}</p>
                             {statusFilter === 'All' && (
-                                <button onClick={() => navigate('/projects/new/client')} className="text-primary font-bold hover:underline">{t('Utwórz pierwszy projekt', 'Create your first project')}</button>
+                                <button onClick={() => navigate('/projects/new/client')} className="text-primary text-sm font-bold hover:underline">{t('Utwórz pierwszy projekt', 'Create your first project')}</button>
                             )}
                          </div>
                     ) : (

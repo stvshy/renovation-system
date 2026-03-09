@@ -62,7 +62,7 @@ const Sidebar: React.FC = () => {
                     )}
                 </div>
 
-                <nav className={`flex-1 py-4 space-y-2 overflow-y-auto custom-scrollbar ${isExpanded ? 'px-2' : 'px-1 sm:px-2'}`}>
+                <nav className={`flex-1 py-4 space-y-2 ${isExpanded ? 'px-2' : 'px-1 sm:px-2'}`}>
                     <NavItem to="/projects" icon="folder" label={t('Projekty', 'Projects')} expanded={isExpanded} />
                     <NavItem to="/inventory" icon="warehouse" label={t('Magazyn', 'Inventory')} expanded={isExpanded} />
                     <NavItem to="/clients" icon="groups" label={t('Klienci', 'Clients')} expanded={isExpanded} />
