@@ -7,31 +7,32 @@
 
 **Renovation System** is a cloud-based Estimation & Project Management platform built for modern construction teams. It moves the renovation workflow out of spreadsheets and into a smart, integrated application.
 
-🚀 **Ready to use for renovation companies!** The application is production-ready, supports dual languages (**English & Polish**), and **works flawlessly on mobile devices** — allowing you to manage projects, check inventory, and create estimates directly from the construction site!
+🚀 **Ready to use for renovation companies!** The application is production-ready, supports dual languages (**English & Polish**), and is tailored for both office and on-site use.
 
 🔗 **[Live Demo](https://stvshy.github.io/renovation-system/)** <br>
 
 ## 📸 Application Overview
 
-### 📅 Project Timeline & Calendar
-![Calendar](./assets/renovation5.png)
-*A centralized view of all active projects, calendar schedules, and quick actions.*
+### 📱 Work From Anywhere (Mobile Ready!)
+<img src="./assets/renovation6.png" align="right" width="170" alt="Clients Mobile">
 
-### 👥 Client Management (Mobile Ready!)
-![Clients](./assets/renovation6.png)
-*Built-in CRM to manage your clients. Fully responsive and optimized for mobile screens.*
+**Renovation System works where you work.** Thanks to a fully responsive design, you can manage your operations directly from the construction site!
 
-### 📐 Room Configuration Wizard
-![Room Config](./assets/renovation2.png)
-*Defining room dimensions and subtracting openings for precise area calculation.*
+* **Mobile-Optimized CRM:** Instantly access client phone numbers, emails, and addresses.
+* **On-Site Tracking:** Update project statuses or check inventory without needing a laptop.
+* **Real-Time Sync:** Everything you do on mobile is instantly available back in the office.
+
+<br clear="all"> <br>
+
+### 📐 Room Configuration & 📄 Final Offer Summary
+| Room Configuration Wizard | Final Offer Summary |
+| :---: | :---: |
+| <img src="./assets/renovation2.png" alt="Room Config" width="90%"> | <img src="./assets/renovation4.png" alt="Offer Summary" width="100%"> |
+| *Defining room dimensions and subtracting openings for precise area calculation.* | *The generated cost breakdown ready to be printed or exported as a PDF for the client.* |
 
 ### 🧮 Service & Material Estimator
 ![Estimator](./assets/renovation3.png)
 *Selecting services (e.g., Painting) and mapping them to inventory items with automatic cost calculation.*
-
-### 📄 Final Offer Summary
-![Offer Summary](./assets/renovation4.png)
-*The generated cost breakdown ready to be printed or exported as a PDF for the client.*
 
 ### ⚙️ Settings & Customization
 ![Settings](./assets/renovation1.png)
