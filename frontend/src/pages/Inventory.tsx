@@ -44,7 +44,7 @@ const Inventory: React.FC = () => {
         quantity: 0,
         unit: Unit.PCS,
         pricePerUnit: 0,
-        category: CATEGORIES[0] || "Inne",
+        category: "",
     });
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const Inventory: React.FC = () => {
 
     const openAddModal = () => {
         setEditingItem(null);
-        setNewItem({ name: "", quantity: 0, unit: Unit.PCS, pricePerUnit: 0, category: CATEGORIES[0] || "Inne" });
+        setNewItem({ name: "", quantity: 0, unit: Unit.PCS, pricePerUnit: 0, category: "" });
         setIsModalOpen(true);
     };
 
@@ -276,7 +276,9 @@ const Inventory: React.FC = () => {
                                         value={newItem.category}
                                         onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
                                     >
-                                        <option value="">{t('Wybierz kategorię', 'Choose category')}</option>
+                                        <option value="" disabled hidden>
+                                            {t('Wybierz kategorię', 'Choose category')}
+                                        </option>
                                         {CATEGORIES.map((cat) => (
                                             <option key={cat} value={cat}>
                                                 {localizeCategory(cat)}

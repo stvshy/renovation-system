@@ -296,13 +296,13 @@ const ServiceForm: React.FC = () => {
         // Use user edited param instead of hidden calculation
         const userParam = parseFloat(strategyParam);
         if (isNaN(userParam) || userParam < 0) {
-            setErrorMessage(t("Nieprawidlowy parametr (wydajnosc/odpad).", "Invalid parameter (coverage/waste)."));
+            setErrorMessage(t("Nieprawidłowy parametr (wydajność/odpad).", "Invalid parameter (coverage/waste)."));
             return;
         }
 
         if (isAddingNewMaterial) {
             if (!customMatName || !customMatPrice) {
-                setErrorMessage(t("Prosze uzupelnic nazwe i cene wlasnego materialu.", "Please enter custom material name and price."));
+                setErrorMessage(t("Proszę uzupełnić nazwę i cenę własnego materiału.", "Please enter custom material name and price."));
                 return;
             }
 
@@ -336,7 +336,7 @@ const ServiceForm: React.FC = () => {
             const inventoryItem = filteredInventory.find((i) => i.id === targetId);
 
             if (!inventoryItem) {
-                setErrorMessage(t("Prosze wybrac material z magazynu lub dodac nowy.", "Please select a material from inventory or add a new one."));
+                setErrorMessage(t("Proszę wybrać materiał z magazynu lub dodać nowy.", "Please select a material from inventory or add a new one."));
                 return;
             }
 
@@ -826,9 +826,9 @@ const ServiceForm: React.FC = () => {
 
                             <button
                                 onClick={handleAddService}
-                                className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-2 active:scale-[0.98]"
+                                className="w-full bg-primary text-white font-bold text-sm sm:text-base py-2.5 sm:py-4 rounded-xl hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-1.5 sm:gap-2 active:scale-[0.98]"
                             >
-                                <span className="material-symbols-outlined">add_task</span>
+                                <span className="material-symbols-outlined text-[18px] sm:text-[22px]">add_task</span>
                                 {t('Dodaj do kosztorysu pokoju', 'Add to room estimate')}
                             </button>
                         </div>

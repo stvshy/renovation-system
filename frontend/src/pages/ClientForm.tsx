@@ -345,11 +345,11 @@ const ClientForm: React.FC = () => {
                         </label>
                     </div>
 
-                    <div className="flex flex-col gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full max-w-md mx-auto sm:flex-row sm:flex-wrap sm:justify-center sm:max-w-none">
-                        <button onClick={() => navigate('/projects')} className="w-full flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                    <div className="flex flex-col md:flex-row gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
+                        <button onClick={() => navigate('/projects')} className="w-full md:flex-1 flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
                             {t('Anuluj', 'Cancel')}
                         </button>
-                        <button onClick={handleNext} className="w-full flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary text-white font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+                        <button onClick={handleNext} className="w-full md:flex-1 flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary text-white font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
                             {t('Zapisz i Dalej', 'Save and Continue')}
                         </button>
                     </div>

@@ -546,7 +546,7 @@ const RoomForm: React.FC = () => {
 
                     <button
                         onClick={() => navigate("/projects")}
-                        className="px-6 py-3 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-300 transition-colors"
+                        className="px-6 py-3 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-300 transition-colors md:mr-auto"
                     >
                         {t('Wyjdź', 'Exit')}
                     </button>
