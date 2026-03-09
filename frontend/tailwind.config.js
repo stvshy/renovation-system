@@ -20,7 +20,8 @@ export default {
         accent: "#F39C12",
       },
       fontFamily: {
-        display: ["Inter", "sans-serif"],
+        display: ["Urbanist", "Questrial", "sans-serif"],
+        body: ["Figtree", "Questrial", "sans-serif"],
       },
     },
   },
