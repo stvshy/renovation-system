@@ -25,17 +25,24 @@ const Register: React.FC = () => {
             return;
         }
 
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-        });
+        try {
+            const { error: signUpError } = await supabase.auth.signUp({
+                email,
+                password,
+            });
 
-        if (error) {
-            setError(error.message);
-            setLoading(false);
-        } else {
+            if (signUpError) {
+                // Supabase returns a detailed password policy message here.
+                setError(signUpError.message);
+                return;
+            }
+
             alert('Rejestracja udana! Możesz się teraz zalogować (sprawdź email jeśli wymagane jest potwierdzenie).');
             navigate('/login');
+        } catch {
+            setError('Wystąpił nieoczekiwany błąd podczas rejestracji. Spróbuj ponownie.');
+        } finally {
+            setLoading(false);
         }
     };
 
