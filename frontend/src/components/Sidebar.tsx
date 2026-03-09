@@ -59,7 +59,7 @@ const Sidebar: React.FC = () => {
                     </button>
 
                     <div className="flex justify-center pt-1">
-                        <LanguageToggleButton size="sm" />
+                        <LanguageToggleButton size="xxs" className="border border-gray-300 dark:border-gray-600" />
                     </div>
                 </div>
             </div>
