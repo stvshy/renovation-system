@@ -30,7 +30,7 @@ const Calendar: React.FC = () => {
     const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
     const monthNames = language === 'pl'
-        ? ["Styczen", "Luty", "Marzec", "Kwiecien", "Maj", "Czerwiec", "Lipiec", "Sierpien", "Wrzesien", "Pazdziernik", "Listopad", "Grudzien"]
+        ? ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"]
         : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const dayNames = language === 'pl' ? ['Pon', 'Wt', 'Sr', 'Czw', 'Pt', 'Sob', 'Ndz'] : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -90,8 +90,7 @@ const Calendar: React.FC = () => {
                 </div>
                 
                 <div className="overflow-x-auto -mx-2 px-2 [touch-action:pan-x]" style={{ WebkitOverflowScrolling: 'touch' }}>
-                    <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
-                        <div className="min-w-[560px] sm:min-w-[700px]">
+                    <div className="min-w-[560px] sm:min-w-[700px] bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
                         {/* Header Row */}
                         <div className="grid grid-cols-7 text-center border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-800">
                             {dayNames.map(day => (
@@ -158,7 +157,6 @@ const Calendar: React.FC = () => {
                             {Array.from({ length: (7 - (startDayOffset + daysInMonth) % 7) % 7 }).map((_, i) => (
                                 <div key={`empty-end-${i}`} className="bg-white dark:bg-slate-900/50 min-h-[96px] sm:min-h-[120px]"></div>
                             ))}
-                        </div>
                         </div>
                     </div>
                 </div>
