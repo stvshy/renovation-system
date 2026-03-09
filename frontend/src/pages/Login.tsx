@@ -98,7 +98,7 @@ const Login: React.FC = () => {
                                         className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-neutral-gray/45 bg-off-white p-[13px] text-base font-medium leading-normal text-text-dark placeholder:text-neutral-gray focus:border-dependable-blue focus:outline-0 focus:ring-2 focus:ring-dependable-blue/20 dark:border-neutral-gray/70 dark:bg-background-dark dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:border-primary dark:focus:ring-primary/25 sm:h-14 sm:p-[15px]"
                                         id="email"
                                         name="email"
-                                        placeholder="np. jan.kowalski@email.com"
+                                        placeholder={t("Wprowadź swój e-mail", "Enter your email")}
                                         required
                                         type="email"
                                         value={email}
