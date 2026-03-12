@@ -95,7 +95,7 @@ const Login: React.FC = () => {
                                     </label>
                                     <input
                                         autoComplete="email"
-                                        className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-neutral-gray/45 bg-off-white p-[13px] text-base font-medium leading-normal text-text-dark placeholder:text-neutral-gray focus:border-dependable-blue focus:outline-0 focus:ring-2 focus:ring-dependable-blue/20 dark:border-neutral-gray/70 dark:bg-background-dark dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:border-primary dark:focus:ring-primary/25 sm:h-14 sm:p-[15px]"
+                                        className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-neutral-gray/45 bg-off-white p-3 font-body text-sm font-medium leading-normal text-text-dark placeholder:text-neutral-gray focus:border-dependable-blue focus:outline-0 focus:ring-2 focus:ring-dependable-blue/20 dark:border-neutral-gray/70 dark:bg-background-dark dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:border-primary dark:focus:ring-primary/25 sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
                                         id="email"
                                         name="email"
                                         placeholder={t("Wprowadź swój e-mail", "Enter your email")}
@@ -112,7 +112,7 @@ const Login: React.FC = () => {
                                     <div className="relative flex w-full items-center">
                                         <input
                                             autoComplete="current-password"
-                                            className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-neutral-gray/45 bg-off-white p-[13px] pr-10 text-base font-medium leading-normal text-text-dark placeholder:text-neutral-gray focus:border-dependable-blue focus:outline-0 focus:ring-2 focus:ring-dependable-blue/20 dark:border-neutral-gray/70 dark:bg-background-dark dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:border-primary dark:focus:ring-primary/25 sm:h-14 sm:p-[15px]"
+                                            className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-neutral-gray/45 bg-off-white p-3 pr-10 font-body text-sm font-medium leading-normal text-text-dark placeholder:text-neutral-gray focus:border-dependable-blue focus:outline-0 focus:ring-2 focus:ring-dependable-blue/20 dark:border-neutral-gray/70 dark:bg-background-dark dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:border-primary dark:focus:ring-primary/25 sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
                                             id="password"
                                             name="password"
                                             placeholder={t("Wprowadź swoje hasło", "Enter your password")}

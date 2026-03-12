@@ -17,6 +17,9 @@ const Register: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    const authInputClassName =
+        'auth-input-stable form-input flex !h-12 !min-h-12 !max-h-12 w-full min-w-0 flex-1 resize-none overflow-hidden appearance-none rounded-lg border border-slate-300 bg-white/95 p-3 pr-10 font-body text-base font-medium leading-normal text-slate-900 placeholder:text-slate-500 focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/25 dark:border-slate-500 dark:bg-slate-800/95 dark:text-white dark:placeholder:text-slate-300';
+
     const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
     const getLocalizedRegisterError = (errorMessage: string) => {
@@ -130,15 +133,19 @@ const Register: React.FC = () => {
 
                                     <label className="flex flex-col gap-2">
                                         <p className="text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100">{t('E-mail', 'Email')}</p>
-                                        <input
-                                            autoComplete="email"
-                                            className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 bg-white/95 p-3 text-base font-medium text-slate-900 placeholder:text-slate-500 focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/25 dark:border-slate-500 dark:bg-slate-800/95 dark:text-white dark:placeholder:text-slate-300 sm:h-[3.25rem]"
-                                            placeholder={t('Wprowadź swój e-mail', 'Enter your email')}
-                                            type="email"
-                                            required
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                        />
+                                        <div className="relative flex w-full items-center">
+                                            <input
+                                                autoComplete="email"
+                                                className={authInputClassName}
+                                                placeholder={t('Wprowadź swój e-mail', 'Enter your email')}
+                                                type="text"
+                                                inputMode="email"
+                                                required
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                            />
+                                            <span aria-hidden="true" className="pointer-events-none absolute right-3 h-5 w-5 opacity-0" />
+                                        </div>
                                     </label>
 
                                     <label className="flex flex-col gap-2">
@@ -146,7 +153,7 @@ const Register: React.FC = () => {
                                         <div className="relative flex w-full items-center">
                                             <input
                                                 autoComplete="new-password"
-                                                className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 bg-white/95 p-3 pr-10 text-base font-medium text-slate-900 placeholder:text-slate-500 focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/25 dark:border-slate-500 dark:bg-slate-800/95 dark:text-white dark:placeholder:text-slate-300 sm:h-[3.25rem]"
+                                                className={authInputClassName}
                                                 placeholder={t('Wprowadź swoje hasło', 'Enter your password')}
                                                 type={showPassword ? 'text' : 'password'}
                                                 required
@@ -168,7 +175,7 @@ const Register: React.FC = () => {
                                         <div className="relative flex w-full items-center">
                                             <input
                                                 autoComplete="new-password"
-                                                className="form-input flex h-12 w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-slate-300 bg-white/95 p-3 pr-10 text-base font-medium text-slate-900 placeholder:text-slate-500 focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/25 dark:border-slate-500 dark:bg-slate-800/95 dark:text-white dark:placeholder:text-slate-300 sm:h-[3.25rem]"
+                                                className={authInputClassName}
                                                 placeholder={t('Potwierdź swoje hasło', 'Confirm your password')}
                                                 type={showConfirmPassword ? 'text' : 'password'}
                                                 required
@@ -186,14 +193,14 @@ const Register: React.FC = () => {
                                     </label>
 
                                     <button
-                                        className="mt-6 flex h-12 w-full items-center justify-center rounded-lg bg-primary px-6 font-display text-base font-bold tracking-[0.015em] text-white transition-all hover:scale-[0.995] hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark disabled:opacity-50 sm:mt-7 sm:h-[3.25rem]"
+                                        className="mt-6 flex h-[47px] w-full items-center justify-center rounded-lg bg-primary px-6 font-display text-base font-bold tracking-[0.015em] text-white transition-all hover:scale-[0.995] hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 dark:focus:ring-offset-background-dark disabled:opacity-50 sm:mt-7"
                                         type="submit"
                                         disabled={loading}
                                     >
                                         {loading ? t('Rejestracja...', 'Registering...') : t('Zarejestruj się', 'Register')}
                                     </button>
 
-                                    <p className="pt-1 text-center text-sm text-white lg:text-slate-800 dark:text-slate-200">
+                                    <p className="pt-1 text-center text-[14.5px] text-white lg:text-slate-800 dark:text-slate-200">
                                         {t('Masz już konto?', 'Already have an account?')}{' '}
                                         <Link className="font-semibold text-primary hover:underline" to="/login">
                                             {t('Zaloguj się', 'Sign in')}
