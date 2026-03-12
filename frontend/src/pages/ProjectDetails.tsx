@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getProjectById, updateProject } from "../lib/storage";
 import { Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
+import { useDemo } from "../context/DemoContext";
 import {
     RenovationTask,
     Room,
@@ -61,7 +62,8 @@ const rehydrateRoom = (plainRoom: any): Room => {
 };
 
 const ProjectDetails: React.FC = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
+    const { isDemoMode, demoRevision } = useDemo();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [project, setProject] = useState<Project | null>(null);
@@ -88,7 +90,7 @@ const ProjectDetails: React.FC = () => {
             setLoading(false);
         };
         load();
-    }, [id, navigate]);
+    }, [id, navigate, isDemoMode, demoRevision]);
 
     const handleStatusChange = async (newStatus: Project["status"]) => {
         if (project) {
@@ -137,6 +139,7 @@ const ProjectDetails: React.FC = () => {
 
     const paidAmount = project.paidAmount || 0;
     const remainingAmount = project.value - paidAmount;
+    const currencyCode = language === "en" ? "EUR" : "PLN";
 
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
@@ -233,7 +236,7 @@ const ProjectDetails: React.FC = () => {
                             </h3>
                             <div className="space-y-1">
                                 <p className="text-sm text-gray-500">{t('Wartosc calkowita', 'Total value')}</p>
-                                <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} {t('zl', 'PLN')}</p>
+                                <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
                         </div>
 
@@ -262,7 +265,7 @@ const ProjectDetails: React.FC = () => {
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2 group cursor-pointer" onClick={handleEditPaidClick}>
-                                        <span className="text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} {t('zl', 'PLN')}</span>
+                                        <span className="text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} {currencyCode}</span>
                                         <span className="material-symbols-outlined text-[14px] text-gray-300 group-hover:text-primary transition-colors">
                                             edit
                                         </span>
@@ -273,7 +276,7 @@ const ProjectDetails: React.FC = () => {
                             {remainingAmount > 0 && (
                                 <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
                                     <span className="text-xs text-gray-400">{t('Pozostalo:', 'Remaining:')}</span>
-                                    <span className="text-xs font-bold text-orange-500">{remainingAmount.toLocaleString()} {t('zl', 'PLN')}</span>
+                                    <span className="text-xs font-bold text-orange-500">{remainingAmount.toLocaleString()} {currencyCode}</span>
                                 </div>
                             )}
                         </div>
@@ -297,7 +300,7 @@ const ProjectDetails: React.FC = () => {
                                             {room.name}
                                         </h3>
                                         <span className="text-sm font-mono font-bold text-gray-600 dark:text-gray-300">
-                                            {room.calculateTotalRoomCost().toFixed(2)} zł
+                                            {room.calculateTotalRoomCost().toFixed(2)} {currencyCode}
                                         </span>
                                     </div>
                                     <div className="p-0 overflow-x-auto">
@@ -317,7 +320,7 @@ const ProjectDetails: React.FC = () => {
                                                     >
                                                         <td className="px-6 py-3 font-medium text-gray-900 dark:text-white min-w-[180px]">{task.description}</td>
                                                         <td className="px-6 py-3 min-w-[140px]">{task.material.name}</td>
-                                                        <td className="px-6 py-3 text-right">{task.calculateTotalCost().toFixed(2)} {t('zl', 'PLN')}</td>
+                                                        <td className="px-6 py-3 text-right">{task.calculateTotalCost().toFixed(2)} {currencyCode}</td>
                                                     </tr>
                                                 ))}
                                             </tbody>

@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { getClients, saveClient } from '../lib/storage';
 import { Client } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useDemo } from '../context/DemoContext';
 
 const Clients: React.FC = () => {
     const navigate = useNavigate();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
+    const { isDemoMode, demoRevision } = useDemo();
     const [clients, setClients] = useState<Client[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -24,7 +26,7 @@ const Clients: React.FC = () => {
             setIsLoading(false);
         };
         load();
-    }, []);
+    }, [isDemoMode, demoRevision]);
 
     const handleSaveClient = async (e: React.FormEvent) => {
         e.preventDefault();

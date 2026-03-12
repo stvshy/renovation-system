@@ -5,9 +5,11 @@ import { InventoryItem } from "../types";
 import { Unit, CATEGORIES } from "../lib/renovationLogic";
 import { useLanguage } from "../context/LanguageContext";
 import ScrollableSelect from "../components/ScrollableSelect";
+import { useDemo } from "../context/DemoContext";
 
 const Inventory: React.FC = () => {
     const { t, language } = useLanguage();
+    const { isDemoMode, demoRevision } = useDemo();
 
     const currencyCode = language === "en" ? "EUR" : "PLN";
 
@@ -54,7 +56,7 @@ const Inventory: React.FC = () => {
             setIsLoading(false);
         };
         load();
-    }, []);
+    }, [isDemoMode, demoRevision]);
 
     const openAddModal = () => {
         setEditingItem(null);

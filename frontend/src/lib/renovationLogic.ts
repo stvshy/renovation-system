@@ -335,26 +335,27 @@ export const CATEGORIES = Array.from(new Set(DEFAULT_SERVICE_CATALOG.map(s => s.
 
 
   // === Demo Data Generation ===
-  export const generateDemoBathroom = (): Room => {
-    // Note: Demo materials now include category (last param)
-    const tynkGipsowy = new Material("Tynk Gipsowy Maszynowy (Knauf MP75)", 1.2, Unit.KG, undefined, undefined, 'Malowanie');
-    const gladzSzpachlowa = new Material("Gładź Finiszowa (Worek)", 3.5, Unit.KG, undefined, undefined, 'Malowanie'); 
-    const wylewkaSamopoziom = new Material("Wylewka Samopoziomująca", 2.0, Unit.KG, undefined, undefined, 'Podłogi');
-    const klejDoPlytek = new Material("Klej do płytek elastyczny", 2.5, Unit.KG, undefined, undefined, 'Glazurnictwo');
-    const plytkiGresowe = new Material("Gres Szary 60x60", 85.0, Unit.M2, undefined, undefined, 'Glazurnictwo');
-    const plytaGK = new Material("Płyta G-K Wodoodporna", 25.0, Unit.M2, undefined, undefined, 'Sufity');
-    const parapet = new Material("Parapet Konglomerat", 200.0, Unit.LM, undefined, undefined, 'Stolarka');
+  export const generateDemoBathroom = (language: 'pl' | 'en' = 'pl'): Room => {
+    const en = language === 'en';
 
-    const lazienka = new Room("Łazienka (Demo)");
+    const tynkGipsowy    = new Material(en ? "Machine Plaster (Knauf MP75)"   : "Tynk Gipsowy Maszynowy (Knauf MP75)", 1.2,  Unit.KG, undefined, undefined, 'Malowanie');
+    const gladzSzpachlowa = new Material(en ? "Finish Skim Coat (Bag)"         : "Gładź Finiszowa (Worek)",             3.5,  Unit.KG, undefined, undefined, 'Malowanie');
+    const wylewkaSamopoziom = new Material(en ? "Self-Leveling Screed"          : "Wylewka Samopoziomująca",             2.0,  Unit.KG, undefined, undefined, 'Podłogi');
+    const klejDoPlytek   = new Material(en ? "Flexible Tile Adhesive"          : "Klej do płytek elastyczny",           2.5,  Unit.KG, undefined, undefined, 'Glazurnictwo');
+    const plytkiGresowe  = new Material(en ? "Grey Porcelain Tile 60x60"       : "Gres Szary 60x60",                   85.0, Unit.M2, undefined, undefined, 'Glazurnictwo');
+    const plytaGK        = new Material(en ? "Water-Resistant Drywall"         : "Płyta G-K Wodoodporna",              25.0, Unit.M2, undefined, undefined, 'Sufity');
+    const parapet        = new Material(en ? "Composite Windowsill"            : "Parapet Konglomerat",               200.0, Unit.LM, undefined, undefined, 'Stolarka');
+
+    const lazienka = new Room(en ? "Bathroom (Demo)" : "Łazienka (Demo)");
     
-    const podlogaLazienka = new Surface("Podłoga", SurfaceType.FLOOR, 3, 2);
+    const podlogaLazienka = new Surface(en ? "Floor" : "Podłoga", SurfaceType.FLOOR, 3, 2);
     lazienka.addSurface(podlogaLazienka);
 
     const scianyLazienka = [
-        new Surface("Ściana A", SurfaceType.WALL, 3, 2.5), 
-        new Surface("Ściana B", SurfaceType.WALL, 3, 2.5), 
-        new Surface("Ściana C", SurfaceType.WALL, 2, 2.5), 
-        new Surface("Ściana D", SurfaceType.WALL, 2, 2.5)
+        new Surface(en ? "Wall A" : "Ściana A", SurfaceType.WALL, 3, 2.5), 
+        new Surface(en ? "Wall B" : "Ściana B", SurfaceType.WALL, 3, 2.5), 
+        new Surface(en ? "Wall C" : "Ściana C", SurfaceType.WALL, 2, 2.5), 
+        new Surface(en ? "Wall D" : "Ściana D", SurfaceType.WALL, 2, 2.5)
     ];
     scianyLazienka[2].addOpening(new Opening(0.8, 2.0, 'drzwi'));
 
@@ -363,13 +364,13 @@ export const CATEGORIES = Array.from(new Set(DEFAULT_SERVICE_CATALOG.map(s => s.
     const areaSciany = lazienka.getTotalWallArea();
     const areaPodloga = lazienka.getFloorArea();
 
-    lazienka.addTask(new RenovationTask("Tynkowanie ścian", tynkGipsowy, 45.0, new ConsumptionStrategy(), { consumptionPerUnit: 10 }, areaSciany));
-    lazienka.addTask(new RenovationTask("Wylewka samopoziomująca", wylewkaSamopoziom, 30.0, new ConsumptionStrategy(), { consumptionPerUnit: 15 }, areaPodloga));
-    lazienka.addTask(new RenovationTask("Sufit podwieszany", plytaGK, 120.0, new WasteFactorStrategy(), { wastePercentage: 15 }, areaPodloga));
-    lazienka.addTask(new RenovationTask("Szpachlowanie sufitu", gladzSzpachlowa, 35.0, new ConsumptionStrategy(), { consumptionPerUnit: 1.5 }, areaPodloga));
-    lazienka.addTask(new RenovationTask("Klejenie płytek", klejDoPlytek, 0.0, new ConsumptionStrategy(), { consumptionPerUnit: 4 }, areaSciany + areaPodloga));
-    lazienka.addTask(new RenovationTask("Układanie gresu", plytkiGresowe, 100.0, new WasteFactorStrategy(), { wastePercentage: 10 }, areaSciany + areaPodloga));
-    lazienka.addTask(new RenovationTask("Montaż parapetu", parapet, 50.0, new LinearStrategy(), { wastePercentage: 0 }, 1.5));
+    lazienka.addTask(new RenovationTask(en ? "Wall plastering"         : "Tynkowanie ścian",           tynkGipsowy,     45.0,  new ConsumptionStrategy(),  { consumptionPerUnit: 10 },  areaSciany));
+    lazienka.addTask(new RenovationTask(en ? "Self-leveling screed"    : "Wylewka samopoziomująca",     wylewkaSamopoziom, 30.0, new ConsumptionStrategy(), { consumptionPerUnit: 15 },  areaPodloga));
+    lazienka.addTask(new RenovationTask(en ? "Suspended ceiling"       : "Sufit podwieszany",           plytaGK,        120.0,  new WasteFactorStrategy(),  { wastePercentage: 15 },     areaPodloga));
+    lazienka.addTask(new RenovationTask(en ? "Ceiling skim coat"       : "Szpachlowanie sufitu",        gladzSzpachlowa, 35.0,  new ConsumptionStrategy(),  { consumptionPerUnit: 1.5 }, areaPodloga));
+    lazienka.addTask(new RenovationTask(en ? "Applying tile adhesive"  : "Klejenie płytek",             klejDoPlytek,    0.0,   new ConsumptionStrategy(),  { consumptionPerUnit: 4 },   areaSciany + areaPodloga));
+    lazienka.addTask(new RenovationTask(en ? "Tile laying"             : "Układanie gresu",             plytkiGresowe,  100.0,  new WasteFactorStrategy(),  { wastePercentage: 10 },     areaSciany + areaPodloga));
+    lazienka.addTask(new RenovationTask(en ? "Windowsill installation" : "Montaż parapetu",             parapet,         50.0,  new LinearStrategy(),       { wastePercentage: 0 },      1.5));
 
     return lazienka;
   }

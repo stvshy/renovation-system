@@ -3,9 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getClientById, getProjects, saveClient } from "../lib/storage";
 import { Client, Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
+import { useDemo } from "../context/DemoContext";
 
 const ClientDetails: React.FC = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
+    const { isDemoMode, demoRevision } = useDemo();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [client, setClient] = useState<Client | undefined>(undefined);
@@ -35,7 +37,7 @@ const ClientDetails: React.FC = () => {
             setLoading(false);
         };
         load();
-    }, [id, navigate]);
+    }, [id, navigate, isDemoMode, demoRevision]);
 
     // Populate edit form when opening modal
     useEffect(() => {
@@ -67,6 +69,8 @@ const ClientDetails: React.FC = () => {
         setClient(updatedClient);
         setIsEditModalOpen(false);
     };
+
+    const currencyCode = language === "en" ? "EUR" : "PLN";
 
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
@@ -183,7 +187,7 @@ const ClientDetails: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="text-left sm:text-right w-full sm:w-auto">
-                                            <p className="font-bold text-gray-800 dark:text-white">{project.value.toLocaleString()} {t('zl', 'PLN')}</p>
+                                            <p className="font-bold text-gray-800 dark:text-white">{project.value.toLocaleString()} {currencyCode}</p>
                                             <span className="material-symbols-outlined text-gray-300 group-hover:text-primary">arrow_forward</span>
                                         </div>
                                     </div>

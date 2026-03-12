@@ -404,7 +404,7 @@ const RoomForm: React.FC = () => {
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
                                         <div className="md:col-span-7 flex flex-row items-center gap-2 md:gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide">
-                                            <div className="flex items-center gap-2 shrink-0">
+                                            <div className="flex items-center gap-1 shrink-0">
                                                 <label className="text-xs text-gray-500 whitespace-nowrap">{t("Szer", "W")}: </label>
                                                 <input
                                                     type="number"
@@ -413,8 +413,9 @@ const RoomForm: React.FC = () => {
                                                     onChange={(e) => handleUpdateSurface(index, "width", e.target.value)}
                                                     className="w-16 p-1 text-sm border rounded bg-gray-50 dark:bg-slate-900 disabled:opacity-60"
                                                 />
+                                                <span className="text-xs text-gray-500 whitespace-nowrap">m</span>
                                             </div>
-                                            <div className="flex items-center gap-2 shrink-0">
+                                            <div className="flex items-center gap-1 shrink-0">
                                                 <label className="text-xs text-gray-500 whitespace-nowrap">{t("Wys/Dł", "H/L")}: </label>
                                                 <input
                                                     type="number"
@@ -423,10 +424,11 @@ const RoomForm: React.FC = () => {
                                                     onChange={(e) => handleUpdateSurface(index, "height", e.target.value)}
                                                     className="w-16 p-1 text-sm border rounded bg-gray-50 dark:bg-slate-900 disabled:opacity-60"
                                                 />
+                                                <span className="text-xs text-gray-500 whitespace-nowrap">m</span>
                                             </div>
                                             {mode === "custom" && (
                                                 <div className="flex items-center gap-2 shrink-0">
-                                                    <label className="text-xs text-primary font-bold whitespace-nowrap">lub m²:</label>
+                                                    <label className="text-xs text-primary font-bold whitespace-nowrap">{t("lub m²:", "or m²:")}</label>
                                                     <input
                                                         type="number"
                                                         placeholder="Auto"
@@ -464,9 +466,7 @@ const RoomForm: React.FC = () => {
                                                 key={opIdx}
                                                 className="inline-flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 text-xs px-2 py-1 rounded border border-red-100 dark:border-red-800"
                                             >
-                                                <span>
-                                                    {op.type === "okno" ? "🪟" : "🚪"} {op.width}x{op.height}m
-                                                </span>
+                                                <span>{op.type === "okno" ? "🪟" : "🚪"} {op.width}m x {op.height}m</span>
                                                 <button onClick={() => handleRemoveOpening(index, opIdx)} className="hover:text-red-800 ml-1">
                                                     ×
                                                 </button>
@@ -488,14 +488,14 @@ const RoomForm: React.FC = () => {
                                             </ScrollableSelect>
                                             <input
                                                 type="number"
-                                                placeholder={t("Szer", "W")}
+                                                placeholder={t("Szer (m)", "W (m)")}
                                                 value={openingDims.w}
                                                 onChange={(e) => setOpeningDims({ ...openingDims, w: e.target.value })}
                                                 className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
                                             />
                                             <input
                                                 type="number"
-                                                placeholder={t("Wys", "H")}
+                                                placeholder={t("Wys (m)", "H (m)")}
                                                 value={openingDims.h}
                                                 onChange={(e) => setOpeningDims({ ...openingDims, h: e.target.value })}
                                                 className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"

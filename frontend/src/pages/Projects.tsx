@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { getProjects } from '../lib/storage';
 import { Project } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useDemo } from '../context/DemoContext';
 
 const Projects: React.FC = () => {
     const navigate = useNavigate();
     const { t, language } = useLanguage();
+    const { isDemoMode, demoRevision } = useDemo();
     const [projects, setProjects] = useState<Project[]>([]);
     const [statusFilter, setStatusFilter] = useState<string>('All');
     const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +22,7 @@ const Projects: React.FC = () => {
             setIsLoading(false);
         };
         load();
-    }, []);
+    }, [isDemoMode, demoRevision]);
 
     const filteredProjects = statusFilter === 'All' 
         ? projects 

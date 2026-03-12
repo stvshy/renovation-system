@@ -73,6 +73,7 @@ const OfferSummary: React.FC = () => {
     const [isSaving, setIsSaving] = useState(false);
 
     const currencyCode = language === "en" ? "EUR" : "PLN";
+    const localizeUnit = (unit: string) => language === "en" && unit === "szt" ? "pcs" : unit;
 
     // Data passed from previous steps
     const clientData = location.state?.clientData;
@@ -87,7 +88,7 @@ const OfferSummary: React.FC = () => {
         } else if (location.state?.room) {
             rawRooms = [location.state.room];
         } else {
-            return [generateDemoBathroom()];
+            return [generateDemoBathroom(language)];
         }
 
         return rawRooms.map((raw) => rehydrateRoom(raw));
@@ -105,7 +106,7 @@ const OfferSummary: React.FC = () => {
 
         const newProject: Project = {
             id: crypto.randomUUID(),
-            name: `Remont: ${clientData.lastName}`,
+            name: `${t('Remont', 'Renovation')}: ${clientData.lastName}`,
             clientName: `${clientData.firstName} ${clientData.lastName}`,
             clientId: clientData.id,
             address: `${clientData.address}, ${clientData.city}`,
@@ -202,7 +203,7 @@ const OfferSummary: React.FC = () => {
                                                     </p>
                                                     <div className="grid grid-cols-2 gap-x-3 gap-y-1 mt-3 text-xs text-gray-600 dark:text-gray-300">
                                                         <p>{t('Ilość', 'Quantity')}</p>
-                                                        <p className="text-right">{quantity.toFixed(2)} {task.material.unit}</p>
+                                                        <p className="text-right">{quantity.toFixed(2)} {localizeUnit(task.material.unit)}</p>
                                                         <p>{t('Koszt Mat.', 'Material Cost')}</p>
                                                         <p className="text-right text-green-600 dark:text-green-400">{materialCost.toFixed(2)} {currencyCode}</p>
                                                         <p>{t('Robocizna', 'Labor')}</p>
@@ -268,7 +269,7 @@ const OfferSummary: React.FC = () => {
                                                         )}
                                                     </td>
                                                     <td className="px-3 sm:px-6 py-4 text-right whitespace-nowrap">
-                                                        {quantity.toFixed(2)} {task.material.unit}
+                                                        {quantity.toFixed(2)} {localizeUnit(task.material.unit)}
                                                     </td>
                                                     <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 whitespace-nowrap">{materialCost.toFixed(2)} {currencyCode}</td>
                                                     <td className="px-3 sm:px-6 py-4 text-right text-blue-600 dark:text-blue-400 whitespace-nowrap">{laborCost.toFixed(2)} {currencyCode}</td>
