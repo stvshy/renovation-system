@@ -1,6 +1,22 @@
 import { supabase } from "./supabaseClient";
 import { Project, Client, InventoryItem } from "../types";
 import { Room, ServiceTemplate, DEFAULT_SERVICE_CATALOG } from "./renovationLogic";
+import {
+    isDemoModeActive,
+    getDemoProjects,
+    getDemoProjectById,
+    saveDemoProject,
+    updateDemoProject,
+    getDemoClients,
+    getDemoClientById,
+    saveDemoClient,
+    getDemoInventory,
+    saveDemoInventoryItem,
+    deleteDemoInventoryItem,
+    getDemoServiceCatalog,
+    saveDemoServiceTemplate,
+    deleteDemoServiceTemplate,
+} from "./demoStore";
 
 // Helper to get current user ID
 const getCurrentUserId = async (): Promise<string | null> => {
@@ -13,6 +29,7 @@ const getCurrentUserId = async (): Promise<string | null> => {
 // --- PROJECTS ---
 
 export const getProjects = async (): Promise<Project[]> => {
+    if (isDemoModeActive()) return getDemoProjects();
     try {
         const userId = await getCurrentUserId();
         if (!userId) return [];
@@ -28,6 +45,7 @@ export const getProjects = async (): Promise<Project[]> => {
 };
 
 export const getProjectById = async (id: string): Promise<Project | undefined> => {
+    if (isDemoModeActive()) return getDemoProjectById(id);
     try {
         const userId = await getCurrentUserId();
         if (!userId) return undefined;
@@ -43,6 +61,7 @@ export const getProjectById = async (id: string): Promise<Project | undefined> =
 };
 
 export const saveProject = async (project: Project): Promise<void> => {
+    if (isDemoModeActive()) { saveDemoProject(project); return; }
     try {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
@@ -65,6 +84,7 @@ export const saveProject = async (project: Project): Promise<void> => {
 };
 
 export const updateProject = async (updatedProject: Project): Promise<void> => {
+    if (isDemoModeActive()) { updateDemoProject(updatedProject); return; }
     try {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
@@ -81,6 +101,7 @@ export const updateProject = async (updatedProject: Project): Promise<void> => {
 // --- CLIENTS ---
 
 export const getClients = async (): Promise<Client[]> => {
+    if (isDemoModeActive()) return getDemoClients();
     try {
         const userId = await getCurrentUserId();
         if (!userId) return [];
@@ -96,6 +117,7 @@ export const getClients = async (): Promise<Client[]> => {
 };
 
 export const getClientById = async (id: string): Promise<Client | undefined> => {
+    if (isDemoModeActive()) return getDemoClientById(id);
     try {
         const userId = await getCurrentUserId();
         if (!userId) return undefined;
@@ -111,6 +133,7 @@ export const getClientById = async (id: string): Promise<Client | undefined> => 
 };
 
 export const saveClient = async (client: Client): Promise<void> => {
+    if (isDemoModeActive()) { saveDemoClient(client); return; }
     try {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
@@ -128,6 +151,7 @@ export const saveClient = async (client: Client): Promise<void> => {
 // --- INVENTORY ---
 
 export const getInventory = async (): Promise<InventoryItem[]> => {
+    if (isDemoModeActive()) return getDemoInventory();
     try {
         const userId = await getCurrentUserId();
         if (!userId) return [];
@@ -143,6 +167,7 @@ export const getInventory = async (): Promise<InventoryItem[]> => {
 };
 
 export const saveInventoryItem = async (item: InventoryItem): Promise<void> => {
+    if (isDemoModeActive()) { saveDemoInventoryItem(item); return; }
     try {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
@@ -157,6 +182,7 @@ export const saveInventoryItem = async (item: InventoryItem): Promise<void> => {
 };
 
 export const deleteInventoryItem = async (id: string): Promise<void> => {
+    if (isDemoModeActive()) { deleteDemoInventoryItem(id); return; }
     try {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
@@ -173,6 +199,23 @@ export const deleteInventoryItem = async (id: string): Promise<void> => {
  * Deducts quantities from inventory based on project tasks.
  */
 export const deductInventoryFromProject = async (rooms: Room[]) => {
+    if (isDemoModeActive()) {
+        // In demo mode: update in-memory inventory without hitting Supabase
+        const inventory = getDemoInventory();
+        const inventoryMap = new Map(inventory.map(i => [i.id, i]));
+        rooms.forEach(room => {
+            room.tasks.forEach(task => {
+                if (task.material.inventoryId) {
+                    const item = inventoryMap.get(task.material.inventoryId);
+                    if (item) {
+                        item.quantity = Math.max(0, item.quantity - task.calculateMaterialQuantity());
+                        saveDemoInventoryItem(item);
+                    }
+                }
+            });
+        });
+        return;
+    }
     try {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
@@ -216,6 +259,7 @@ export const deductInventoryFromProject = async (rooms: Room[]) => {
 // --- SERVICES / SETTINGS ---
 
 export const getServiceCatalog = async (): Promise<ServiceTemplate[]> => {
+    if (isDemoModeActive()) return getDemoServiceCatalog();
     try {
         const userId = await getCurrentUserId();
 
@@ -263,6 +307,7 @@ export const getServiceCatalog = async (): Promise<ServiceTemplate[]> => {
 };
 
 export const saveServiceTemplate = async (template: ServiceTemplate): Promise<void> => {
+    if (isDemoModeActive()) { saveDemoServiceTemplate(template); return; }
     try {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");
@@ -277,6 +322,7 @@ export const saveServiceTemplate = async (template: ServiceTemplate): Promise<vo
 };
 
 export const deleteServiceTemplate = async (id: string): Promise<void> => {
+    if (isDemoModeActive()) { deleteDemoServiceTemplate(id); return; }
     try {
         const userId = await getCurrentUserId();
         if (!userId) throw new Error("User not authenticated");

@@ -16,18 +16,20 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
+import { DemoProvider, useDemo } from "./context/DemoContext";
 
 const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const { isDemoMode } = useDemo();
   const { t } = useLanguage();
 
-  if (loading) {
+  if (loading && !isDemoMode) {
     return (
       <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">{t("Ładowanie...", "Loading...")}</div>
     );
   }
 
-  if (!user) {
+  if (!user && !isDemoMode) {
     return <Navigate to="/login" replace />;
   }
 
@@ -36,15 +38,16 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 
 const PublicRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const { isDemoMode } = useDemo();
   const { t } = useLanguage();
 
-  if (loading) {
+  if (loading && !isDemoMode) {
     return (
       <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">{t("Ładowanie...", "Loading...")}</div>
     );
   }
 
-  if (user) {
+  if (user || isDemoMode) {
     return <Navigate to="/projects" replace />;
   }
 
@@ -54,8 +57,9 @@ const PublicRoute = ({ children }: { children?: React.ReactNode }) => {
 const App: React.FC = () => {
   return (
     <LanguageProvider>
-      <AuthProvider>
-        <HashRouter>
+      <DemoProvider>
+        <AuthProvider>
+          <HashRouter>
           <Routes>
             {/* Public Routes */}
             <Route
@@ -98,8 +102,9 @@ const App: React.FC = () => {
               <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>
-        </HashRouter>
-      </AuthProvider>
+          </HashRouter>
+        </AuthProvider>
+      </DemoProvider>
     </LanguageProvider>
   );
 };

@@ -3,10 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import LanguageToggleButton from "../components/LanguageToggleButton";
 import { useLanguage } from "../context/LanguageContext";
+import { useDemo } from "../context/DemoContext";
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useLanguage();
+    const { enterDemoMode } = useDemo();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
@@ -64,8 +66,28 @@ const Login: React.FC = () => {
         }
     };
 
+    const handleViewDemo = () => {
+        enterDemoMode();
+        navigate("/projects");
+    };
+
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 font-body text-text-dark">
+            {/* Demo button – fixed pill at the top centre */}
+            <div className="pointer-events-none fixed inset-x-0 top-5 z-50 flex justify-center">
+                <button
+                    onClick={handleViewDemo}
+                    className="pointer-events-auto group flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/80 px-4 py-2 shadow-lg shadow-sky-200/40 backdrop-blur-md transition-all duration-200 hover:scale-105 hover:border-sky-300 hover:bg-white hover:shadow-sky-300/50 active:scale-[0.98]"
+                >
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-dependable-blue text-[10px] font-bold text-white shadow-sm">
+                        ▶
+                    </span>
+                    <span className="text-sm font-semibold text-slate-700 group-hover:text-dependable-blue transition-colors">
+                        {t("Zobacz demo", "View Demo")}
+                    </span>
+                    <span className="text-dependable-blue transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+                </button>
+            </div>
             <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(56,189,248,0.24),transparent_34%),radial-gradient(circle_at_84%_78%,rgba(14,165,233,0.2),transparent_36%),radial-gradient(circle_at_72%_22%,rgba(125,211,252,0.2),transparent_30%)]" />
                 <div className="absolute -left-24 top-[-72px] h-72 w-72 rounded-full bg-cyan-200/35 blur-3xl" />
