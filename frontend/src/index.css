@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* 500 - Tekst lekko pogrubiony (font-medium) */
+@font-face {
+  font-display: swap;
+  font-family: 'Urbanist';
+  font-style: normal;
+  font-weight: 500;
+  src: url('/urbanist/Urbanist-Medium.woff2') format('woff2');
+}
+
+/* 600 - Tekst polgruby (font-semibold) */
+@font-face {
+  font-display: swap;
+  font-family: 'Urbanist';
+  font-style: normal;
+  font-weight: 600;
+  src: url('/urbanist/Urbanist-SemiBold.woff2') format('woff2');
+}
+
+/* 700 - Tekst gruby (font-bold) */
+@font-face {
+  font-display: swap;
+  font-family: 'Urbanist';
+  font-style: normal;
+  font-weight: 700;
+  src: url('/urbanist/Urbanist-Bold.woff2') format('woff2');
+}
+
+/* 800 - Tekst bardzo gruby (font-extrabold) */
+@font-face {
+  font-display: swap;
+  font-family: 'Urbanist';
+  font-style: normal;
+  font-weight: 800;
+  src: url('/urbanist/Urbanist-ExtraBold.woff2') format('woff2');
+}
+
 /* Custom scrollbar for better aesthetics */
 ::-webkit-scrollbar {
   width: 8px;
