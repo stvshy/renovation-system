@@ -54,8 +54,18 @@ export type ProjectDraft = {
     };
 };
 
+import { supabase } from "./supabaseClient";
+import { isDemoModeActive } from "./demoStore";
+
 const PROJECT_DRAFTS_KEY = "projectDrafts";
 const CURRENT_PROJECT_SNAPSHOT_KEY = "currentProjectSnapshot";
+const MISSING_DRAFTS_TABLE_CODE = "PGRST205";
+
+let hasLoggedMissingDraftTable = false;
+
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
 
 const readLocalStorage = (key: string) => {
     if (typeof window === "undefined") return null;
@@ -77,7 +87,28 @@ const writeSessionStorage = (key: string, value: string) => {
     window.sessionStorage.setItem(key, value);
 };
 
-export const getProjectDrafts = (): ProjectDraft[] => {
+const _getSupabaseUserId = async (): Promise<string | null> => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.user?.id ?? null;
+};
+
+const _isMissingDraftTableError = (error: any): boolean => {
+    return error?.code === MISSING_DRAFTS_TABLE_CODE;
+};
+
+const _logDraftStorageFallback = () => {
+    if (hasLoggedMissingDraftTable) return;
+    hasLoggedMissingDraftTable = true;
+    console.warn(
+        "Supabase table 'project_drafts' is missing. Falling back to localStorage for drafts."
+    );
+};
+
+// ---------------------------------------------------------------------------
+// localStorage CRUD (demo mode)
+// ---------------------------------------------------------------------------
+
+const _getDraftsLocal = (): ProjectDraft[] => {
     try {
         const raw = readLocalStorage(PROJECT_DRAFTS_KEY);
         if (!raw) return [];
@@ -88,20 +119,152 @@ export const getProjectDrafts = (): ProjectDraft[] => {
     }
 };
 
-export const getProjectDraftById = (id: string) => getProjectDrafts().find((draft) => draft.id === id);
+const _getDraftByIdLocal = (id: string): ProjectDraft | undefined =>
+    _getDraftsLocal().find((d) => d.id === id);
 
-export const saveProjectDraft = (draft: ProjectDraft) => {
-    const drafts = getProjectDrafts();
-    const nextDraft = { ...draft, updatedAt: new Date().toISOString() };
-    const nextDrafts = drafts.filter((item) => item.id !== nextDraft.id);
-    nextDrafts.push(nextDraft);
-    writeLocalStorage(PROJECT_DRAFTS_KEY, JSON.stringify(nextDrafts));
-    return nextDraft;
+const _saveDraftLocal = (draft: ProjectDraft): ProjectDraft => {
+    const all = _getDraftsLocal();
+    const next = { ...draft, updatedAt: new Date().toISOString() };
+    writeLocalStorage(PROJECT_DRAFTS_KEY, JSON.stringify([...all.filter((d) => d.id !== next.id), next]));
+    return next;
 };
 
-export const deleteProjectDraft = (id: string) => {
-    const nextDrafts = getProjectDrafts().filter((draft) => draft.id !== id);
-    writeLocalStorage(PROJECT_DRAFTS_KEY, JSON.stringify(nextDrafts));
+const _deleteDraftLocal = (id: string): void => {
+    writeLocalStorage(PROJECT_DRAFTS_KEY, JSON.stringify(_getDraftsLocal().filter((d) => d.id !== id)));
+};
+
+// ---------------------------------------------------------------------------
+// Supabase CRUD (authenticated mode)
+// ---------------------------------------------------------------------------
+
+/** Maps a Supabase row back to a ProjectDraft */
+const _rowToDraft = (row: any): ProjectDraft => ({
+    id: row.id,
+    currentStep: row.current_step as ProjectWizardStep,
+    updatedAt: row.updated_at,
+    ...row.draft_data,
+});
+
+/** Builds the Supabase upsert payload from a draft */
+const _draftToRow = (draft: ProjectDraft, userId: string) => ({
+    id: draft.id,
+    user_id: userId,
+    current_step: draft.currentStep,
+    updated_at: new Date().toISOString(),
+    draft_data: {
+        clientData: draft.clientData,
+        projectDates: draft.projectDates,
+        rooms: draft.rooms,
+        clientForm: draft.clientForm,
+        roomForm: draft.roomForm,
+        serviceForm: draft.serviceForm,
+    },
+});
+
+const _getDraftsSupabase = async (): Promise<ProjectDraft[]> => {
+    try {
+        const userId = await _getSupabaseUserId();
+        if (!userId) return [];
+        const { data, error } = await supabase
+            .from("project_drafts")
+            .select("*")
+            .eq("user_id", userId)
+            .order("updated_at", { ascending: false });
+        if (error) throw error;
+        return (data ?? []).map(_rowToDraft);
+    } catch (err: any) {
+        if (_isMissingDraftTableError(err)) {
+            _logDraftStorageFallback();
+            return _getDraftsLocal();
+        }
+        console.error("Error loading drafts from Supabase:", err.message ?? err);
+        return [];
+    }
+};
+
+const _getDraftByIdSupabase = async (id: string): Promise<ProjectDraft | undefined> => {
+    try {
+        const userId = await _getSupabaseUserId();
+        if (!userId) return undefined;
+        const { data, error } = await supabase
+            .from("project_drafts")
+            .select("*")
+            .eq("id", id)
+            .eq("user_id", userId)
+            .single();
+        if (error) throw error;
+        return _rowToDraft(data);
+    } catch (err: any) {
+        if (_isMissingDraftTableError(err)) {
+            _logDraftStorageFallback();
+            return _getDraftByIdLocal(id);
+        }
+        return undefined;
+    }
+};
+
+const _saveDraftSupabase = async (draft: ProjectDraft): Promise<ProjectDraft> => {
+    const userId = await _getSupabaseUserId();
+    if (!userId) throw new Error("User not authenticated");
+    const { data, error } = await supabase
+        .from("project_drafts")
+        .upsert(_draftToRow(draft, userId))
+        .select()
+        .single();
+    if (error) throw error;
+    return _rowToDraft(data);
+};
+
+const _deleteDraftSupabase = async (id: string): Promise<void> => {
+    const userId = await _getSupabaseUserId();
+    if (!userId) return;
+    const { error } = await supabase
+        .from("project_drafts")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", userId);
+    if (error) throw error;
+};
+
+// ---------------------------------------------------------------------------
+// Public async API  (branches on demo mode)
+// ---------------------------------------------------------------------------
+
+export const getProjectDrafts = async (): Promise<ProjectDraft[]> => {
+    if (isDemoModeActive()) return _getDraftsLocal();
+    return _getDraftsSupabase();
+};
+
+export const getProjectDraftById = async (id: string): Promise<ProjectDraft | undefined> => {
+    if (isDemoModeActive()) return _getDraftByIdLocal(id);
+    return _getDraftByIdSupabase(id);
+};
+
+export const saveProjectDraft = async (draft: ProjectDraft): Promise<ProjectDraft> => {
+    if (isDemoModeActive()) return _saveDraftLocal(draft);
+    try {
+        return await _saveDraftSupabase(draft);
+    } catch (error: any) {
+        if (_isMissingDraftTableError(error)) {
+            _logDraftStorageFallback();
+            return _saveDraftLocal(draft);
+        }
+        throw error;
+    }
+};
+
+export const deleteProjectDraft = async (id: string): Promise<void> => {
+    if (isDemoModeActive()) { _deleteDraftLocal(id); return; }
+    try {
+        await _deleteDraftSupabase(id);
+    } catch (error: any) {
+        if (_isMissingDraftTableError(error)) {
+            _logDraftStorageFallback();
+            _deleteDraftLocal(id);
+            return;
+        }
+        throw error;
+    }
 };
 
 export const getCurrentProjectSnapshot = (): ProjectDraft | null => {
@@ -129,11 +292,11 @@ export const clearCurrentProjectSnapshot = () => {
     window.sessionStorage.removeItem(CURRENT_PROJECT_SNAPSHOT_KEY);
 };
 
-export const saveCurrentProjectDraft = () => {
+export const saveCurrentProjectDraft = async (): Promise<ProjectDraft | null> => {
     const snapshot = getCurrentProjectSnapshot();
     if (!snapshot) return null;
 
-    const draft = saveProjectDraft({
+    const draft = await saveProjectDraft({
         ...snapshot,
         id: snapshot.id || crypto.randomUUID(),
     });
@@ -246,14 +409,14 @@ const buildComparableDraft = (draft: ProjectDraft, step: ProjectWizardStep) => {
     return base;
 };
 
-export const hasUnsavedProjectChanges = () => {
+export const hasUnsavedProjectChanges = async (): Promise<boolean> => {
     const snapshot = getCurrentProjectSnapshot();
     if (!snapshot) return false;
 
     // New wizard (without saved draft ID) is always treated as unsaved work.
     if (!snapshot.id) return true;
 
-    const storedDraft = getProjectDraftById(snapshot.id);
+    const storedDraft = await getProjectDraftById(snapshot.id);
     if (!storedDraft) return true;
 
     const comparableSnapshot = buildComparableDraft(snapshot, snapshot.currentStep);

@@ -27,7 +27,7 @@ const Projects: React.FC = () => {
         const load = async () => {
             const data = await getProjects();
             setProjects(data);
-            setDrafts(getProjectDrafts());
+            setDrafts(await getProjectDrafts());
             setIsLoading(false);
         };
         load();
@@ -102,11 +102,15 @@ const Projects: React.FC = () => {
         setDraftToDelete(draftId);
     };
 
-    const handleConfirmDraftDelete = () => {
+    const handleConfirmDraftDelete = async () => {
         if (!draftToDelete) return;
-        deleteProjectDraft(draftToDelete);
-        setDrafts((prev) => prev.filter((draft) => draft.id !== draftToDelete));
-        setDraftToDelete(null);
+        try {
+            await deleteProjectDraft(draftToDelete);
+            setDrafts((prev) => prev.filter((draft) => draft.id !== draftToDelete));
+            setDraftToDelete(null);
+        } catch (error) {
+            console.error("Deleting draft failed:", error);
+        }
     };
 
     const statuses = [

@@ -151,7 +151,7 @@ const OfferSummary: React.FC = () => {
 
         clearProjectCreationDirty();
         clearCurrentProjectSnapshot();
-        if (draftId) deleteProjectDraft(draftId);
+        if (draftId) await deleteProjectDraft(draftId);
 
         setIsSaving(false);
         navigate("/projects");

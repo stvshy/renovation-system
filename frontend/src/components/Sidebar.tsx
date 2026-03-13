@@ -18,20 +18,25 @@ const Sidebar: React.FC = () => {
 
     const isProjectCreationRoute = location.pathname.startsWith('/projects/new');
 
-    const shouldConfirmNavigation = (targetPath: string) => {
+    const shouldConfirmNavigation = async (targetPath: string): Promise<boolean> => {
         if (!isProjectCreationRoute) return false;
         if (location.pathname === targetPath) return false;
         if (!getProjectCreationDirty()) return false;
         return hasUnsavedProjectChanges();
     };
 
-    const handleProtectedNavigation = (targetPath: string) => {
-        if (shouldConfirmNavigation(targetPath)) {
-            setPendingNavigation(targetPath);
-            return;
-        }
+    const handleProtectedNavigation = async (targetPath: string) => {
+        try {
+            if (await shouldConfirmNavigation(targetPath)) {
+                setPendingNavigation(targetPath);
+                return;
+            }
 
-        navigate(targetPath);
+            navigate(targetPath);
+        } catch (error) {
+            console.error("Navigation guard failed:", error);
+            navigate(targetPath);
+        }
     };
 
     const handleConfirmNavigation = () => {
@@ -42,13 +47,17 @@ const Sidebar: React.FC = () => {
         setPendingNavigation(null);
     };
 
-    const handleSaveDraftAndNavigate = () => {
+    const handleSaveDraftAndNavigate = async () => {
         if (!pendingNavigation) return;
-        saveCurrentProjectDraft();
-        clearProjectCreationDirty();
-        clearCurrentProjectSnapshot();
-        navigate(pendingNavigation);
-        setPendingNavigation(null);
+        try {
+            await saveCurrentProjectDraft();
+            clearProjectCreationDirty();
+            clearCurrentProjectSnapshot();
+            navigate(pendingNavigation);
+            setPendingNavigation(null);
+        } catch (error) {
+            console.error("Saving draft failed:", error);
+        }
     };
 
     const handleLogout = async () => {
