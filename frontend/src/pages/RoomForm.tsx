@@ -22,7 +22,11 @@ import { saveEditedProjectFromSnapshot } from "../lib/projectWizardSave";
 
 type Mode = "standard" | "custom";
 type SurfaceDraft = { width: string; height: string; area: string };
-type ConfirmAction = { type: "delete-room"; roomIndex: number } | { type: "switch-to-standard" } | null;
+type ConfirmAction =
+    | { type: "delete-room"; roomIndex: number }
+    | { type: "switch-to-standard" }
+    | { type: "delete-surface"; surfaceIndex: number; taskCount: number }
+    | null;
 type PendingSaveAction = {
     action: "add-next" | "proceed-services";
     updatedRooms: any[];
@@ -101,9 +105,16 @@ const recalculateTaskDimensionForRoom = (taskRaw: any, room: Room) => {
     return currentInput;
 };
 
-const extractSpecificSurfaceName = (description: string): string | null => {
+const extractSpecificSurfaceName = (description: string, knownSurfaceNames?: string[]): string | null => {
     const match = description.match(/\(([^)]+)\)$/);
-    return match ? match[1].trim() : null;
+    if (!match) return null;
+
+    const candidate = match[1].trim();
+    if (!knownSurfaceNames || knownSurfaceNames.length === 0) {
+        return candidate;
+    }
+
+    return knownSurfaceNames.includes(candidate) ? candidate : null;
 };
 
 const replaceSpecificSurfaceName = (description: string, nextSurfaceName: string) => {
@@ -132,9 +143,17 @@ const buildSurfaceNameMapByTypeOrder = (previousRoom: any, nextRoom: Room) => {
 
     previousByType.forEach((prevSurfaces, type) => {
         const mappedNext = nextByType.get(type) || [];
-        prevSurfaces.forEach((prevSurface, index) => {
-            const nextSurface = mappedNext[index];
-            result.set(prevSurface.name, nextSurface ? nextSurface.name : null);
+        if (prevSurfaces.length === mappedNext.length) {
+            prevSurfaces.forEach((prevSurface, index) => {
+                const nextSurface = mappedNext[index];
+                result.set(prevSurface.name, nextSurface ? nextSurface.name : null);
+            });
+            return;
+        }
+
+        const nextByName = new Map(mappedNext.map((surface) => [surface.name, surface.name]));
+        prevSurfaces.forEach((prevSurface) => {
+            result.set(prevSurface.name, nextByName.get(prevSurface.name) || null);
         });
     });
 
@@ -229,6 +248,7 @@ const RoomForm: React.FC = () => {
     const [hoveredRoomIndex, setHoveredRoomIndex] = useState<number | null>(null);
     const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
     const [pendingSaveAction, setPendingSaveAction] = useState<PendingSaveAction>(null);
+    const [removedSurfaceNames, setRemovedSurfaceNames] = useState<string[]>([]);
 
     const savedRoomsWithSurfaces = existingRooms.filter((room) => Array.isArray(room.surfaces) && room.surfaces.length > 0);
     const defaultNewRoomName = `${t("Pokój", "Room")} ${existingRooms.length + 1}`;
@@ -283,6 +303,7 @@ const RoomForm: React.FC = () => {
         setEditingRoomIndex(null);
         setRoomName(`${t("Pokój", "Room")} ${roomCount + 1}`);
         setMode("standard");
+        setRemovedSurfaceNames([]);
         setLength("");
         setWidth("");
         setHeight("");
@@ -377,9 +398,27 @@ const RoomForm: React.FC = () => {
     };
 
     const handleRemoveSurface = (index: number) => {
+        const getAssignedTaskCountForSurface = (surfaceName: string) => {
+            if (editingRoomIndex === null) return 0;
+            const sourceRoom = existingRooms[editingRoomIndex];
+            if (!sourceRoom?.tasks || !Array.isArray(sourceRoom.tasks)) return 0;
+            const sourceSurfaceNames = Array.isArray(sourceRoom.surfaces) ? sourceRoom.surfaces.map((surface: any) => surface.name) : [];
+            return sourceRoom.tasks.filter((task: any) => extractSpecificSurfaceName(task.description || "", sourceSurfaceNames) === surfaceName).length;
+        };
+
+        const surfaceName = surfaces[index]?.name;
+        const assignedTaskCount = surfaceName ? getAssignedTaskCountForSurface(surfaceName) : 0;
+        if (assignedTaskCount > 0) {
+            setConfirmAction({ type: "delete-surface", surfaceIndex: index, taskCount: assignedTaskCount });
+            return;
+        }
+
         const updatedSurfaces = [...surfaces];
         updatedSurfaces.splice(index, 1);
         setSurfacesWithDrafts(updatedSurfaces);
+        if (surfaceName) {
+            setRemovedSurfaceNames((current) => (current.includes(surfaceName) ? current : [...current, surfaceName]));
+        }
         if (activeSurfaceIndex === index) setActiveSurfaceIndex(null);
         if (activeSurfaceIndex !== null && activeSurfaceIndex > index) setActiveSurfaceIndex(activeSurfaceIndex - 1);
     };
@@ -407,6 +446,7 @@ const RoomForm: React.FC = () => {
     const handleEditRoom = (index: number) => {
         const roomData = existingRooms[index];
         setEditingRoomIndex(index);
+        setRemovedSurfaceNames([]);
         setRoomName(roomData.name);
 
         // Rehydrate surfaces to ensure methods like getNetArea exist
@@ -460,12 +500,17 @@ const RoomForm: React.FC = () => {
         const room = new Room(roomName);
         surfaces.forEach((s) => room.addSurface(s));
         const surfaceNameMap = buildSurfaceNameMapByTypeOrder(sourceRoomForTasks, room);
+        const sourceSurfaceNames = Array.isArray(sourceRoomForTasks?.surfaces) ? sourceRoomForTasks.surfaces.map((surface: any) => surface.name) : [];
         let removedSurfaceTasks = 0;
 
         if (sourceRoomForTasks?.tasks && Array.isArray(sourceRoomForTasks.tasks)) {
             sourceRoomForTasks.tasks.forEach((taskRaw: any) => {
-                const previousSurfaceName = extractSpecificSurfaceName(taskRaw.description || "");
+                const previousSurfaceName = extractSpecificSurfaceName(taskRaw.description || "", sourceSurfaceNames);
                 if (previousSurfaceName) {
+                    if (removedSurfaceNames.includes(previousSurfaceName)) {
+                        removedSurfaceTasks += 1;
+                        return;
+                    }
                     const mappedSurfaceName = surfaceNameMap.get(previousSurfaceName);
                     if (!mappedSurfaceName) {
                         removedSurfaceTasks += 1;
@@ -1102,6 +1147,8 @@ const RoomForm: React.FC = () => {
                                     <h3 className="text-lg font-black text-gray-900 dark:text-white">
                                         {confirmAction.type === "delete-room"
                                             ? t("Usunąć pokój?", "Delete room?")
+                                            : confirmAction.type === "delete-surface"
+                                            ? t("Usunąć powierzchnię?", "Delete surface?")
                                             : t("Zmienić typ pokoju?", "Change room type?")}
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
@@ -1110,9 +1157,14 @@ const RoomForm: React.FC = () => {
                                                   "Ten pokój zostanie usunięty z projektu. Tej operacji nie można cofnąć.",
                                                   "This room will be removed from the project. This action cannot be undone."
                                               )
+                                            : confirmAction.type === "delete-surface"
+                                            ? t(
+                                                  `Ta powierzchnia ma przypisane roboty (${confirmAction.taskCount}). Po usunięciu powierzchni te roboty zostaną usunięte w kolejnych krokach.`,
+                                                  `This surface has assigned work items (${confirmAction.taskCount}). After removing the surface, those items will be removed in the next steps.`
+                                              )
                                             : t(
-                                                  "Przełączenie z nieregularnego na standardowy wyzeruje obecne dane tego pokoju i usunie dane kolejnych kroków (usługi oraz podsumowanie) do ponownego przeliczenia.",
-                                                  "Switching from irregular to standard will reset current room data and clear downstream step data (services and summary) for recalculation."
+                                                  "Przełączenie z nieregularnego na standardowy przeliczy roboty w kolejnych krokach na nowe wymiary. Jeśli jakaś powierzchnia zniknie, przypisane do niej roboty zostaną usunięte po dodatkowym ostrzeżeniu.",
+                                                  "Switching from irregular to standard will recalculate downstream work items using the new dimensions. If a surface disappears, work assigned to it will be removed after an additional warning."
                                               )}
                                     </p>
                                 </div>
@@ -1141,17 +1193,37 @@ const RoomForm: React.FC = () => {
                                             return;
                                         }
 
+                                        if (confirmAction.type === "delete-surface") {
+                                            const surfaceName = surfaces[confirmAction.surfaceIndex]?.name;
+                                            const updatedSurfaces = [...surfaces];
+                                            updatedSurfaces.splice(confirmAction.surfaceIndex, 1);
+                                            setSurfacesWithDrafts(updatedSurfaces);
+                                            if (surfaceName) {
+                                                setRemovedSurfaceNames((current) => (current.includes(surfaceName) ? current : [...current, surfaceName]));
+                                            }
+                                            if (activeSurfaceIndex === confirmAction.surfaceIndex) setActiveSurfaceIndex(null);
+                                            if (activeSurfaceIndex !== null && activeSurfaceIndex > confirmAction.surfaceIndex) {
+                                                setActiveSurfaceIndex(activeSurfaceIndex - 1);
+                                            }
+                                            setConfirmAction(null);
+                                            return;
+                                        }
+
                                         handleConfirmSwitchToStandard();
                                     }}
                                     className={`px-4 py-2 rounded-lg font-bold text-white ${
                                         confirmAction.type === "delete-room"
                                             ? "bg-red-600 hover:bg-red-700"
+                                            : confirmAction.type === "delete-surface"
+                                            ? "bg-amber-600 hover:bg-amber-700"
                                             : "bg-primary hover:bg-primary/90"
                                     }`}
                                 >
                                     {confirmAction.type === "delete-room"
                                         ? t("Usuń pokój", "Delete room")
-                                        : t("Tak, wyzeruj i przełącz", "Yes, reset and switch")}
+                                        : confirmAction.type === "delete-surface"
+                                        ? t("Usuń powierzchnię", "Delete surface")
+                                        : t("Tak, przelicz", "Yes, recalculate")}
                                 </button>
                             </div>
                         </div>

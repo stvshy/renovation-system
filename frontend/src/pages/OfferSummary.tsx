@@ -14,12 +14,13 @@ import {
     Surface,
     Opening,
 } from "../lib/renovationLogic";
-import { saveProject, deductInventoryFromProject } from "../lib/storage";
-import { Project } from "../types";
+import { saveProject, deductInventoryFromProject, getInventory } from "../lib/storage";
+import { InventoryItem, Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import EditWizardExitControl from "../components/EditWizardExitControl";
 import { clearProjectCreationDirty, setProjectCreationDirty } from "../lib/projectCreationGuard";
 import { clearCurrentProjectSnapshot, deleteProjectDraft, setCurrentProjectSnapshot } from "../lib/projectDrafts";
+import { buildMaterialPlan } from "../lib/materialPlanning";
 import { saveEditedProjectFromSnapshot } from "../lib/projectWizardSave";
 
 // Helper to restore class methods if data was serialized via state
@@ -75,6 +76,7 @@ const OfferSummary: React.FC = () => {
     const location = useLocation();
     const { t, language } = useLanguage();
     const [isSaving, setIsSaving] = useState(false);
+    const [inventory, setInventory] = useState<InventoryItem[]>([]);
     const draftSnapshot = location.state?.draftSnapshot;
     const draftId = location.state?.draftId || draftSnapshot?.id;
     const editProjectId = location.state?.editProjectId;
@@ -125,8 +127,19 @@ const OfferSummary: React.FC = () => {
         });
     }, [clientData, draftId, projectDates, rooms]);
 
+    useEffect(() => {
+        const loadInventory = async () => {
+            const inventoryItems = await getInventory();
+            setInventory(inventoryItems);
+        };
+
+        loadInventory();
+    }, []);
+
     const grandTotal = rooms.reduce((sum, room) => sum + room.calculateTotalRoomCost(), 0);
     const totalArea = rooms.reduce((sum, room) => sum + room.getFloorArea(), 0);
+    const materialPlan = useMemo(() => buildMaterialPlan(rooms, inventory), [inventory, rooms]);
+    const shoppingListItems = materialPlan.items.filter((item) => item.toBuy > 0);
 
     const handleSubmitProject = async () => {
         if (!clientData || !projectDates) {
@@ -279,7 +292,7 @@ const OfferSummary: React.FC = () => {
                 {/* Grand Total Card */}
                 <div className="p-3 sm:p-4 @container">
                     <div className="flex flex-col items-center justify-center rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white dark:bg-background-dark/50 p-5 sm:p-8 border border-gray-200 dark:border-gray-700">
-                        <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg font-normal leading-normal font-display text-center">{t('Szacowany koszt calkowity', 'Estimated total cost')}</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg font-normal leading-normal font-display text-center">{t('Szacowany koszt całkowity', 'Estimated total cost')}</p>
                         <p className="text-accent text-3xl sm:text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display text-center break-words">{grandTotal.toFixed(2)} {currencyCode}</p>
                         <p className="text-sm text-gray-400 mt-2 text-center">{t('Robocizna + Materiały (Wszystkie pokoje)', 'Labor + Materials (All rooms)')}</p>
                         {projectDates && (
@@ -287,6 +300,64 @@ const OfferSummary: React.FC = () => {
                                 {t('Realizacja:', 'Execution:')} {projectDates.startDate} — {projectDates.endDate}
                             </p>
                         )}
+                    </div>
+                </div>
+
+                <div className="px-3 sm:px-4 mt-2">
+                    <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden">
+                        <div className="px-4 sm:px-6 py-4 border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div>
+                                <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Lista zakupów', 'Shopping list')}</h2>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    {t(
+                                        'Cały koszt materiałów jest już wliczony w kosztorys. Tu pokazujemy tylko to, czego brakuje w magazynie.',
+                                        'The full material cost is already included in the estimate. This section only shows what is missing from inventory.'
+                                    )}
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
+                                <div>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
+                                    <p className="text-xl font-black text-amber-600 dark:text-amber-400">{shoppingListItems.length}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Koszt zakupów', 'Purchase cost')}</p>
+                                    <p className="text-xl font-black text-red-600 dark:text-red-400">{materialPlan.totalShortageCost.toFixed(2)} {currencyCode}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[720px] text-sm text-left text-gray-600 dark:text-gray-300">
+                                <thead className="text-xs uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th className="px-4 py-3">{t('Materiał', 'Material')}</th>
+                                        <th className="px-4 py-3 text-right">{t('Potrzebne', 'Required')}</th>
+                                        <th className="px-4 py-3 text-right">{t('W magazynie', 'In stock')}</th>
+                                        <th className="px-4 py-3 text-right">{t('Do dokupienia', 'To buy')}</th>
+                                        <th className="px-4 py-3 text-right">{t('Koszt zakupu', 'Purchase cost')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {shoppingListItems.map((item) => (
+                                        <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
+                                            <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">{item.materialName}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
+                                        </tr>
+                                    ))}
+                                    {shoppingListItems.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="px-4 py-8 text-center text-sm text-emerald-700 dark:text-emerald-300">
+                                                {t('Na ten moment magazyn pokrywa wszystkie materiały z projektu.', 'At the moment inventory covers all materials required by this project.')}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 

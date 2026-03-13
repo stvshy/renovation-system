@@ -20,6 +20,7 @@ import EditWizardExitControl from "../components/EditWizardExitControl";
 import ScrollableSelect from "../components/ScrollableSelect";
 import { clearProjectCreationDirty, setProjectCreationDirty } from "../lib/projectCreationGuard";
 import { clearCurrentProjectSnapshot, setCurrentProjectSnapshot } from "../lib/projectDrafts";
+import { buildMaterialPlan } from "../lib/materialPlanning";
 import { saveEditedProjectFromSnapshot } from "../lib/projectWizardSave";
 
 // Helper to rehydrate objects
@@ -224,6 +225,8 @@ const ServiceForm: React.FC = () => {
     }, [activeRoomIndex, clientData, customMatCoverage, customMatInitialStock, customMatName, customMatPrice, customMatUnit, draftId, hasWizardData, isAddingNewMaterial, manualQuantity, newMatScope, projectDates, rooms, scopeType, selectedCategory, selectedMaterialId, selectedTemplateId, specificSurfaceIndex, strategyParam]);
 
     const activeRoom = rooms[Math.min(activeRoomIndex, Math.max(rooms.length - 1, 0))];
+    const materialPlan = useMemo(() => buildMaterialPlan(rooms, inventory), [inventory, rooms]);
+    const shoppingListItems = materialPlan.items.filter((item) => item.toBuy > 0);
 
     const categoryServices = useMemo(() => serviceCatalog.filter((s) => s.category === selectedCategory), [selectedCategory, serviceCatalog]);
 
@@ -481,27 +484,6 @@ const ServiceForm: React.FC = () => {
         }
 
         const task = new RenovationTask(description, material, selectedTemplate.laborRate, strategy, params, inputDim);
-
-        // --- VALIDATION: Check Stock if Inventory Item ---
-        if (material.inventoryId) {
-            // Re-fetch or use latest inventory state if we just added something
-            // We already refreshed `inventory` state if added new item
-            const invItem = inventory.find((i) => i.id === material.inventoryId);
-
-            if (invItem) {
-                const requiredQty = task.calculateMaterialQuantity();
-                if (invItem.quantity < requiredQty) {
-                    // Show on-page error instead of alert
-                    setErrorMessage(
-                        t(
-                            `Zbyt mala ilosc w magazynie! Potrzebujesz: ${requiredQty.toFixed(2)} ${material.unit}, dostepne: ${invItem.quantity} ${invItem.unit}.`,
-                            `Insufficient inventory! Required: ${requiredQty.toFixed(2)} ${material.unit}, available: ${invItem.quantity} ${invItem.unit}.`
-                        )
-                    );
-                    return; // STOP execution
-                }
-            }
-        }
 
         const updatedRooms = [...rooms];
         updatedRooms[activeRoomIndex].addTask(task);
@@ -1012,8 +994,8 @@ const ServiceForm: React.FC = () => {
                     </div>
 
                     {/* RIGHT COLUMN: Live Summary */}
-                    <div className="lg:col-span-5 flex flex-col h-full min-h-[500px]">
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col h-full max-h-[700px]">
+                    <div className="lg:col-span-5 flex flex-col gap-4 min-h-[500px]">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col min-h-[320px] max-h-[700px]">
                             <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
                                 <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary">receipt_long</span>
@@ -1062,6 +1044,55 @@ const ServiceForm: React.FC = () => {
                                                 >
                                                     <span className="material-symbols-outlined text-lg">delete</span>
                                                 </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg overflow-hidden">
+                            <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-amber-50/60 dark:bg-amber-900/10">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400">shopping_cart</span>
+                                            {t('Lista zakupów projektu', 'Project shopping list')}
+                                        </h3>
+                                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                            {t(
+                                                'Braki magazynowe nie blokują już dodawania pozycji. Jeśli czegoś zabraknie, materiał trafi tutaj i do podsumowania jako zakup.',
+                                                'Inventory shortages no longer block adding items. If something is missing, it appears here and in the summary as a purchase.'
+                                            )}
+                                        </p>
+                                    </div>
+                                    <div className="text-right shrink-0">
+                                        <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Koszt zakupów', 'Purchase cost')}</p>
+                                        <p className="text-lg font-black text-red-600 dark:text-red-400">{materialPlan.totalShortageCost.toFixed(2)} {currencyCode}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{shoppingListItems.length} {t('pozycji', 'items')}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar">
+                                {shoppingListItems.length === 0 ? (
+                                    <div className="rounded-xl border border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/70 dark:bg-emerald-900/10 px-4 py-5 text-sm text-emerald-700 dark:text-emerald-300 text-center">
+                                        {t('Wszystkie materiały są pokryte stanem magazynowym.', 'All material demand is currently covered by inventory.')}
+                                    </div>
+                                ) : (
+                                    shoppingListItems.map((item) => (
+                                        <div key={item.key} className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-4">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div>
+                                                    <p className="font-bold text-slate-900 dark:text-white">{item.materialName}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                        {t('Potrzebne', 'Required')}: {item.required.toFixed(2)} {localizeUnit(item.unit)} | {t('W magazynie', 'In stock')}: {item.available.toFixed(2)} {localizeUnit(item.unit)}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right shrink-0">
+                                                    <p className="text-sm font-black text-amber-700 dark:text-amber-300">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.shortageCost.toFixed(2)} {currencyCode}</p>
+                                                </div>
                                             </div>
                                         </div>
                                     ))

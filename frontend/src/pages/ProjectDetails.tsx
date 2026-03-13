@@ -17,6 +17,7 @@ import {
     SurfaceType,
 } from "../lib/renovationLogic";
 import ScrollableSelect from "../components/ScrollableSelect";
+import { buildMaterialPlan } from "../lib/materialPlanning";
 
 // Helper to rehydrate rooms (same as in OfferSummary)
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -124,54 +125,10 @@ const ProjectDetails: React.FC = () => {
 
     const unitLabel = (unit: string) => (language === "en" && unit === "szt" ? "pcs" : unit);
 
-    const materialSummary = (() => {
-        const bucket = new Map<
-            string,
-            {
-                materialName: string;
-                unit: string;
-                inventoryId?: string;
-                required: number;
-                available: number;
-                workItems: Array<{ roomName: string; taskName: string; quantity: number }>;
-            }
-        >();
-
-        hydratedRooms.forEach((room) => {
-            room.tasks.forEach((task) => {
-                const key = task.material.inventoryId || `${task.material.name}::${task.material.unit}`;
-                const requiredQty = task.calculateMaterialQuantity();
-                const inventoryMatch = task.material.inventoryId
-                    ? inventory.find((item) => item.id === task.material.inventoryId)
-                    : inventory.find((item) => item.name === task.material.name && item.unit === task.material.unit);
-
-                const existing = bucket.get(key);
-                if (!existing) {
-                    bucket.set(key, {
-                        materialName: task.material.name,
-                        unit: task.material.unit,
-                        inventoryId: task.material.inventoryId,
-                        required: requiredQty,
-                        available: inventoryMatch?.quantity ?? 0,
-                        workItems: [{ roomName: room.name, taskName: task.description, quantity: requiredQty }],
-                    });
-                    return;
-                }
-
-                existing.required += requiredQty;
-                existing.workItems.push({ roomName: room.name, taskName: task.description, quantity: requiredQty });
-            });
-        });
-
-        return Array.from(bucket.values())
-            .map((entry) => ({
-                ...entry,
-                toBuy: Math.max(0, entry.required - entry.available),
-            }))
-            .sort((a, b) => b.toBuy - a.toBuy || a.materialName.localeCompare(b.materialName));
-    })();
-
-    const totalToBuy = materialSummary.reduce((sum, item) => sum + item.toBuy, 0);
+    const materialPlan = buildMaterialPlan(hydratedRooms, inventory);
+    const materialSummary = materialPlan.items;
+    const totalToBuy = materialPlan.totalShortageQuantity;
+    const totalShoppingCost = materialPlan.totalShortageCost;
 
     if (loading) return <div>{t('Ładowanie...', 'Loading...')}</div>;
     if (!project) return <div>{t('Projekt nie znaleziony.', 'Project not found.')}</div>;
@@ -677,6 +634,7 @@ const ProjectDetails: React.FC = () => {
                         <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
                             <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Łączna ilość do zakupu", "Total quantity to buy")}</p>
                             <p className="text-2xl font-black text-red-600 dark:text-red-400 mt-1">{totalToBuy.toFixed(2)}</p>
+                            <p className="text-xs text-gray-500 dark:text-slate-400 mt-2">{totalShoppingCost.toFixed(2)} {currencyCode}</p>
                         </div>
                     </div>
 
@@ -689,6 +647,7 @@ const ProjectDetails: React.FC = () => {
                                     <th className="px-4 py-3 text-right">{t("Potrzebne", "Required")}</th>
                                     <th className="px-4 py-3 text-right">{t("W magazynie", "In stock")}</th>
                                     <th className="px-4 py-3 text-right">{t("Do dokupienia", "To buy")}</th>
+                                    <th className="px-4 py-3 text-right">{t("Koszt zakupu", "Purchase cost")}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -718,11 +677,14 @@ const ProjectDetails: React.FC = () => {
                                                 {material.toBuy.toFixed(2)} {unitLabel(material.unit)}
                                             </span>
                                         </td>
+                                        <td className="px-4 py-3 text-right whitespace-nowrap font-bold text-amber-700 dark:text-amber-300">
+                                            {material.shortageCost.toFixed(2)} {currencyCode}
+                                        </td>
                                     </tr>
                                 ))}
                                 {materialSummary.length === 0 && (
                                     <tr>
-                                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-slate-400">
+                                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500 dark:text-slate-400">
                                             {t("Brak pozycji materiałowych dla tego projektu.", "No material rows for this project.")}
                                         </td>
                                     </tr>
