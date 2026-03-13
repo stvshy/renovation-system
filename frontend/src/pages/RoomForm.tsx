@@ -23,6 +23,23 @@ const createSurfaceDraft = (surface: Surface): SurfaceDraft => ({
     area: toEditableNumberString(surface.customArea),
 });
 
+const serializeRoomState = (roomName: string, surfaces: Surface[]) =>
+    JSON.stringify({
+        roomName,
+        surfaces: surfaces.map((surface) => ({
+            name: surface.name,
+            type: surface.type,
+            width: surface.width,
+            height: surface.height,
+            customArea: surface.customArea ?? null,
+            openings: surface.openings.map((opening) => ({
+                width: opening.width,
+                height: opening.height,
+                type: opening.type,
+            })),
+        })),
+    });
+
 // Helper to rehydrate surface objects (restore methods) from serialized state
 const rehydrateSurface = (s: any): Surface => {
     // Note: rehydrate using the new 5th parameter for customArea
@@ -81,6 +98,17 @@ const RoomForm: React.FC = () => {
     const [hoveredRoomIndex, setHoveredRoomIndex] = useState<number | null>(null);
     const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
 
+    const savedRoomsWithSurfaces = existingRooms.filter((room) => Array.isArray(room.surfaces) && room.surfaces.length > 0);
+    const defaultNewRoomName = `${t("Pokój", "Room")} ${existingRooms.length + 1}`;
+    const hasDraftRoom = roomName !== defaultNewRoomName || length !== "" || width !== "" || height !== "" || surfaces.length > 0;
+    const currentRoomSnapshot = serializeRoomState(roomName, surfaces);
+    const originalRoomSnapshot =
+        editingRoomIndex !== null
+            ? serializeRoomState(existingRooms[editingRoomIndex].name, existingRooms[editingRoomIndex].surfaces.map((s: any) => rehydrateSurface(s)))
+            : null;
+    const hasUnsavedChanges = editingRoomIndex !== null ? currentRoomSnapshot !== originalRoomSnapshot : hasDraftRoom;
+    const canGoToServicesWithoutSaving = savedRoomsWithSurfaces.length > 0 && !hasUnsavedChanges;
+
     const setSurfacesWithDrafts = (nextSurfaces: Surface[]) => {
         setSurfaces(nextSurfaces);
         setSurfaceDrafts(nextSurfaces.map(createSurfaceDraft));
@@ -98,6 +126,11 @@ const RoomForm: React.FC = () => {
         setOpeningDims({ w: "", h: "", type: "okno" });
         setActiveSurfaceIndex(null);
         setHoveredRoomIndex(null);
+    };
+
+    const handleStartNewRoom = () => {
+        resetRoomForm(existingRooms.length);
+        window.scrollTo(0, 0);
     };
 
     const handleDimensionChange = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
@@ -285,6 +318,17 @@ const RoomForm: React.FC = () => {
     };
 
     const handleSaveAndProceedToServices = () => {
+        if (canGoToServicesWithoutSaving) {
+            navigate("/projects/new/services", {
+                state: {
+                    rooms: existingRooms,
+                    clientData,
+                    projectDates,
+                },
+            });
+            return;
+        }
+
         const newRoom = createRoomObject();
         const updatedRooms = [...existingRooms];
 
@@ -371,9 +415,21 @@ const RoomForm: React.FC = () => {
                                         {r.name}
                                     </button>
                                 ))}
-                                {editingRoomIndex === null && (
-                                    <div className="flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-slate-800 text-gray-400 border border-dashed border-gray-300">
-                                        <span>{t("Nowy Pokój", "New room")}...</span>
+                                {editingRoomIndex !== null ? (
+                                    <button
+                                        type="button"
+                                        onClick={handleStartNewRoom}
+                                        className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 transition-all hover:border-primary hover:text-primary"
+                                        title={t("Dodaj nowy pokój", "Add new room")}
+                                    >
+                                        <span className="material-symbols-outlined text-base">add</span>
+                                    </button>
+                                ) : (
+                                    <div
+                                        className="flex h-8 items-center gap-2 px-3 rounded-full text-sm bg-gray-100 dark:bg-slate-800 text-gray-400 border border-dashed border-gray-300"
+                                        title={t("Nowy pokój do zapisania", "New room to save")}
+                                    >
+                                        <span>{roomName.trim() || defaultNewRoomName}</span>
                                     </div>
                                 )}
                             </div>
@@ -667,40 +723,24 @@ const RoomForm: React.FC = () => {
 
                 {/* Footer Buttons */}
                 <div className="flex flex-col md:flex-row px-4 py-8 justify-end gap-4">
-                    {editingRoomIndex !== null && (
-                        <button
-                            onClick={handleCancelEdit}
-                            className="px-6 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-300 font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                        >
-                            {t('Anuluj edycje', 'Cancel editing')}
-                        </button>
-                    )}
-
-                    <button
-                        onClick={() => navigate("/projects")}
-                        className="px-6 py-3 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold hover:bg-gray-300 transition-colors md:mr-auto"
-                    >
-                        {t('Wyjdź', 'Exit')}
-                    </button>
-
                     <button
                         onClick={handleSaveAndAddNext}
-                        disabled={surfaces.length === 0}
+                        disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
                         className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-transparent ${
                             editingRoomIndex !== null ? "border-green-600 text-green-600 hover:bg-green-50" : "border-primary text-primary hover:bg-primary/5"
                         }`}
                     >
-                        <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
                         {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
+                        <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
                     </button>
 
                     <button
                         onClick={handleSaveAndProceedToServices}
-                        disabled={surfaces.length === 0}
+                        disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
                         className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <span className="material-symbols-outlined">handyman</span>
-                        {t('Zapisz i przejdź do usług', 'Save and proceed to services')}
+                        {canGoToServicesWithoutSaving ? t('Usługi', 'Services') : t('Zapisz i przejdź do usług', 'Save and proceed to services')}
+                        <span className="material-symbols-outlined">arrow_forward</span>
                     </button>
                 </div>
 
