@@ -352,6 +352,7 @@ const RoomForm: React.FC = () => {
                 rooms: updatedRooms,
                 clientData,
                 projectDates,
+                draftId,
             },
             replace: true,
         });

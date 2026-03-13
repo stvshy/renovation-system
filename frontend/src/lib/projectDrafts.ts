@@ -59,6 +59,7 @@ import { isDemoModeActive } from "./demoStore";
 
 const PROJECT_DRAFTS_KEY = "projectDrafts";
 const CURRENT_PROJECT_SNAPSHOT_KEY = "currentProjectSnapshot";
+const CURRENT_PROJECT_BASELINE_KEY = "currentProjectBaseline";
 const MISSING_DRAFTS_TABLE_CODE = "PGRST205";
 
 let hasLoggedMissingDraftTable = false;
@@ -277,9 +278,19 @@ export const getCurrentProjectSnapshot = (): ProjectDraft | null => {
     }
 };
 
-export const setCurrentProjectSnapshot = (snapshot: ProjectDraft) => {
+const getCurrentProjectBaseline = (): ProjectDraft | null => {
+    try {
+        const raw = readSessionStorage(CURRENT_PROJECT_BASELINE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch {
+        return null;
+    }
+};
+
+const setCurrentProjectBaseline = (snapshot: ProjectDraft) => {
     writeSessionStorage(
-        CURRENT_PROJECT_SNAPSHOT_KEY,
+        CURRENT_PROJECT_BASELINE_KEY,
         JSON.stringify({
             ...snapshot,
             updatedAt: new Date().toISOString(),
@@ -287,9 +298,31 @@ export const setCurrentProjectSnapshot = (snapshot: ProjectDraft) => {
     );
 };
 
+export const setCurrentProjectSnapshot = (snapshot: ProjectDraft) => {
+    const nextSnapshot = {
+        ...snapshot,
+        updatedAt: new Date().toISOString(),
+    };
+
+    writeSessionStorage(
+        CURRENT_PROJECT_SNAPSHOT_KEY,
+        JSON.stringify(nextSnapshot)
+    );
+
+    // Keep a stable baseline for the currently edited draft, so navigation guards
+    // do not depend on repeated remote fetches and serialization differences.
+    if (nextSnapshot.id) {
+        const baseline = getCurrentProjectBaseline();
+        if (!baseline || baseline.id !== nextSnapshot.id) {
+            setCurrentProjectBaseline(nextSnapshot);
+        }
+    }
+};
+
 export const clearCurrentProjectSnapshot = () => {
     if (typeof window === "undefined") return;
     window.sessionStorage.removeItem(CURRENT_PROJECT_SNAPSHOT_KEY);
+    window.sessionStorage.removeItem(CURRENT_PROJECT_BASELINE_KEY);
 };
 
 export const saveCurrentProjectDraft = async (): Promise<ProjectDraft | null> => {
@@ -302,6 +335,7 @@ export const saveCurrentProjectDraft = async (): Promise<ProjectDraft | null> =>
     });
 
     setCurrentProjectSnapshot(draft);
+    setCurrentProjectBaseline(draft);
     return draft;
 };
 
@@ -415,6 +449,13 @@ export const hasUnsavedProjectChanges = async (): Promise<boolean> => {
 
     // New wizard (without saved draft ID) is always treated as unsaved work.
     if (!snapshot.id) return true;
+
+    const baseline = getCurrentProjectBaseline();
+    if (baseline && baseline.id === snapshot.id) {
+        const comparableSnapshot = buildComparableDraft(snapshot, snapshot.currentStep);
+        const comparableBaseline = buildComparableDraft(baseline, snapshot.currentStep);
+        return JSON.stringify(comparableSnapshot) !== JSON.stringify(comparableBaseline);
+    }
 
     const storedDraft = await getProjectDraftById(snapshot.id);
     if (!storedDraft) return true;
