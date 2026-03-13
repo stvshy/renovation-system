@@ -1133,15 +1133,15 @@ const ServiceForm: React.FC = () => {
                                         </h3>
                                         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                                             {t(
-                                                'Braki magazynowe nie blokują już dodawania pozycji. Jeśli czegoś zabraknie, materiał trafi tutaj i do podsumowania jako zakup.',
-                                                'Inventory shortages no longer block adding items. If something is missing, it appears here and in the summary as a purchase.'
+                                                'Materiały, których brakuje w magazynie.',
+                                                'Materials needed but not in stock.'
                                             )}
                                         </p>
                                     </div>
                                     <div className="text-right shrink-0">
                                         <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Koszt zakupów', 'Purchase cost')}</p>
                                         <p className="text-lg font-black text-red-600 dark:text-red-400">{materialPlan.totalShortageCost.toFixed(2)} {currencyCode}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{shoppingListItems.length} {t('pozycji', 'items')}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t('Liczba sztuk: ', 'Items: ')}{shoppingListItems.length}</p>
                                     </div>
                                 </div>
                             </div>
@@ -1158,7 +1158,7 @@ const ServiceForm: React.FC = () => {
                                                 <div>
                                                     <p className="font-bold text-slate-900 dark:text-white">{item.materialName}</p>
                                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                                        {t('Potrzebne', 'Required')}: {item.required.toFixed(2)} {localizeUnit(item.unit)} | {t('W magazynie', 'In stock')}: {item.available.toFixed(2)} {localizeUnit(item.unit)}
+                                                        {t('Potrzebne', 'Required')}: {item.required.toFixed(2)} {localizeUnit(item.unit)}, {t('Magazyn', 'In stock')}: {item.available.toFixed(2)} {localizeUnit(item.unit)}
                                                     </p>
                                                 </div>
                                                 <div className="text-right shrink-0">
@@ -1181,7 +1181,7 @@ const ServiceForm: React.FC = () => {
                                             {t('Koszty dodatkowe', 'Additional costs')}
                                         </h3>
                                         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                            {t('Pozycje dodane w finansach projektu. Możesz je tu usunąć.', 'Costs added in project finances. You can remove them here.')}
+                                            {t('Pozycje dodane w finansach projektu.', 'Costs added in project finances.')}
                                         </p>
                                     </div>
                                     <div className="text-right shrink-0">
