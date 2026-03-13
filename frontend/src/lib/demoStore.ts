@@ -262,29 +262,29 @@ const DEMO_PROJECTS_EN: Project[] = [
 ];
 
 const DEMO_INVENTORY_DEFAULT: InventoryItem[] = [
-    { id: 'demo-inv-1', user_id: 'demo-user', name: 'Farba Lateksowa Biała (Standard)', quantity: 80, unit: 'l', pricePerUnit: 60, category: 'Malowanie', minLevel: 20 },
+    { id: 'demo-inv-1', user_id: 'demo-user', name: 'Farba Lateksowa Biała (Standard)', quantity: 12, unit: 'l', pricePerUnit: 60, category: 'Malowanie', minLevel: 20 },
     { id: 'demo-inv-2', user_id: 'demo-user', name: 'Panele AC5 Dąb Sonoma', quantity: 150, unit: 'm²', pricePerUnit: 85, category: 'Podłogi', minLevel: 30 },
     { id: 'demo-inv-3', user_id: 'demo-user', name: 'Grunt Głęboko Penetrujący', quantity: 40, unit: 'l', pricePerUnit: 25, category: 'Malowanie', minLevel: 10 },
-    { id: 'demo-inv-4', user_id: 'demo-user', name: 'Klej do płytek C2', quantity: 18, unit: 'kg', pricePerUnit: 35, category: 'Glazurnictwo', minLevel: 5 },
+    { id: 'demo-inv-4', user_id: 'demo-user', name: 'Klej do płytek C2', quantity: 16, unit: 'kg', pricePerUnit: 35, category: 'Glazurnictwo', minLevel: 5 },
     { id: 'demo-inv-5', user_id: 'demo-user', name: 'Gniazdko Podwójne Białe', quantity: 60, unit: 'szt', pricePerUnit: 22, category: 'Elektryka', minLevel: 15 },
-    { id: 'demo-inv-6', user_id: 'demo-user', name: 'Listwa MDF Biała 240cm', quantity: 75, unit: 'mb', pricePerUnit: 35, category: 'Podłogi', minLevel: 20 },
+    { id: 'demo-inv-6', user_id: 'demo-user', name: 'Listwa MDF Biała 240cm', quantity: 20, unit: 'mb', pricePerUnit: 35, category: 'Podłogi', minLevel: 20 },
     { id: 'demo-inv-7', user_id: 'demo-user', name: 'Gładź Finiszowa Gotowa', quantity: 120, unit: 'kg', pricePerUnit: 5, category: 'Malowanie', minLevel: 30 },
     { id: 'demo-inv-8', user_id: 'demo-user', name: 'Gres 60x60 Jasny Beton', quantity: 45, unit: 'm²', pricePerUnit: 85, category: 'Glazurnictwo', minLevel: 10 },
     { id: 'demo-inv-9', user_id: 'demo-user', name: 'Drzwi Wewnętrzne Białe', quantity: 4, unit: 'szt', pricePerUnit: 450, category: 'Stolarka', minLevel: 2 },
-    { id: 'demo-inv-10', user_id: 'demo-user', name: 'Wylewka Szybkowiążąca 25kg', quantity: 15, unit: 'szt', pricePerUnit: 62, category: 'Podłogi', minLevel: 5 },
+    { id: 'demo-inv-10', user_id: 'demo-user', name: 'Wylewka Szybkowiążąca 25kg', quantity: 12, unit: 'szt', pricePerUnit: 62, category: 'Podłogi', minLevel: 5 },
 ];
 
 const DEMO_INVENTORY_EN: InventoryItem[] = [
-    { id: 'demo-inv-1', user_id: 'demo-user', name: 'White Latex Paint (Standard)', quantity: 80, unit: 'l', pricePerUnit: 60, category: 'Malowanie', minLevel: 20 },
+    { id: 'demo-inv-1', user_id: 'demo-user', name: 'White Latex Paint (Standard)', quantity: 12, unit: 'l', pricePerUnit: 60, category: 'Malowanie', minLevel: 20 },
     { id: 'demo-inv-2', user_id: 'demo-user', name: 'AC5 Oak Sonoma Panels', quantity: 150, unit: 'm²', pricePerUnit: 85, category: 'Podłogi', minLevel: 30 },
     { id: 'demo-inv-3', user_id: 'demo-user', name: 'Deep Penetrating Primer', quantity: 40, unit: 'l', pricePerUnit: 25, category: 'Malowanie', minLevel: 10 },
-    { id: 'demo-inv-4', user_id: 'demo-user', name: 'C2 Tile Adhesive', quantity: 18, unit: 'kg', pricePerUnit: 35, category: 'Glazurnictwo', minLevel: 5 },
+    { id: 'demo-inv-4', user_id: 'demo-user', name: 'C2 Tile Adhesive', quantity: 16, unit: 'kg', pricePerUnit: 35, category: 'Glazurnictwo', minLevel: 5 },
     { id: 'demo-inv-5', user_id: 'demo-user', name: 'Double White Socket', quantity: 60, unit: 'szt', pricePerUnit: 22, category: 'Elektryka', minLevel: 15 },
-    { id: 'demo-inv-6', user_id: 'demo-user', name: 'White MDF Baseboard 240cm', quantity: 75, unit: 'mb', pricePerUnit: 35, category: 'Podłogi', minLevel: 20 },
+    { id: 'demo-inv-6', user_id: 'demo-user', name: 'White MDF Baseboard 240cm', quantity: 20, unit: 'mb', pricePerUnit: 35, category: 'Podłogi', minLevel: 20 },
     { id: 'demo-inv-7', user_id: 'demo-user', name: 'Ready Finish Filler', quantity: 120, unit: 'kg', pricePerUnit: 5, category: 'Malowanie', minLevel: 30 },
     { id: 'demo-inv-8', user_id: 'demo-user', name: 'Light Concrete Tile 60x60', quantity: 45, unit: 'm²', pricePerUnit: 85, category: 'Glazurnictwo', minLevel: 10 },
     { id: 'demo-inv-9', user_id: 'demo-user', name: 'White Interior Door', quantity: 4, unit: 'szt', pricePerUnit: 450, category: 'Stolarka', minLevel: 2 },
-    { id: 'demo-inv-10', user_id: 'demo-user', name: 'Fast-Setting Screed 25kg', quantity: 15, unit: 'szt', pricePerUnit: 62, category: 'Podłogi', minLevel: 5 },
+    { id: 'demo-inv-10', user_id: 'demo-user', name: 'Fast-Setting Screed 25kg', quantity: 12, unit: 'szt', pricePerUnit: 62, category: 'Podłogi', minLevel: 5 },
 ];
 
 // ---------- Module-level state ----------

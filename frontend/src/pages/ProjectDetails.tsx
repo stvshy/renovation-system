@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getInventory, getProjectById, updateProject } from "../lib/storage";
 import { InventoryItem, Project } from "../types";
@@ -127,8 +127,12 @@ const ProjectDetails: React.FC = () => {
 
     const materialPlan = buildMaterialPlan(hydratedRooms, inventory);
     const materialSummary = materialPlan.items;
-    const totalToBuy = materialPlan.totalShortageQuantity;
     const totalShoppingCost = materialPlan.totalShortageCost;
+
+    const editSessionDraftId = useMemo(() => {
+        if (!project?.id) return "";
+        return `edit-${project.id}-${Date.now()}`;
+    }, [project?.id]);
 
     if (loading) return <div>{t('Ładowanie...', 'Loading...')}</div>;
     if (!project) return <div>{t('Projekt nie znaleziony.', 'Project not found.')}</div>;
@@ -153,7 +157,7 @@ const ProjectDetails: React.FC = () => {
     const currencyCode = language === "en" ? "EUR" : "PLN";
 
     const baseWizardState = {
-        draftId: `edit-${project.id}`,
+        draftId: editSessionDraftId,
         clientData: project.clientData,
         projectDates: {
             startDate: project.startDate || "",
@@ -173,7 +177,7 @@ const ProjectDetails: React.FC = () => {
 
     const handleEditClientStep = () => {
         const draftSnapshot = {
-            id: `edit-${project.id}`,
+            id: editSessionDraftId,
             currentStep: "client",
             updatedAt: new Date().toISOString(),
             clientData: project.clientData,
@@ -199,7 +203,7 @@ const ProjectDetails: React.FC = () => {
         navigate("/projects/new/client", {
             state: {
                 draftSnapshot,
-                draftId: `edit-${project.id}`,
+                draftId: editSessionDraftId,
                 preSelectedClientId: project.clientId,
                 rooms: project.rooms || [],
                 editProjectId: project.id,
@@ -213,7 +217,7 @@ const ProjectDetails: React.FC = () => {
             state: {
                 ...baseWizardState,
                 draftSnapshot: {
-                    id: `edit-${project.id}`,
+                    id: editSessionDraftId,
                     currentStep: "room",
                     updatedAt: new Date().toISOString(),
                     clientData: project.clientData,
@@ -229,7 +233,7 @@ const ProjectDetails: React.FC = () => {
             state: {
                 ...baseWizardState,
                 draftSnapshot: {
-                    id: `edit-${project.id}`,
+                    id: editSessionDraftId,
                     currentStep: "services",
                     updatedAt: new Date().toISOString(),
                     clientData: project.clientData,
@@ -632,9 +636,10 @@ const ProjectDetails: React.FC = () => {
                             </p>
                         </div>
                         <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-                            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Łączna ilość do zakupu", "Total quantity to buy")}</p>
-                            <p className="text-2xl font-black text-red-600 dark:text-red-400 mt-1">{totalToBuy.toFixed(2)}</p>
-                            <p className="text-xs text-gray-500 dark:text-slate-400 mt-2">{totalShoppingCost.toFixed(2)} {currencyCode}</p>
+                            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Łączny koszt zakupu", "Total purchase cost")}</p>
+                            <p className={`text-2xl font-black mt-1 ${totalShoppingCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+                                {totalShoppingCost.toFixed(2)} {currencyCode}
+                            </p>
                         </div>
                     </div>
 
@@ -673,11 +678,15 @@ const ProjectDetails: React.FC = () => {
                                             {material.available.toFixed(2)} {unitLabel(material.unit)}
                                         </td>
                                         <td className="px-4 py-3 text-right whitespace-nowrap font-bold">
-                                            <span className={material.toBuy > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}>
+                                            <span className={material.toBuy > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}>
                                                 {material.toBuy.toFixed(2)} {unitLabel(material.unit)}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 text-right whitespace-nowrap font-bold text-amber-700 dark:text-amber-300">
+                                        <td
+                                            className={`px-4 py-3 text-right whitespace-nowrap font-bold ${
+                                                material.shortageCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"
+                                            }`}
+                                        >
                                             {material.shortageCost.toFixed(2)} {currencyCode}
                                         </td>
                                     </tr>

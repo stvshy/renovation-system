@@ -360,20 +360,46 @@ const normalizeDraftForCompare = (draft: ProjectDraft | null) => {
     return rest;
 };
 
-const isEmptyClientForm = (form?: ProjectDraft["clientForm"]) => {
-    if (!form) return true;
-    return (
-        form.selectedClientId === "" &&
-        form.firstName.trim() === "" &&
-        form.lastName.trim() === "" &&
-        form.address.trim() === "" &&
-        form.city.trim() === "" &&
-        form.zipCode.trim() === "" &&
-        form.phone.trim() === "" &&
-        form.email.trim() === "" &&
-        form.startDate === "" &&
-        form.endDate === ""
-    );
+const normalizeRoomsForCompare = (rooms: any[] | undefined) => {
+    if (!Array.isArray(rooms)) return rooms;
+
+    return rooms.map((room) => ({
+        name: room?.name,
+        surfaces: Array.isArray(room?.surfaces)
+            ? room.surfaces.map((surface: any) => ({
+                  name: surface?.name,
+                  type: surface?.type,
+                  width: surface?.width,
+                  height: surface?.height,
+                  customArea: surface?.customArea,
+                  openings: Array.isArray(surface?.openings)
+                      ? surface.openings.map((opening: any) => ({
+                            width: opening?.width,
+                            height: opening?.height,
+                            type: opening?.type,
+                        }))
+                      : [],
+              }))
+            : [],
+        tasks: Array.isArray(room?.tasks)
+            ? room.tasks.map((task: any) => ({
+                  description: task?.description,
+                  material: task?.material
+                      ? {
+                            name: task.material.name,
+                            unitPrice: task.material.unitPrice,
+                            unit: task.material.unit,
+                            defaultCoverage: task.material.defaultCoverage,
+                            inventoryId: task.material.inventoryId,
+                            category: task.material.category,
+                        }
+                      : undefined,
+                  laborRate: task?.laborRate,
+                  strategyParams: task?.strategyParams,
+                  inputDimension: task?.inputDimension,
+              }))
+            : [],
+    }));
 };
 
 const isPristineRoomForm = (form?: ProjectDraft["roomForm"]) => {
@@ -392,22 +418,35 @@ const isPristineRoomForm = (form?: ProjectDraft["roomForm"]) => {
     );
 };
 
-const isPristineServiceForm = (form?: ProjectDraft["serviceForm"]) => {
-    if (!form) return true;
+const createComparableSurfaceDraft = (surface: any) => ({
+    width: surface?.width && Number(surface.width) !== 0 ? String(surface.width) : "",
+    height: surface?.height && Number(surface.height) !== 0 ? String(surface.height) : "",
+    area: surface?.customArea !== undefined && surface?.customArea !== null && Number(surface.customArea) !== 0 ? String(surface.customArea) : "",
+});
+
+const isAutoHydratedRoomForm = (form: ProjectDraft["roomForm"] | undefined, rooms: any[] | undefined) => {
+    if (!form) return false;
+    if (!Array.isArray(rooms)) return false;
+    if (form.editingRoomIndex === null) return false;
+
+    const sourceRoom = rooms[form.editingRoomIndex];
+    if (!sourceRoom) return false;
+
+    const sourceSurfaces = Array.isArray(sourceRoom.surfaces) ? sourceRoom.surfaces : [];
+    const sourceSurfaceDrafts = sourceSurfaces.map(createComparableSurfaceDraft);
+
     return (
-        form.selectedCategory === "" &&
-        form.selectedTemplateId === "" &&
-        form.selectedMaterialId === "" &&
-        form.isAddingNewMaterial === false &&
-        form.newMatScope === "project" &&
-        form.customMatName === "" &&
-        form.customMatPrice === "" &&
-        form.customMatCoverage === "" &&
-        form.customMatInitialStock === "" &&
-        form.scopeType === "global" &&
-        form.specificSurfaceIndex === 0 &&
-        form.manualQuantity === "1" &&
-        form.strategyParam === ""
+        form.mode === "custom" &&
+        form.length === "" &&
+        form.width === "" &&
+        form.height === "" &&
+        form.openingDims.w === "" &&
+        form.openingDims.h === "" &&
+        form.openingDims.type === "okno" &&
+        form.activeSurfaceIndex === null &&
+        form.roomName === sourceRoom.name &&
+        JSON.stringify(form.surfaces) === JSON.stringify(sourceSurfaces) &&
+        JSON.stringify(form.surfaceDrafts) === JSON.stringify(sourceSurfaceDrafts)
     );
 };
 
@@ -419,26 +458,18 @@ const buildComparableDraft = (draft: ProjectDraft, step: ProjectWizardStep) => {
         id: normalized.id,
         clientData: normalized.clientData,
         projectDates: normalized.projectDates,
-        rooms: normalized.rooms,
+        rooms: normalizeRoomsForCompare(normalized.rooms),
     } as any;
 
-    if (step === "client") {
-        if (!isEmptyClientForm(normalized.clientForm)) {
-            base.clientForm = normalized.clientForm;
-        }
-    }
+    // Client form fields are UI state only; persisted changes are reflected in clientData/projectDates.
 
     if (step === "room") {
-        if (!isPristineRoomForm(normalized.roomForm)) {
+        if (!isPristineRoomForm(normalized.roomForm) && !isAutoHydratedRoomForm(normalized.roomForm, normalized.rooms)) {
             base.roomForm = normalized.roomForm;
         }
     }
 
-    if (step === "services") {
-        if (!isPristineServiceForm(normalized.serviceForm)) {
-            base.serviceForm = normalized.serviceForm;
-        }
-    }
+    // Service form fields are UI state only; persisted changes are reflected in rooms.
 
     return base;
 };
