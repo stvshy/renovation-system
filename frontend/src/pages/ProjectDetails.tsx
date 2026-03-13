@@ -667,8 +667,8 @@ const ProjectDetails: React.FC = () => {
                     <div className="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-slate-900 p-5 shadow-sm">
                         <div className="flex items-start justify-between gap-3">
                             <div>
-                                <p className="text-xs uppercase tracking-wide font-bold text-indigo-500">{t("Krok 1", "Step 1")}</p>
-                                <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Dane klienta i terminy", "Client and timeline")}</h3>
+                                <p className="text-xs uppercase tracking-wide font-semibold text-indigo-500">{t("Krok 1", "Step 1")}</p>
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("Dane klienta i terminy", "Client and timeline")}</h3>
                                 <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
                                     {project.clientName} | {project.startDate || "-"} - {project.endDate || "-"}
                                 </p>
@@ -687,8 +687,8 @@ const ProjectDetails: React.FC = () => {
                     <div className="rounded-2xl border border-teal-200 dark:border-teal-800 bg-gradient-to-br from-teal-50 to-white dark:from-teal-950/30 dark:to-slate-900 p-5 shadow-sm">
                         <div className="flex items-start justify-between gap-3">
                             <div>
-                                <p className="text-xs uppercase tracking-wide font-bold text-teal-500">{t("Krok 2", "Step 2")}</p>
-                                <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Zakres i pomieszczenia", "Scope and rooms")}</h3>
+                                <p className="text-xs uppercase tracking-wide font-semibold text-teal-500">{t("Krok 2", "Step 2")}</p>
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("Zakres i pomieszczenia", "Scope and rooms")}</h3>
                                 <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
                                     {t("Liczba pomieszczeń", "Rooms")}: {hydratedRooms.length}
                                 </p>
@@ -707,8 +707,8 @@ const ProjectDetails: React.FC = () => {
                     <div className="rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/30 dark:to-slate-900 p-5 shadow-sm">
                         <div className="flex items-start justify-between gap-3">
                             <div>
-                                <p className="text-xs uppercase tracking-wide font-bold text-amber-500">{t("Krok 3", "Step 3")}</p>
-                                <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Usługi i materiały", "Services and materials")}</h3>
+                                <p className="text-xs uppercase tracking-wide font-semibold text-amber-500">{t("Krok 3", "Step 3")}</p>
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("Usługi i materiały", "Services and materials")}</h3>
                                 <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
                                     {t("Pozycje materiałowe", "Material lines")}: {materialSummary.length}
                                 </p>
@@ -1360,13 +1360,16 @@ const ProjectDetails: React.FC = () => {
                         <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Dodaj koszt dodatkowy", "Add additional cost")}</h3>
                         <label className="flex flex-col gap-1">
                             <span className="text-xs font-bold text-gray-500 uppercase">{t("Kwota", "Amount")}</span>
-                            <input
-                                type="number"
-                                min="0"
-                                value={extraCostForm.amount}
-                                onChange={(e) => setExtraCostForm((prev) => ({ ...prev, amount: e.target.value }))}
-                                className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800"
-                            />
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={extraCostForm.amount}
+                                    onChange={(e) => setExtraCostForm((prev) => ({ ...prev, amount: e.target.value }))}
+                                    className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 pr-16"
+                                />
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 dark:text-slate-400">{currencyCode}</span>
+                            </div>
                         </label>
                         <label className="flex flex-col gap-1">
                             <span className="text-xs font-bold text-gray-500 uppercase">{t("Notatka", "Note")}</span>

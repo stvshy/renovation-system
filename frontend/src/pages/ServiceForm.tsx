@@ -149,6 +149,10 @@ const ServiceForm: React.FC = () => {
     const clientData = location.state?.clientData || draftSnapshot?.clientData;
     const projectDates = location.state?.projectDates || draftSnapshot?.projectDates;
     const [additionalCosts, setAdditionalCosts] = useState<AdditionalCost[]>(() => getAdditionalCostsFromSource(clientData, editProjectMeta));
+    const [isAddAdditionalCostModalOpen, setIsAddAdditionalCostModalOpen] = useState(false);
+    const [additionalCostAmount, setAdditionalCostAmount] = useState("");
+    const [additionalCostNote, setAdditionalCostNote] = useState("");
+    const [additionalCostError, setAdditionalCostError] = useState<string | null>(null);
 
     // Load Catalog from Storage
     const [serviceCatalog, setServiceCatalog] = useState<any[]>([]);
@@ -556,6 +560,45 @@ const ServiceForm: React.FC = () => {
 
     const handleRemoveAdditionalCost = (costId: string) => {
         setAdditionalCosts((current) => current.filter((item) => item.id !== costId));
+    };
+
+    const handleOpenAddAdditionalCostModal = () => {
+        setAdditionalCostError(null);
+        setIsAddAdditionalCostModalOpen(true);
+    };
+
+    const handleCloseAddAdditionalCostModal = () => {
+        setAdditionalCostError(null);
+        setIsAddAdditionalCostModalOpen(false);
+    };
+
+    const handleAddAdditionalCost = () => {
+        const amount = parseFloat(additionalCostAmount);
+        const note = additionalCostNote.trim();
+
+        if (isNaN(amount) || amount <= 0) {
+            setAdditionalCostError(t('Podaj poprawną kwotę większą od 0.', 'Enter a valid amount greater than 0.'));
+            return;
+        }
+
+        if (!note) {
+            setAdditionalCostError(t('Dodaj krótki opis kosztu.', 'Add a short cost description.'));
+            return;
+        }
+
+        setAdditionalCosts((current) => [
+            ...current,
+            {
+                id: crypto.randomUUID(),
+                amount,
+                note,
+                createdAt: new Date().toISOString(),
+            },
+        ]);
+
+        setAdditionalCostAmount("");
+        setAdditionalCostNote("");
+        handleCloseAddAdditionalCostModal();
     };
 
     if (rooms.length === 0 || !activeRoom) {
@@ -1148,16 +1191,16 @@ const ServiceForm: React.FC = () => {
 
                             <div className="p-4 space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar">
                                 {shoppingListItems.length === 0 ? (
-                                    <div className="rounded-xl border border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/70 dark:bg-emerald-900/10 px-4 py-5 text-sm text-emerald-700 dark:text-emerald-300 text-center">
+                                    <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/40 px-4 py-4 text-sm text-slate-600 dark:text-slate-300 text-center">
                                         {t('Wszystkie materiały są pokryte stanem magazynowym.', 'All material demand is currently covered by inventory.')}
                                     </div>
                                 ) : (
                                     shoppingListItems.map((item) => (
-                                        <div key={item.key} className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-4">
+                                        <div key={item.key} className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-3">
                                             <div className="flex items-start justify-between gap-3">
                                                 <div>
-                                                    <p className="font-bold text-slate-900 dark:text-white">{item.materialName}</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                    <p className="font-bold text-sm text-slate-900 dark:text-white">{item.materialName}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                                         {t('Potrzebne', 'Required')}: {item.required.toFixed(2)} {localizeUnit(item.unit)}, {t('Magazyn', 'In stock')}: {item.available.toFixed(2)} {localizeUnit(item.unit)}
                                                     </p>
                                                 </div>
@@ -1176,12 +1219,22 @@ const ServiceForm: React.FC = () => {
                             <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-rose-50/60 dark:bg-rose-900/10">
                                 <div className="flex items-center justify-between gap-3">
                                     <div>
-                                        <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-rose-600 dark:text-rose-400">request_quote</span>
-                                            {t('Koszty dodatkowe', 'Additional costs')}
-                                        </h3>
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-rose-600 dark:text-rose-400">request_quote</span>
+                                                {t('Koszty dodatkowe', 'Additional costs')}
+                                            </h3>
+                                            <button
+                                                type="button"
+                                                onClick={handleOpenAddAdditionalCostModal}
+                                                className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-900/60 transition-colors"
+                                                title={t('Dodaj koszt dodatkowy', 'Add additional cost')}
+                                            >
+                                                <span className="material-symbols-outlined text-[16px] leading-none">add</span>
+                                            </button>
+                                        </div>
                                         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                            {t('Pozycje dodane w finansach projektu.', 'Costs added in project finances.')}
+                                            {t('Niestandardowe koszty w ramach projektu.', 'Custom costs related to the project.')}
                                         </p>
                                     </div>
                                     <div className="text-right shrink-0">
@@ -1189,25 +1242,25 @@ const ServiceForm: React.FC = () => {
                                         <p className={`text-lg font-black ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                                             {additionalCostsTotal.toFixed(2)} {currencyCode}
                                         </p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{additionalCosts.length} {t('pozycji', 'items')}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t('Pozycje: ', 'Items: ')}{additionalCosts.length} </p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="p-4 space-y-3 max-h-[260px] overflow-y-auto custom-scrollbar">
                                 {additionalCosts.length === 0 ? (
-                                    <div className="rounded-xl border border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/70 dark:bg-emerald-900/10 px-4 py-5 text-sm text-emerald-700 dark:text-emerald-300 text-center">
+                                    <div className="w-full rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/40 px-4 py-4 text-sm text-slate-600 dark:text-slate-300 text-center">
                                         {t('Brak kosztów dodatkowych.', 'No additional costs yet.')}
                                     </div>
                                 ) : (
                                     additionalCosts.map((cost) => (
-                                        <div key={cost.id} className="rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-4">
+                                        <div key={cost.id} className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-3">
                                             <div className="flex items-start justify-between gap-3">
                                                 <div>
-                                                    <p className="font-semibold text-slate-900 dark:text-white break-words">{cost.note}</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{new Date(cost.createdAt).toLocaleDateString()}</p>
+                                                    <p className="font-bold text-sm text-slate-900 dark:text-white break-words">{cost.note}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{new Date(cost.createdAt).toLocaleDateString()}</p>
                                                 </div>
-                                                <div className="text-right shrink-0 flex items-start gap-2">
+                                                <div className="text-right shrink-0 self-center flex items-center gap-2">
                                                     <p className="text-sm font-black text-red-600 dark:text-red-400">+{cost.amount.toFixed(2)} {currencyCode}</p>
                                                     <button
                                                         type="button"
@@ -1226,6 +1279,70 @@ const ServiceForm: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                {isAddAdditionalCostModalOpen && (
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={handleCloseAddAdditionalCostModal}>
+                        <div
+                            className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl p-5 space-y-4"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="flex items-center justify-between gap-3">
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white">{t('Dodaj koszt dodatkowy', 'Add additional cost')}</h3>
+                                <button
+                                    type="button"
+                                    onClick={handleCloseAddAdditionalCostModal}
+                                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                                >
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+
+                            <label className="flex flex-col gap-1">
+                                <span className="text-xs font-bold uppercase text-slate-500">{t('Kwota', 'Amount')}</span>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={additionalCostAmount}
+                                        onChange={(e) => setAdditionalCostAmount(e.target.value)}
+                                        className="form-input w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 pr-16"
+                                    />
+                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 dark:text-slate-400">{currencyCode}</span>
+                                </div>
+                            </label>
+
+                            <label className="flex flex-col gap-1">
+                                <span className="text-xs font-bold uppercase text-slate-500">{t('Notatka', 'Note')}</span>
+                                <textarea
+                                    value={additionalCostNote}
+                                    onChange={(e) => setAdditionalCostNote(e.target.value)}
+                                    className="form-textarea w-full rounded-lg border-slate-200 dark:border-slate-700 dark:bg-slate-800 min-h-[96px]"
+                                />
+                            </label>
+
+                            {additionalCostError && (
+                                <p className="text-sm text-red-600 dark:text-red-400">{additionalCostError}</p>
+                            )}
+
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    type="button"
+                                    onClick={handleCloseAddAdditionalCostModal}
+                                    className="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 text-sm font-semibold"
+                                >
+                                    {t('Anuluj', 'Cancel')}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleAddAdditionalCost}
+                                    className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold"
+                                >
+                                    {t('Dodaj', 'Add')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Footer Navigation */}
                 {isEditMode ? (
