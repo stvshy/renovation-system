@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getInventory, getProjectById, getProjects, saveClient, updateProject } from "../lib/storage";
+import { deleteProject, getInventory, getProjectById, getProjects, saveClient, updateProject } from "../lib/storage";
 import { AdditionalCost, Client, InventoryItem, Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import { useDemo } from "../context/DemoContext";
@@ -110,6 +110,7 @@ const ProjectDetails: React.FC = () => {
     const [extraCostForm, setExtraCostForm] = useState<{ amount: string; note: string }>({ amount: "", note: "" });
     const [isAdditionalCostsPanelOpen, setIsAdditionalCostsPanelOpen] = useState(false);
     const [additionalCostEdits, setAdditionalCostEdits] = useState<Record<string, { amount: string; note: string }>>({});
+    const [isDeleteProjectModalOpen, setIsDeleteProjectModalOpen] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -378,6 +379,13 @@ const ProjectDetails: React.FC = () => {
         };
 
         await saveProjectUpdate(updatedProject);
+    };
+
+    const handleDeleteProject = async () => {
+        if (!project) return;
+        await deleteProject(project.id);
+        setIsDeleteProjectModalOpen(false);
+        navigate("/projects");
     };
 
     const handleEditClientStep = () => {
@@ -928,14 +936,24 @@ const ProjectDetails: React.FC = () => {
                 <div className="mt-2">
                     <div className="flex items-center justify-between gap-3 mb-4">
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Materiały i Magazyn', 'Materials and inventory')}</h2>
-                        <button
-                            type="button"
-                            onClick={handleEditServicesStep}
-                            className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
-                        >
-                            <span className="material-symbols-outlined text-base">edit</span>
-                            {t("Edytuj", "Edit")}
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => navigate("/inventory")}
+                                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                            >
+                                <span className="material-symbols-outlined text-base">warehouse</span>
+                                {t("Magazyn", "Inventory")}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleEditServicesStep}
+                                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                                {t("Edytuj", "Edit")}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -1015,6 +1033,17 @@ const ProjectDetails: React.FC = () => {
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700 flex justify-end">
+                    <button
+                        type="button"
+                        onClick={() => setIsDeleteProjectModalOpen(true)}
+                        className="inline-flex items-center gap-2 rounded-lg border border-red-300 dark:border-red-800 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                    >
+                        <span className="material-symbols-outlined text-base">delete</span>
+                        {t("Usuń projekt", "Delete project")}
+                    </button>
                 </div>
             </div>
 
@@ -1260,6 +1289,38 @@ const ProjectDetails: React.FC = () => {
                             })}
                         </div>
                     </aside>
+                </div>
+            )}
+
+            {isDeleteProjectModalOpen && (
+                <div className="fixed inset-0 z-[10052] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-xl overflow-hidden">
+                        <div className="px-5 py-4 border-b border-gray-100 dark:border-slate-800">
+                            <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Usunąć projekt?", "Delete project?")}</h3>
+                            <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
+                                {t(
+                                    "Ta operacja jest nieodwracalna. Projekt zniknie z listy projektów i kalendarza.",
+                                    "This action cannot be undone. The project will be removed from the project list and calendar."
+                                )}
+                            </p>
+                        </div>
+                        <div className="px-5 py-4 flex justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setIsDeleteProjectModalOpen(false)}
+                                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 text-sm font-semibold text-gray-700 dark:text-slate-200"
+                            >
+                                {t("Anuluj", "Cancel")}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleDeleteProject}
+                                className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700"
+                            >
+                                {t("Usuń", "Delete")}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

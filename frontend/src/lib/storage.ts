@@ -7,6 +7,7 @@ import {
     getDemoProjectById,
     saveDemoProject,
     updateDemoProject,
+    deleteDemoProject,
     getDemoClients,
     getDemoClientById,
     saveDemoClient,
@@ -95,6 +96,20 @@ export const updateProject = async (updatedProject: Project): Promise<void> => {
         if (error) throw error;
     } catch (error: any) {
         console.error("Error updating project", error.message || error);
+    }
+};
+
+export const deleteProject = async (id: string): Promise<void> => {
+    if (isDemoModeActive()) { deleteDemoProject(id); return; }
+    try {
+        const userId = await getCurrentUserId();
+        if (!userId) throw new Error("User not authenticated");
+
+        const { error } = await supabase.from("projects").delete().eq("id", id).eq("user_id", userId);
+
+        if (error) throw error;
+    } catch (error: any) {
+        console.error("Error deleting project", error.message || error);
     }
 };
 
