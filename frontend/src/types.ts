@@ -30,6 +30,12 @@ export interface AdditionalCost {
     createdAt: string;
 }
 
+export interface ProjectNote {
+    id: string;
+    content: string;
+    createdAt: string;
+}
+
 export interface Project {
     id: string;
     user_id?: string;
@@ -46,6 +52,7 @@ export interface Project {
     rooms?: Room[]; // Persisted room data for details view
     clientData?: any; // Snapshot of client data
     paidAmount?: number;
+    notes?: ProjectNote[];
 }
 
 export interface RoomDimensions {

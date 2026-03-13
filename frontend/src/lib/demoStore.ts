@@ -101,6 +101,18 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
         startDate: '2026-02-10',
         endDate: '2026-04-28',
         color: '#4ECDC4',
+        notes: [
+            {
+                id: 'demo-note-1-1',
+                content: 'Klient wymaga, aby podłoga była ułożona według wzoru przesłanego mailowo.',
+                createdAt: '2026-02-09T10:15:00.000Z',
+            },
+            {
+                id: 'demo-note-1-2',
+                content: 'Prace hałaśliwe tylko do godziny 17:00 ze względu na wspólnotę mieszkaniową.',
+                createdAt: '2026-02-11T08:40:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-2',
@@ -115,6 +127,13 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
         startDate: '2026-05-01',
         endDate: '2026-05-20',
         color: '#45B7D1',
+        notes: [
+            {
+                id: 'demo-note-2-1',
+                content: 'Inwestor zamówił armaturę we własnym zakresie i dostarczy ją przed montażem.',
+                createdAt: '2026-04-22T12:10:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-3',
@@ -129,6 +148,13 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
         startDate: '2025-11-01',
         endDate: '2026-01-15',
         color: '#98D8C8',
+        notes: [
+            {
+                id: 'demo-note-3-1',
+                content: 'Po odbiorze zgłoszono drobne poprawki malarskie przy listwach sufitowych.',
+                createdAt: '2026-01-16T14:20:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-4',
@@ -143,6 +169,13 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
         startDate: '2026-02-15',
         endDate: '2026-05-05',
         color: '#FF8A65',
+        notes: [
+            {
+                id: 'demo-note-4-1',
+                content: 'Klient prosi o wcześniejsze wykończenie strefy jadalni przed świętami.',
+                createdAt: '2026-02-18T09:00:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-5',
@@ -157,6 +190,13 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
         startDate: '2026-05-25',
         endDate: '2026-06-25',
         color: '#7986CB',
+        notes: [
+            {
+                id: 'demo-note-5-1',
+                content: 'Wymagane codzienne raportowanie postępu prac dla działu administracji biura.',
+                createdAt: '2026-05-20T07:35:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-6',
@@ -171,6 +211,13 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
         startDate: '2026-07-02',
         endDate: '2026-07-24',
         color: '#4DB6AC',
+        notes: [
+            {
+                id: 'demo-note-6-1',
+                content: 'Dostawy materiałów tylko w godzinach 9:00-14:00, zgodnie z regulaminem budynku.',
+                createdAt: '2026-06-28T15:50:00.000Z',
+            },
+        ],
     },
 ];
 
@@ -188,6 +235,18 @@ const DEMO_PROJECTS_EN: Project[] = [
         startDate: '2026-02-10',
         endDate: '2026-04-28',
         color: '#4ECDC4',
+        notes: [
+            {
+                id: 'demo-note-en-1-1',
+                content: 'Client asked for the flooring pattern to follow the layout sent by email.',
+                createdAt: '2026-02-09T10:15:00.000Z',
+            },
+            {
+                id: 'demo-note-en-1-2',
+                content: 'No noisy work after 5:00 PM due to building regulations.',
+                createdAt: '2026-02-11T08:40:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-2',
@@ -202,6 +261,13 @@ const DEMO_PROJECTS_EN: Project[] = [
         startDate: '2026-05-01',
         endDate: '2026-05-20',
         color: '#45B7D1',
+        notes: [
+            {
+                id: 'demo-note-en-2-1',
+                content: 'Owner will provide fixtures before installation starts.',
+                createdAt: '2026-04-22T12:10:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-3',
@@ -216,6 +282,13 @@ const DEMO_PROJECTS_EN: Project[] = [
         startDate: '2025-11-01',
         endDate: '2026-01-15',
         color: '#98D8C8',
+        notes: [
+            {
+                id: 'demo-note-en-3-1',
+                content: 'Minor paint touch-ups near crown moldings were requested after handover.',
+                createdAt: '2026-01-16T14:20:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-4',
@@ -230,6 +303,13 @@ const DEMO_PROJECTS_EN: Project[] = [
         startDate: '2026-02-15',
         endDate: '2026-05-05',
         color: '#FF8A65',
+        notes: [
+            {
+                id: 'demo-note-en-4-1',
+                content: 'Client requested the dining zone to be finished ahead of holiday events.',
+                createdAt: '2026-02-18T09:00:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-5',
@@ -244,6 +324,13 @@ const DEMO_PROJECTS_EN: Project[] = [
         startDate: '2026-05-25',
         endDate: '2026-06-25',
         color: '#7986CB',
+        notes: [
+            {
+                id: 'demo-note-en-5-1',
+                content: 'Daily progress summary is required for office administration.',
+                createdAt: '2026-05-20T07:35:00.000Z',
+            },
+        ],
     },
     {
         id: 'demo-project-6',
@@ -258,6 +345,13 @@ const DEMO_PROJECTS_EN: Project[] = [
         startDate: '2026-07-02',
         endDate: '2026-07-24',
         color: '#4DB6AC',
+        notes: [
+            {
+                id: 'demo-note-en-6-1',
+                content: 'Material deliveries are allowed only between 9:00 AM and 2:00 PM.',
+                createdAt: '2026-06-28T15:50:00.000Z',
+            },
+        ],
     },
 ];
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { deleteProject, getInventory, getProjectById, getProjects, saveClient, updateProject } from "../lib/storage";
-import { AdditionalCost, Client, InventoryItem, Project } from "../types";
+import { AdditionalCost, Client, InventoryItem, Project, ProjectNote } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import { useDemo } from "../context/DemoContext";
 import {
@@ -86,6 +86,19 @@ const withProjectMetaAdditionalCosts = (clientData: any, additionalCosts: Additi
 
 const sumAdditionalCosts = (costs: AdditionalCost[]) => costs.reduce((sum, item) => sum + item.amount, 0);
 
+const getProjectNotes = (project: Project | null): ProjectNote[] => {
+    if (!Array.isArray(project?.notes)) return [];
+    return project.notes
+        .filter((entry) => entry && typeof entry.content === "string")
+        .map((entry) => ({
+            id: entry.id || crypto.randomUUID(),
+            content: entry.content.trim(),
+            createdAt: entry.createdAt || new Date().toISOString(),
+        }))
+        .filter((entry) => entry.content.length > 0)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+};
+
 const ProjectDetails: React.FC = () => {
     const { t, language } = useLanguage();
     const { isDemoMode, demoRevision } = useDemo();
@@ -110,6 +123,7 @@ const ProjectDetails: React.FC = () => {
     const [extraCostForm, setExtraCostForm] = useState<{ amount: string; note: string }>({ amount: "", note: "" });
     const [isAdditionalCostsPanelOpen, setIsAdditionalCostsPanelOpen] = useState(false);
     const [additionalCostEdits, setAdditionalCostEdits] = useState<Record<string, { amount: string; note: string }>>({});
+    const [newProjectNoteInput, setNewProjectNoteInput] = useState("");
     const [isDeleteProjectModalOpen, setIsDeleteProjectModalOpen] = useState(false);
 
     useEffect(() => {
@@ -186,6 +200,7 @@ const ProjectDetails: React.FC = () => {
 
     const additionalCosts = useMemo(() => getAdditionalCostsFromClientData(project?.clientData), [project?.clientData]);
     const additionalCostsTotal = useMemo(() => sumAdditionalCosts(additionalCosts), [additionalCosts]);
+    const projectNotes = useMemo(() => getProjectNotes(project), [project]);
 
     useEffect(() => {
         if (!isAdditionalCostsPanelOpen) return;
@@ -388,6 +403,37 @@ const ProjectDetails: React.FC = () => {
         navigate("/projects");
     };
 
+    const handleAddProjectNote = async () => {
+        if (!project) return;
+        const content = newProjectNoteInput.trim();
+        if (!content) return;
+
+        const nextNotes: ProjectNote[] = [
+            {
+                id: crypto.randomUUID(),
+                content,
+                createdAt: new Date().toISOString(),
+            },
+            ...projectNotes,
+        ];
+
+        await saveProjectUpdate({
+            ...project,
+            notes: nextNotes,
+        });
+        setNewProjectNoteInput("");
+    };
+
+    const handleDeleteProjectNote = async (noteId: string) => {
+        if (!project) return;
+
+        const nextNotes = projectNotes.filter((note) => note.id !== noteId);
+        await saveProjectUpdate({
+            ...project,
+            notes: nextNotes,
+        });
+    };
+
     const handleEditClientStep = () => {
         const draftSnapshot = {
             id: editSessionDraftId,
@@ -523,6 +569,18 @@ const ProjectDetails: React.FC = () => {
             timelineInfoIcon = "warning";
         }
     }
+
+    const formatNoteDate = (value: string) => {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toLocaleString(language === "en" ? "en-US" : "pl-PL", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
 
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
@@ -1032,6 +1090,65 @@ const ProjectDetails: React.FC = () => {
                                 )}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t("Notatki projektowe", "Project notes")}</h2>
+                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                            {t("Liczba notatek", "Total notes")}: {projectNotes.length}
+                        </span>
+                    </div>
+
+                    <div className="space-y-3">
+                        <label className="flex flex-col gap-1">
+                            <span className="text-xs font-bold text-gray-500 uppercase">{t("Nowa notatka", "New note")}</span>
+                            <textarea
+                                value={newProjectNoteInput}
+                                onChange={(e) => setNewProjectNoteInput(e.target.value)}
+                                placeholder={t(
+                                    "Wpisz treść notatki.",
+                                    "Type your content here."
+                                )}
+                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[96px]"
+                            />
+                        </label>
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                onClick={handleAddProjectNote}
+                                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
+                            >
+                                <span className="material-symbols-outlined text-base">note_add</span>
+                                {t("Dodaj notatkę", "Add note")}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mt-5 space-y-3">
+                        {projectNotes.length === 0 && (
+                            <div className="rounded-lg border border-dashed border-gray-300 dark:border-slate-600 p-4 text-sm text-gray-500 dark:text-slate-400 text-center">
+                                {t("Brak notatek dla tego projektu.", "No notes for this project yet.")}
+                            </div>
+                        )}
+
+                        {projectNotes.map((note) => (
+                            <article key={note.id} className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/70 dark:bg-slate-900/40 p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                    <p className="text-sm text-gray-800 dark:text-slate-100 whitespace-pre-wrap">{note.content}</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDeleteProjectNote(note.id)}
+                                        className="inline-flex items-center justify-center rounded-md p-1 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                        title={t("Usuń notatkę", "Delete note")}
+                                    >
+                                        <span className="material-symbols-outlined text-base">delete</span>
+                                    </button>
+                                </div>
+                                <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">{formatNoteDate(note.createdAt)}</p>
+                            </article>
+                        ))}
                     </div>
                 </div>
 
