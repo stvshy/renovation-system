@@ -715,7 +715,7 @@ const ProjectDetails: React.FC = () => {
                             </div>
                         </div>
                         {timelineInfoText && (
-                            <div className="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                            <div className="mt-auto translate-y-1 pt-4 border-t border-gray-100 dark:border-slate-700">
                                 <p className={`text-[14px] font-bold inline-flex items-center gap-1.5 ${timelineInfoClass}`}>
                                     <span className="material-symbols-outlined text-base">{timelineInfoIcon}</span>
                                     {timelineInfoText}
