@@ -15,7 +15,7 @@ import {
     Opening,
 } from "../lib/renovationLogic";
 import { saveProject, deductInventoryFromProject, getInventory } from "../lib/storage";
-import { InventoryItem, Project } from "../types";
+import { AdditionalCost, InventoryItem, Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import EditWizardExitControl from "../components/EditWizardExitControl";
 import { clearProjectCreationDirty, setProjectCreationDirty } from "../lib/projectCreationGuard";
@@ -71,12 +71,30 @@ const rehydrateRoom = (plainRoom: any): Room => {
     return room;
 };
 
+const getAdditionalCostsFromSource = (clientData: any, editProjectMeta: any): AdditionalCost[] => {
+    const fromClientData = clientData?.projectMeta?.additionalCosts;
+    const fromMeta = editProjectMeta?.additionalCosts;
+    const source = Array.isArray(fromClientData) ? fromClientData : Array.isArray(fromMeta) ? fromMeta : [];
+    return source
+        .filter((item) => item && typeof item.amount === "number" && item.amount >= 0)
+        .map((item) => ({
+            id: item.id || crypto.randomUUID(),
+            amount: Number(item.amount) || 0,
+            note: item.note || "",
+            createdAt: item.createdAt || new Date().toISOString(),
+        }));
+};
+
+const sumAdditionalCosts = (costs: AdditionalCost[]) => costs.reduce((sum, item) => sum + item.amount, 0);
+
 const OfferSummary: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, language } = useLanguage();
     const [isSaving, setIsSaving] = useState(false);
     const [inventory, setInventory] = useState<InventoryItem[]>([]);
+    const [isEditingProjectName, setIsEditingProjectName] = useState(false);
+    const [projectNameInput, setProjectNameInput] = useState("");
     const draftSnapshot = location.state?.draftSnapshot;
     const draftId = location.state?.draftId || draftSnapshot?.id;
     const editProjectId = location.state?.editProjectId;
@@ -89,6 +107,28 @@ const OfferSummary: React.FC = () => {
     // Data passed from previous steps
     const clientData = location.state?.clientData || draftSnapshot?.clientData;
     const projectDates = location.state?.projectDates || draftSnapshot?.projectDates;
+    const additionalCosts = useMemo(() => getAdditionalCostsFromSource(clientData, editProjectMeta), [clientData, editProjectMeta]);
+    const additionalCostsTotal = useMemo(() => sumAdditionalCosts(additionalCosts), [additionalCosts]);
+    const baseProjectName = editProjectMeta?.name || `${t('Remont', 'Renovation')}: ${clientData?.lastName || "-"}`;
+    const effectiveProjectName = (projectNameInput || baseProjectName).trim();
+    const clientDataWithProjectMeta = useMemo(
+        () => ({
+            ...(clientData || {}),
+            projectMeta: {
+                ...(clientData?.projectMeta || {}),
+                additionalCosts,
+            },
+        }),
+        [additionalCosts, clientData]
+    );
+    const editProjectMetaWithAdditionalCosts = useMemo(
+        () => ({
+            ...(editProjectMeta || {}),
+            name: effectiveProjectName,
+            additionalCosts,
+        }),
+        [additionalCosts, editProjectMeta, effectiveProjectName]
+    );
 
     // Process all rooms from state or fallback to demo
     const rooms: Room[] = useMemo(() => {
@@ -108,8 +148,8 @@ const OfferSummary: React.FC = () => {
     }, [draftSnapshot?.rooms, language, location.state]);
 
     useEffect(() => {
-        setProjectCreationDirty(Boolean(clientData || projectDates || rooms.length > 0));
-    }, [clientData, projectDates, rooms]);
+        setProjectCreationDirty(Boolean(clientDataWithProjectMeta || projectDates || rooms.length > 0));
+    }, [clientDataWithProjectMeta, projectDates, rooms]);
 
     useEffect(() => {
         if (!clientData && !projectDates && rooms.length === 0) {
@@ -121,11 +161,15 @@ const OfferSummary: React.FC = () => {
             id: draftId,
             currentStep: "offer",
             updatedAt: new Date().toISOString(),
-            clientData,
+            clientData: clientDataWithProjectMeta,
             projectDates,
             rooms,
         });
-    }, [clientData, draftId, projectDates, rooms]);
+    }, [clientDataWithProjectMeta, draftId, projectDates, rooms]);
+
+    useEffect(() => {
+        setProjectNameInput(baseProjectName);
+    }, [baseProjectName]);
 
     useEffect(() => {
         const loadInventory = async () => {
@@ -137,6 +181,7 @@ const OfferSummary: React.FC = () => {
     }, []);
 
     const grandTotal = rooms.reduce((sum, room) => sum + room.calculateTotalRoomCost(), 0);
+    const finalProjectTotal = grandTotal + additionalCostsTotal;
     const totalArea = rooms.reduce((sum, room) => sum + room.getFloorArea(), 0);
     const materialPlan = useMemo(() => buildMaterialPlan(rooms, inventory), [inventory, rooms]);
     const shoppingListItems = materialPlan.items.filter((item) => item.toBuy > 0);
@@ -152,18 +197,18 @@ const OfferSummary: React.FC = () => {
 
         const newProject: Project = {
             id: editProjectId || crypto.randomUUID(),
-            name: editProjectMeta?.name || `${t('Remont', 'Renovation')}: ${clientData.lastName}`,
+            name: effectiveProjectName,
             clientName: `${clientData.firstName} ${clientData.lastName}`,
             clientId: clientData.id,
             address: `${clientData.address}, ${clientData.city}`,
             status: editProjectMeta?.status || "Planned",
-            value: grandTotal,
+            value: finalProjectTotal,
             area: totalArea,
             startDate: projectDates.startDate,
             endDate: projectDates.endDate,
             color: editProjectMeta?.color,
             rooms: rooms, // Save the full structure
-            clientData: clientData,
+            clientData: clientDataWithProjectMeta,
             paidAmount: editProjectMeta?.paidAmount,
             user_id: editProjectMeta?.user_id,
         };
@@ -210,6 +255,27 @@ const OfferSummary: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-3 sm:p-4 sm:items-center">
                     <div>
                         <p className="text-[#0d141b] dark:text-white text-2xl sm:text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
+                        <div className="mt-1 flex items-center gap-2">
+                            <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">{effectiveProjectName}</p>
+                            <button
+                                type="button"
+                                onClick={() => setIsEditingProjectName((prev) => !prev)}
+                                className="inline-flex items-center justify-center rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+                                title={t('Edytuj nazwę projektu', 'Edit project name')}
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                            </button>
+                        </div>
+                        {isEditingProjectName && (
+                            <div className="mt-2 max-w-md">
+                                <input
+                                    type="text"
+                                    value={projectNameInput}
+                                    onChange={(e) => setProjectNameInput(e.target.value)}
+                                    className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 text-sm"
+                                />
+                            </div>
+                        )}
                         {clientData && (
                             <p className="text-sm text-gray-500 mt-1">
                                 {t('Klient:', 'Client:')} {clientData.firstName} {clientData.lastName}
@@ -221,12 +287,12 @@ const OfferSummary: React.FC = () => {
                                 onClick={() =>
                                     navigate('/projects/new/client', {
                                         state: {
-                                            clientData,
+                                            clientData: clientDataWithProjectMeta,
                                             projectDates,
                                             rooms,
                                             draftId,
                                             editProjectId,
-                                            editProjectMeta,
+                                            editProjectMeta: editProjectMetaWithAdditionalCosts,
                                         },
                                     })
                                 }
@@ -240,11 +306,11 @@ const OfferSummary: React.FC = () => {
                                     navigate('/projects/new/room', {
                                         state: {
                                             rooms,
-                                            clientData,
+                                            clientData: clientDataWithProjectMeta,
                                             projectDates,
                                             draftId,
                                             editProjectId,
-                                            editProjectMeta,
+                                            editProjectMeta: editProjectMetaWithAdditionalCosts,
                                         },
                                     })
                                 }
@@ -258,11 +324,11 @@ const OfferSummary: React.FC = () => {
                                     navigate('/projects/new/services', {
                                         state: {
                                             rooms,
-                                            clientData,
+                                            clientData: clientDataWithProjectMeta,
                                             projectDates,
                                             draftId,
                                             editProjectId,
-                                            editProjectMeta,
+                                            editProjectMeta: editProjectMetaWithAdditionalCosts,
                                         },
                                     })
                                 }
@@ -293,8 +359,13 @@ const OfferSummary: React.FC = () => {
                 <div className="p-3 sm:p-4 @container">
                     <div className="flex flex-col items-center justify-center rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white dark:bg-background-dark/50 p-5 sm:p-8 border border-gray-200 dark:border-gray-700">
                         <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg font-normal leading-normal font-display text-center">{t('Szacowany koszt całkowity', 'Estimated total cost')}</p>
-                        <p className="text-accent text-3xl sm:text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display text-center break-words">{grandTotal.toFixed(2)} {currencyCode}</p>
-                        <p className="text-sm text-gray-400 mt-2 text-center">{t('Robocizna + Materiały (Wszystkie pokoje)', 'Labor + Materials (All rooms)')}</p>
+                        <p className="text-accent text-3xl sm:text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display text-center break-words">{finalProjectTotal.toFixed(2)} {currencyCode}</p>
+                        <p className="text-sm text-gray-400 mt-2 text-center">{t('Robocizna + Materiały + Koszty dodatkowe', 'Labor + Materials + Additional costs')}</p>
+                        {additionalCostsTotal > 0 && (
+                            <p className="text-xs text-red-600 dark:text-red-400 mt-1 text-center">
+                                {t('Koszty dodatkowe:', 'Additional costs:')} +{additionalCostsTotal.toFixed(2)} {currencyCode}
+                            </p>
+                        )}
                         {projectDates && (
                             <p className="text-xs text-primary mt-4 font-bold bg-primary/10 px-3 py-1 rounded-full inline-flex flex-wrap items-center justify-center text-center">
                                 {t('Realizacja:', 'Execution:')} {projectDates.startDate} — {projectDates.endDate}
@@ -302,6 +373,25 @@ const OfferSummary: React.FC = () => {
                         )}
                     </div>
                 </div>
+
+                {additionalCosts.length > 0 && (
+                    <div className="px-3 sm:px-4 mt-2 print:mt-4">
+                        <div className="rounded-xl border border-rose-200 dark:border-rose-800 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden print:shadow-none">
+                            <div className="px-4 sm:px-6 py-4 border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10 flex items-center justify-between gap-3">
+                                <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Koszty dodatkowe', 'Additional costs')}</h2>
+                                <p className="text-sm font-black text-red-600 dark:text-red-400">+{additionalCostsTotal.toFixed(2)} {currencyCode}</p>
+                            </div>
+                            <div className="p-4 space-y-2">
+                                {additionalCosts.map((cost) => (
+                                    <div key={cost.id} className="flex items-start justify-between gap-3 rounded-lg border border-rose-100 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-900/10 px-3 py-2">
+                                        <p className="text-sm text-gray-700 dark:text-slate-200 break-words">{cost.note}</p>
+                                        <p className="text-sm font-black text-red-600 dark:text-red-400 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 <div className="hidden px-3 sm:px-4 mt-2">
                     <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden">
@@ -551,11 +641,11 @@ const OfferSummary: React.FC = () => {
                             navigate("/projects/new/services", {
                                 state: {
                                     rooms,
-                                    clientData,
+                                    clientData: clientDataWithProjectMeta,
                                     projectDates,
                                     draftId,
                                     editProjectId,
-                                    editProjectMeta,
+                                    editProjectMeta: editProjectMetaWithAdditionalCosts,
                                 },
                             })
                         }

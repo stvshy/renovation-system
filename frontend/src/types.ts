@@ -23,6 +23,13 @@ export interface InventoryItem {
     minLevel?: number; // Optional: for low stock warnings
 }
 
+export interface AdditionalCost {
+    id: string;
+    amount: number;
+    note: string;
+    createdAt: string;
+}
+
 export interface Project {
     id: string;
     user_id?: string;

@@ -1,5 +1,5 @@
 import { getProjectById, updateProject } from './storage';
-import { Project } from '../types';
+import { AdditionalCost, Project } from '../types';
 import {
     ConsumptionStrategy,
     ItemCountStrategy,
@@ -77,6 +77,21 @@ const calculateProjectTotals = (roomsRaw: any[] | undefined) => {
     };
 };
 
+const getAdditionalCostsFromClientData = (clientData: any): AdditionalCost[] => {
+    const costs = clientData?.projectMeta?.additionalCosts;
+    if (!Array.isArray(costs)) return [];
+    return costs
+        .filter((item) => item && typeof item.amount === 'number' && item.amount >= 0)
+        .map((item) => ({
+            id: item.id || crypto.randomUUID(),
+            amount: Number(item.amount) || 0,
+            note: item.note || '',
+            createdAt: item.createdAt || new Date().toISOString(),
+        }));
+};
+
+const sumAdditionalCosts = (costs: AdditionalCost[]) => costs.reduce((sum, item) => sum + item.amount, 0);
+
 export const saveEditedProjectFromSnapshot = async (editProjectId: string) => {
     const snapshot = getCurrentProjectSnapshot();
     if (!snapshot) return false;
@@ -86,6 +101,8 @@ export const saveEditedProjectFromSnapshot = async (editProjectId: string) => {
 
     const isRoomsStep = snapshot.currentStep === 'room' || snapshot.currentStep === 'services' || snapshot.currentStep === 'offer';
     const nextClientData = snapshot.clientData || existingProject.clientData;
+    const additionalCosts = getAdditionalCostsFromClientData(nextClientData);
+    const additionalCostsTotal = sumAdditionalCosts(additionalCosts);
     const nextRooms = isRoomsStep && snapshot.rooms ? snapshot.rooms : existingProject.rooms;
     const totals = isRoomsStep ? calculateProjectTotals(nextRooms as any[] | undefined) : null;
 
@@ -103,7 +120,9 @@ export const saveEditedProjectFromSnapshot = async (editProjectId: string) => {
         startDate: snapshot.projectDates?.startDate || existingProject.startDate,
         endDate: snapshot.projectDates?.endDate || existingProject.endDate,
         rooms: nextRooms,
-        value: totals ? (totals.value > 0 ? totals.value : existingProject.value) : existingProject.value,
+        value: totals
+            ? (totals.value > 0 ? totals.value + additionalCostsTotal : existingProject.value)
+            : existingProject.value,
         area: totals ? (totals.area > 0 ? totals.area : existingProject.area) : existingProject.area,
     };
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getInventory, getProjectById, updateProject } from "../lib/storage";
-import { InventoryItem, Project } from "../types";
+import { getInventory, getProjectById, saveClient, updateProject } from "../lib/storage";
+import { AdditionalCost, Client, InventoryItem, Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import { useDemo } from "../context/DemoContext";
 import {
@@ -63,6 +63,29 @@ const rehydrateRoom = (plainRoom: any): Room => {
     return room;
 };
 
+const getAdditionalCostsFromClientData = (clientData: any): AdditionalCost[] => {
+    const costs = clientData?.projectMeta?.additionalCosts;
+    if (!Array.isArray(costs)) return [];
+    return costs
+        .filter((entry) => entry && typeof entry.amount === "number" && entry.amount >= 0)
+        .map((entry) => ({
+            id: entry.id || crypto.randomUUID(),
+            amount: Number(entry.amount) || 0,
+            note: entry.note || "",
+            createdAt: entry.createdAt || new Date().toISOString(),
+        }));
+};
+
+const withProjectMetaAdditionalCosts = (clientData: any, additionalCosts: AdditionalCost[]) => ({
+    ...(clientData || {}),
+    projectMeta: {
+        ...(clientData?.projectMeta || {}),
+        additionalCosts,
+    },
+});
+
+const sumAdditionalCosts = (costs: AdditionalCost[]) => costs.reduce((sum, item) => sum + item.amount, 0);
+
 const ProjectDetails: React.FC = () => {
     const { t, language } = useLanguage();
     const { isDemoMode, demoRevision } = useDemo();
@@ -76,6 +99,14 @@ const ProjectDetails: React.FC = () => {
     // Payment Edit State
     const [isEditingPaid, setIsEditingPaid] = useState(false);
     const [paidInput, setPaidInput] = useState("");
+    const [isEditingNameModalOpen, setIsEditingNameModalOpen] = useState(false);
+    const [projectNameInput, setProjectNameInput] = useState("");
+    const [isEditingClientModalOpen, setIsEditingClientModalOpen] = useState(false);
+    const [clientEditForm, setClientEditForm] = useState<Partial<Client>>({});
+    const [isEditingTimelineModalOpen, setIsEditingTimelineModalOpen] = useState(false);
+    const [timelineForm, setTimelineForm] = useState<{ startDate: string; endDate: string }>({ startDate: "", endDate: "" });
+    const [isAddingExtraCostModalOpen, setIsAddingExtraCostModalOpen] = useState(false);
+    const [extraCostForm, setExtraCostForm] = useState<{ amount: string; note: string }>({ amount: "", note: "" });
 
     useEffect(() => {
         const load = async () => {
@@ -95,6 +126,24 @@ const ProjectDetails: React.FC = () => {
         };
         load();
     }, [id, navigate, isDemoMode, demoRevision]);
+
+    useEffect(() => {
+        if (!isEditingNameModalOpen || !project) return;
+        setProjectNameInput(project.name || "");
+    }, [isEditingNameModalOpen, project]);
+
+    useEffect(() => {
+        if (!isEditingClientModalOpen || !project?.clientData) return;
+        setClientEditForm({ ...project.clientData });
+    }, [isEditingClientModalOpen, project?.clientData]);
+
+    useEffect(() => {
+        if (!isEditingTimelineModalOpen || !project) return;
+        setTimelineForm({
+            startDate: project.startDate || "",
+            endDate: project.endDate || "",
+        });
+    }, [isEditingTimelineModalOpen, project]);
 
     const handleStatusChange = async (newStatus: Project["status"]) => {
         if (project) {
@@ -124,6 +173,9 @@ const ProjectDetails: React.FC = () => {
     };
 
     const unitLabel = (unit: string) => (language === "en" && unit === "szt" ? "pcs" : unit);
+
+    const additionalCosts = useMemo(() => getAdditionalCostsFromClientData(project?.clientData), [project?.clientData]);
+    const additionalCostsTotal = useMemo(() => sumAdditionalCosts(additionalCosts), [additionalCosts]);
 
     const materialPlan = buildMaterialPlan(hydratedRooms, inventory);
     const materialSummary = materialPlan.items;
@@ -172,7 +224,98 @@ const ProjectDetails: React.FC = () => {
             color: project.color,
             paidAmount: project.paidAmount,
             user_id: project.user_id,
+            additionalCosts,
         },
+    };
+
+    const saveProjectUpdate = async (updatedProject: Project) => {
+        await updateProject(updatedProject);
+        setProject(updatedProject);
+        if (updatedProject.rooms) {
+            setHydratedRooms(updatedProject.rooms.map((room) => rehydrateRoom(room)));
+        }
+    };
+
+    const handleSaveProjectName = async () => {
+        if (!project) return;
+        const nextName = projectNameInput.trim();
+        if (!nextName) return;
+
+        const updated = { ...project, name: nextName };
+        await saveProjectUpdate(updated);
+        setIsEditingNameModalOpen(false);
+    };
+
+    const handleSaveClientDetails = async () => {
+        if (!project || !project.clientId) return;
+
+        const updatedClient: Client = {
+            id: project.clientId,
+            firstName: (clientEditForm.firstName || "").trim(),
+            lastName: (clientEditForm.lastName || "").trim(),
+            email: (clientEditForm.email || "").trim(),
+            phone: (clientEditForm.phone || "").trim(),
+            address: (clientEditForm.address || "").trim(),
+            city: (clientEditForm.city || "").trim(),
+            zipCode: (clientEditForm.zipCode || "").trim(),
+            user_id: project.user_id,
+        };
+
+        await saveClient(updatedClient);
+
+        const nextClientData = withProjectMetaAdditionalCosts(updatedClient, additionalCosts);
+        const updatedProject: Project = {
+            ...project,
+            clientName: `${updatedClient.firstName} ${updatedClient.lastName}`.trim(),
+            address: `${updatedClient.address}, ${updatedClient.city}`,
+            clientData: nextClientData,
+        };
+
+        await saveProjectUpdate(updatedProject);
+        setIsEditingClientModalOpen(false);
+    };
+
+    const handleSaveTimeline = async () => {
+        if (!project) return;
+        if (!timelineForm.startDate || !timelineForm.endDate) return;
+        if (new Date(timelineForm.endDate) < new Date(timelineForm.startDate)) return;
+
+        const updatedProject: Project = {
+            ...project,
+            startDate: timelineForm.startDate,
+            endDate: timelineForm.endDate,
+        };
+
+        await saveProjectUpdate(updatedProject);
+        setIsEditingTimelineModalOpen(false);
+    };
+
+    const handleAddAdditionalCost = async () => {
+        if (!project) return;
+        const amount = parseFloat(extraCostForm.amount);
+        const note = extraCostForm.note.trim();
+        if (isNaN(amount) || amount <= 0 || !note) return;
+
+        const nextAdditionalCosts: AdditionalCost[] = [
+            ...additionalCosts,
+            {
+                id: crypto.randomUUID(),
+                amount,
+                note,
+                createdAt: new Date().toISOString(),
+            },
+        ];
+
+        const nextClientData = withProjectMetaAdditionalCosts(project.clientData, nextAdditionalCosts);
+        const updatedProject: Project = {
+            ...project,
+            value: project.value + amount,
+            clientData: nextClientData,
+        };
+
+        await saveProjectUpdate(updatedProject);
+        setExtraCostForm({ amount: "", note: "" });
+        setIsAddingExtraCostModalOpen(false);
     };
 
     const handleEditClientStep = () => {
@@ -282,6 +425,14 @@ const ProjectDetails: React.FC = () => {
                     <div className="min-w-0 w-full">
                         <div className="flex items-center gap-3">
                             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white break-words">{project.name}</h1>
+                            <button
+                                type="button"
+                                onClick={() => setIsEditingNameModalOpen(true)}
+                                className="inline-flex items-center justify-center rounded-md p-1.5 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+                                title={t("Edytuj nazwę projektu", "Edit project name")}
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                            </button>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
                                 {project.status === "In Progress"
                                     ? t('W trakcie', 'In Progress')
@@ -385,34 +536,58 @@ const ProjectDetails: React.FC = () => {
                 {/* Info Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Client Info */}
-                    <button
-                        type="button"
-                        onClick={() => project.clientId && navigate(`/clients/${project.clientId}`)}
-                        disabled={!project.clientId}
-                        className="flex h-full flex-col items-start justify-start bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-left transition-all hover:shadow-md hover:border-primary/30 disabled:cursor-default disabled:hover:shadow-sm disabled:hover:border-gray-100 dark:disabled:hover:border-gray-700"
-                    >
-                        <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-lg">person</span>
-                            {t('Dane Klienta', 'Client Details')}
-                        </h3>
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 h-full">
+                        <div className="mb-4 flex items-center justify-between">
+                            <h3 className="text-sm font-bold text-gray-400 uppercase flex items-center gap-2">
+                                <span className="material-symbols-outlined text-lg">person</span>
+                                {t('Dane Klienta', 'Client Details')}
+                            </h3>
+                            <button
+                                type="button"
+                                onClick={() => setIsEditingClientModalOpen(true)}
+                                className="inline-flex items-center justify-center rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-700"
+                                title={t("Edytuj dane klienta", "Edit client details")}
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                            </button>
+                        </div>
                         {project.clientData ? (
                             <div className="space-y-2">
                                 <p className="font-bold text-lg text-gray-800 dark:text-white">{project.clientName}</p>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">{project.clientData.phone}</p>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">{project.clientData.email}</p>
                                 <p className="text-sm text-gray-500 italic mt-2">{project.address}</p>
+                                {project.clientId && (
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate(`/clients/${project.clientId}`)}
+                                        className="text-xs font-bold text-primary hover:underline"
+                                    >
+                                        {t("Otwórz profil klienta", "Open client profile")}
+                                    </button>
+                                )}
                             </div>
                         ) : (
                             <p className="text-gray-500">{t('Brak szczegółowych danych klienta', 'No detailed client data')}</p>
                         )}
-                    </button>
+                    </div>
 
                     {/* Timeline */}
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-                        <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
-                            <span className="material-symbols-outlined text-lg">schedule</span>
-                            {t('Termin Realizacji', 'Project Timeline')}
-                        </h3>
+                        <div className="mb-4 flex items-center justify-between">
+                            <h3 className="text-sm font-bold text-gray-400 uppercase flex items-center gap-2">
+                                <span className="material-symbols-outlined text-lg">schedule</span>
+                                {t('Termin Realizacji', 'Project Timeline')}
+                            </h3>
+                            <button
+                                type="button"
+                                onClick={() => setIsEditingTimelineModalOpen(true)}
+                                className="inline-flex items-center justify-center rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-700"
+                                title={t("Edytuj terminy", "Edit timeline")}
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                            </button>
+                        </div>
                         <div className="flex flex-col justify-center h-full pb-6">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-xs text-gray-500">{t('Start', 'Start')}</span>
@@ -438,14 +613,37 @@ const ProjectDetails: React.FC = () => {
                     {/* Finances */}
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
                         <div>
-                            <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-lg">attach_money</span>
-                                {t('Finanse', 'Finances')}
-                            </h3>
+                            <div className="mb-4 flex items-center justify-between">
+                                <h3 className="text-sm font-bold text-gray-400 uppercase flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-lg">attach_money</span>
+                                    {t('Finanse', 'Finances')}
+                                </h3>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAddingExtraCostModalOpen(true)}
+                                    className="inline-flex items-center justify-center rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-700"
+                                    title={t("Dodaj koszt dodatkowy", "Add additional cost")}
+                                >
+                                    <span className="material-symbols-outlined text-base">add</span>
+                                </button>
+                            </div>
                             <div className="space-y-1">
                                 <p className="text-sm text-gray-500">{t('Wartość całkowita', 'Total value')}</p>
                                 <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
+                            {additionalCosts.length > 0 && (
+                                <div className="mt-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-2.5 space-y-1.5">
+                                    <p className="text-xs font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300">
+                                        {t("Koszty dodatkowe", "Additional costs")} ({additionalCostsTotal.toFixed(2)} {currencyCode})
+                                    </p>
+                                    {additionalCosts.map((cost) => (
+                                        <div key={cost.id} className="flex items-start justify-between gap-2 text-xs">
+                                            <span className="text-gray-600 dark:text-slate-300 break-words">{cost.note}</span>
+                                            <span className="font-bold text-red-600 dark:text-red-400 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-2">
@@ -703,6 +901,162 @@ const ProjectDetails: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {isEditingNameModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-xl p-5 space-y-4">
+                        <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Edytuj nazwę projektu", "Edit project name")}</h3>
+                        <input
+                            type="text"
+                            value={projectNameInput}
+                            onChange={(e) => setProjectNameInput(e.target.value)}
+                            className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800"
+                        />
+                        <div className="flex justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setIsEditingNameModalOpen(false)}
+                                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 text-sm font-semibold"
+                            >
+                                {t("Anuluj", "Cancel")}
+                            </button>
+                            <button type="button" onClick={handleSaveProjectName} className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">
+                                {t("Zapisz", "Save")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isEditingClientModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+                        <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800">
+                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('Edytuj Klienta', 'Edit Client')}</h2>
+                            <button
+                                onClick={() => setIsEditingClientModalOpen(false)}
+                                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                            >
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label className="flex flex-col gap-1">
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Imie', 'First name')}</span>
+                                    <input className="form-input rounded-lg dark:bg-slate-800" value={clientEditForm.firstName || ""} onChange={(e) => setClientEditForm((prev) => ({ ...prev, firstName: e.target.value }))} />
+                                </label>
+                                <label className="flex flex-col gap-1">
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Nazwisko', 'Last name')}</span>
+                                    <input className="form-input rounded-lg dark:bg-slate-800" value={clientEditForm.lastName || ""} onChange={(e) => setClientEditForm((prev) => ({ ...prev, lastName: e.target.value }))} />
+                                </label>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label className="flex flex-col gap-1">
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Telefon', 'Phone')}</span>
+                                    <input className="form-input rounded-lg dark:bg-slate-800" type="tel" value={clientEditForm.phone || ""} onChange={(e) => setClientEditForm((prev) => ({ ...prev, phone: e.target.value }))} />
+                                </label>
+                                <label className="flex flex-col gap-1">
+                                    <span className="text-xs font-bold text-gray-500 uppercase">Email</span>
+                                    <input className="form-input rounded-lg dark:bg-slate-800" type="email" value={clientEditForm.email || ""} onChange={(e) => setClientEditForm((prev) => ({ ...prev, email: e.target.value }))} />
+                                </label>
+                            </div>
+                            <label className="flex flex-col gap-1">
+                                <span className="text-xs font-bold text-gray-500 uppercase">{t('Ulica i numer', 'Street and number')}</span>
+                                <input className="form-input rounded-lg dark:bg-slate-800" value={clientEditForm.address || ""} onChange={(e) => setClientEditForm((prev) => ({ ...prev, address: e.target.value }))} />
+                            </label>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label className="flex flex-col gap-1">
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Miasto', 'City')}</span>
+                                    <input className="form-input rounded-lg dark:bg-slate-800" value={clientEditForm.city || ""} onChange={(e) => setClientEditForm((prev) => ({ ...prev, city: e.target.value }))} />
+                                </label>
+                                <label className="flex flex-col gap-1">
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Kod pocztowy', 'Postal code')}</span>
+                                    <input className="form-input rounded-lg dark:bg-slate-800" value={clientEditForm.zipCode || ""} onChange={(e) => setClientEditForm((prev) => ({ ...prev, zipCode: e.target.value }))} />
+                                </label>
+                            </div>
+                            <div className="pt-2 flex justify-end gap-2">
+                                <button type="button" onClick={() => setIsEditingClientModalOpen(false)} className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700">
+                                    {t('Anuluj', 'Cancel')}
+                                </button>
+                                <button type="button" onClick={handleSaveClientDetails} className="px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90">
+                                    {t('Zapisz Zmiany', 'Save Changes')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isEditingTimelineModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-xl p-5 space-y-4">
+                        <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Edytuj terminy", "Edit timeline")}</h3>
+                        <div className="space-y-3">
+                            <label className="flex flex-col gap-1">
+                                <span className="text-xs font-bold text-gray-500 uppercase">{t("Data rozpoczęcia", "Start date")}</span>
+                                <input
+                                    type="date"
+                                    value={timelineForm.startDate}
+                                    onChange={(e) => setTimelineForm((prev) => ({ ...prev, startDate: e.target.value }))}
+                                    className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800"
+                                />
+                            </label>
+                            <label className="flex flex-col gap-1">
+                                <span className="text-xs font-bold text-gray-500 uppercase">{t("Data zakończenia", "End date")}</span>
+                                <input
+                                    type="date"
+                                    value={timelineForm.endDate}
+                                    onChange={(e) => setTimelineForm((prev) => ({ ...prev, endDate: e.target.value }))}
+                                    className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800"
+                                />
+                            </label>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <button type="button" onClick={() => setIsEditingTimelineModalOpen(false)} className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 text-sm font-semibold">
+                                {t("Anuluj", "Cancel")}
+                            </button>
+                            <button type="button" onClick={handleSaveTimeline} className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">
+                                {t("Zapisz", "Save")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isAddingExtraCostModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-xl p-5 space-y-4">
+                        <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Dodaj koszt dodatkowy", "Add additional cost")}</h3>
+                        <label className="flex flex-col gap-1">
+                            <span className="text-xs font-bold text-gray-500 uppercase">{t("Kwota", "Amount")}</span>
+                            <input
+                                type="number"
+                                min="0"
+                                value={extraCostForm.amount}
+                                onChange={(e) => setExtraCostForm((prev) => ({ ...prev, amount: e.target.value }))}
+                                className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800"
+                            />
+                        </label>
+                        <label className="flex flex-col gap-1">
+                            <span className="text-xs font-bold text-gray-500 uppercase">{t("Notatka", "Note")}</span>
+                            <textarea
+                                value={extraCostForm.note}
+                                onChange={(e) => setExtraCostForm((prev) => ({ ...prev, note: e.target.value }))}
+                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 min-h-[96px]"
+                            />
+                        </label>
+                        <div className="flex justify-end gap-2">
+                            <button type="button" onClick={() => setIsAddingExtraCostModalOpen(false)} className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 text-sm font-semibold">
+                                {t("Anuluj", "Cancel")}
+                            </button>
+                            <button type="button" onClick={handleAddAdditionalCost} className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">
+                                {t("Dodaj", "Add")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

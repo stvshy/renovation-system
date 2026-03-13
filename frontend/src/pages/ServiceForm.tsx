@@ -14,7 +14,7 @@ import {
     SurfaceType,
 } from "../lib/renovationLogic";
 import { getInventory, saveInventoryItem, getServiceCatalog } from "../lib/storage";
-import { InventoryItem } from "../types";
+import { AdditionalCost, InventoryItem } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import EditWizardExitControl from "../components/EditWizardExitControl";
 import ScrollableSelect from "../components/ScrollableSelect";
@@ -53,6 +53,22 @@ const rehydrateRoom = (plainRoom: any): Room => {
     }
     return room;
 };
+
+const getAdditionalCostsFromSource = (clientData: any, editProjectMeta: any): AdditionalCost[] => {
+    const fromClientData = clientData?.projectMeta?.additionalCosts;
+    const fromMeta = editProjectMeta?.additionalCosts;
+    const source = Array.isArray(fromClientData) ? fromClientData : Array.isArray(fromMeta) ? fromMeta : [];
+    return source
+        .filter((item) => item && typeof item.amount === "number" && item.amount >= 0)
+        .map((item) => ({
+            id: item.id || crypto.randomUUID(),
+            amount: Number(item.amount) || 0,
+            note: item.note || "",
+            createdAt: item.createdAt || new Date().toISOString(),
+        }));
+};
+
+const sumAdditionalCosts = (costs: AdditionalCost[]) => costs.reduce((sum, item) => sum + item.amount, 0);
 
 const ServiceForm: React.FC = () => {
     const navigate = useNavigate();
@@ -132,6 +148,7 @@ const ServiceForm: React.FC = () => {
 
     const clientData = location.state?.clientData || draftSnapshot?.clientData;
     const projectDates = location.state?.projectDates || draftSnapshot?.projectDates;
+    const [additionalCosts, setAdditionalCosts] = useState<AdditionalCost[]>(() => getAdditionalCostsFromSource(clientData, editProjectMeta));
 
     // Load Catalog from Storage
     const [serviceCatalog, setServiceCatalog] = useState<any[]>([]);
@@ -179,6 +196,24 @@ const ServiceForm: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const hasWizardData = Boolean(clientData || projectDates || rooms.length > 0);
+    const additionalCostsTotal = useMemo(() => sumAdditionalCosts(additionalCosts), [additionalCosts]);
+    const clientDataWithProjectMeta = useMemo(
+        () => ({
+            ...(clientData || {}),
+            projectMeta: {
+                ...(clientData?.projectMeta || {}),
+                additionalCosts,
+            },
+        }),
+        [additionalCosts, clientData]
+    );
+    const editProjectMetaWithAdditionalCosts = useMemo(
+        () => ({
+            ...(editProjectMeta || {}),
+            additionalCosts,
+        }),
+        [additionalCosts, editProjectMeta]
+    );
 
     useEffect(() => {
         if (rooms.length === 0) return;
@@ -201,7 +236,7 @@ const ServiceForm: React.FC = () => {
             id: draftId,
             currentStep: "services",
             updatedAt: new Date().toISOString(),
-            clientData,
+            clientData: clientDataWithProjectMeta,
             projectDates,
             rooms,
             serviceForm: {
@@ -222,7 +257,7 @@ const ServiceForm: React.FC = () => {
                 strategyParam,
             },
         });
-    }, [activeRoomIndex, clientData, customMatCoverage, customMatInitialStock, customMatName, customMatPrice, customMatUnit, draftId, hasWizardData, isAddingNewMaterial, manualQuantity, newMatScope, projectDates, rooms, scopeType, selectedCategory, selectedMaterialId, selectedTemplateId, specificSurfaceIndex, strategyParam]);
+    }, [activeRoomIndex, clientDataWithProjectMeta, customMatCoverage, customMatInitialStock, customMatName, customMatPrice, customMatUnit, draftId, hasWizardData, isAddingNewMaterial, manualQuantity, newMatScope, projectDates, rooms, scopeType, selectedCategory, selectedMaterialId, selectedTemplateId, specificSurfaceIndex, strategyParam]);
 
     const activeRoom = rooms[Math.min(activeRoomIndex, Math.max(rooms.length - 1, 0))];
     const materialPlan = useMemo(() => buildMaterialPlan(rooms, inventory), [inventory, rooms]);
@@ -510,13 +545,17 @@ const ServiceForm: React.FC = () => {
         navigate("/projects/new/offer", {
             state: {
                 rooms: rooms,
-                clientData,
+                clientData: clientDataWithProjectMeta,
                 projectDates,
                 draftId,
                 editProjectId,
-                editProjectMeta,
+                editProjectMeta: editProjectMetaWithAdditionalCosts,
             },
         });
+    };
+
+    const handleRemoveAdditionalCost = (costId: string) => {
+        setAdditionalCosts((current) => current.filter((item) => item.id !== costId));
     };
 
     if (rooms.length === 0 || !activeRoom) {
@@ -536,11 +575,11 @@ const ServiceForm: React.FC = () => {
                             navigate('/projects/new/room', {
                                 state: {
                                     rooms,
-                                    clientData,
+                                    clientData: clientDataWithProjectMeta,
                                     projectDates,
                                     draftId,
                                     editProjectId,
-                                    editProjectMeta,
+                                    editProjectMeta: editProjectMetaWithAdditionalCosts,
                                 },
                             })
                         }
@@ -605,12 +644,12 @@ const ServiceForm: React.FC = () => {
                             onClick={() =>
                                 navigate('/projects/new/client', {
                                     state: {
-                                        clientData,
+                                        clientData: clientDataWithProjectMeta,
                                         projectDates,
                                         rooms,
                                         draftId,
                                         editProjectId,
-                                        editProjectMeta,
+                                        editProjectMeta: editProjectMetaWithAdditionalCosts,
                                     },
                                 })
                             }
@@ -624,11 +663,11 @@ const ServiceForm: React.FC = () => {
                                 navigate('/projects/new/room', {
                                     state: {
                                         rooms,
-                                        clientData,
+                                        clientData: clientDataWithProjectMeta,
                                         projectDates,
                                         draftId,
                                         editProjectId,
-                                        editProjectMeta,
+                                        editProjectMeta: editProjectMetaWithAdditionalCosts,
                                     },
                                 })
                             }
@@ -648,11 +687,11 @@ const ServiceForm: React.FC = () => {
                                 navigate('/projects/new/offer', {
                                     state: {
                                         rooms,
-                                        clientData,
+                                        clientData: clientDataWithProjectMeta,
                                         projectDates,
                                         draftId,
                                         editProjectId,
-                                        editProjectMeta,
+                                        editProjectMeta: editProjectMetaWithAdditionalCosts,
                                     },
                                 })
                             }
@@ -1132,6 +1171,59 @@ const ServiceForm: React.FC = () => {
                                 )}
                             </div>
                         </div>
+
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg overflow-hidden">
+                            <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-rose-50/60 dark:bg-rose-900/10">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div>
+                                        <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-rose-600 dark:text-rose-400">request_quote</span>
+                                            {t('Koszty dodatkowe', 'Additional costs')}
+                                        </h3>
+                                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                                            {t('Pozycje dodane w finansach projektu. Możesz je tu usunąć.', 'Costs added in project finances. You can remove them here.')}
+                                        </p>
+                                    </div>
+                                    <div className="text-right shrink-0">
+                                        <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Suma', 'Total')}</p>
+                                        <p className={`text-lg font-black ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                                            {additionalCostsTotal.toFixed(2)} {currencyCode}
+                                        </p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{additionalCosts.length} {t('pozycji', 'items')}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 space-y-3 max-h-[260px] overflow-y-auto custom-scrollbar">
+                                {additionalCosts.length === 0 ? (
+                                    <div className="rounded-xl border border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/70 dark:bg-emerald-900/10 px-4 py-5 text-sm text-emerald-700 dark:text-emerald-300 text-center">
+                                        {t('Brak kosztów dodatkowych.', 'No additional costs yet.')}
+                                    </div>
+                                ) : (
+                                    additionalCosts.map((cost) => (
+                                        <div key={cost.id} className="rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-4">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div>
+                                                    <p className="font-semibold text-slate-900 dark:text-white break-words">{cost.note}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{new Date(cost.createdAt).toLocaleDateString()}</p>
+                                                </div>
+                                                <div className="text-right shrink-0 flex items-start gap-2">
+                                                    <p className="text-sm font-black text-red-600 dark:text-red-400">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveAdditionalCost(cost.id)}
+                                                        className="text-slate-400 hover:text-red-600 dark:hover:text-red-400"
+                                                        title={t('Usuń koszt', 'Remove cost')}
+                                                    >
+                                                        <span className="material-symbols-outlined text-base">delete</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1143,11 +1235,11 @@ const ServiceForm: React.FC = () => {
                                 navigate("/projects/new/room", {
                                     state: {
                                         rooms,
-                                        clientData,
+                                        clientData: clientDataWithProjectMeta,
                                         projectDates,
                                         draftId,
                                         editProjectId,
-                                        editProjectMeta,
+                                        editProjectMeta: editProjectMetaWithAdditionalCosts,
                                     },
                                 })
                             }
@@ -1172,11 +1264,11 @@ const ServiceForm: React.FC = () => {
                                 navigate("/projects/new/room", {
                                     state: {
                                         rooms,
-                                        clientData,
+                                        clientData: clientDataWithProjectMeta,
                                         projectDates,
                                         draftId,
                                         editProjectId,
-                                        editProjectMeta,
+                                        editProjectMeta: editProjectMetaWithAdditionalCosts,
                                     },
                                 })
                             }
