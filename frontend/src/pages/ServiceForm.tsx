@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
     Room,
@@ -18,6 +18,7 @@ import { InventoryItem } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import ScrollableSelect from "../components/ScrollableSelect";
 import { setProjectCreationDirty } from "../lib/projectCreationGuard";
+import { clearCurrentProjectSnapshot, setCurrentProjectSnapshot } from "../lib/projectDrafts";
 
 // Helper to rehydrate objects
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -54,6 +55,11 @@ const ServiceForm: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t, language } = useLanguage();
+    const draftSnapshot = location.state?.draftSnapshot;
+    const draftId = location.state?.draftId || draftSnapshot?.id;
+    const draftServiceForm = draftSnapshot?.serviceForm;
+    const restoreDraftRef = useRef(false);
+    const skipTemplateResetRef = useRef(Boolean(draftServiceForm));
 
     const currencyCode = language === "en" ? "EUR" : "PLN";
     const currencySymbol = language === "en" ? "EUR" : "zł";
@@ -114,12 +120,12 @@ const ServiceForm: React.FC = () => {
 
     // --- State ---
     const [rooms, setRooms] = useState<Room[]>(() => {
-        const rawRooms = location.state?.rooms || [];
+        const rawRooms = location.state?.rooms || draftSnapshot?.rooms || [];
         return rawRooms.map((r: any) => rehydrateRoom(r));
     });
 
-    const clientData = location.state?.clientData;
-    const projectDates = location.state?.projectDates;
+    const clientData = location.state?.clientData || draftSnapshot?.clientData;
+    const projectDates = location.state?.projectDates || draftSnapshot?.projectDates;
 
     // Load Catalog from Storage
     const [serviceCatalog, setServiceCatalog] = useState<any[]>([]);
@@ -139,29 +145,29 @@ const ServiceForm: React.FC = () => {
         loadData();
     }, []);
 
-    const [activeRoomIndex, setActiveRoomIndex] = useState(0);
-    const [selectedCategory, setSelectedCategory] = useState("");
+    const [activeRoomIndex, setActiveRoomIndex] = useState(draftServiceForm?.activeRoomIndex ?? 0);
+    const [selectedCategory, setSelectedCategory] = useState(draftServiceForm?.selectedCategory || "");
 
     // Selection State
-    const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
-    const [selectedMaterialId, setSelectedMaterialId] = useState<string>("");
-    const [isAddingNewMaterial, setIsAddingNewMaterial] = useState(false);
+    const [selectedTemplateId, setSelectedTemplateId] = useState<string>(draftServiceForm?.selectedTemplateId || "");
+    const [selectedMaterialId, setSelectedMaterialId] = useState<string>(draftServiceForm?.selectedMaterialId || "");
+    const [isAddingNewMaterial, setIsAddingNewMaterial] = useState(draftServiceForm?.isAddingNewMaterial || false);
 
     // New Material Form State
-    const [newMatScope, setNewMatScope] = useState<"project" | "inventory">("project");
-    const [customMatName, setCustomMatName] = useState("");
-    const [customMatPrice, setCustomMatPrice] = useState("");
-    const [customMatUnit, setCustomMatUnit] = useState<Unit>(Unit.M2);
-    const [customMatCoverage, setCustomMatCoverage] = useState("");
-    const [customMatInitialStock, setCustomMatInitialStock] = useState("");
+    const [newMatScope, setNewMatScope] = useState<"project" | "inventory">(draftServiceForm?.newMatScope || "project");
+    const [customMatName, setCustomMatName] = useState(draftServiceForm?.customMatName || "");
+    const [customMatPrice, setCustomMatPrice] = useState(draftServiceForm?.customMatPrice || "");
+    const [customMatUnit, setCustomMatUnit] = useState<Unit>((draftServiceForm?.customMatUnit as Unit) || Unit.M2);
+    const [customMatCoverage, setCustomMatCoverage] = useState(draftServiceForm?.customMatCoverage || "");
+    const [customMatInitialStock, setCustomMatInitialStock] = useState(draftServiceForm?.customMatInitialStock || "");
 
     // Scope State
-    const [scopeType, setScopeType] = useState<"global" | "specific" | "manual">("global");
-    const [specificSurfaceIndex, setSpecificSurfaceIndex] = useState<number>(0);
-    const [manualQuantity, setManualQuantity] = useState<string>("1");
+    const [scopeType, setScopeType] = useState<"global" | "specific" | "manual">(draftServiceForm?.scopeType || "global");
+    const [specificSurfaceIndex, setSpecificSurfaceIndex] = useState<number>(draftServiceForm?.specificSurfaceIndex ?? 0);
+    const [manualQuantity, setManualQuantity] = useState<string>(draftServiceForm?.manualQuantity || "1");
 
     // Strategy Parameter (Editable)
-    const [strategyParam, setStrategyParam] = useState<string>("");
+    const [strategyParam, setStrategyParam] = useState<string>(draftServiceForm?.strategyParam || "");
 
     // Error State
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -171,6 +177,39 @@ const ServiceForm: React.FC = () => {
     useEffect(() => {
         setProjectCreationDirty(hasWizardData);
     }, [hasWizardData]);
+
+    useEffect(() => {
+        if (!hasWizardData) {
+            clearCurrentProjectSnapshot();
+            return;
+        }
+
+        setCurrentProjectSnapshot({
+            id: draftId,
+            currentStep: "services",
+            updatedAt: new Date().toISOString(),
+            clientData,
+            projectDates,
+            rooms,
+            serviceForm: {
+                activeRoomIndex,
+                selectedCategory,
+                selectedTemplateId,
+                selectedMaterialId,
+                isAddingNewMaterial,
+                newMatScope,
+                customMatName,
+                customMatPrice,
+                customMatUnit,
+                customMatCoverage,
+                customMatInitialStock,
+                scopeType,
+                specificSurfaceIndex,
+                manualQuantity,
+                strategyParam,
+            },
+        });
+    }, [activeRoomIndex, clientData, customMatCoverage, customMatInitialStock, customMatName, customMatPrice, customMatUnit, draftId, hasWizardData, isAddingNewMaterial, manualQuantity, newMatScope, projectDates, rooms, scopeType, selectedCategory, selectedMaterialId, selectedTemplateId, specificSurfaceIndex, strategyParam]);
 
     const activeRoom = rooms[activeRoomIndex];
 
@@ -190,15 +229,24 @@ const ServiceForm: React.FC = () => {
 
     // Update Template Selection when Category changes
     useEffect(() => {
-        if (categoryServices.length > 0) {
-            setSelectedTemplateId(categoryServices[0].id);
-        } else {
+        if (categoryServices.length === 0) {
             setSelectedTemplateId("");
+            return;
         }
-    }, [selectedCategory, categoryServices]);
+
+        const currentStillValid = categoryServices.some((service) => service.id === selectedTemplateId);
+        if (!currentStillValid) {
+            setSelectedTemplateId(categoryServices[0].id);
+        }
+    }, [categoryServices, selectedTemplateId]);
 
     // Reset Material State and Strategy Param when Template Changes
     useEffect(() => {
+        if (skipTemplateResetRef.current) {
+            skipTemplateResetRef.current = false;
+            return;
+        }
+
         setIsAddingNewMaterial(false);
         setNewMatScope("project");
         setCustomMatName("");
@@ -219,6 +267,27 @@ const ServiceForm: React.FC = () => {
             setStrategyParam(selectedTemplate.defaultParam.toString());
         }
     }, [selectedTemplateId]);
+
+    useEffect(() => {
+        if (!draftServiceForm || restoreDraftRef.current || serviceCatalog.length === 0) return;
+
+        setActiveRoomIndex(draftServiceForm.activeRoomIndex ?? 0);
+        setSelectedCategory(draftServiceForm.selectedCategory || "");
+        setSelectedTemplateId(draftServiceForm.selectedTemplateId || "");
+        setSelectedMaterialId(draftServiceForm.selectedMaterialId || "");
+        setIsAddingNewMaterial(draftServiceForm.isAddingNewMaterial || false);
+        setNewMatScope(draftServiceForm.newMatScope || "project");
+        setCustomMatName(draftServiceForm.customMatName || "");
+        setCustomMatPrice(draftServiceForm.customMatPrice || "");
+        setCustomMatUnit((draftServiceForm.customMatUnit as Unit) || Unit.M2);
+        setCustomMatCoverage(draftServiceForm.customMatCoverage || "");
+        setCustomMatInitialStock(draftServiceForm.customMatInitialStock || "");
+        setScopeType(draftServiceForm.scopeType || "global");
+        setSpecificSurfaceIndex(draftServiceForm.specificSurfaceIndex ?? 0);
+        setManualQuantity(draftServiceForm.manualQuantity || "1");
+        setStrategyParam(draftServiceForm.strategyParam || "");
+        restoreDraftRef.current = true;
+    }, [draftServiceForm, serviceCatalog.length]);
 
     // Auto-select Material Logic - CRITICAL FIX
     // Whenever the filtered inventory list changes (category change) OR we switch back from adding new material,
@@ -449,6 +518,7 @@ const ServiceForm: React.FC = () => {
                 rooms: rooms,
                 clientData,
                 projectDates,
+                draftId,
             },
         });
     };
@@ -916,6 +986,7 @@ const ServiceForm: React.FC = () => {
                                     rooms,
                                     clientData,
                                     projectDates,
+                                    draftId,
                                 },
                             })
                         }

@@ -18,6 +18,7 @@ import { saveProject, deductInventoryFromProject } from "../lib/storage";
 import { Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import { clearProjectCreationDirty, setProjectCreationDirty } from "../lib/projectCreationGuard";
+import { clearCurrentProjectSnapshot, deleteProjectDraft, setCurrentProjectSnapshot } from "../lib/projectDrafts";
 
 // Helper to restore class methods if data was serialized via state
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -72,6 +73,8 @@ const OfferSummary: React.FC = () => {
     const location = useLocation();
     const { t, language } = useLanguage();
     const [isSaving, setIsSaving] = useState(false);
+    const draftSnapshot = location.state?.draftSnapshot;
+    const draftId = location.state?.draftId || draftSnapshot?.id;
 
     const currencyCode = language === "en" ? "EUR" : "PLN";
     const localizeUnit = (unit: string) => language === "en" && unit === "szt" ? "pcs" : unit;
@@ -98,6 +101,22 @@ const OfferSummary: React.FC = () => {
     useEffect(() => {
         setProjectCreationDirty(Boolean(clientData || projectDates || rooms.length > 0));
     }, [clientData, projectDates, rooms]);
+
+    useEffect(() => {
+        if (!clientData && !projectDates && rooms.length === 0) {
+            clearCurrentProjectSnapshot();
+            return;
+        }
+
+        setCurrentProjectSnapshot({
+            id: draftId,
+            currentStep: "offer",
+            updatedAt: new Date().toISOString(),
+            clientData,
+            projectDates,
+            rooms,
+        });
+    }, [clientData, draftId, projectDates, rooms]);
 
     const grandTotal = rooms.reduce((sum, room) => sum + room.calculateTotalRoomCost(), 0);
     const totalArea = rooms.reduce((sum, room) => sum + room.getFloorArea(), 0);
@@ -131,6 +150,8 @@ const OfferSummary: React.FC = () => {
         await deductInventoryFromProject(rooms);
 
         clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        if (draftId) deleteProjectDraft(draftId);
 
         setIsSaving(false);
         navigate("/projects");
@@ -309,6 +330,7 @@ const OfferSummary: React.FC = () => {
                                     rooms,
                                     clientData,
                                     projectDates,
+                                    draftId,
                                 },
                             })
                         }

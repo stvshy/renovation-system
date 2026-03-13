@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageToggleButton from './LanguageToggleButton';
 import { clearProjectCreationDirty, getProjectCreationDirty } from '../lib/projectCreationGuard';
+import { clearCurrentProjectSnapshot, hasUnsavedProjectChanges, saveCurrentProjectDraft } from '../lib/projectDrafts';
 
 const Sidebar: React.FC = () => {
     const { user, signOut } = useAuth();
@@ -20,7 +21,8 @@ const Sidebar: React.FC = () => {
     const shouldConfirmNavigation = (targetPath: string) => {
         if (!isProjectCreationRoute) return false;
         if (location.pathname === targetPath) return false;
-        return getProjectCreationDirty();
+        if (!getProjectCreationDirty()) return false;
+        return hasUnsavedProjectChanges();
     };
 
     const handleProtectedNavigation = (targetPath: string) => {
@@ -35,6 +37,16 @@ const Sidebar: React.FC = () => {
     const handleConfirmNavigation = () => {
         if (!pendingNavigation) return;
         clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(pendingNavigation);
+        setPendingNavigation(null);
+    };
+
+    const handleSaveDraftAndNavigate = () => {
+        if (!pendingNavigation) return;
+        saveCurrentProjectDraft();
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
         navigate(pendingNavigation);
         setPendingNavigation(null);
     };
@@ -127,12 +139,12 @@ const Sidebar: React.FC = () => {
             {pendingNavigation &&
                 createPortal(
                     <div className="fixed inset-0 z-[10050] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                        <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
-                            <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-800">
-                                <h3 className="text-lg font-black text-gray-900 dark:text-white">
+                        <div className="w-full max-w-[26rem] sm:max-w-2xl rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+                            <div className="px-5 sm:px-7 py-5 sm:py-6 border-b border-gray-100 dark:border-slate-800">
+                                <h3 className="text-[18px] sm:text-[24px] font-black text-gray-900 dark:text-white leading-tight">
                                     {t('Opuścić formularz projektu?', 'Leave project form?')}
                                 </h3>
-                                <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
+                                <p className="mt-2 text-sm sm:text-base text-gray-500 dark:text-slate-400 leading-relaxed">
                                     {t(
                                         'Jeśli opuścisz kreator projektu, niezapisane dane zostaną utracone.',
                                         'If you leave the project wizard, unsaved data will be lost.'
@@ -140,20 +152,36 @@ const Sidebar: React.FC = () => {
                                 </p>
                             </div>
 
-                            <div className="px-6 py-5 flex justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setPendingNavigation(null)}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
-                                >
-                                    {t('Zostań', 'Stay')}
-                                </button>
+                            <div className="px-5 sm:px-7 py-5 sm:py-6 flex items-center justify-between gap-3 sm:gap-4">
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setPendingNavigation(null)}
+                                        className="h-11 sm:h-10 px-3 sm:px-4 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 text-sm sm:text-base font-semibold hover:bg-gray-100 dark:hover:bg-slate-800 inline-flex items-center gap-1.5 sm:gap-2"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px] sm:text-[20px]">arrow_back</span>
+                                        <span className="sm:hidden">{t('Wróć', 'Stay')}</span>
+                                        <span className="hidden sm:inline">{t('Zostań', 'Stay')}</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleSaveDraftAndNavigate}
+                                        className="h-11 sm:h-10 px-3 sm:px-4 rounded-lg font-semibold text-sm sm:text-base text-green-700 border border-green-600 bg-white hover:bg-green-50 dark:bg-slate-900 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-900/20 inline-flex items-center gap-1.5 sm:gap-2"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px] sm:text-[20px]">save</span>
+                                        <span className="sm:hidden">{t('Zapisz', 'Save')}</span>
+                                        <span className="hidden sm:inline">{t('Zapisz jako roboczy', 'Save as draft')}</span>
+                                    </button>
+                                </div>
+
                                 <button
                                     type="button"
                                     onClick={handleConfirmNavigation}
-                                    className="px-4 py-2 rounded-lg font-bold text-white bg-red-600 hover:bg-red-700"
+                                    className="h-11 sm:h-10 px-3 sm:px-4 rounded-lg font-semibold text-sm sm:text-base text-white bg-red-600 hover:bg-red-700 inline-flex items-center gap-1.5 sm:gap-2"
                                 >
-                                    {t('Opuść formularz', 'Leave form')}
+                                    <span className="material-symbols-outlined text-[18px] sm:text-[20px]">close</span>
+                                    <span className="sm:hidden">{t('Wyjdź', 'Leave')}</span>
+                                    <span className="hidden sm:inline">{t('Opuść formularz', 'Leave form')}</span>
                                 </button>
                             </div>
                         </div>

@@ -4,6 +4,7 @@ import { Room, Surface, SurfaceType, Opening, OpeningType } from "../lib/renovat
 import { useLanguage } from "../context/LanguageContext";
 import ScrollableSelect from "../components/ScrollableSelect";
 import { setProjectCreationDirty } from "../lib/projectCreationGuard";
+import { clearCurrentProjectSnapshot, setCurrentProjectSnapshot } from "../lib/projectDrafts";
 
 type Mode = "standard" | "custom";
 type SurfaceDraft = { width: string; height: string; area: string };
@@ -57,6 +58,9 @@ const RoomForm: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useLanguage();
+    const draftSnapshot = location.state?.draftSnapshot;
+    const draftId = location.state?.draftId || draftSnapshot?.id;
+    const draftRoomForm = draftSnapshot?.roomForm;
 
     const localizeSurfaceName = (name: string) => {
         if (name === "Podłoga") return t("Podłoga", "Floor");
@@ -73,29 +77,33 @@ const RoomForm: React.FC = () => {
     };
 
     // Retrieve passed data
-    const existingRooms: any[] = location.state?.rooms || [];
-    const clientData = location.state?.clientData;
-    const projectDates = location.state?.projectDates;
+    const existingRooms: any[] = location.state?.rooms || draftSnapshot?.rooms || [];
+    const clientData = location.state?.clientData || draftSnapshot?.clientData;
+    const projectDates = location.state?.projectDates || draftSnapshot?.projectDates;
 
     // State for Editing
-    const [editingRoomIndex, setEditingRoomIndex] = useState<number | null>(null);
+    const [editingRoomIndex, setEditingRoomIndex] = useState<number | null>(draftRoomForm?.editingRoomIndex ?? null);
 
     // Basic Info
-    const [roomName, setRoomName] = useState(`${t("Pokój", "Room")} ${existingRooms.length + 1}`);
-    const [mode, setMode] = useState<Mode>("standard");
+    const [roomName, setRoomName] = useState(draftRoomForm?.roomName || `${t("Pokój", "Room")} ${existingRooms.length + 1}`);
+    const [mode, setMode] = useState<Mode>(draftRoomForm?.mode || "standard");
 
     // Standard Mode Dimensions
-    const [length, setLength] = useState<string>("");
-    const [width, setWidth] = useState<string>("");
-    const [height, setHeight] = useState<string>("");
+    const [length, setLength] = useState<string>(draftRoomForm?.length || "");
+    const [width, setWidth] = useState<string>(draftRoomForm?.width || "");
+    const [height, setHeight] = useState<string>(draftRoomForm?.height || "");
 
     // Surfaces State
-    const [surfaces, setSurfaces] = useState<Surface[]>([]);
-    const [surfaceDrafts, setSurfaceDrafts] = useState<SurfaceDraft[]>([]);
+    const [surfaces, setSurfaces] = useState<Surface[]>(() =>
+        Array.isArray(draftRoomForm?.surfaces) ? draftRoomForm.surfaces.map((surface: any) => rehydrateSurface(surface)) : []
+    );
+    const [surfaceDrafts, setSurfaceDrafts] = useState<SurfaceDraft[]>(draftRoomForm?.surfaceDrafts || []);
 
     // Opening Input State
-    const [openingDims, setOpeningDims] = useState<{ w: string; h: string; type: OpeningType }>({ w: "", h: "", type: "okno" });
-    const [activeSurfaceIndex, setActiveSurfaceIndex] = useState<number | null>(null);
+    const [openingDims, setOpeningDims] = useState<{ w: string; h: string; type: OpeningType }>(
+        draftRoomForm?.openingDims || { w: "", h: "", type: "okno" }
+    );
+    const [activeSurfaceIndex, setActiveSurfaceIndex] = useState<number | null>(draftRoomForm?.activeSurfaceIndex ?? null);
     const [hoveredRoomIndex, setHoveredRoomIndex] = useState<number | null>(null);
     const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
 
@@ -114,6 +122,34 @@ const RoomForm: React.FC = () => {
     useEffect(() => {
         setProjectCreationDirty(hasWizardData);
     }, [hasWizardData]);
+
+    useEffect(() => {
+        if (!hasWizardData) {
+            clearCurrentProjectSnapshot();
+            return;
+        }
+
+        setCurrentProjectSnapshot({
+            id: draftId,
+            currentStep: "room",
+            updatedAt: new Date().toISOString(),
+            clientData,
+            projectDates,
+            rooms: existingRooms,
+            roomForm: {
+                editingRoomIndex,
+                roomName,
+                mode,
+                length,
+                width,
+                height,
+                surfaces,
+                surfaceDrafts,
+                openingDims,
+                activeSurfaceIndex,
+            },
+        });
+    }, [activeSurfaceIndex, clientData, draftId, editingRoomIndex, existingRooms, hasWizardData, height, length, mode, openingDims, projectDates, roomName, surfaceDrafts, surfaces, width]);
 
     const setSurfacesWithDrafts = (nextSurfaces: Surface[]) => {
         setSurfaces(nextSurfaces);
@@ -284,6 +320,7 @@ const RoomForm: React.FC = () => {
                 rooms: updatedRooms,
                 clientData,
                 projectDates,
+                draftId,
             },
             replace: true,
         });
@@ -330,6 +367,7 @@ const RoomForm: React.FC = () => {
                     rooms: existingRooms,
                     clientData,
                     projectDates,
+                    draftId,
                 },
             });
             return;
@@ -350,6 +388,7 @@ const RoomForm: React.FC = () => {
                 rooms: updatedRooms,
                 clientData,
                 projectDates,
+                draftId,
             },
         });
     };

@@ -5,28 +5,33 @@ import { Client } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import ScrollableSelect from '../components/ScrollableSelect';
 import { setProjectCreationDirty } from '../lib/projectCreationGuard';
+import { clearCurrentProjectSnapshot, setCurrentProjectSnapshot } from '../lib/projectDrafts';
 
 const ClientForm: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { t } = useLanguage();
+    const draftSnapshot = location.state?.draftSnapshot;
+    const draftId = location.state?.draftId || draftSnapshot?.id;
+    const draftClientForm = draftSnapshot?.clientForm;
+    const draftProjectDates = draftSnapshot?.projectDates;
 
-    const [mode, setMode] = useState<'new' | 'existing'>('new');
+    const [mode, setMode] = useState<'new' | 'existing'>(draftClientForm?.mode || 'new');
     const [existingClients, setExistingClients] = useState<Client[]>([]);
-    const [selectedClientId, setSelectedClientId] = useState<string>('');
+    const [selectedClientId, setSelectedClientId] = useState<string>(draftClientForm?.selectedClientId || '');
 
     // Form fields for new client
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [address, setAddress] = useState('');
-    const [city, setCity] = useState('');
-    const [zipCode, setZipCode] = useState('');
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState(draftClientForm?.firstName || '');
+    const [lastName, setLastName] = useState(draftClientForm?.lastName || '');
+    const [address, setAddress] = useState(draftClientForm?.address || '');
+    const [city, setCity] = useState(draftClientForm?.city || '');
+    const [zipCode, setZipCode] = useState(draftClientForm?.zipCode || '');
+    const [phone, setPhone] = useState(draftClientForm?.phone || '');
+    const [email, setEmail] = useState(draftClientForm?.email || '');
     
     // Project Dates
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [startDate, setStartDate] = useState(draftProjectDates?.startDate || draftClientForm?.startDate || '');
+    const [endDate, setEndDate] = useState(draftProjectDates?.endDate || draftClientForm?.endDate || '');
 
     // Validation State
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -63,6 +68,45 @@ const ClientForm: React.FC = () => {
     useEffect(() => {
         setProjectCreationDirty(hasWizardData);
     }, [hasWizardData]);
+
+    useEffect(() => {
+        if (!hasWizardData) {
+            clearCurrentProjectSnapshot();
+            return;
+        }
+
+        const clientData = {
+            id: selectedClientId || draftSnapshot?.clientData?.id,
+            firstName,
+            lastName,
+            address,
+            city,
+            zipCode,
+            phone,
+            email,
+        };
+
+        setCurrentProjectSnapshot({
+            id: draftId,
+            currentStep: 'client',
+            updatedAt: new Date().toISOString(),
+            clientData,
+            projectDates: { startDate, endDate },
+            clientForm: {
+                mode,
+                selectedClientId,
+                firstName,
+                lastName,
+                address,
+                city,
+                zipCode,
+                phone,
+                email,
+                startDate,
+                endDate,
+            },
+        });
+    }, [address, city, draftId, email, endDate, firstName, hasWizardData, lastName, mode, phone, selectedClientId, startDate, zipCode]);
 
     // Handle selecting an existing client
     useEffect(() => {
@@ -182,7 +226,8 @@ const ClientForm: React.FC = () => {
         navigate('/projects/new/room', { 
             state: { 
                 clientData,
-                projectDates
+                projectDates,
+                draftId,
             } 
         });
     };

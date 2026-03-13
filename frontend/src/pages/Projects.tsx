@@ -4,12 +4,18 @@ import { getProjects } from '../lib/storage';
 import { Project } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { useDemo } from '../context/DemoContext';
+import { deleteProjectDraft, getProjectDrafts, getProjectWizardRoute, ProjectDraft } from '../lib/projectDrafts';
+
+type ProjectListItem =
+    | { kind: 'project'; project: Project }
+    | { kind: 'draft'; draft: ProjectDraft };
 
 const Projects: React.FC = () => {
     const navigate = useNavigate();
     const { t, language } = useLanguage();
     const { isDemoMode, demoRevision } = useDemo();
     const [projects, setProjects] = useState<Project[]>([]);
+    const [drafts, setDrafts] = useState<ProjectDraft[]>([]);
     const [statusFilter, setStatusFilter] = useState<string>('All');
     const [isLoading, setIsLoading] = useState(true);
 
@@ -19,6 +25,7 @@ const Projects: React.FC = () => {
         const load = async () => {
             const data = await getProjects();
             setProjects(data);
+            setDrafts(getProjectDrafts());
             setIsLoading(false);
         };
         load();
@@ -51,6 +58,48 @@ const Projects: React.FC = () => {
     const filteredProjects = statusFilter === 'All'
         ? sortProjects(projects)
         : sortProjects(projects.filter(p => p.status === statusFilter));
+
+    const sortedDrafts = [...drafts].sort((left, right) => new Date(right.updatedAt).getTime() - new Date(left.updatedAt).getTime());
+
+    const visibleItems: ProjectListItem[] = [
+        ...filteredProjects.map((project) => ({ kind: 'project' as const, project })),
+        ...(statusFilter === 'All' ? sortedDrafts.map((draft) => ({ kind: 'draft' as const, draft })) : []),
+    ];
+
+    const getDraftTitle = (draft: ProjectDraft) => {
+        const fullName = [draft.clientData?.firstName, draft.clientData?.lastName].filter(Boolean).join(' ').trim();
+        if (fullName) return `${t('Wersja robocza', 'Draft')}: ${fullName}`;
+        return t('Wersja robocza projektu', 'Project draft');
+    };
+
+    const getDraftSubtitle = (draft: ProjectDraft) => {
+        const address = [draft.clientData?.address, draft.clientData?.city].filter(Boolean).join(', ');
+        const updatedAt = new Date(draft.updatedAt);
+        const updatedLabel = Number.isNaN(updatedAt.getTime()) ? draft.updatedAt : updatedAt.toLocaleString(language === 'en' ? 'en-US' : 'pl-PL');
+        return `${t('Krok', 'Step')}: ${
+            draft.currentStep === 'client'
+                ? t('Dane klienta', 'Client details')
+                : draft.currentStep === 'room'
+                ? t('Pomieszczenia', 'Rooms')
+                : draft.currentStep === 'services'
+                ? t('Usługi', 'Services')
+                : t('Podsumowanie', 'Summary')
+        }${address ? ` | ${address}` : ''} | ${t('Zapisano', 'Saved')}: ${updatedLabel}`;
+    };
+
+    const handleDraftResume = (draft: ProjectDraft) => {
+        navigate(getProjectWizardRoute(draft.currentStep), {
+            state: {
+                draftId: draft.id,
+                draftSnapshot: draft,
+            },
+        });
+    };
+
+    const handleDraftDelete = (draftId: string) => {
+        deleteProjectDraft(draftId);
+        setDrafts((prev) => prev.filter((draft) => draft.id !== draftId));
+    };
 
     const statuses = [
         { label: t('Wszystkie', 'All'), value: 'All' },
@@ -105,7 +154,7 @@ const Projects: React.FC = () => {
                 <div className="flex flex-col gap-4 px-2">
                     {isLoading ? (
                         <div className="text-center py-10">{t('Ładowanie projektów...', 'Loading projects...')}</div>
-                    ) : filteredProjects.length === 0 ? (
+                    ) : visibleItems.length === 0 ? (
                          <div className="text-center py-20 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700">
                             <p className="text-slate-500 text-base mb-2">{t('Brak projektów w tej kategorii', 'No projects in this category')}</p>
                             {statusFilter === 'All' && (
@@ -113,46 +162,91 @@ const Projects: React.FC = () => {
                             )}
                          </div>
                     ) : (
-                        filteredProjects.map((project) => (
-                            <div 
-                                key={project.id} 
-                                onClick={() => navigate(`/projects/${project.id}`)}
-                                className="cursor-pointer flex items-center gap-4 bg-white dark:bg-slate-800/50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-slate-100 dark:border-slate-800"
-                            >
-                                <div 
-                                    className="flex items-center justify-center rounded-lg text-primary shrink-0 size-12 font-bold text-lg"
-                                    style={{ backgroundColor: project.color ? `${project.color}30` : '#e0e7ff', color: project.color }}
-                                >
-                                    {project.name.charAt(0).toUpperCase()}
-                                </div>
-                                <div className="flex flex-col justify-center flex-grow">
-                                    <div className="flex items-center gap-2">
-                                        <p className="text-slate-900 dark:text-slate-50 text-base font-semibold leading-normal line-clamp-1">{project.name}</p>
-                                        <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap
-                                            ${project.status === 'Completed' ? 'bg-green-100 text-green-700' :
-                                              project.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
-                                              project.status === 'Archived' ? 'bg-gray-100 text-gray-600' :
-                                              'bg-blue-100 text-blue-700'}`}
-                                        >
-                                            {statuses.find(s => s.value === project.status)?.label || project.status}
-                                        </span>
+                        visibleItems.map((item) => {
+                            if (item.kind === 'draft') {
+                                const { draft } = item;
+                                const draftTitle = getDraftTitle(draft);
+                                return (
+                                    <div
+                                        key={draft.id}
+                                        onClick={() => handleDraftResume(draft)}
+                                        className="cursor-pointer flex items-center gap-4 bg-slate-100/75 dark:bg-slate-800/35 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-dashed border-slate-300 dark:border-slate-700 opacity-85"
+                                    >
+                                        <div className="flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-300 shrink-0 size-12 font-bold text-lg bg-slate-200 dark:bg-slate-700/70">
+                                            <span className="material-symbols-outlined">draft</span>
+                                        </div>
+                                        <div className="flex flex-col justify-center flex-grow min-w-0">
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-slate-800 dark:text-slate-100 text-base font-semibold leading-normal line-clamp-1">{draftTitle}</p>
+                                                <span className="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                                                    {t('Roboczy', 'Draft')}
+                                                </span>
+                                            </div>
+                                            <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">
+                                                {getDraftSubtitle(draft)}
+                                            </p>
+                                        </div>
+                                        <div className="shrink-0 group relative hidden sm:flex items-center gap-1">
+                                            <button
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    handleDraftDelete(draft.id);
+                                                }}
+                                                className="text-red-500 hover:text-red-600 flex size-8 items-center justify-center rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                                title={t('Usuń wersję roboczą', 'Delete draft')}
+                                            >
+                                                <span className="material-symbols-outlined">delete</span>
+                                            </button>
+                                            <button className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary flex size-8 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+                                                <span className="material-symbols-outlined">edit</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">
-                                        {project.value.toLocaleString()} {currencyCode} | {project.area.toFixed(0)} m² | {project.address}
-                                    </p>
-                                    {project.startDate && project.endDate && (
-                                        <p className="text-xs text-slate-400 mt-1">
-                                            {project.startDate} - {project.endDate}
+                                );
+                            }
+
+                            const { project } = item;
+                            return (
+                                <div 
+                                    key={project.id} 
+                                    onClick={() => navigate(`/projects/${project.id}`)}
+                                    className="cursor-pointer flex items-center gap-4 bg-white dark:bg-slate-800/50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-slate-100 dark:border-slate-800"
+                                >
+                                    <div 
+                                        className="flex items-center justify-center rounded-lg text-primary shrink-0 size-12 font-bold text-lg"
+                                        style={{ backgroundColor: project.color ? `${project.color}30` : '#e0e7ff', color: project.color }}
+                                    >
+                                        {project.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="flex flex-col justify-center flex-grow">
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-slate-900 dark:text-slate-50 text-base font-semibold leading-normal line-clamp-1">{project.name}</p>
+                                            <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap
+                                                ${project.status === 'Completed' ? 'bg-green-100 text-green-700' :
+                                                  project.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
+                                                  project.status === 'Archived' ? 'bg-gray-100 text-gray-600' :
+                                                  'bg-blue-100 text-blue-700'}`}
+                                            >
+                                                {statuses.find(s => s.value === project.status)?.label || project.status}
+                                            </span>
+                                        </div>
+                                        <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">
+                                            {project.value.toLocaleString()} {currencyCode} | {project.area.toFixed(0)} m² | {project.address}
                                         </p>
-                                    )}
+                                        {project.startDate && project.endDate && (
+                                            <p className="text-xs text-slate-400 mt-1">
+                                                {project.startDate} - {project.endDate}
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="shrink-0 group relative hidden sm:block">
+                                        <button className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary flex size-8 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+                                            <span className="material-symbols-outlined">chevron_right</span>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="shrink-0 group relative hidden sm:block">
-                                    <button className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary flex size-8 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
-                                        <span className="material-symbols-outlined">chevron_right</span>
-                                    </button>
-                                </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             </div>
