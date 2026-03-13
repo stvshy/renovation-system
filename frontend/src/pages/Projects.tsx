@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { getProjects } from '../lib/storage';
 import { Project } from '../types';
@@ -18,6 +19,7 @@ const Projects: React.FC = () => {
     const [drafts, setDrafts] = useState<ProjectDraft[]>([]);
     const [statusFilter, setStatusFilter] = useState<string>('All');
     const [isLoading, setIsLoading] = useState(true);
+    const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
 
     const currencyCode = language === 'en' ? 'EUR' : 'PLN';
 
@@ -97,8 +99,14 @@ const Projects: React.FC = () => {
     };
 
     const handleDraftDelete = (draftId: string) => {
-        deleteProjectDraft(draftId);
-        setDrafts((prev) => prev.filter((draft) => draft.id !== draftId));
+        setDraftToDelete(draftId);
+    };
+
+    const handleConfirmDraftDelete = () => {
+        if (!draftToDelete) return;
+        deleteProjectDraft(draftToDelete);
+        setDrafts((prev) => prev.filter((draft) => draft.id !== draftToDelete));
+        setDraftToDelete(null);
     };
 
     const statuses = [
@@ -110,6 +118,7 @@ const Projects: React.FC = () => {
     ];
 
     return (
+        <>
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
                 <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-3 border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
@@ -192,7 +201,7 @@ const Projects: React.FC = () => {
                                                     event.stopPropagation();
                                                     handleDraftDelete(draft.id);
                                                 }}
-                                                className="text-red-500 hover:text-red-600 flex size-8 items-center justify-center rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                                className="text-red-500 hover:text-red-700 flex size-8 items-center justify-center rounded-full hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors mt-[0.2px]"
                                                 title={t('Usuń wersję roboczą', 'Delete draft')}
                                             >
                                                 <span className="material-symbols-outlined">delete</span>
@@ -251,6 +260,49 @@ const Projects: React.FC = () => {
                 </div>
             </div>
         </div>
+
+        {draftToDelete &&
+            createPortal(
+                <div className="fixed inset-0 z-[10050] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="w-full max-w-[26rem] sm:max-w-2xl rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+                        <div className="px-5 sm:px-7 py-5 sm:py-6 border-b border-gray-100 dark:border-slate-800">
+                            <h3 className="text-[18px] sm:text-[24px] font-black text-gray-900 dark:text-white leading-tight">
+                                {t('Usunąć wersję roboczą?', 'Delete draft?')}
+                            </h3>
+                            <p className="mt-2 text-sm sm:text-base text-gray-500 dark:text-slate-400 leading-relaxed">
+                                {t(
+                                    'Ta wersja robocza zostanie trwale usunięta z listy projektów. Tej operacji nie można cofnąć.',
+                                    'This draft will be permanently removed from the project list. This action cannot be undone.'
+                                )}
+                            </p>
+                        </div>
+
+                        <div className="px-5 sm:px-7 py-5 sm:py-6 flex items-center justify-between gap-3 sm:gap-4">
+                            <button
+                                type="button"
+                                onClick={() => setDraftToDelete(null)}
+                                className="h-11 sm:h-10 px-3 sm:px-4 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 text-sm sm:text-base font-semibold hover:bg-gray-100 dark:hover:bg-slate-800 inline-flex items-center gap-1.5 sm:gap-2"
+                            >
+                                <span className="material-symbols-outlined text-[18px] sm:text-[20px]">arrow_back</span>
+                                <span className="sm:hidden">{t('Wróć', 'Back')}</span>
+                                <span className="hidden sm:inline">{t('Anuluj', 'Cancel')}</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleConfirmDraftDelete}
+                                className="h-11 sm:h-10 px-3 sm:px-4 rounded-lg font-semibold text-sm sm:text-base text-white bg-red-600 hover:bg-red-700 inline-flex items-center gap-1.5 sm:gap-2"
+                            >
+                                <span className="material-symbols-outlined text-[18px] sm:text-[20px]">delete</span>
+                                <span className="sm:hidden">{t('Usuń', 'Delete')}</span>
+                                <span className="hidden sm:inline">{t('Usuń wersję roboczą', 'Delete draft')}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+        </>
     );
 };
 
