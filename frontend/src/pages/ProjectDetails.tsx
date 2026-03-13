@@ -189,7 +189,12 @@ const ProjectDetails: React.FC = () => {
                 {/* Info Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Client Info */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <button
+                        type="button"
+                        onClick={() => project.clientId && navigate(`/clients/${project.clientId}`)}
+                        disabled={!project.clientId}
+                        className="flex h-full flex-col items-start justify-start bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 text-left transition-all hover:shadow-md hover:border-primary/30 disabled:cursor-default disabled:hover:shadow-sm disabled:hover:border-gray-100 dark:disabled:hover:border-gray-700"
+                    >
                         <h3 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
                             <span className="material-symbols-outlined text-lg">person</span>
                             {t('Dane Klienta', 'Client Details')}
@@ -204,7 +209,7 @@ const ProjectDetails: React.FC = () => {
                         ) : (
                             <p className="text-gray-500">{t('Brak szczegółowych danych klienta', 'No detailed client data')}</p>
                         )}
-                    </div>
+                    </button>
 
                     {/* Timeline */}
                     <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">

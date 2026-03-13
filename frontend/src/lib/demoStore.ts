@@ -119,6 +119,48 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
         endDate: '2026-01-15',
         color: '#98D8C8',
     },
+    {
+        id: 'demo-project-4',
+        user_id: 'demo-user',
+        name: 'Remont kuchni i jadalni - Żoliborz',
+        clientName: 'Anna Kowalska',
+        clientId: 'demo-client-1',
+        address: 'ul. Mickiewicza 21, Warszawa',
+        status: 'In Progress',
+        value: 21300,
+        area: 38,
+        startDate: '2026-02-15',
+        endDate: '2026-05-05',
+        color: '#FF8A65',
+    },
+    {
+        id: 'demo-project-5',
+        user_id: 'demo-user',
+        name: 'Remont biura - Praga Południe',
+        clientName: 'Marek Nowak',
+        clientId: 'demo-client-2',
+        address: 'ul. Grochowska 120, Warszawa',
+        status: 'Planned',
+        value: 32700,
+        area: 74,
+        startDate: '2026-05-25',
+        endDate: '2026-06-25',
+        color: '#7986CB',
+    },
+    {
+        id: 'demo-project-6',
+        user_id: 'demo-user',
+        name: 'Remont łazienki i pralni - Gdańsk',
+        clientName: 'Katarzyna Wiśniewska',
+        clientId: 'demo-client-3',
+        address: 'ul. Chmielna 56, Gdańsk',
+        status: 'Planned',
+        value: 11900,
+        area: 14,
+        startDate: '2026-07-02',
+        endDate: '2026-07-24',
+        color: '#4DB6AC',
+    },
 ];
 
 const DEMO_PROJECTS_EN: Project[] = [
@@ -164,6 +206,48 @@ const DEMO_PROJECTS_EN: Project[] = [
         endDate: '2026-01-15',
         color: '#98D8C8',
     },
+    {
+        id: 'demo-project-4',
+        user_id: 'demo-user',
+        name: 'Kitchen & Dining Renovation - Capitol Hill',
+        clientName: 'Emily Carter',
+        clientId: 'demo-client-1',
+        address: '182 Broadway E, Seattle',
+        status: 'In Progress',
+        value: 21300,
+        area: 38,
+        startDate: '2026-02-15',
+        endDate: '2026-05-05',
+        color: '#FF8A65',
+    },
+    {
+        id: 'demo-project-5',
+        user_id: 'demo-user',
+        name: 'Office Renovation - South Congress',
+        clientName: 'Daniel Brooks',
+        clientId: 'demo-client-2',
+        address: '118 S Congress Ave, Austin',
+        status: 'Planned',
+        value: 32700,
+        area: 74,
+        startDate: '2026-05-25',
+        endDate: '2026-06-25',
+        color: '#7986CB',
+    },
+    {
+        id: 'demo-project-6',
+        user_id: 'demo-user',
+        name: 'Laundry & Bathroom Upgrade - West Loop',
+        clientName: 'Olivia Reed',
+        clientId: 'demo-client-3',
+        address: '955 W Madison St, Chicago',
+        status: 'Planned',
+        value: 11900,
+        area: 14,
+        startDate: '2026-07-02',
+        endDate: '2026-07-24',
+        color: '#4DB6AC',
+    },
 ];
 
 const DEMO_INVENTORY_DEFAULT: InventoryItem[] = [
@@ -200,12 +284,81 @@ let _clients: Client[] = [];
 let _inventory: InventoryItem[] = [];
 let _services: ServiceTemplate[] = [];
 
+const pad2 = (num: number): string => num.toString().padStart(2, '0');
+
+const toISODate = (date: Date): string => {
+    const y = date.getFullYear();
+    const m = pad2(date.getMonth() + 1);
+    const d = pad2(date.getDate());
+    return `${y}-${m}-${d}`;
+};
+
+const addDays = (date: Date, days: number): Date => {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+};
+
+const applyDynamicDemoDates = (projects: Project[]): Project[] => {
+    const now = new Date();
+    const baseInProgressStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const baseInProgressEnd = addDays(baseInProgressStart, 88);
+
+    // Partial overlap with main in-progress project.
+    const overlapInProgressStart = new Date(now.getFullYear(), now.getMonth(), 12);
+    const overlapInProgressEnd = addDays(overlapInProgressStart, 74);
+
+    const firstPlannedStart = addDays(baseInProgressStart, 31);
+    const firstPlannedEnd = addDays(firstPlannedStart, 24);
+
+    // Planned project starting shortly after the previous planned one.
+    const secondPlannedStart = addDays(firstPlannedEnd, 7);
+    const secondPlannedEnd = addDays(secondPlannedStart, 21);
+
+    const completedStart = addDays(baseInProgressStart, -112);
+    const completedEnd = addDays(baseInProgressStart, -18);
+
+    const schedule: Record<string, { startDate: string; endDate: string }> = {
+        'demo-project-1': { startDate: toISODate(baseInProgressStart), endDate: toISODate(baseInProgressEnd) },
+        'demo-project-4': { startDate: toISODate(overlapInProgressStart), endDate: toISODate(overlapInProgressEnd) },
+        'demo-project-2': { startDate: toISODate(firstPlannedStart), endDate: toISODate(firstPlannedEnd) },
+        'demo-project-5': { startDate: toISODate(secondPlannedStart), endDate: toISODate(secondPlannedEnd) },
+        'demo-project-6': { startDate: toISODate(addDays(secondPlannedStart, 10)), endDate: toISODate(addDays(secondPlannedEnd, 12)) },
+        'demo-project-3': { startDate: toISODate(completedStart), endDate: toISODate(completedEnd) },
+    };
+
+    return projects.map((p) => {
+        const dynamic = schedule[p.id];
+        if (!dynamic) return { ...p };
+        return {
+            ...p,
+            startDate: dynamic.startDate,
+            endDate: dynamic.endDate,
+        };
+    });
+};
+
+const attachClientSnapshots = (projects: Project[], clients: Client[]): Project[] => {
+    return projects.map((project) => {
+        const client = clients.find((entry) => entry.id === project.clientId);
+        return {
+            ...project,
+            clientName: client ? `${client.firstName} ${client.lastName}` : project.clientName,
+            address: client ? `${client.address}, ${client.city}` : project.address,
+            clientData: client ? { ...client } : project.clientData,
+        };
+    });
+};
+
 // ---------- Lifecycle ----------
 
 export function enterDemoMode(language: 'pl' | 'en' = 'pl'): void {
     _isDemoMode = true;
-    _projects = (language === 'en' ? DEMO_PROJECTS_EN : DEMO_PROJECTS_DEFAULT).map(p => ({ ...p }));
     _clients = (language === 'en' ? DEMO_CLIENTS_EN : DEMO_CLIENTS_DEFAULT).map(c => ({ ...c }));
+    _projects = attachClientSnapshots(
+        applyDynamicDemoDates(language === 'en' ? DEMO_PROJECTS_EN : DEMO_PROJECTS_DEFAULT),
+        _clients
+    );
     _inventory = (language === 'en' ? DEMO_INVENTORY_EN : DEMO_INVENTORY_DEFAULT).map(i => ({ ...i }));
     _services = DEFAULT_SERVICE_CATALOG.map(s => ({ ...s, materials: s.materials.map(m => ({ ...m })) }));
 }
