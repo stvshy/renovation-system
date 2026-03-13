@@ -255,6 +255,8 @@ const RoomForm: React.FC = () => {
     const hasDraftRoom = roomName !== defaultNewRoomName || length !== "" || width !== "" || height !== "" || surfaces.length > 0;
     const hasDownstreamWork = existingRooms.some((room) => Array.isArray(room.tasks) && room.tasks.length > 0);
     const hasVisitedNextSteps = draftSnapshot?.currentStep === "services" || draftSnapshot?.currentStep === "offer" || hasDownstreamWork;
+    const hasCustomModeData = surfaces.length > 0;
+    const shouldWarnDownstreamImpact = isEditMode || hasVisitedNextSteps;
     const canAutoDraftCurrentRoom = !isEditMode && editingRoomIndex === null && !hasVisitedNextSteps;
     const currentDraftRoom = (() => {
         if (!canAutoDraftCurrentRoom) return null;
@@ -347,9 +349,9 @@ const RoomForm: React.FC = () => {
         if (nextMode === mode) return;
 
         const hasExistingRoomData = surfaces.length > 0 || length !== "" || width !== "" || height !== "";
-        const shouldWarnAboutDownstreamImpact = isEditMode || hasVisitedNextSteps;
+        const shouldWarnAboutModeSwitch = shouldWarnDownstreamImpact || hasCustomModeData;
 
-        if (mode === "custom" && nextMode === "standard" && hasExistingRoomData && shouldWarnAboutDownstreamImpact) {
+        if (mode === "custom" && nextMode === "standard" && hasExistingRoomData && shouldWarnAboutModeSwitch) {
             setConfirmAction({ type: "switch-to-standard" });
             return;
         }
@@ -977,6 +979,10 @@ const RoomForm: React.FC = () => {
 
                     <div className="grid grid-cols-1 gap-4">
                         {surfaces.map((surface, index) => (
+                            (() => {
+                                const autoAreaLocked = mode === "custom" && (surfaceDrafts[index]?.area ?? "").trim() !== "";
+
+                                return (
                             <div
                                 key={index}
                                 className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm relative group"
@@ -1013,7 +1019,7 @@ const RoomForm: React.FC = () => {
                                                     type="number"
                                                     min="0"
                                                     step="any"
-                                                    disabled={mode === "standard"}
+                                                    disabled={mode === "standard" || autoAreaLocked}
                                                     value={surfaceDrafts[index]?.width ?? ""}
                                                     onChange={(e) => handleUpdateSurface(index, "width", e.target.value)}
                                                     className="w-16 p-1 text-sm border rounded bg-gray-50 dark:bg-slate-900 disabled:opacity-60"
@@ -1026,7 +1032,7 @@ const RoomForm: React.FC = () => {
                                                     type="number"
                                                     min="0"
                                                     step="any"
-                                                    disabled={mode === "standard"}
+                                                    disabled={mode === "standard" || autoAreaLocked}
                                                     value={surfaceDrafts[index]?.height ?? ""}
                                                     onChange={(e) => handleUpdateSurface(index, "height", e.target.value)}
                                                     className="w-16 p-1 text-sm border rounded bg-gray-50 dark:bg-slate-900 disabled:opacity-60"
@@ -1068,6 +1074,14 @@ const RoomForm: React.FC = () => {
 
                                 {/* Openings Section */}
                                 <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                                    {autoAreaLocked && (
+                                        <div className="mb-2 rounded-lg border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+                                            {t(
+                                                'Wprowadzono wartość Auto (m²). Aby edytować W i H/L, usuń wartość z pola Auto.',
+                                                'Auto (m²) value is set. To edit W and H/L, clear the Auto field first.'
+                                            )}
+                                        </div>
+                                    )}
                                     <div className="flex flex-wrap gap-2 items-center mb-2">
                                         <span className="text-xs font-semibold text-gray-500">{t("Otwory", "Openings")}:</span>
                                         {surface.openings.map((op, opIdx) => (
@@ -1134,6 +1148,8 @@ const RoomForm: React.FC = () => {
                                     )}
                                 </div>
                             </div>
+                                );
+                            })()
                         ))}
                     </div>
 
@@ -1248,10 +1264,15 @@ const RoomForm: React.FC = () => {
                                                   `Ta powierzchnia ma przypisane roboty (${confirmAction.taskCount}). Po usunięciu powierzchni te roboty zostaną usunięte w kolejnych krokach.`,
                                                   `This surface has assigned work items (${confirmAction.taskCount}). After removing the surface, those items will be removed in the next steps.`
                                               )
-                                            : t(
-                                                  "Przełączenie z nieregularnego na standardowy przeliczy roboty w kolejnych krokach na nowe wymiary. Jeśli jakaś powierzchnia zniknie, przypisane do niej roboty zostaną usunięte po dodatkowym ostrzeżeniu.",
-                                                  "Switching from irregular to standard will recalculate downstream work items using the new dimensions. If a surface disappears, work assigned to it will be removed after an additional warning."
-                                              )}
+                                                                                        : shouldWarnDownstreamImpact
+                                                                                        ? t(
+                                                                                                    "Przełączenie z nieregularnego na standardowy przeliczy roboty w kolejnych krokach na nowe wymiary. Jeśli jakaś powierzchnia zniknie, przypisane do niej roboty zostaną usunięte po dodatkowym ostrzeżeniu.",
+                                                                                                    "Switching from irregular to standard will recalculate downstream work items using the new dimensions. If a surface disappears, work assigned to it will be removed after an additional warning."
+                                                                                            )
+                                                                                        : t(
+                                                                                                    "Zmiana trybu usunie aktualnie wprowadzone powierzchnie i otwory z trybu nieregularnego. W trybie standardowym trzeba podać wymiary od nowa.",
+                                                                                                    "Switching mode will remove the currently entered custom surfaces and openings. In standard mode, dimensions must be entered again."
+                                                                                            )}
                                     </p>
                                 </div>
                                 <button
@@ -1309,7 +1330,7 @@ const RoomForm: React.FC = () => {
                                         ? t("Usuń pokój", "Delete room")
                                         : confirmAction.type === "delete-surface"
                                         ? t("Usuń powierzchnię", "Delete surface")
-                                        : t("Tak, przelicz", "Yes, recalculate")}
+                                        : t("Tak, zmień", "Yes, change")}
                                 </button>
                             </div>
                         </div>
