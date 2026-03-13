@@ -140,7 +140,7 @@ const Clients: React.FC = () => {
                         <form onSubmit={handleSaveClient} className="p-6 space-y-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Imie', 'First name')}</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Imię', 'First name')}</span>
                                     <input required className="form-input rounded-lg dark:bg-slate-800" value={newClient.firstName} onChange={e => setNewClient({...newClient, firstName: e.target.value})} />
                                 </label>
                                 <label className="flex flex-col gap-1">

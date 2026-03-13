@@ -252,14 +252,14 @@ const Settings: React.FC = () => {
                                 <div>
                                     <label className="block relative z-10">
                                         <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-xs font-bold text-gray-500 uppercase">{t('Sposob liczenia', 'Calculation mode')}</span>
+                                            <span className="text-xs font-bold text-gray-500 uppercase">{t('Sposób liczenia', 'Calculation mode')}</span>
                                             <div className="group relative inline-flex items-center justify-center">
                                                 <span className="material-symbols-outlined text-gray-400 text-[18px] cursor-help hover:text-primary transition-colors">
                                                     help
                                                 </span>
                                                 {/* Tooltip Positioned BELOW (top-full + mt-2) */}
                                                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 p-4 bg-slate-800 text-white text-xs rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] pointer-events-none transform -translate-y-2 group-hover:translate-y-0">
-                                                    <p className="font-bold mb-2 text-primary border-b border-gray-600 pb-2 text-sm">{t('Logika obliczen:', 'Calculation logic:')}</p>
+                                                    <p className="font-bold mb-2 text-primary border-b border-gray-600 pb-2 text-sm">{t('Logika obliczeń:', 'Calculation logic:')}</p>
                                                     <ul className="space-y-3">
                                                         <li>
                                                             <span className="font-bold text-blue-300 block mb-0.5">{t('Zużycie (m²/l)', 'Consumption (m²/l)')}</span>

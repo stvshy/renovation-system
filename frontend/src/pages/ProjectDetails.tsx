@@ -891,7 +891,7 @@ const ProjectDetails: React.FC = () => {
 
                             {remainingAmount > 0 && (
                                 <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
-                                    <span className="text-xs text-gray-400">{t('Pozostalo:', 'Remaining:')}</span>
+                                    <span className="text-xs text-gray-400">{t('Pozostało:', 'Remaining:')}</span>
                                     <span className="text-xs font-bold text-orange-500">{remainingAmount.toLocaleString()} {currencyCode}</span>
                                 </div>
                             )}
@@ -1273,7 +1273,7 @@ const ProjectDetails: React.FC = () => {
                         <div className="p-6 space-y-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Imie', 'First name')}</span>
+                                    <span className="text-xs font-bold text-gray-500 uppercase">{t('Imię', 'First name')}</span>
                                     <input className="form-input rounded-lg dark:bg-slate-800" value={clientEditForm.firstName || ""} onChange={(e) => setClientEditForm((prev) => ({ ...prev, firstName: e.target.value }))} />
                                 </label>
                                 <label className="flex flex-col gap-1">

@@ -482,7 +482,7 @@ const ServiceForm: React.FC = () => {
 
         const inputDim = calculateDimension();
         if (inputDim <= 0) {
-            setErrorMessage(t("Wartosc powierzchni/ilosci musi byc wieksza od 0.", "Area/quantity value must be greater than 0."));
+            setErrorMessage(t("Wartość powierzchni/ilości musi być większa od 0.", "Area/quantity value must be greater than 0."));
             return;
         }
 
