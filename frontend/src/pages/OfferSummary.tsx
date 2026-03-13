@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
     generateDemoBathroom,
@@ -17,6 +17,7 @@ import {
 import { saveProject, deductInventoryFromProject } from "../lib/storage";
 import { Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
+import { clearProjectCreationDirty, setProjectCreationDirty } from "../lib/projectCreationGuard";
 
 // Helper to restore class methods if data was serialized via state
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -94,6 +95,10 @@ const OfferSummary: React.FC = () => {
         return rawRooms.map((raw) => rehydrateRoom(raw));
     }, [location.state]);
 
+    useEffect(() => {
+        setProjectCreationDirty(Boolean(clientData || projectDates || rooms.length > 0));
+    }, [clientData, projectDates, rooms]);
+
     const grandTotal = rooms.reduce((sum, room) => sum + room.calculateTotalRoomCost(), 0);
     const totalArea = rooms.reduce((sum, room) => sum + room.getFloorArea(), 0);
 
@@ -124,6 +129,8 @@ const OfferSummary: React.FC = () => {
 
         // 2. Deduct Materials from Inventory
         await deductInventoryFromProject(rooms);
+
+        clearProjectCreationDirty();
 
         setIsSaving(false);
         navigate("/projects");

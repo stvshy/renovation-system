@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Room, Surface, SurfaceType, Opening, OpeningType } from "../lib/renovationLogic";
 import { useLanguage } from "../context/LanguageContext";
 import ScrollableSelect from "../components/ScrollableSelect";
+import { setProjectCreationDirty } from "../lib/projectCreationGuard";
 
 type Mode = "standard" | "custom";
 type SurfaceDraft = { width: string; height: string; area: string };
@@ -108,6 +109,11 @@ const RoomForm: React.FC = () => {
             : null;
     const hasUnsavedChanges = editingRoomIndex !== null ? currentRoomSnapshot !== originalRoomSnapshot : hasDraftRoom;
     const canGoToServicesWithoutSaving = savedRoomsWithSurfaces.length > 0 && !hasUnsavedChanges;
+    const hasWizardData = Boolean(clientData || projectDates || existingRooms.length > 0 || hasDraftRoom);
+
+    useEffect(() => {
+        setProjectCreationDirty(hasWizardData);
+    }, [hasWizardData]);
 
     const setSurfacesWithDrafts = (nextSurfaces: Surface[]) => {
         setSurfaces(nextSurfaces);

@@ -4,6 +4,7 @@ import { getClients, saveClient, getClientById } from '../lib/storage';
 import { Client } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import ScrollableSelect from '../components/ScrollableSelect';
+import { setProjectCreationDirty } from '../lib/projectCreationGuard';
 
 const ClientForm: React.FC = () => {
     const navigate = useNavigate();
@@ -30,6 +31,18 @@ const ClientForm: React.FC = () => {
     // Validation State
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    const hasWizardData =
+        !!selectedClientId ||
+        !!firstName.trim() ||
+        !!lastName.trim() ||
+        !!address.trim() ||
+        !!city.trim() ||
+        !!zipCode.trim() ||
+        !!phone.trim() ||
+        !!email.trim() ||
+        !!startDate ||
+        !!endDate;
+
     useEffect(() => {
         const loadClients = async () => {
             const clients = await getClients();
@@ -46,6 +59,10 @@ const ClientForm: React.FC = () => {
         };
         loadClients();
     }, [location.state]);
+
+    useEffect(() => {
+        setProjectCreationDirty(hasWizardData);
+    }, [hasWizardData]);
 
     // Handle selecting an existing client
     useEffect(() => {
