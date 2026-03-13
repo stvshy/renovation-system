@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { hasUnsavedProjectChanges } from '../lib/projectDrafts';
 
 interface EditWizardExitControlProps {
     visible: boolean;
@@ -12,6 +13,24 @@ const EditWizardExitControl: React.FC<EditWizardExitControlProps> = ({ visible, 
     const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [isChecking, setIsChecking] = useState(false);
+
+    const handleOpenExit = async () => {
+        setIsChecking(true);
+        try {
+            const hasChanges = await hasUnsavedProjectChanges();
+            if (!hasChanges) {
+                onExitWithoutSaving();
+                return;
+            }
+
+            setIsOpen(true);
+        } catch {
+            setIsOpen(true);
+        } finally {
+            setIsChecking(false);
+        }
+    };
 
     if (!visible) return null;
 
@@ -19,11 +38,12 @@ const EditWizardExitControl: React.FC<EditWizardExitControlProps> = ({ visible, 
         <>
             <button
                 type="button"
-                onClick={() => setIsOpen(true)}
+                onClick={handleOpenExit}
+                disabled={isChecking}
                 className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white transition-colors"
             >
                 <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                <span>{t('Wyjdź', 'Exit')}</span>
+                <span>{isChecking ? t('Sprawdzanie...', 'Checking...') : t('Wyjdź', 'Exit')}</span>
             </button>
 
             {isOpen &&

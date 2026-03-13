@@ -519,7 +519,40 @@ const ServiceForm: React.FC = () => {
         });
     };
 
-    if (rooms.length === 0 || !activeRoom) return <div className="p-10 text-center">{t('Brak danych pokoi.', 'No room data.')}</div>;
+    if (rooms.length === 0 || !activeRoom) {
+        return (
+            <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-8">
+                <div className="w-full max-w-[860px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg p-8 text-center">
+                    <p className="text-xl font-black text-slate-800 dark:text-white">{t('Brak zapisanych pokoi', 'No saved rooms')}</p>
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                        {t(
+                            'Aby przejść do konfiguracji usług, najpierw dodaj co najmniej jeden pokój w kroku 2.',
+                            'To continue with services configuration, add at least one room in step 2 first.'
+                        )}
+                    </p>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            navigate('/projects/new/room', {
+                                state: {
+                                    rooms,
+                                    clientData,
+                                    projectDates,
+                                    draftId,
+                                    editProjectId,
+                                    editProjectMeta,
+                                },
+                            })
+                        }
+                        className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-white font-bold hover:bg-primary/90"
+                    >
+                        <span className="material-symbols-outlined">arrow_back</span>
+                        {t('Wróć do kroku 2', 'Back to step 2')}
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     const currentDimension = calculateDimension();
 

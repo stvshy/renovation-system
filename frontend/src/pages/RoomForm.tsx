@@ -253,6 +253,20 @@ const RoomForm: React.FC = () => {
     const savedRoomsWithSurfaces = existingRooms.filter((room) => Array.isArray(room.surfaces) && room.surfaces.length > 0);
     const defaultNewRoomName = `${t("Pokój", "Room")} ${existingRooms.length + 1}`;
     const hasDraftRoom = roomName !== defaultNewRoomName || length !== "" || width !== "" || height !== "" || surfaces.length > 0;
+    const hasDownstreamWork = existingRooms.some((room) => Array.isArray(room.tasks) && room.tasks.length > 0);
+    const hasVisitedNextSteps = draftSnapshot?.currentStep === "services" || draftSnapshot?.currentStep === "offer" || hasDownstreamWork;
+    const canAutoDraftCurrentRoom = !isEditMode && editingRoomIndex === null && !hasVisitedNextSteps;
+    const currentDraftRoom = (() => {
+        if (!canAutoDraftCurrentRoom) return null;
+        if (surfaces.length === 0) return null;
+
+        const draftRoom = new Room(roomName.trim() || defaultNewRoomName);
+        surfaces.forEach((surface) => draftRoom.addSurface(surface));
+        return draftRoom;
+    })();
+    const roomsForNavigation = currentDraftRoom ? [...existingRooms, currentDraftRoom] : existingRooms;
+    const canNavigateToNextSteps = roomsForNavigation.length > 0;
+    const showManualSaveInCreate = editingRoomIndex !== null || hasVisitedNextSteps;
     const currentRoomSnapshot = serializeRoomState(roomName, surfaces);
     const originalRoomSnapshot =
         editingRoomIndex !== null
@@ -278,7 +292,7 @@ const RoomForm: React.FC = () => {
             updatedAt: new Date().toISOString(),
             clientData,
             projectDates,
-            rooms: existingRooms,
+            rooms: roomsForNavigation,
             roomForm: {
                 editingRoomIndex,
                 roomName,
@@ -292,7 +306,7 @@ const RoomForm: React.FC = () => {
                 activeSurfaceIndex,
             },
         });
-    }, [activeSurfaceIndex, clientData, draftId, editingRoomIndex, existingRooms, hasWizardData, height, length, mode, openingDims, projectDates, roomName, surfaceDrafts, surfaces, width]);
+    }, [activeSurfaceIndex, clientData, draftId, editingRoomIndex, existingRooms, hasWizardData, height, length, mode, openingDims, projectDates, roomName, roomsForNavigation, surfaceDrafts, surfaces, width]);
 
     const setSurfacesWithDrafts = (nextSurfaces: Surface[]) => {
         setSurfaces(nextSurfaces);
@@ -333,8 +347,9 @@ const RoomForm: React.FC = () => {
         if (nextMode === mode) return;
 
         const hasExistingRoomData = surfaces.length > 0 || length !== "" || width !== "" || height !== "";
+        const shouldWarnAboutDownstreamImpact = isEditMode || hasVisitedNextSteps;
 
-        if (mode === "custom" && nextMode === "standard" && hasExistingRoomData) {
+        if (mode === "custom" && nextMode === "standard" && hasExistingRoomData && shouldWarnAboutDownstreamImpact) {
             setConfirmAction({ type: "switch-to-standard" });
             return;
         }
@@ -603,6 +618,21 @@ const RoomForm: React.FC = () => {
     };
 
     const handleSaveAndProceedToServices = () => {
+        if (!isEditMode && !showManualSaveInCreate) {
+            if (!canNavigateToNextSteps) return;
+            navigate("/projects/new/services", {
+                state: {
+                    rooms: roomsForNavigation,
+                    clientData,
+                    projectDates,
+                    draftId,
+                    editProjectId,
+                    editProjectMeta,
+                },
+            });
+            return;
+        }
+
         if (canGoToServicesWithoutSaving) {
             navigate("/projects/new/services", {
                 state: {
@@ -627,6 +657,25 @@ const RoomForm: React.FC = () => {
         executeSaveAction("proceed-services", updatedRooms);
     };
 
+    const handleAddNextRoomAuto = () => {
+        if (!currentDraftRoom) return;
+
+        navigate("/projects/new/room", {
+            state: {
+                rooms: roomsForNavigation,
+                clientData,
+                projectDates,
+                draftId,
+                editProjectId,
+                editProjectMeta,
+            },
+            replace: true,
+        });
+
+        resetRoomForm(roomsForNavigation.length);
+        window.scrollTo(0, 0);
+    };
+
     const getTotalArea = (type: SurfaceType) => {
         return surfaces.filter((s) => s.type === type).reduce((sum, s) => sum + s.getNetArea(), 0);
     };
@@ -636,7 +685,7 @@ const RoomForm: React.FC = () => {
             state: {
                 clientData,
                 projectDates,
-                rooms: existingRooms,
+                rooms: roomsForNavigation,
                 draftId,
                 editProjectId,
                 editProjectMeta,
@@ -645,9 +694,11 @@ const RoomForm: React.FC = () => {
     };
 
     const handleGoToSummaryStep = () => {
+        if (!canNavigateToNextSteps) return;
+
         navigate('/projects/new/offer', {
             state: {
-                rooms: existingRooms,
+                rooms: roomsForNavigation,
                 clientData,
                 projectDates,
                 draftId,
@@ -702,26 +753,37 @@ const RoomForm: React.FC = () => {
                         </button>
                         <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
+                                if (!canNavigateToNextSteps) return;
                                 navigate('/projects/new/services', {
                                     state: {
-                                        rooms: existingRooms,
+                                        rooms: roomsForNavigation,
                                         clientData,
                                         projectDates,
                                         draftId,
                                         editProjectId,
                                         editProjectMeta,
                                     },
-                                })
-                            }
-                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                });
+                            }}
+                            disabled={!canNavigateToNextSteps}
+                            className={`text-xs font-bold rounded-lg border px-2.5 py-1 transition-colors ${
+                                canNavigateToNextSteps
+                                    ? 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                    : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
+                            }`}
                         >
                             {t('Krok 3', 'Step 3')}
                         </button>
                         <button
                             type="button"
                             onClick={handleGoToSummaryStep}
-                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            disabled={!canNavigateToNextSteps}
+                            className={`text-xs font-bold rounded-lg border px-2.5 py-1 transition-colors ${
+                                canNavigateToNextSteps
+                                    ? 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                    : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
+                            }`}
                         >
                             {t('Krok 4', 'Step 4')}
                         </button>
@@ -1117,25 +1179,49 @@ const RoomForm: React.FC = () => {
                     </div>
                 ) : (
                     <div className="flex flex-col md:flex-row px-4 py-8 justify-end gap-4">
-                        <button
-                            onClick={handleSaveAndAddNext}
-                            disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
-                            className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-transparent ${
-                                editingRoomIndex !== null ? "border-green-600 text-green-600 hover:bg-green-50" : "border-primary text-primary hover:bg-primary/5"
-                            }`}
-                        >
-                            {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
-                            <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
-                        </button>
+                        {showManualSaveInCreate ? (
+                            <>
+                                <button
+                                    onClick={handleSaveAndAddNext}
+                                    disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
+                                    className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-transparent ${
+                                        editingRoomIndex !== null ? "border-green-600 text-green-600 hover:bg-green-50" : "border-primary text-primary hover:bg-primary/5"
+                                    }`}
+                                >
+                                    {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
+                                    <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
+                                </button>
 
-                        <button
-                            onClick={handleSaveAndProceedToServices}
-                            disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
-                            className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {canGoToServicesWithoutSaving ? t('Usługi', 'Services') : t('Zapisz i przejdź do usług', 'Save and proceed to services')}
-                            <span className="material-symbols-outlined">arrow_forward</span>
-                        </button>
+                                <button
+                                    onClick={handleSaveAndProceedToServices}
+                                    disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
+                                    className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {canGoToServicesWithoutSaving ? t('Usługi', 'Services') : t('Zapisz i przejdź do usług', 'Save and proceed to services')}
+                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={handleAddNextRoomAuto}
+                                    disabled={!currentDraftRoom}
+                                    className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 border-primary text-primary font-bold bg-white dark:bg-transparent hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {t('Dodaj kolejny pokój', 'Add next room')}
+                                    <span className="material-symbols-outlined">add_circle</span>
+                                </button>
+
+                                <button
+                                    onClick={handleSaveAndProceedToServices}
+                                    disabled={!canNavigateToNextSteps}
+                                    className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {t('Przejdź do usług', 'Go to services')}
+                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                </button>
+                            </>
+                        )}
                     </div>
                 )}
 

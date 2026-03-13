@@ -204,8 +204,8 @@ const OfferSummary: React.FC = () => {
     };
 
     return (
-        <div className="px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-4 sm:py-5">
-            <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
+        <div className="px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 print:px-0 flex flex-1 justify-center py-4 sm:py-5 print:py-0">
+            <div className="layout-content-container flex flex-col max-w-[960px] print:max-w-none flex-1">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-3 sm:p-4 sm:items-center">
                     <div>
@@ -303,7 +303,7 @@ const OfferSummary: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="px-3 sm:px-4 mt-2">
+                <div className="hidden px-3 sm:px-4 mt-2">
                     <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden">
                         <div className="px-4 sm:px-6 py-4 border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div>
@@ -416,8 +416,8 @@ const OfferSummary: React.FC = () => {
                             </div>
 
                             {/* Detailed table for tablet/desktop + print */}
-                            <div className="hidden sm:block print:block mt-4 bg-white dark:bg-background-dark/50 rounded-xl shadow-[0_0_4px_rgba(0,0,0,0.1)] border border-gray-200 dark:border-gray-700 overflow-x-auto mx-2 sm:mx-4">
-                                <table className="w-full min-w-[720px] text-sm text-left text-gray-500 dark:text-gray-400 font-display">
+                            <div className="hidden sm:block print:block mt-4 bg-white dark:bg-background-dark/50 rounded-xl shadow-[0_0_4px_rgba(0,0,0,0.1)] border border-gray-200 dark:border-gray-700 overflow-x-auto print:overflow-visible mx-2 sm:mx-4 print:mx-0">
+                                <table className="w-full min-w-[720px] print:min-w-0 text-sm text-left text-gray-500 dark:text-gray-400 font-display">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
                                             <th scope="col" className="px-3 sm:px-6 py-3">
@@ -485,6 +485,64 @@ const OfferSummary: React.FC = () => {
                         </div>
                     );
                 })}
+
+                <div className="px-3 sm:px-4 mt-2 print:mt-6 break-inside-avoid">
+                    <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden print:shadow-none">
+                        <div className="px-4 sm:px-6 py-4 border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div>
+                                <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Lista zakupów', 'Shopping list')}</h2>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    {t(
+                                        'Cały koszt materiałów jest już wliczony w kosztorys. Tu pokazujemy tylko to, czego brakuje w magazynie.',
+                                        'The full material cost is already included in the estimate. This section only shows what is missing from inventory.'
+                                    )}
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
+                                <div>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
+                                    <p className="text-xl font-black text-amber-600 dark:text-amber-400">{shoppingListItems.length}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Koszt zakupów', 'Purchase cost')}</p>
+                                    <p className="text-xl font-black text-red-600 dark:text-red-400">{materialPlan.totalShortageCost.toFixed(2)} {currencyCode}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="overflow-x-auto print:overflow-visible">
+                            <table className="w-full min-w-[720px] print:min-w-0 text-sm text-left text-gray-600 dark:text-gray-300">
+                                <thead className="text-xs uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th className="px-4 py-3">{t('Materiał', 'Material')}</th>
+                                        <th className="px-4 py-3 text-right">{t('Potrzebne', 'Required')}</th>
+                                        <th className="px-4 py-3 text-right">{t('W magazynie', 'In stock')}</th>
+                                        <th className="px-4 py-3 text-right">{t('Do dokupienia', 'To buy')}</th>
+                                        <th className="px-4 py-3 text-right">{t('Koszt zakupu', 'Purchase cost')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {shoppingListItems.map((item) => (
+                                        <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
+                                            <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">{item.materialName}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
+                                        </tr>
+                                    ))}
+                                    {shoppingListItems.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="px-4 py-8 text-center text-sm text-emerald-700 dark:text-emerald-300">
+                                                {t('Na ten moment magazyn pokrywa wszystkie materiały z projektu.', 'At the moment inventory covers all materials required by this project.')}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap justify-end gap-3 sm:gap-4 p-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
