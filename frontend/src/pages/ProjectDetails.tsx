@@ -124,6 +124,8 @@ const ProjectDetails: React.FC = () => {
     const [isAdditionalCostsPanelOpen, setIsAdditionalCostsPanelOpen] = useState(false);
     const [additionalCostEdits, setAdditionalCostEdits] = useState<Record<string, { amount: string; note: string }>>({});
     const [newProjectNoteInput, setNewProjectNoteInput] = useState("");
+    const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+    const [editingNoteContent, setEditingNoteContent] = useState("");
     const [isDeleteProjectModalOpen, setIsDeleteProjectModalOpen] = useState(false);
 
     useEffect(() => {
@@ -432,6 +434,31 @@ const ProjectDetails: React.FC = () => {
             ...project,
             notes: nextNotes,
         });
+    };
+
+    const handleStartEditProjectNote = (note: ProjectNote) => {
+        setEditingNoteId(note.id);
+        setEditingNoteContent(note.content);
+    };
+
+    const handleCancelEditProjectNote = () => {
+        setEditingNoteId(null);
+        setEditingNoteContent("");
+    };
+
+    const handleSaveEditedProjectNote = async (noteId: string) => {
+        if (!project) return;
+        const content = editingNoteContent.trim();
+        if (!content) return;
+
+        const nextNotes = projectNotes.map((note) => (note.id === noteId ? { ...note, content } : note));
+        await saveProjectUpdate({
+            ...project,
+            notes: nextNotes,
+        });
+
+        setEditingNoteId(null);
+        setEditingNoteContent("");
     };
 
     const handleEditClientStep = () => {
@@ -1136,15 +1163,56 @@ const ProjectDetails: React.FC = () => {
                         {projectNotes.map((note) => (
                             <article key={note.id} className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/70 dark:bg-slate-900/40 p-4">
                                 <div className="flex items-start justify-between gap-3">
-                                    <p className="text-sm text-gray-800 dark:text-slate-100 whitespace-pre-wrap">{note.content}</p>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleDeleteProjectNote(note.id)}
-                                        className="inline-flex items-center justify-center rounded-md p-1 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                                        title={t("Usuń notatkę", "Delete note")}
-                                    >
-                                        <span className="material-symbols-outlined text-base">delete</span>
-                                    </button>
+                                    <div className="flex-1">
+                                        {editingNoteId === note.id ? (
+                                            <textarea
+                                                value={editingNoteContent}
+                                                onChange={(e) => setEditingNoteContent(e.target.value)}
+                                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[96px]"
+                                            />
+                                        ) : (
+                                            <p className="text-sm text-gray-800 dark:text-slate-100 whitespace-pre-wrap">{note.content}</p>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        {editingNoteId === note.id ? (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleSaveEditedProjectNote(note.id)}
+                                                    className="inline-flex items-center justify-center rounded-md p-1 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20"
+                                                    title={t("Zapisz notatkę", "Save note")}
+                                                >
+                                                    <span className="material-symbols-outlined text-base">check</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={handleCancelEditProjectNote}
+                                                    className="inline-flex items-center justify-center rounded-md p-1 text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700"
+                                                    title={t("Anuluj edycję", "Cancel editing")}
+                                                >
+                                                    <span className="material-symbols-outlined text-base">close</span>
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleStartEditProjectNote(note)}
+                                                className="inline-flex items-center justify-center rounded-md p-1 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                                                title={t("Edytuj notatkę", "Edit note")}
+                                            >
+                                                <span className="material-symbols-outlined text-base">edit</span>
+                                            </button>
+                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDeleteProjectNote(note.id)}
+                                            className="inline-flex items-center justify-center rounded-md p-1 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                            title={t("Usuń notatkę", "Delete note")}
+                                        >
+                                            <span className="material-symbols-outlined text-base">delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                                 <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">{formatNoteDate(note.createdAt)}</p>
                             </article>
