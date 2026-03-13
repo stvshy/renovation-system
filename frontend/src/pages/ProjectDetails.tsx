@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getInventory, getProjectById, saveClient, updateProject } from "../lib/storage";
+import { getInventory, getProjectById, getProjects, saveClient, updateProject } from "../lib/storage";
 import { AdditionalCost, Client, InventoryItem, Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import { useDemo } from "../context/DemoContext";
@@ -94,6 +94,7 @@ const ProjectDetails: React.FC = () => {
     const [project, setProject] = useState<Project | null>(null);
     const [hydratedRooms, setHydratedRooms] = useState<Room[]>([]);
     const [inventory, setInventory] = useState<InventoryItem[]>([]);
+    const [clientProjectCount, setClientProjectCount] = useState(0);
     const [loading, setLoading] = useState(true);
 
     // Payment Edit State
@@ -107,14 +108,22 @@ const ProjectDetails: React.FC = () => {
     const [timelineForm, setTimelineForm] = useState<{ startDate: string; endDate: string }>({ startDate: "", endDate: "" });
     const [isAddingExtraCostModalOpen, setIsAddingExtraCostModalOpen] = useState(false);
     const [extraCostForm, setExtraCostForm] = useState<{ amount: string; note: string }>({ amount: "", note: "" });
+    const [isAdditionalCostsPanelOpen, setIsAdditionalCostsPanelOpen] = useState(false);
+    const [additionalCostEdits, setAdditionalCostEdits] = useState<Record<string, { amount: string; note: string }>>({});
 
     useEffect(() => {
         const load = async () => {
             if (id) {
-                const [foundProject, inventoryItems] = await Promise.all([getProjectById(id), getInventory()]);
+                const [foundProject, inventoryItems, allProjects] = await Promise.all([getProjectById(id), getInventory(), getProjects()]);
                 if (foundProject) {
                     setProject(foundProject);
                     setInventory(inventoryItems);
+                    const projectCount = allProjects.filter((entry) => {
+                        if (foundProject.clientId && entry.clientId === foundProject.clientId) return true;
+                        if (foundProject.clientData?.email && entry.clientData?.email === foundProject.clientData.email) return true;
+                        return false;
+                    }).length;
+                    setClientProjectCount(projectCount);
                     if (foundProject.rooms) {
                         setHydratedRooms(foundProject.rooms.map((r) => rehydrateRoom(r)));
                     }
@@ -176,6 +185,18 @@ const ProjectDetails: React.FC = () => {
 
     const additionalCosts = useMemo(() => getAdditionalCostsFromClientData(project?.clientData), [project?.clientData]);
     const additionalCostsTotal = useMemo(() => sumAdditionalCosts(additionalCosts), [additionalCosts]);
+
+    useEffect(() => {
+        if (!isAdditionalCostsPanelOpen) return;
+        const initialEdits: Record<string, { amount: string; note: string }> = {};
+        additionalCosts.forEach((cost) => {
+            initialEdits[cost.id] = {
+                amount: String(cost.amount),
+                note: cost.note,
+            };
+        });
+        setAdditionalCostEdits(initialEdits);
+    }, [additionalCosts, isAdditionalCostsPanelOpen]);
 
     const materialPlan = buildMaterialPlan(hydratedRooms, inventory);
     const materialSummary = materialPlan.items;
@@ -318,6 +339,47 @@ const ProjectDetails: React.FC = () => {
         setIsAddingExtraCostModalOpen(false);
     };
 
+    const handleSaveEditedAdditionalCost = async (costId: string) => {
+        if (!project) return;
+
+        const draft = additionalCostEdits[costId];
+        if (!draft) return;
+
+        const amount = parseFloat(draft.amount);
+        const note = draft.note.trim();
+        if (isNaN(amount) || amount <= 0 || !note) return;
+
+        const nextAdditionalCosts = additionalCosts.map((cost) => (cost.id === costId ? { ...cost, amount, note } : cost));
+        const baseProjectValue = project.value - additionalCostsTotal;
+        const nextTotal = sumAdditionalCosts(nextAdditionalCosts);
+        const nextClientData = withProjectMetaAdditionalCosts(project.clientData, nextAdditionalCosts);
+
+        const updatedProject: Project = {
+            ...project,
+            value: baseProjectValue + nextTotal,
+            clientData: nextClientData,
+        };
+
+        await saveProjectUpdate(updatedProject);
+    };
+
+    const handleDeleteAdditionalCost = async (costId: string) => {
+        if (!project) return;
+
+        const nextAdditionalCosts = additionalCosts.filter((cost) => cost.id !== costId);
+        const baseProjectValue = project.value - additionalCostsTotal;
+        const nextTotal = sumAdditionalCosts(nextAdditionalCosts);
+        const nextClientData = withProjectMetaAdditionalCosts(project.clientData, nextAdditionalCosts);
+
+        const updatedProject: Project = {
+            ...project,
+            value: baseProjectValue + nextTotal,
+            clientData: nextClientData,
+        };
+
+        await saveProjectUpdate(updatedProject);
+    };
+
     const handleEditClientStep = () => {
         const draftSnapshot = {
             id: editSessionDraftId,
@@ -414,6 +476,43 @@ const ProjectDetails: React.FC = () => {
             const elapsedDuration = Math.max(0, today.getTime() - startDate.getTime());
             elapsedPercent = Math.min(100, Math.max(0, (elapsedDuration / totalDuration) * 100));
             remainingPercent = Math.max(0, 100 - elapsedPercent);
+        }
+    }
+
+    const dayMs = 24 * 60 * 60 * 1000;
+    let timelineInfoText = "";
+    let timelineInfoClass = "text-slate-600 dark:text-slate-300";
+    let timelineInfoIcon = "schedule";
+
+    if (project.status === "Completed") {
+        timelineInfoText = t("Projekt zakończony", "Project completed");
+        timelineInfoClass = "text-emerald-600 dark:text-emerald-400";
+        timelineInfoIcon = "check_circle";
+    } else if (project.status === "Planned" && startDate) {
+        const daysToStart = Math.ceil((startDate.getTime() - today.getTime()) / dayMs);
+        if (daysToStart > 0) {
+            timelineInfoText = t(`Do rozpoczęcia: ${daysToStart} dni`, `Starts in ${daysToStart} days`);
+        } else if (daysToStart === 0) {
+            timelineInfoText = t("Start: dzisiaj", "Start: today");
+        } else {
+            timelineInfoText = t("Planowany start minął", "Planned start has passed");
+        }
+        timelineInfoClass = "text-blue-600 dark:text-blue-400";
+        timelineInfoIcon = "event_upcoming";
+    } else if (project.status === "In Progress" && endDate) {
+        const daysToEnd = Math.ceil((endDate.getTime() - today.getTime()) / dayMs);
+        if (daysToEnd > 0) {
+            timelineInfoText = t(`Do końca: ${daysToEnd} dni`, `${daysToEnd} days left`);
+            timelineInfoClass = "text-amber-600 dark:text-amber-400";
+            timelineInfoIcon = "timer";
+        } else if (daysToEnd === 0) {
+            timelineInfoText = t("Koniec: dzisiaj", "Ends today");
+            timelineInfoClass = "text-amber-600 dark:text-amber-400";
+            timelineInfoIcon = "timer";
+        } else {
+            timelineInfoText = t(`Po terminie o ${Math.abs(daysToEnd)} dni`, `${Math.abs(daysToEnd)} days overdue`);
+            timelineInfoClass = "text-red-600 dark:text-red-400";
+            timelineInfoIcon = "warning";
         }
     }
 
@@ -536,7 +635,7 @@ const ProjectDetails: React.FC = () => {
                 {/* Info Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Client Info */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 h-full">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col">
                         <div className="mb-4 flex items-center justify-between">
                             <h3 className="text-sm font-bold text-gray-400 uppercase flex items-center gap-2">
                                 <span className="material-symbols-outlined text-lg">person</span>
@@ -552,28 +651,35 @@ const ProjectDetails: React.FC = () => {
                             </button>
                         </div>
                         {project.clientData ? (
-                            <div className="space-y-2">
-                                <p className="font-bold text-lg text-gray-800 dark:text-white">{project.clientName}</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-300">{project.clientData.phone}</p>
-                                <p className="text-sm text-gray-600 dark:text-gray-300">{project.clientData.email}</p>
-                                <p className="text-sm text-gray-500 italic mt-2">{project.address}</p>
-                                {project.clientId && (
-                                    <button
-                                        type="button"
-                                        onClick={() => navigate(`/clients/${project.clientId}`)}
-                                        className="text-xs font-bold text-primary hover:underline"
-                                    >
-                                        {t("Otwórz profil klienta", "Open client profile")}
-                                    </button>
-                                )}
+                            <div className="flex-1 flex items-center">
+                                <button
+                                    type="button"
+                                    onClick={() => project.clientId && navigate(`/clients/${project.clientId}`)}
+                                    disabled={!project.clientId}
+                                    className="w-full text-left rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/40 disabled:cursor-default"
+                                >
+                                    <div className="flex flex-col justify-center space-y-2">
+                                        <p className="font-bold text-lg text-gray-800 dark:text-white">{project.clientName}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-300">{project.clientData.phone}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-300">{project.clientData.email}</p>
+                                        <p className="text-sm text-gray-500 italic mt-2">{project.address}</p>
+                                    </div>
+                                </button>
                             </div>
                         ) : (
-                            <p className="text-gray-500">{t('Brak szczegółowych danych klienta', 'No detailed client data')}</p>
+                            <div className="flex-1 flex items-center">
+                                <p className="text-gray-500">{t('Brak szczegółowych danych klienta', 'No detailed client data')}</p>
+                            </div>
                         )}
+                        <div className="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                            <p className="text-[14px] text-gray-500 dark:text-slate-400">
+                                {t("Przypisane projekty", "Assigned projects")}: <span className="font-bold text-gray-700 dark:text-slate-200">{clientProjectCount}</span>
+                            </p>
+                        </div>
                     </div>
 
                     {/* Timeline */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
                         <div className="mb-4 flex items-center justify-between">
                             <h3 className="text-sm font-bold text-gray-400 uppercase flex items-center gap-2">
                                 <span className="material-symbols-outlined text-lg">schedule</span>
@@ -588,7 +694,7 @@ const ProjectDetails: React.FC = () => {
                                 <span className="material-symbols-outlined text-base">edit</span>
                             </button>
                         </div>
-                        <div className="flex flex-col justify-center h-full pb-6">
+                        <div className="flex-1 flex flex-col justify-center">
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-xs text-gray-500">{t('Start', 'Start')}</span>
                                 <span className="font-bold text-gray-800 dark:text-white">{project.startDate || "-"}</span>
@@ -608,6 +714,14 @@ const ProjectDetails: React.FC = () => {
                                 <span className="font-bold text-gray-800 dark:text-white">{project.endDate || "-"}</span>
                             </div>
                         </div>
+                        {timelineInfoText && (
+                            <div className="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p className={`text-[14px] font-bold inline-flex items-center gap-1.5 ${timelineInfoClass}`}>
+                                    <span className="material-symbols-outlined text-base">{timelineInfoIcon}</span>
+                                    {timelineInfoText}
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     {/* Finances */}
@@ -632,16 +746,18 @@ const ProjectDetails: React.FC = () => {
                                 <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
                             {additionalCosts.length > 0 && (
-                                <div className="mt-3 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-2.5 space-y-1.5">
-                                    <p className="text-xs font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300">
-                                        {t("Koszty dodatkowe", "Additional costs")} ({additionalCostsTotal.toFixed(2)} {currencyCode})
+                                <div className="mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-200/70 dark:border-amber-800/70 bg-amber-50/40 dark:bg-amber-900/10 px-2.5 py-1.5">
+                                    <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300">
+                                        {t("Koszty dodatkowe", "Additional costs")}: +{additionalCostsTotal.toFixed(2)} {currencyCode}
                                     </p>
-                                    {additionalCosts.map((cost) => (
-                                        <div key={cost.id} className="flex items-start justify-between gap-2 text-xs">
-                                            <span className="text-gray-600 dark:text-slate-300 break-words">{cost.note}</span>
-                                            <span className="font-bold text-red-600 dark:text-red-400 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</span>
-                                        </div>
-                                    ))}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsAdditionalCostsPanelOpen(true)}
+                                        className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold text-amber-800 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900/30"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">visibility</span>
+                                        {t("Podgląd", "Preview")}
+                                    </button>
                                 </div>
                             )}
                         </div>
@@ -1055,6 +1171,95 @@ const ProjectDetails: React.FC = () => {
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {isAdditionalCostsPanelOpen && (
+                <div className="fixed inset-0 z-[10051] bg-black/40" onClick={() => setIsAdditionalCostsPanelOpen(false)}>
+                    <aside
+                        className="absolute right-0 top-0 h-full w-full max-w-md bg-white dark:bg-slate-900 border-l border-gray-200 dark:border-slate-700 shadow-2xl p-5 overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Koszty dodatkowe", "Additional costs")}</h3>
+                            <button
+                                type="button"
+                                onClick={() => setIsAdditionalCostsPanelOpen(false)}
+                                className="text-gray-500 hover:text-gray-700 dark:text-slate-300 dark:hover:text-white"
+                            >
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
+                            {t("Suma kosztów dodatkowych", "Additional costs total")}: <span className="font-bold text-red-600 dark:text-red-400">+{additionalCostsTotal.toFixed(2)} {currencyCode}</span>
+                        </p>
+
+                        <div className="space-y-4">
+                            {additionalCosts.length === 0 && (
+                                <div className="rounded-lg border border-dashed border-emerald-300 dark:border-emerald-700 bg-emerald-50/70 dark:bg-emerald-900/10 p-4 text-sm text-emerald-700 dark:text-emerald-300 text-center">
+                                    {t("Brak kosztów dodatkowych.", "No additional costs yet.")}
+                                </div>
+                            )}
+
+                            {additionalCosts.map((cost) => {
+                                const edit = additionalCostEdits[cost.id] || { amount: String(cost.amount), note: cost.note };
+                                return (
+                                    <div key={cost.id} className="rounded-xl border border-gray-200 dark:border-slate-700 p-4 space-y-3">
+                                        <label className="flex flex-col gap-1">
+                                            <span className="text-xs font-bold text-gray-500 uppercase">{t("Kwota", "Amount")}</span>
+                                            <div className="relative">
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={edit.amount}
+                                                    onChange={(e) =>
+                                                        setAdditionalCostEdits((prev) => ({
+                                                            ...prev,
+                                                            [cost.id]: { ...edit, amount: e.target.value },
+                                                        }))
+                                                    }
+                                                    className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 pr-14"
+                                                />
+                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 dark:text-slate-400">{currencyCode}</span>
+                                            </div>
+                                        </label>
+
+                                        <label className="flex flex-col gap-1">
+                                            <span className="text-xs font-bold text-gray-500 uppercase">{t("Notatka", "Note")}</span>
+                                            <textarea
+                                                value={edit.note}
+                                                onChange={(e) =>
+                                                    setAdditionalCostEdits((prev) => ({
+                                                        ...prev,
+                                                        [cost.id]: { ...edit, note: e.target.value },
+                                                    }))
+                                                }
+                                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 min-h-[90px]"
+                                            />
+                                        </label>
+
+                                        <div className="flex justify-end gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDeleteAdditionalCost(cost.id)}
+                                                className="px-3 py-1.5 rounded-md border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-900/20"
+                                            >
+                                                {t("Usuń", "Delete")}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleSaveEditedAdditionalCost(cost.id)}
+                                                className="px-3 py-1.5 rounded-md bg-primary text-white text-xs font-semibold"
+                                            >
+                                                {t("Zapisz", "Save")}
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </aside>
                 </div>
             )}
         </div>
