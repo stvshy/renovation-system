@@ -17,8 +17,10 @@ import {
 import { saveProject, deductInventoryFromProject } from "../lib/storage";
 import { Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
+import EditWizardExitControl from "../components/EditWizardExitControl";
 import { clearProjectCreationDirty, setProjectCreationDirty } from "../lib/projectCreationGuard";
 import { clearCurrentProjectSnapshot, deleteProjectDraft, setCurrentProjectSnapshot } from "../lib/projectDrafts";
+import { saveEditedProjectFromSnapshot } from "../lib/projectWizardSave";
 
 // Helper to restore class methods if data was serialized via state
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -75,13 +77,16 @@ const OfferSummary: React.FC = () => {
     const [isSaving, setIsSaving] = useState(false);
     const draftSnapshot = location.state?.draftSnapshot;
     const draftId = location.state?.draftId || draftSnapshot?.id;
+    const editProjectId = location.state?.editProjectId;
+    const editProjectMeta = location.state?.editProjectMeta;
+    const isEditMode = Boolean(editProjectId);
 
     const currencyCode = language === "en" ? "EUR" : "PLN";
     const localizeUnit = (unit: string) => language === "en" && unit === "szt" ? "pcs" : unit;
 
     // Data passed from previous steps
-    const clientData = location.state?.clientData;
-    const projectDates = location.state?.projectDates;
+    const clientData = location.state?.clientData || draftSnapshot?.clientData;
+    const projectDates = location.state?.projectDates || draftSnapshot?.projectDates;
 
     // Process all rooms from state or fallback to demo
     const rooms: Room[] = useMemo(() => {
@@ -89,6 +94,8 @@ const OfferSummary: React.FC = () => {
 
         if (location.state?.rooms && Array.isArray(location.state.rooms)) {
             rawRooms = location.state.rooms;
+        } else if (draftSnapshot?.rooms && Array.isArray(draftSnapshot.rooms)) {
+            rawRooms = draftSnapshot.rooms;
         } else if (location.state?.room) {
             rawRooms = [location.state.room];
         } else {
@@ -96,7 +103,7 @@ const OfferSummary: React.FC = () => {
         }
 
         return rawRooms.map((raw) => rehydrateRoom(raw));
-    }, [location.state]);
+    }, [draftSnapshot?.rooms, language, location.state]);
 
     useEffect(() => {
         setProjectCreationDirty(Boolean(clientData || projectDates || rooms.length > 0));
@@ -128,26 +135,33 @@ const OfferSummary: React.FC = () => {
         }
         setIsSaving(true);
 
+        const isEditingExistingProject = Boolean(editProjectId);
+
         const newProject: Project = {
-            id: crypto.randomUUID(),
-            name: `${t('Remont', 'Renovation')}: ${clientData.lastName}`,
+            id: editProjectId || crypto.randomUUID(),
+            name: editProjectMeta?.name || `${t('Remont', 'Renovation')}: ${clientData.lastName}`,
             clientName: `${clientData.firstName} ${clientData.lastName}`,
             clientId: clientData.id,
             address: `${clientData.address}, ${clientData.city}`,
-            status: "Planned",
+            status: editProjectMeta?.status || "Planned",
             value: grandTotal,
             area: totalArea,
             startDate: projectDates.startDate,
             endDate: projectDates.endDate,
+            color: editProjectMeta?.color,
             rooms: rooms, // Save the full structure
             clientData: clientData,
+            paidAmount: editProjectMeta?.paidAmount,
+            user_id: editProjectMeta?.user_id,
         };
 
         // 1. Save Project
         await saveProject(newProject);
 
-        // 2. Deduct Materials from Inventory
-        await deductInventoryFromProject(rooms);
+        // Inventory deduction happens only on new project creation.
+        if (!isEditingExistingProject) {
+            await deductInventoryFromProject(rooms);
+        }
 
         clearProjectCreationDirty();
         clearCurrentProjectSnapshot();
@@ -159,6 +173,21 @@ const OfferSummary: React.FC = () => {
 
     const handlePrint = () => {
         window.print();
+    };
+
+    const handleExitWithoutSaving = () => {
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(editProjectId ? `/projects/${editProjectId}` : '/projects');
+    };
+
+    const handleSaveAndExit = async () => {
+        if (editProjectId) {
+            await saveEditedProjectFromSnapshot(editProjectId);
+        }
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(editProjectId ? `/projects/${editProjectId}` : '/projects');
     };
 
     return (
@@ -173,13 +202,78 @@ const OfferSummary: React.FC = () => {
                                 {t('Klient:', 'Client:')} {clientData.firstName} {clientData.lastName}
                             </p>
                         )}
+                        <div className="flex flex-wrap gap-2 mt-3">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    navigate('/projects/new/client', {
+                                        state: {
+                                            clientData,
+                                            projectDates,
+                                            rooms,
+                                            draftId,
+                                            editProjectId,
+                                            editProjectMeta,
+                                        },
+                                    })
+                                }
+                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                            >
+                                {t('Krok 1', 'Step 1')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    navigate('/projects/new/room', {
+                                        state: {
+                                            rooms,
+                                            clientData,
+                                            projectDates,
+                                            draftId,
+                                            editProjectId,
+                                            editProjectMeta,
+                                        },
+                                    })
+                                }
+                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                            >
+                                {t('Krok 2', 'Step 2')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    navigate('/projects/new/services', {
+                                        state: {
+                                            rooms,
+                                            clientData,
+                                            projectDates,
+                                            draftId,
+                                            editProjectId,
+                                            editProjectMeta,
+                                        },
+                                    })
+                                }
+                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                            >
+                                {t('Krok 3', 'Step 3')}
+                            </button>
+                            <button
+                                type="button"
+                                className="text-xs font-bold rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-primary print:hidden"
+                            >
+                                {t('Krok 4', 'Step 4')}
+                            </button>
+                        </div>
                     </div>
-                    <button
-                        onClick={handlePrint}
-                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors print:hidden"
-                    >
-                        <span className="truncate">{t('Drukuj / Pobierz PDF', 'Print / Download PDF')}</span>
-                    </button>
+                    <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-2 print:hidden">
+                        <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
+                        <button
+                            onClick={handlePrint}
+                            className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        >
+                            <span className="truncate">{t('Drukuj / Pobierz PDF', 'Print / Download PDF')}</span>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Grand Total Card */}
@@ -331,6 +425,8 @@ const OfferSummary: React.FC = () => {
                                     clientData,
                                     projectDates,
                                     draftId,
+                                    editProjectId,
+                                    editProjectMeta,
                                 },
                             })
                         }

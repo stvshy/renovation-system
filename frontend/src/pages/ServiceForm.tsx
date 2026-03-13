@@ -16,9 +16,11 @@ import {
 import { getInventory, saveInventoryItem, getServiceCatalog } from "../lib/storage";
 import { InventoryItem } from "../types";
 import { useLanguage } from "../context/LanguageContext";
+import EditWizardExitControl from "../components/EditWizardExitControl";
 import ScrollableSelect from "../components/ScrollableSelect";
-import { setProjectCreationDirty } from "../lib/projectCreationGuard";
+import { clearProjectCreationDirty, setProjectCreationDirty } from "../lib/projectCreationGuard";
 import { clearCurrentProjectSnapshot, setCurrentProjectSnapshot } from "../lib/projectDrafts";
+import { saveEditedProjectFromSnapshot } from "../lib/projectWizardSave";
 
 // Helper to rehydrate objects
 const rehydrateRoom = (plainRoom: any): Room => {
@@ -57,9 +59,12 @@ const ServiceForm: React.FC = () => {
     const { t, language } = useLanguage();
     const draftSnapshot = location.state?.draftSnapshot;
     const draftId = location.state?.draftId || draftSnapshot?.id;
+    const editProjectId = location.state?.editProjectId;
+    const editProjectMeta = location.state?.editProjectMeta;
     const draftServiceForm = draftSnapshot?.serviceForm;
     const restoreDraftRef = useRef(false);
     const skipTemplateResetRef = useRef(Boolean(draftServiceForm));
+    const isEditMode = Boolean(editProjectId);
 
     const currencyCode = language === "en" ? "EUR" : "PLN";
     const currencySymbol = language === "en" ? "EUR" : "zł";
@@ -175,6 +180,13 @@ const ServiceForm: React.FC = () => {
     const hasWizardData = Boolean(clientData || projectDates || rooms.length > 0);
 
     useEffect(() => {
+        if (rooms.length === 0) return;
+        if (activeRoomIndex >= rooms.length) {
+            setActiveRoomIndex(0);
+        }
+    }, [activeRoomIndex, rooms.length]);
+
+    useEffect(() => {
         setProjectCreationDirty(hasWizardData);
     }, [hasWizardData]);
 
@@ -211,7 +223,7 @@ const ServiceForm: React.FC = () => {
         });
     }, [activeRoomIndex, clientData, customMatCoverage, customMatInitialStock, customMatName, customMatPrice, customMatUnit, draftId, hasWizardData, isAddingNewMaterial, manualQuantity, newMatScope, projectDates, rooms, scopeType, selectedCategory, selectedMaterialId, selectedTemplateId, specificSurfaceIndex, strategyParam]);
 
-    const activeRoom = rooms[activeRoomIndex];
+    const activeRoom = rooms[Math.min(activeRoomIndex, Math.max(rooms.length - 1, 0))];
 
     const categoryServices = useMemo(() => serviceCatalog.filter((s) => s.category === selectedCategory), [selectedCategory, serviceCatalog]);
 
@@ -519,11 +531,13 @@ const ServiceForm: React.FC = () => {
                 clientData,
                 projectDates,
                 draftId,
+                editProjectId,
+                editProjectMeta,
             },
         });
     };
 
-    if (rooms.length === 0) return <div className="p-10 text-center">{t('Brak danych pokoi.', 'No room data.')}</div>;
+    if (rooms.length === 0 || !activeRoom) return <div className="p-10 text-center">{t('Brak danych pokoi.', 'No room data.')}</div>;
 
     const currentDimension = calculateDimension();
 
@@ -543,14 +557,94 @@ const ServiceForm: React.FC = () => {
         }
     };
 
+    const handleExitWithoutSaving = () => {
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(editProjectId ? `/projects/${editProjectId}` : '/projects');
+    };
+
+    const handleSaveAndExit = async () => {
+        if (editProjectId) {
+            await saveEditedProjectFromSnapshot(editProjectId);
+        }
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(editProjectId ? `/projects/${editProjectId}` : '/projects');
+    };
+
     return (
         <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[1200px] flex-1 gap-6">
                 {/* Header */}
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                        <p className="text-text-dark dark:text-off-white text-2xl sm:text-3xl font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
-                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider w-fit">{t('Krok 3 z 4', 'Step 3 of 4')}</span>
+                        <div>
+                            <p className="text-text-dark dark:text-off-white text-2xl sm:text-3xl font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
+                            <span className="mt-2 inline-flex bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider w-fit">{t('Krok 3 z 4', 'Step 3 of 4')}</span>
+                        </div>
+                        <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                        <button
+                            type="button"
+                            onClick={() =>
+                                navigate('/projects/new/client', {
+                                    state: {
+                                        clientData,
+                                        projectDates,
+                                        rooms,
+                                        draftId,
+                                        editProjectId,
+                                        editProjectMeta,
+                                    },
+                                })
+                            }
+                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 1', 'Step 1')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                navigate('/projects/new/room', {
+                                    state: {
+                                        rooms,
+                                        clientData,
+                                        projectDates,
+                                        draftId,
+                                        editProjectId,
+                                        editProjectMeta,
+                                    },
+                                })
+                            }
+                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 2', 'Step 2')}
+                        </button>
+                        <button
+                            type="button"
+                            className="text-xs font-bold rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-primary"
+                        >
+                            {t('Krok 3', 'Step 3')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                navigate('/projects/new/offer', {
+                                    state: {
+                                        rooms,
+                                        clientData,
+                                        projectDates,
+                                        draftId,
+                                        editProjectId,
+                                        editProjectMeta,
+                                    },
+                                })
+                            }
+                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 4', 'Step 4')}
+                        </button>
                     </div>
                 </div>
 
@@ -978,32 +1072,65 @@ const ServiceForm: React.FC = () => {
                 </div>
 
                 {/* Footer Navigation */}
-                <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-                    <button
-                        onClick={() =>
-                            navigate("/projects/new/room", {
-                                state: {
-                                    rooms,
-                                    clientData,
-                                    projectDates,
-                                    draftId,
-                                },
-                            })
-                        }
-                        className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
-                    >
-                        <span className="material-symbols-outlined">arrow_back</span>
-                        {t('Edytuj Pokoje', 'Edit Rooms')}
-                    </button>
+                {isEditMode ? (
+                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                        <button
+                            onClick={() =>
+                                navigate("/projects/new/room", {
+                                    state: {
+                                        rooms,
+                                        clientData,
+                                        projectDates,
+                                        draftId,
+                                        editProjectId,
+                                        editProjectMeta,
+                                    },
+                                })
+                            }
+                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                        >
+                            <span className="material-symbols-outlined">arrow_back</span>
+                            {t('Pokoje', 'Rooms')}
+                        </button>
 
-                    <button
-                        onClick={handleFinish}
-                        className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
-                    >
-                        <span className="material-symbols-outlined">assignment_turned_in</span>
-                        {t('Przejdź do podsumowania', 'Go to Summary')}
-                    </button>
-                </div>
+                        <button
+                            onClick={handleFinish}
+                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                        >
+                            {t('Podsumowanie', 'Summary')}
+                            <span className="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                        <button
+                            onClick={() =>
+                                navigate("/projects/new/room", {
+                                    state: {
+                                        rooms,
+                                        clientData,
+                                        projectDates,
+                                        draftId,
+                                        editProjectId,
+                                        editProjectMeta,
+                                    },
+                                })
+                            }
+                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                        >
+                            <span className="material-symbols-outlined">arrow_back</span>
+                            {t('Edytuj Pokoje', 'Edit Rooms')}
+                        </button>
+
+                        <button
+                            onClick={handleFinish}
+                            className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                        >
+                            <span className="material-symbols-outlined">assignment_turned_in</span>
+                            {t('Przejdź do podsumowania', 'Go to Summary')}
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

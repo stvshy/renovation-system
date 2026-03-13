@@ -6,7 +6,8 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageToggleButton from './LanguageToggleButton';
 import { clearProjectCreationDirty, getProjectCreationDirty } from '../lib/projectCreationGuard';
-import { clearCurrentProjectSnapshot, hasUnsavedProjectChanges, saveCurrentProjectDraft } from '../lib/projectDrafts';
+import { clearCurrentProjectSnapshot, getCurrentProjectSnapshot, hasUnsavedProjectChanges, saveCurrentProjectDraft } from '../lib/projectDrafts';
+import { saveEditedProjectFromSnapshot } from '../lib/projectWizardSave';
 
 type ToastState = { message: string; kind: 'success' | 'error' };
 
@@ -17,6 +18,9 @@ const Sidebar: React.FC = () => {
     const location = useLocation();
     const [isExpanded, setIsExpanded] = useState(false);
     const [toast, setToast] = useState<ToastState | null>(null);
+    const [pendingTargetPath, setPendingTargetPath] = useState<string | null>(null);
+    const [showExitWizardModal, setShowExitWizardModal] = useState(false);
+    const [isHandlingWizardExit, setIsHandlingWizardExit] = useState(false);
     const toastTimerRef = useRef<number | null>(null);
 
     const isProjectCreationRoute = location.pathname.startsWith('/projects/new');
@@ -37,6 +41,18 @@ const Sidebar: React.FC = () => {
         toastTimerRef.current = window.setTimeout(() => setToast(null), 3600);
     };
 
+    const resolveEditingProjectId = (): string | null => {
+        const stateProjectId = (location.state as any)?.editProjectId as string | undefined;
+        if (stateProjectId) return stateProjectId;
+
+        const snapshot = getCurrentProjectSnapshot();
+        if (snapshot?.id?.startsWith('edit-')) {
+            return snapshot.id.slice('edit-'.length);
+        }
+
+        return null;
+    };
+
     const handleProtectedNavigation = async (targetPath: string) => {
         if (location.pathname === targetPath) return;
 
@@ -44,9 +60,17 @@ const Sidebar: React.FC = () => {
             if (isProjectCreationRoute && getProjectCreationDirty()) {
                 const hasChanges = await hasUnsavedProjectChanges();
                 if (hasChanges) {
-                    const savedDraft = await saveCurrentProjectDraft();
-                    if (savedDraft) {
-                        showToast(t('Zapisano jako wersja robocza', 'Saved as draft'), 'success');
+                    const editProjectId = resolveEditingProjectId();
+
+                    if (editProjectId) {
+                        setPendingTargetPath(targetPath);
+                        setShowExitWizardModal(true);
+                        return;
+                    } else {
+                        const savedDraft = await saveCurrentProjectDraft();
+                        if (savedDraft) {
+                            showToast(t('Zapisano jako wersję roboczą', 'Saved as draft'), 'success');
+                        }
                     }
                 }
 
@@ -57,7 +81,54 @@ const Sidebar: React.FC = () => {
             navigate(targetPath);
         } catch (error) {
             console.error('Navigation autosave failed:', error);
-            showToast(t('Nie udało się zapisać wersji roboczej', 'Could not save draft'), 'error');
+            const editProjectId = resolveEditingProjectId();
+            showToast(
+                editProjectId
+                    ? t('Nie udało się zapisać zmian projektu', 'Could not save project changes')
+                    : t('Nie udało się zapisać wersji roboczej', 'Could not save draft'),
+                'error'
+            );
+        }
+    };
+
+    const handleLeaveWithoutSaving = () => {
+        const targetPath = pendingTargetPath;
+        setShowExitWizardModal(false);
+        setPendingTargetPath(null);
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        if (targetPath) {
+            navigate(targetPath);
+        }
+    };
+
+    const handleLeaveWithSaving = async () => {
+        const targetPath = pendingTargetPath;
+        if (!targetPath) return;
+
+        setIsHandlingWizardExit(true);
+        try {
+            const editProjectId = resolveEditingProjectId();
+            if (!editProjectId) {
+                setShowExitWizardModal(false);
+                setPendingTargetPath(null);
+                navigate(targetPath);
+                return;
+            }
+
+            await saveEditedProjectFromSnapshot(editProjectId);
+            showToast(t('Zapisano zmiany projektu', 'Project changes saved'), 'success');
+
+            clearProjectCreationDirty();
+            clearCurrentProjectSnapshot();
+            setShowExitWizardModal(false);
+            setPendingTargetPath(null);
+            navigate(targetPath);
+        } catch (error) {
+            console.error('Saving project before leave failed:', error);
+            showToast(t('Nie udało się zapisać zmian projektu', 'Could not save project changes'), 'error');
+        } finally {
+            setIsHandlingWizardExit(false);
         }
     };
 
@@ -164,6 +235,53 @@ const Sidebar: React.FC = () => {
                     </div>,
                     document.body
                 )}
+
+            {showExitWizardModal &&
+                createPortal(
+                    <div className="fixed inset-0 z-[10060] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                        <div className="w-full max-w-[28rem] rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+                            <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-800">
+                                <h3 className="text-lg font-black text-gray-900 dark:text-white">{t('Opuścić edycję projektu?', 'Leave project editing?')}</h3>
+                                <p className="mt-2 text-sm text-gray-500 dark:text-slate-400 leading-relaxed">
+                                    {t(
+                                        'Masz niezapisane zmiany. Możesz zostać, zapisać zmiany i wyjść albo wyjść bez zapisywania.',
+                                        'You have unsaved changes. You can stay, save changes and leave, or leave without saving.'
+                                    )}
+                                </p>
+                            </div>
+
+                            <div className="px-6 py-5 flex flex-col sm:flex-row justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowExitWizardModal(false);
+                                        setPendingTargetPath(null);
+                                    }}
+                                    className="h-10 px-4 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 text-sm font-semibold hover:bg-gray-100 dark:hover:bg-slate-800"
+                                >
+                                    {t('Zostań', 'Stay')}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleLeaveWithoutSaving}
+                                    className="h-10 px-4 rounded-lg border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-900/20"
+                                >
+                                    {t('Wyjdź bez zapisywania', 'Leave without saving')}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleLeaveWithSaving}
+                                    disabled={isHandlingWizardExit}
+                                    className="h-10 px-4 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed"
+                                >
+                                    {isHandlingWizardExit ? t('Zapisywanie...', 'Saving...') : t('Zapisz i wyjdź', 'Save and leave')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>,
+                    document.body
+                )}
+
         </>
     );
 };

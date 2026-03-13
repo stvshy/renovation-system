@@ -3,9 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getClients, saveClient, getClientById } from '../lib/storage';
 import { Client } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import EditWizardExitControl from '../components/EditWizardExitControl';
 import ScrollableSelect from '../components/ScrollableSelect';
-import { setProjectCreationDirty } from '../lib/projectCreationGuard';
+import { clearProjectCreationDirty, setProjectCreationDirty } from '../lib/projectCreationGuard';
 import { clearCurrentProjectSnapshot, setCurrentProjectSnapshot } from '../lib/projectDrafts';
+import { saveEditedProjectFromSnapshot } from '../lib/projectWizardSave';
 
 const ClientForm: React.FC = () => {
     const navigate = useNavigate();
@@ -13,25 +15,32 @@ const ClientForm: React.FC = () => {
     const { t } = useLanguage();
     const draftSnapshot = location.state?.draftSnapshot;
     const draftId = location.state?.draftId || draftSnapshot?.id;
+    const editProjectId = location.state?.editProjectId;
+    const editProjectMeta = location.state?.editProjectMeta;
     const draftClientForm = draftSnapshot?.clientForm;
     const draftProjectDates = draftSnapshot?.projectDates;
+    const incomingClientData = location.state?.clientData || draftSnapshot?.clientData;
+    const incomingProjectDates = location.state?.projectDates || draftProjectDates;
+    const existingRooms = location.state?.rooms || draftSnapshot?.rooms || [];
+    const isEditMode = Boolean(editProjectId);
 
-    const [mode, setMode] = useState<'new' | 'existing'>(draftClientForm?.mode || 'new');
+    const [mode, setMode] = useState<'new' | 'existing'>(draftClientForm?.mode || (incomingClientData?.id ? 'existing' : 'new'));
     const [existingClients, setExistingClients] = useState<Client[]>([]);
-    const [selectedClientId, setSelectedClientId] = useState<string>(draftClientForm?.selectedClientId || '');
+    const [selectedClientId, setSelectedClientId] = useState<string>(draftClientForm?.selectedClientId || incomingClientData?.id || '');
+    const [isEditingSelectedClient, setIsEditingSelectedClient] = useState(false);
 
     // Form fields for new client
-    const [firstName, setFirstName] = useState(draftClientForm?.firstName || '');
-    const [lastName, setLastName] = useState(draftClientForm?.lastName || '');
-    const [address, setAddress] = useState(draftClientForm?.address || '');
-    const [city, setCity] = useState(draftClientForm?.city || '');
-    const [zipCode, setZipCode] = useState(draftClientForm?.zipCode || '');
-    const [phone, setPhone] = useState(draftClientForm?.phone || '');
-    const [email, setEmail] = useState(draftClientForm?.email || '');
+    const [firstName, setFirstName] = useState(draftClientForm?.firstName || incomingClientData?.firstName || '');
+    const [lastName, setLastName] = useState(draftClientForm?.lastName || incomingClientData?.lastName || '');
+    const [address, setAddress] = useState(draftClientForm?.address || incomingClientData?.address || '');
+    const [city, setCity] = useState(draftClientForm?.city || incomingClientData?.city || '');
+    const [zipCode, setZipCode] = useState(draftClientForm?.zipCode || incomingClientData?.zipCode || '');
+    const [phone, setPhone] = useState(draftClientForm?.phone || incomingClientData?.phone || '');
+    const [email, setEmail] = useState(draftClientForm?.email || incomingClientData?.email || '');
     
     // Project Dates
-    const [startDate, setStartDate] = useState(draftProjectDates?.startDate || draftClientForm?.startDate || '');
-    const [endDate, setEndDate] = useState(draftProjectDates?.endDate || draftClientForm?.endDate || '');
+    const [startDate, setStartDate] = useState(incomingProjectDates?.startDate || draftClientForm?.startDate || '');
+    const [endDate, setEndDate] = useState(incomingProjectDates?.endDate || draftClientForm?.endDate || '');
 
     // Validation State
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -92,6 +101,7 @@ const ClientForm: React.FC = () => {
             updatedAt: new Date().toISOString(),
             clientData,
             projectDates: { startDate, endDate },
+            rooms: existingRooms,
             clientForm: {
                 mode,
                 selectedClientId,
@@ -106,7 +116,7 @@ const ClientForm: React.FC = () => {
                 endDate,
             },
         });
-    }, [address, city, draftId, email, endDate, firstName, hasWizardData, lastName, mode, phone, selectedClientId, startDate, zipCode]);
+    }, [address, city, draftId, email, endDate, existingRooms, firstName, hasWizardData, lastName, mode, phone, selectedClientId, startDate, zipCode]);
 
     // Handle selecting an existing client
     useEffect(() => {
@@ -121,8 +131,18 @@ const ClientForm: React.FC = () => {
                     setZipCode(client.zipCode);
                     setPhone(client.phone);
                     setEmail(client.email);
+                    setIsEditingSelectedClient(false);
                     // Clear selection error if exists
                     setErrors(prev => ({...prev, clientSelection: ''}));
+                } else if (incomingClientData?.id === selectedClientId) {
+                    setFirstName(incomingClientData.firstName || '');
+                    setLastName(incomingClientData.lastName || '');
+                    setAddress(incomingClientData.address || '');
+                    setCity(incomingClientData.city || '');
+                    setZipCode(incomingClientData.zipCode || '');
+                    setPhone(incomingClientData.phone || '');
+                    setEmail(incomingClientData.email || '');
+                    setErrors(prev => ({ ...prev, clientSelection: '' }));
                 }
             } else if (mode === 'existing' && !selectedClientId) {
                 // Clear fields if no selection
@@ -133,10 +153,47 @@ const ClientForm: React.FC = () => {
                 setZipCode('');
                 setPhone('');
                 setEmail('');
+                setIsEditingSelectedClient(false);
             }
         };
         loadClientDetails();
-    }, [selectedClientId, mode]);
+    }, [incomingClientData, mode, selectedClientId]);
+
+    const buildWizardState = () => ({
+        clientData: {
+            id: selectedClientId || draftSnapshot?.clientData?.id,
+            firstName,
+            lastName,
+            address,
+            city,
+            zipCode,
+            phone,
+            email,
+        },
+        projectDates: {
+            startDate,
+            endDate,
+        },
+        rooms: existingRooms,
+        draftId,
+        editProjectId,
+        editProjectMeta,
+    });
+
+    const handleExitWithoutSaving = () => {
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(editProjectId ? `/projects/${editProjectId}` : '/projects');
+    };
+
+    const handleSaveAndExit = async () => {
+        if (editProjectId) {
+            await saveEditedProjectFromSnapshot(editProjectId);
+        }
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(editProjectId ? `/projects/${editProjectId}` : '/projects');
+    };
 
     const validateForm = () => {
         const newErrors: Record<string, string> = {};
@@ -189,7 +246,7 @@ const ClientForm: React.FC = () => {
             return;
         }
 
-        // If creating new client, save them to DB for future use
+        // If creating new client, save them to DB for future use.
         let finalClientId = selectedClientId;
         if (mode === 'new') {
             finalClientId = crypto.randomUUID();
@@ -204,30 +261,40 @@ const ClientForm: React.FC = () => {
                 email
             };
             await saveClient(newClientObj);
+        } else if (mode === 'existing' && selectedClientId && isEditingSelectedClient) {
+            const updatedClient: Client = {
+                id: selectedClientId,
+                firstName,
+                lastName,
+                address,
+                city,
+                zipCode,
+                phone,
+                email,
+            };
+            await saveClient(updatedClient);
+
+            setExistingClients((prev) =>
+                prev.map((client) => (client.id === selectedClientId ? { ...client, ...updatedClient } : client))
+            );
+            setIsEditingSelectedClient(false);
         }
 
+        const wizardState = buildWizardState();
         const clientData = {
+            ...wizardState.clientData,
             id: finalClientId,
-            firstName,
-            lastName,
-            address,
-            city,
-            zipCode,
-            phone,
-            email
-        };
-
-        const projectDates = {
-            startDate,
-            endDate
         };
 
         // Pass data via state to the next route
         navigate('/projects/new/room', { 
             state: { 
                 clientData,
-                projectDates,
+                projectDates: wizardState.projectDates,
+                rooms: existingRooms,
                 draftId,
+                editProjectId,
+                editProjectMeta,
             } 
         });
     };
@@ -248,10 +315,44 @@ const ClientForm: React.FC = () => {
         <div className="px-3 sm:px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-4 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[960px] flex-1">
                 <div className="flex flex-wrap justify-between gap-3 p-4">
-                    <p className="text-slate-800 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">{t('Nowy Projekt', 'New Project')}</p>
+                    <div>
+                        <p className="text-slate-800 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
+                            {isEditMode ? t('Edycja Projektu', 'Edit Project') : t('Nowy Projekt', 'New Project')}
+                        </p>
+                        {isEditMode && <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('Krok 1 z 4', 'Step 1 of 4')}</p>}
+                    </div>
+                    <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
                 </div>
                 
                 <div className="flex flex-col gap-6 p-4">
+                    {isEditMode && (
+                        <div className="flex flex-wrap gap-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+                            <button type="button" className="text-xs font-bold rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-primary">
+                                {t('Krok 1', 'Step 1')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => navigate('/projects/new/room', { state: buildWizardState() })}
+                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            >
+                                {t('Krok 2', 'Step 2')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => navigate('/projects/new/services', { state: buildWizardState() })}
+                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            >
+                                {t('Krok 3', 'Step 3')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => navigate('/projects/new/offer', { state: buildWizardState() })}
+                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            >
+                                {t('Krok 4', 'Step 4')}
+                            </button>
+                        </div>
+                    )}
                     
                     {/* Mode Selection */}
                     <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
@@ -274,10 +375,35 @@ const ClientForm: React.FC = () => {
                     
                     {mode === 'existing' && (
                         <div className="mb-4">
-                            <label className="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">{t('Wybierz klienta', 'Select client')}</label>
-                            <ScrollableSelect 
+                            <div className="flex items-center justify-between gap-2 mb-2">
+                                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('Wybierz klienta', 'Select client')}</label>
+                                {selectedClientId && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEditingSelectedClient((prev) => !prev)}
+                                        className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-bold border transition-colors ${
+                                            isEditingSelectedClient
+                                                ? 'border-primary bg-primary/10 text-primary'
+                                                : 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                        }`}
+                                        title={
+                                            isEditingSelectedClient
+                                                ? t('Wyłącz edycję klienta', 'Disable client edit')
+                                                : t('Edytuj dane klienta', 'Edit client data')
+                                        }
+                                    >
+                                        <span className="material-symbols-outlined text-sm">edit</span>
+                                        {isEditingSelectedClient ? t('Edytujesz', 'Editing') : t('Edytuj', 'Edit')}
+                                    </button>
+                                )}
+                            </div>
+
+                            <ScrollableSelect
                                 value={selectedClientId}
-                                onChange={handleChange(setSelectedClientId, 'clientSelection')}
+                                onChange={(e) => {
+                                    handleChange(setSelectedClientId, 'clientSelection')(e);
+                                    setIsEditingSelectedClient(false);
+                                }}
                                 className={`form-select w-full rounded-lg border bg-background-light dark:bg-slate-800 p-3 
                                     ${errors.clientSelection ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                             >
@@ -297,7 +423,7 @@ const ClientForm: React.FC = () => {
                                 <input 
                                     value={firstName} 
                                     onChange={handleChange(setFirstName, 'firstName')} 
-                                    disabled={mode === 'existing'}
+                                    disabled={mode === 'existing' && !isEditingSelectedClient}
                                     className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900 
                                         ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                                     placeholder={t('Jan', 'John')} 
@@ -309,7 +435,7 @@ const ClientForm: React.FC = () => {
                                 <input 
                                     value={lastName} 
                                     onChange={handleChange(setLastName, 'lastName')}
-                                    disabled={mode === 'existing'}
+                                    disabled={mode === 'existing' && !isEditingSelectedClient}
                                     className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900 
                                         ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                                     placeholder={t('Kowalski', 'Doe')} 
@@ -324,7 +450,7 @@ const ClientForm: React.FC = () => {
                                 <input 
                                     value={address} 
                                     onChange={(e) => setAddress(e.target.value)} 
-                                    disabled={mode === 'existing'}
+                                    disabled={mode === 'existing' && !isEditingSelectedClient}
                                     className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder={t('ul. Kwiatowa 15', '123 Main St')} 
                                 />
@@ -337,7 +463,7 @@ const ClientForm: React.FC = () => {
                                 <input 
                                     value={city} 
                                     onChange={(e) => setCity(e.target.value)} 
-                                    disabled={mode === 'existing'}
+                                    disabled={mode === 'existing' && !isEditingSelectedClient}
                                     className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder={t('Warszawa', 'London')} 
                                 />
@@ -347,7 +473,7 @@ const ClientForm: React.FC = () => {
                                 <input 
                                     value={zipCode} 
                                     onChange={(e) => setZipCode(e.target.value)} 
-                                    disabled={mode === 'existing'}
+                                    disabled={mode === 'existing' && !isEditingSelectedClient}
                                     className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder="00-001" 
                                 />
@@ -360,7 +486,7 @@ const ClientForm: React.FC = () => {
                                 <input 
                                     value={phone} 
                                     onChange={(e) => setPhone(e.target.value)} 
-                                    disabled={mode === 'existing'}
+                                    disabled={mode === 'existing' && !isEditingSelectedClient}
                                     className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder="123-456-789" 
                                     type="tel" 
@@ -371,7 +497,7 @@ const ClientForm: React.FC = () => {
                                 <input 
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
-                                    disabled={mode === 'existing'}
+                                    disabled={mode === 'existing' && !isEditingSelectedClient}
                                     className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder={t('jan.kowalski@example.com', 'john.doe@example.com')} 
                                     type="email" 
@@ -407,14 +533,26 @@ const ClientForm: React.FC = () => {
                         </label>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
-                        <button onClick={() => navigate('/projects')} className="w-full md:flex-1 flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
-                            {t('Anuluj', 'Cancel')}
-                        </button>
-                        <button onClick={handleNext} className="w-full md:flex-1 flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary text-white font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
-                            {t('Zapisz i Dalej', 'Save and Continue')}
-                        </button>
-                    </div>
+                    {isEditMode ? (
+                        <div className="flex justify-end p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
+                            <button
+                                onClick={handleNext}
+                                className="inline-flex items-center justify-center gap-2 h-12 px-2 text-slate-500 dark:text-slate-300 font-semibold text-base hover:text-slate-700 dark:hover:text-white transition-colors"
+                            >
+                                <span>{t('Przejdź do kolejnego kroku', 'Go to the next step')}</span>
+                                <span className="material-symbols-outlined">arrow_forward</span>
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col md:flex-row gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
+                            <button onClick={() => navigate('/projects')} className="w-full md:flex-1 flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                                {t('Anuluj', 'Cancel')}
+                            </button>
+                            <button onClick={handleNext} className="w-full md:flex-1 flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary text-white font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+                                {t('Zapisz i Dalej', 'Save and Continue')}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

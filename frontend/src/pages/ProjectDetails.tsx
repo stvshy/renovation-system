@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProjectById, updateProject } from "../lib/storage";
-import { Project } from "../types";
+import { getInventory, getProjectById, updateProject } from "../lib/storage";
+import { InventoryItem, Project } from "../types";
 import { useLanguage } from "../context/LanguageContext";
 import { useDemo } from "../context/DemoContext";
 import {
@@ -14,6 +14,7 @@ import {
     LinearStrategy,
     ItemCountStrategy,
     Material,
+    SurfaceType,
 } from "../lib/renovationLogic";
 import ScrollableSelect from "../components/ScrollableSelect";
 
@@ -68,6 +69,7 @@ const ProjectDetails: React.FC = () => {
     const navigate = useNavigate();
     const [project, setProject] = useState<Project | null>(null);
     const [hydratedRooms, setHydratedRooms] = useState<Room[]>([]);
+    const [inventory, setInventory] = useState<InventoryItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Payment Edit State
@@ -77,9 +79,10 @@ const ProjectDetails: React.FC = () => {
     useEffect(() => {
         const load = async () => {
             if (id) {
-                const foundProject = await getProjectById(id);
+                const [foundProject, inventoryItems] = await Promise.all([getProjectById(id), getInventory()]);
                 if (foundProject) {
                     setProject(foundProject);
+                    setInventory(inventoryItems);
                     if (foundProject.rooms) {
                         setHydratedRooms(foundProject.rooms.map((r) => rehydrateRoom(r)));
                     }
@@ -119,6 +122,57 @@ const ProjectDetails: React.FC = () => {
         }
     };
 
+    const unitLabel = (unit: string) => (language === "en" && unit === "szt" ? "pcs" : unit);
+
+    const materialSummary = (() => {
+        const bucket = new Map<
+            string,
+            {
+                materialName: string;
+                unit: string;
+                inventoryId?: string;
+                required: number;
+                available: number;
+                workItems: Array<{ roomName: string; taskName: string; quantity: number }>;
+            }
+        >();
+
+        hydratedRooms.forEach((room) => {
+            room.tasks.forEach((task) => {
+                const key = task.material.inventoryId || `${task.material.name}::${task.material.unit}`;
+                const requiredQty = task.calculateMaterialQuantity();
+                const inventoryMatch = task.material.inventoryId
+                    ? inventory.find((item) => item.id === task.material.inventoryId)
+                    : inventory.find((item) => item.name === task.material.name && item.unit === task.material.unit);
+
+                const existing = bucket.get(key);
+                if (!existing) {
+                    bucket.set(key, {
+                        materialName: task.material.name,
+                        unit: task.material.unit,
+                        inventoryId: task.material.inventoryId,
+                        required: requiredQty,
+                        available: inventoryMatch?.quantity ?? 0,
+                        workItems: [{ roomName: room.name, taskName: task.description, quantity: requiredQty }],
+                    });
+                    return;
+                }
+
+                existing.required += requiredQty;
+                existing.workItems.push({ roomName: room.name, taskName: task.description, quantity: requiredQty });
+            });
+        });
+
+        return Array.from(bucket.values())
+            .map((entry) => ({
+                ...entry,
+                toBuy: Math.max(0, entry.required - entry.available),
+            }))
+            .sort((a, b) => b.toBuy - a.toBuy || a.materialName.localeCompare(b.materialName));
+    })();
+
+    const totalToBuy = materialSummary.reduce((sum, item) => sum + item.toBuy, 0);
+
     if (loading) return <div>{t('Ładowanie...', 'Loading...')}</div>;
     if (!project) return <div>{t('Projekt nie znaleziony.', 'Project not found.')}</div>;
 
@@ -140,6 +194,94 @@ const ProjectDetails: React.FC = () => {
     const paidAmount = project.paidAmount || 0;
     const remainingAmount = project.value - paidAmount;
     const currencyCode = language === "en" ? "EUR" : "PLN";
+
+    const baseWizardState = {
+        draftId: `edit-${project.id}`,
+        clientData: project.clientData,
+        projectDates: {
+            startDate: project.startDate || "",
+            endDate: project.endDate || "",
+        },
+        rooms: project.rooms || [],
+        editProjectId: project.id,
+        editProjectMeta: {
+            id: project.id,
+            name: project.name,
+            status: project.status,
+            color: project.color,
+            paidAmount: project.paidAmount,
+            user_id: project.user_id,
+        },
+    };
+
+    const handleEditClientStep = () => {
+        const draftSnapshot = {
+            id: `edit-${project.id}`,
+            currentStep: "client",
+            updatedAt: new Date().toISOString(),
+            clientData: project.clientData,
+            projectDates: {
+                startDate: project.startDate || "",
+                endDate: project.endDate || "",
+            },
+            clientForm: {
+                mode: project.clientId ? "existing" : "new",
+                selectedClientId: project.clientId || "",
+                firstName: project.clientData?.firstName || "",
+                lastName: project.clientData?.lastName || "",
+                address: project.clientData?.address || "",
+                city: project.clientData?.city || "",
+                zipCode: project.clientData?.zipCode || "",
+                phone: project.clientData?.phone || "",
+                email: project.clientData?.email || "",
+                startDate: project.startDate || "",
+                endDate: project.endDate || "",
+            },
+        };
+
+        navigate("/projects/new/client", {
+            state: {
+                draftSnapshot,
+                draftId: `edit-${project.id}`,
+                preSelectedClientId: project.clientId,
+                rooms: project.rooms || [],
+                editProjectId: project.id,
+                editProjectMeta: baseWizardState.editProjectMeta,
+            },
+        });
+    };
+
+    const handleEditRoomsStep = () => {
+        navigate("/projects/new/room", {
+            state: {
+                ...baseWizardState,
+                draftSnapshot: {
+                    id: `edit-${project.id}`,
+                    currentStep: "room",
+                    updatedAt: new Date().toISOString(),
+                    clientData: project.clientData,
+                    projectDates: baseWizardState.projectDates,
+                    rooms: project.rooms || [],
+                },
+            },
+        });
+    };
+
+    const handleEditServicesStep = () => {
+        navigate("/projects/new/services", {
+            state: {
+                ...baseWizardState,
+                draftSnapshot: {
+                    id: `edit-${project.id}`,
+                    currentStep: "services",
+                    updatedAt: new Date().toISOString(),
+                    clientData: project.clientData,
+                    projectDates: baseWizardState.projectDates,
+                    rooms: project.rooms || [],
+                },
+            },
+        });
+    };
 
     const parseProjectDate = (value?: string) => {
         if (!value) return null;
@@ -173,7 +315,7 @@ const ProjectDetails: React.FC = () => {
 
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
-            <div className="layout-content-container flex flex-col w-full max-w-6xl gap-6">
+            <div className="layout-content-container flex flex-col w-full max-w-7xl gap-6">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-200 dark:border-gray-700 pb-6">
                     <div className="min-w-0 w-full">
@@ -213,6 +355,69 @@ const ProjectDetails: React.FC = () => {
                             <span className="material-symbols-outlined text-sm">calendar_month</span>
                             {t('Kalendarz', 'Calendar')}
                         </button>
+                    </div>
+                </div>
+
+                {/* Step Dashboard */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div className="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-slate-900 p-5 shadow-sm">
+                        <div className="flex items-start justify-between gap-3">
+                            <div>
+                                <p className="text-xs uppercase tracking-wide font-bold text-indigo-500">{t("Krok 1", "Step 1")}</p>
+                                <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Dane klienta i terminy", "Client and timeline")}</h3>
+                                <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
+                                    {project.clientName} | {project.startDate || "-"} - {project.endDate || "-"}
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleEditClientStep}
+                                className="inline-flex items-center gap-1 rounded-lg border border-indigo-300 dark:border-indigo-700 px-3 py-1.5 text-sm font-bold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/30"
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                                {t("Edytuj", "Edit")}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-teal-200 dark:border-teal-800 bg-gradient-to-br from-teal-50 to-white dark:from-teal-950/30 dark:to-slate-900 p-5 shadow-sm">
+                        <div className="flex items-start justify-between gap-3">
+                            <div>
+                                <p className="text-xs uppercase tracking-wide font-bold text-teal-500">{t("Krok 2", "Step 2")}</p>
+                                <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Zakres i pomieszczenia", "Scope and rooms")}</h3>
+                                <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
+                                    {t("Liczba pomieszczeń", "Rooms")}: {hydratedRooms.length}
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleEditRoomsStep}
+                                className="inline-flex items-center gap-1 rounded-lg border border-teal-300 dark:border-teal-700 px-3 py-1.5 text-sm font-bold text-teal-700 dark:text-teal-300 hover:bg-teal-100/60 dark:hover:bg-teal-900/30"
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                                {t("Edytuj", "Edit")}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/30 dark:to-slate-900 p-5 shadow-sm">
+                        <div className="flex items-start justify-between gap-3">
+                            <div>
+                                <p className="text-xs uppercase tracking-wide font-bold text-amber-500">{t("Krok 3", "Step 3")}</p>
+                                <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Usługi i materiały", "Services and materials")}</h3>
+                                <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
+                                    {t("Pozycje materiałowe", "Material lines")}: {materialSummary.length}
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleEditServicesStep}
+                                className="inline-flex items-center gap-1 rounded-lg border border-amber-300 dark:border-amber-700 px-3 py-1.5 text-sm font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-100/60 dark:hover:bg-amber-900/30"
+                            >
+                                <span className="material-symbols-outlined text-base">edit</span>
+                                {t("Edytuj", "Edit")}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -328,51 +533,203 @@ const ProjectDetails: React.FC = () => {
 
                 {/* Rooms Breakdown */}
                 <div className="mt-4">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t('Zakres Prac', 'Scope of Work')}</h2>
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Zakres Prac i Ustalenia', 'Scope of Work and Agreements')}</h2>
+                        <button
+                            type="button"
+                            onClick={handleEditRoomsStep}
+                            className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                        >
+                            <span className="material-symbols-outlined text-base">edit</span>
+                            {t("Edytuj", "Edit")}
+                        </button>
+                    </div>
                     {hydratedRooms.length === 0 ? (
                         <div className="p-10 text-center bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 text-gray-500">
                             {t('Brak szczegółowych danych o pokojach dla tego projektu.', 'No detailed room data for this project.')}
                         </div>
                     ) : (
                         <div className="space-y-6">
-                            {hydratedRooms.map((room, idx) => (
-                                <div key={idx} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                                    <div className="bg-gray-50 dark:bg-gray-700/50 px-6 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                                        <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-primary">meeting_room</span>
-                                            {room.name}
-                                        </h3>
-                                        <span className="text-sm font-mono font-bold text-gray-600 dark:text-gray-300">
-                                            {room.calculateTotalRoomCost().toFixed(2)} {currencyCode}
-                                        </span>
-                                    </div>
-                                    <div className="p-0 overflow-x-auto">
-                                        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                            <thead className="text-xs text-gray-700 uppercase bg-gray-50/50 dark:bg-gray-800 dark:text-gray-400">
-                                                <tr>
-                                                    <th className="px-6 py-2">{t('Zadanie', 'Task')}</th>
-                                                    <th className="px-6 py-2">{t('Materiał', 'Material')}</th>
-                                                    <th className="px-6 py-2 text-right">{t('Koszt', 'Cost')}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {room.tasks.map((task, tIdx) => (
-                                                    <tr
-                                                        key={tIdx}
-                                                        className="border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30"
-                                                    >
-                                                        <td className="px-6 py-3 font-medium text-gray-900 dark:text-white min-w-[180px]">{task.description}</td>
-                                                        <td className="px-6 py-3 min-w-[140px]">{task.material.name}</td>
-                                                        <td className="px-6 py-3 text-right">{task.calculateTotalCost().toFixed(2)} {currencyCode}</td>
+                            {hydratedRooms.map((room, idx) => {
+                                const wallSurfaces = room.surfaces.filter((surface) => surface.type === SurfaceType.WALL);
+                                const floorSurface = room.surfaces.find((surface) => surface.type === SurfaceType.FLOOR);
+                                const ceilingSurface = room.surfaces.find((surface) => surface.type === SurfaceType.CEILING);
+
+                                return (
+                                    <div key={idx} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                                        <div className="bg-gray-50 dark:bg-gray-700/50 px-6 py-3 border-b border-gray-200 dark:border-gray-700 flex flex-wrap justify-between items-center gap-2">
+                                            <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-primary">meeting_room</span>
+                                                {room.name}
+                                            </h3>
+                                            <div className="flex items-center gap-4">
+                                                <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                                                    {t("Pow.", "Area")}: {room.getFloorArea().toFixed(2)} m²
+                                                </span>
+                                                <span className="text-sm font-mono font-bold text-gray-600 dark:text-gray-300">
+                                                    {room.calculateTotalRoomCost().toFixed(2)} {currencyCode}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 p-5">
+                                            <div className="rounded-xl border border-gray-100 dark:border-slate-700 p-4 bg-gray-50/60 dark:bg-slate-900/30">
+                                                <h4 className="text-sm uppercase tracking-wide text-gray-500 dark:text-slate-400 font-bold mb-3">
+                                                    {t("Wymiary i powierzchnie", "Dimensions and surfaces")}
+                                                </h4>
+                                                <div className="space-y-2 text-sm text-gray-700 dark:text-slate-300">
+                                                    <p>
+                                                        {t("Podłoga", "Floor")}: {floorSurface ? `${floorSurface.width} x ${floorSurface.height} m` : "-"}
+                                                    </p>
+                                                    <p>
+                                                        {t("Sufit", "Ceiling")}: {ceilingSurface ? `${ceilingSurface.width} x ${ceilingSurface.height} m` : "-"}
+                                                    </p>
+                                                    {wallSurfaces.map((surface, wallIndex) => (
+                                                        <p key={`${surface.name}-${wallIndex}`}>
+                                                            {surface.name}: {surface.width} x {surface.height} m
+                                                        </p>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className="rounded-xl border border-gray-100 dark:border-slate-700 p-4 bg-gray-50/60 dark:bg-slate-900/30">
+                                                <h4 className="text-sm uppercase tracking-wide text-gray-500 dark:text-slate-400 font-bold mb-3">
+                                                    {t("Otwory i powierzchnie dodatkowe", "Openings and additional surfaces")}
+                                                </h4>
+                                                <div className="space-y-2 text-sm text-gray-700 dark:text-slate-300">
+                                                    {room.surfaces.some((surface) => surface.openings.length > 0) ? (
+                                                        room.surfaces.map((surface) =>
+                                                            surface.openings.map((opening, openingIndex) => (
+                                                                <p key={`${surface.name}-${openingIndex}`}>
+                                                                    {surface.name}: {opening.type === "okno" ? t("Okno", "Window") : t("Drzwi", "Door")} {opening.width} x {opening.height} m
+                                                                </p>
+                                                            ))
+                                                        )
+                                                    ) : (
+                                                        <p className="text-gray-500 dark:text-slate-400">{t("Brak zdefiniowanych otworów", "No openings defined")}</p>
+                                                    )}
+                                                    <p className="pt-2 border-t border-dashed border-gray-200 dark:border-slate-700 font-semibold">
+                                                        {t("Łączna powierzchnia ścian netto", "Total net wall area")}: {room.getTotalWallArea().toFixed(2)} m²
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-0 overflow-x-auto border-t border-gray-100 dark:border-slate-700">
+                                            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                                <thead className="text-xs text-gray-700 uppercase bg-gray-50/50 dark:bg-gray-800 dark:text-gray-400">
+                                                    <tr>
+                                                        <th className="px-6 py-2">{t('Praca', 'Work item')}</th>
+                                                        <th className="px-6 py-2">{t('Materiał', 'Material')}</th>
+                                                        <th className="px-6 py-2 text-right">{t('Ilość', 'Quantity')}</th>
+                                                        <th className="px-6 py-2 text-right">{t('Koszt', 'Cost')}</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    {room.tasks.map((task, tIdx) => (
+                                                        <tr
+                                                            key={tIdx}
+                                                            className="border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30"
+                                                        >
+                                                            <td className="px-6 py-3 font-medium text-gray-900 dark:text-white min-w-[220px]">{task.description}</td>
+                                                            <td className="px-6 py-3 min-w-[190px]">{task.material.name}</td>
+                                                            <td className="px-6 py-3 text-right whitespace-nowrap">
+                                                                {task.calculateMaterialQuantity().toFixed(2)} {unitLabel(task.material.unit)}
+                                                            </td>
+                                                            <td className="px-6 py-3 text-right whitespace-nowrap">{task.calculateTotalCost().toFixed(2)} {currencyCode}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
+                </div>
+
+                {/* Materials and Inventory Dashboard */}
+                <div className="mt-2">
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Materiały i Magazyn', 'Materials and inventory')}</h2>
+                        <button
+                            type="button"
+                            onClick={handleEditServicesStep}
+                            className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                        >
+                            <span className="material-symbols-outlined text-base">edit</span>
+                            {t("Edytuj", "Edit")}
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+                            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Pozycje materiałowe", "Material lines")}</p>
+                            <p className="text-2xl font-black text-gray-900 dark:text-white mt-1">{materialSummary.length}</p>
+                        </div>
+                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+                            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Materiały do dokupienia", "Items to buy")}</p>
+                            <p className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">
+                                {materialSummary.filter((item) => item.toBuy > 0).length}
+                            </p>
+                        </div>
+                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+                            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Łączna ilość do zakupu", "Total quantity to buy")}</p>
+                            <p className="text-2xl font-black text-red-600 dark:text-red-400 mt-1">{totalToBuy.toFixed(2)}</p>
+                        </div>
+                    </div>
+
+                    <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                        <table className="w-full min-w-[900px] text-sm text-left text-gray-600 dark:text-slate-300">
+                            <thead className="text-xs uppercase bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400">
+                                <tr>
+                                    <th className="px-4 py-3">{t("Materiał", "Material")}</th>
+                                    <th className="px-4 py-3">{t("Do jakich prac", "Used for")}</th>
+                                    <th className="px-4 py-3 text-right">{t("Potrzebne", "Required")}</th>
+                                    <th className="px-4 py-3 text-right">{t("W magazynie", "In stock")}</th>
+                                    <th className="px-4 py-3 text-right">{t("Do dokupienia", "To buy")}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {materialSummary.map((material) => (
+                                    <tr key={`${material.materialName}-${material.unit}`} className="border-t border-gray-100 dark:border-slate-800 align-top">
+                                        <td className="px-4 py-3">
+                                            <p className="font-semibold text-gray-900 dark:text-white">{material.materialName}</p>
+                                            <p className="text-xs text-gray-500 dark:text-slate-400">{unitLabel(material.unit)}</p>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="space-y-1">
+                                                {material.workItems.map((workItem, index) => (
+                                                    <p key={`${workItem.roomName}-${index}`} className="text-xs">
+                                                        <span className="font-semibold">{workItem.roomName}</span>: {workItem.taskName}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 text-right whitespace-nowrap font-semibold">
+                                            {material.required.toFixed(2)} {unitLabel(material.unit)}
+                                        </td>
+                                        <td className="px-4 py-3 text-right whitespace-nowrap">
+                                            {material.available.toFixed(2)} {unitLabel(material.unit)}
+                                        </td>
+                                        <td className="px-4 py-3 text-right whitespace-nowrap font-bold">
+                                            <span className={material.toBuy > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}>
+                                                {material.toBuy.toFixed(2)} {unitLabel(material.unit)}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {materialSummary.length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-slate-400">
+                                            {t("Brak pozycji materiałowych dla tego projektu.", "No material rows for this project.")}
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

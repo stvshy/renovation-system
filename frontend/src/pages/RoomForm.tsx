@@ -1,14 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Room, Surface, SurfaceType, Opening, OpeningType } from "../lib/renovationLogic";
+import {
+    Room,
+    Surface,
+    SurfaceType,
+    Opening,
+    OpeningType,
+    RenovationTask,
+    Material,
+    LinearStrategy,
+    WasteFactorStrategy,
+    ItemCountStrategy,
+    ConsumptionStrategy,
+} from "../lib/renovationLogic";
 import { useLanguage } from "../context/LanguageContext";
+import EditWizardExitControl from "../components/EditWizardExitControl";
 import ScrollableSelect from "../components/ScrollableSelect";
-import { setProjectCreationDirty } from "../lib/projectCreationGuard";
+import { clearProjectCreationDirty, setProjectCreationDirty } from "../lib/projectCreationGuard";
 import { clearCurrentProjectSnapshot, setCurrentProjectSnapshot } from "../lib/projectDrafts";
+import { saveEditedProjectFromSnapshot } from "../lib/projectWizardSave";
 
 type Mode = "standard" | "custom";
 type SurfaceDraft = { width: string; height: string; area: string };
 type ConfirmAction = { type: "delete-room"; roomIndex: number } | { type: "switch-to-standard" } | null;
+type PendingSaveAction = {
+    action: "add-next" | "proceed-services";
+    updatedRooms: any[];
+    removedTaskCount: number;
+} | null;
 
 const NON_NEGATIVE_NUMBER_PATTERN = /^\d*(\.\d*)?$/;
 
@@ -24,6 +43,103 @@ const createSurfaceDraft = (surface: Surface): SurfaceDraft => ({
     height: toEditableNumberString(surface.height),
     area: toEditableNumberString(surface.customArea),
 });
+
+const normalizeText = (value: string) =>
+    value
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+const resolveTaskStrategy = (taskRaw: any) => {
+    if (taskRaw.strategyParams?.wastePercentage !== undefined && taskRaw.material?.unit === "mb") return new LinearStrategy();
+    if (taskRaw.strategyParams?.wastePercentage !== undefined) return new WasteFactorStrategy();
+    if (
+        taskRaw.strategyParams?.itemCount !== undefined ||
+        taskRaw.description?.includes("Montaż") ||
+        (taskRaw.inputDimension % 1 === 0 && taskRaw.inputDimension < 50 && taskRaw.material?.unit === "szt")
+    )
+        return new ItemCountStrategy();
+    return new ConsumptionStrategy();
+};
+
+const recalculateTaskDimensionForRoom = (taskRaw: any, room: Room) => {
+    const currentInput = Number(taskRaw.inputDimension) || 0;
+    const materialUnit = taskRaw.material?.unit;
+    const normalized = normalizeText(taskRaw.description || "");
+
+    if (taskRaw.strategyParams?.itemCount !== undefined || materialUnit === "szt") {
+        return currentInput;
+    }
+
+    if (materialUnit === "mb" || normalized.includes("listw") || normalized.includes("baseboard")) {
+        return room.getFloorPerimeter();
+    }
+
+    if (normalized.includes("sufit") || normalized.includes("ceiling")) {
+        return room.getCeilingArea();
+    }
+
+    if (
+        normalized.includes("podlog") ||
+        normalized.includes("floor") ||
+        normalized.includes("panel") ||
+        normalized.includes("wylewk")
+    ) {
+        return room.getFloorArea();
+    }
+
+    if (
+        normalized.includes("scian") ||
+        normalized.includes("wall") ||
+        normalized.includes("malowan") ||
+        normalized.includes("gruntowan") ||
+        normalized.includes("gladz")
+    ) {
+        return room.getTotalWallArea();
+    }
+
+    return currentInput;
+};
+
+const extractSpecificSurfaceName = (description: string): string | null => {
+    const match = description.match(/\(([^)]+)\)$/);
+    return match ? match[1].trim() : null;
+};
+
+const replaceSpecificSurfaceName = (description: string, nextSurfaceName: string) => {
+    if (!extractSpecificSurfaceName(description)) return description;
+    return description.replace(/\(([^)]+)\)$/, `(${nextSurfaceName})`);
+};
+
+const buildSurfaceNameMapByTypeOrder = (previousRoom: any, nextRoom: Room) => {
+    const result = new Map<string, string | null>();
+    if (!previousRoom?.surfaces || !Array.isArray(previousRoom.surfaces)) return result;
+
+    const previousByType = new Map<string, any[]>();
+    const nextByType = new Map<string, Surface[]>();
+
+    previousRoom.surfaces.forEach((surface: any) => {
+        const key = surface.type;
+        if (!previousByType.has(key)) previousByType.set(key, []);
+        previousByType.get(key)!.push(surface);
+    });
+
+    nextRoom.surfaces.forEach((surface) => {
+        const key = surface.type;
+        if (!nextByType.has(key)) nextByType.set(key, []);
+        nextByType.get(key)!.push(surface);
+    });
+
+    previousByType.forEach((prevSurfaces, type) => {
+        const mappedNext = nextByType.get(type) || [];
+        prevSurfaces.forEach((prevSurface, index) => {
+            const nextSurface = mappedNext[index];
+            result.set(prevSurface.name, nextSurface ? nextSurface.name : null);
+        });
+    });
+
+    return result;
+};
 
 const serializeRoomState = (roomName: string, surfaces: Surface[]) =>
     JSON.stringify({
@@ -60,7 +176,10 @@ const RoomForm: React.FC = () => {
     const { t } = useLanguage();
     const draftSnapshot = location.state?.draftSnapshot;
     const draftId = location.state?.draftId || draftSnapshot?.id;
+    const editProjectId = location.state?.editProjectId;
+    const editProjectMeta = location.state?.editProjectMeta;
     const draftRoomForm = draftSnapshot?.roomForm;
+    const isEditMode = Boolean(editProjectId);
 
     const localizeSurfaceName = (name: string) => {
         if (name === "Podłoga") return t("Podłoga", "Floor");
@@ -80,13 +199,18 @@ const RoomForm: React.FC = () => {
     const existingRooms: any[] = location.state?.rooms || draftSnapshot?.rooms || [];
     const clientData = location.state?.clientData || draftSnapshot?.clientData;
     const projectDates = location.state?.projectDates || draftSnapshot?.projectDates;
+    const initialEditingRoomIndex = draftRoomForm?.editingRoomIndex ?? (isEditMode && existingRooms.length > 0 ? 0 : null);
+    const initialRoomData = initialEditingRoomIndex !== null ? existingRooms[initialEditingRoomIndex] : null;
+    const initialSurfaces = Array.isArray(draftRoomForm?.surfaces)
+        ? draftRoomForm.surfaces.map((surface: any) => rehydrateSurface(surface))
+        : initialRoomData?.surfaces?.map((surface: any) => rehydrateSurface(surface)) || [];
 
     // State for Editing
-    const [editingRoomIndex, setEditingRoomIndex] = useState<number | null>(draftRoomForm?.editingRoomIndex ?? null);
+    const [editingRoomIndex, setEditingRoomIndex] = useState<number | null>(initialEditingRoomIndex);
 
     // Basic Info
-    const [roomName, setRoomName] = useState(draftRoomForm?.roomName || `${t("Pokój", "Room")} ${existingRooms.length + 1}`);
-    const [mode, setMode] = useState<Mode>(draftRoomForm?.mode || "standard");
+    const [roomName, setRoomName] = useState(draftRoomForm?.roomName || initialRoomData?.name || `${t("Pokój", "Room")} ${existingRooms.length + 1}`);
+    const [mode, setMode] = useState<Mode>(draftRoomForm?.mode || (initialRoomData ? "custom" : "standard"));
 
     // Standard Mode Dimensions
     const [length, setLength] = useState<string>(draftRoomForm?.length || "");
@@ -94,10 +218,8 @@ const RoomForm: React.FC = () => {
     const [height, setHeight] = useState<string>(draftRoomForm?.height || "");
 
     // Surfaces State
-    const [surfaces, setSurfaces] = useState<Surface[]>(() =>
-        Array.isArray(draftRoomForm?.surfaces) ? draftRoomForm.surfaces.map((surface: any) => rehydrateSurface(surface)) : []
-    );
-    const [surfaceDrafts, setSurfaceDrafts] = useState<SurfaceDraft[]>(draftRoomForm?.surfaceDrafts || []);
+    const [surfaces, setSurfaces] = useState<Surface[]>(initialSurfaces);
+    const [surfaceDrafts, setSurfaceDrafts] = useState<SurfaceDraft[]>(draftRoomForm?.surfaceDrafts || initialSurfaces.map(createSurfaceDraft));
 
     // Opening Input State
     const [openingDims, setOpeningDims] = useState<{ w: string; h: string; type: OpeningType }>(
@@ -106,6 +228,7 @@ const RoomForm: React.FC = () => {
     const [activeSurfaceIndex, setActiveSurfaceIndex] = useState<number | null>(draftRoomForm?.activeSurfaceIndex ?? null);
     const [hoveredRoomIndex, setHoveredRoomIndex] = useState<number | null>(null);
     const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
+    const [pendingSaveAction, setPendingSaveAction] = useState<PendingSaveAction>(null);
 
     const savedRoomsWithSurfaces = existingRooms.filter((room) => Array.isArray(room.surfaces) && room.surfaces.length > 0);
     const defaultNewRoomName = `${t("Pokój", "Room")} ${existingRooms.length + 1}`;
@@ -321,6 +444,8 @@ const RoomForm: React.FC = () => {
                 clientData,
                 projectDates,
                 draftId,
+                editProjectId,
+                editProjectMeta,
             },
             replace: true,
         });
@@ -331,15 +456,57 @@ const RoomForm: React.FC = () => {
 
     // --- Save Logic ---
 
-    const createRoomObject = () => {
+    const createRoomObject = (sourceRoomForTasks?: any): { room: Room; removedSurfaceTasks: number } => {
         const room = new Room(roomName);
         surfaces.forEach((s) => room.addSurface(s));
-        return room;
+        const surfaceNameMap = buildSurfaceNameMapByTypeOrder(sourceRoomForTasks, room);
+        let removedSurfaceTasks = 0;
+
+        if (sourceRoomForTasks?.tasks && Array.isArray(sourceRoomForTasks.tasks)) {
+            sourceRoomForTasks.tasks.forEach((taskRaw: any) => {
+                const previousSurfaceName = extractSpecificSurfaceName(taskRaw.description || "");
+                if (previousSurfaceName) {
+                    const mappedSurfaceName = surfaceNameMap.get(previousSurfaceName);
+                    if (!mappedSurfaceName) {
+                        removedSurfaceTasks += 1;
+                        return;
+                    }
+                    taskRaw = {
+                        ...taskRaw,
+                        description: replaceSpecificSurfaceName(taskRaw.description, mappedSurfaceName),
+                    };
+                }
+
+                const strategy = resolveTaskStrategy(taskRaw);
+                const material = new Material(
+                    taskRaw.material.name,
+                    taskRaw.material.unitPrice,
+                    taskRaw.material.unit,
+                    taskRaw.material.defaultCoverage,
+                    taskRaw.material.inventoryId,
+                    taskRaw.material.category
+                );
+                const nextInputDimension = recalculateTaskDimensionForRoom(taskRaw, room);
+                room.addTask(
+                    new RenovationTask(
+                        taskRaw.description,
+                        material,
+                        taskRaw.laborRate,
+                        strategy,
+                        taskRaw.strategyParams || {},
+                        nextInputDimension
+                    )
+                );
+            });
+        }
+
+        return { room, removedSurfaceTasks };
     };
 
-    const handleSaveAndAddNext = () => {
-        const newRoom = createRoomObject();
+    const buildUpdatedRoomsAfterSave = () => {
         const updatedRooms = [...existingRooms];
+        const sourceRoom = editingRoomIndex !== null ? existingRooms[editingRoomIndex] : null;
+        const { room: newRoom, removedSurfaceTasks } = createRoomObject(sourceRoom);
 
         if (editingRoomIndex !== null) {
             updatedRooms[editingRoomIndex] = newRoom;
@@ -347,18 +514,47 @@ const RoomForm: React.FC = () => {
             updatedRooms.push(newRoom);
         }
 
-        navigate("/projects/new/room", {
+        return { updatedRooms, removedSurfaceTasks };
+    };
+
+    const executeSaveAction = (action: "add-next" | "proceed-services", updatedRooms: any[]) => {
+        if (action === "add-next") {
+            navigate("/projects/new/room", {
+                state: {
+                    rooms: updatedRooms,
+                    clientData,
+                    projectDates,
+                    draftId,
+                    editProjectId,
+                    editProjectMeta,
+                },
+                replace: true,
+            });
+
+            resetRoomForm(updatedRooms.length);
+            window.scrollTo(0, 0);
+            return;
+        }
+
+        navigate("/projects/new/services", {
             state: {
                 rooms: updatedRooms,
                 clientData,
                 projectDates,
                 draftId,
+                editProjectId,
+                editProjectMeta,
             },
-            replace: true,
         });
+    };
 
-        resetRoomForm(updatedRooms.length);
-        window.scrollTo(0, 0);
+    const handleSaveAndAddNext = () => {
+        const { updatedRooms, removedSurfaceTasks } = buildUpdatedRoomsAfterSave();
+        if (removedSurfaceTasks > 0) {
+            setPendingSaveAction({ action: "add-next", updatedRooms, removedTaskCount: removedSurfaceTasks });
+            return;
+        }
+        executeSaveAction("add-next", updatedRooms);
     };
 
     const handleSaveAndProceedToServices = () => {
@@ -369,33 +565,66 @@ const RoomForm: React.FC = () => {
                     clientData,
                     projectDates,
                     draftId,
+                    editProjectId,
+                    editProjectMeta,
                 },
             });
             return;
         }
 
-        const newRoom = createRoomObject();
-        const updatedRooms = [...existingRooms];
-
-        if (editingRoomIndex !== null) {
-            updatedRooms[editingRoomIndex] = newRoom;
-        } else {
-            updatedRooms.push(newRoom);
+        const { updatedRooms, removedSurfaceTasks } = buildUpdatedRoomsAfterSave();
+        if (removedSurfaceTasks > 0) {
+            setPendingSaveAction({ action: "proceed-services", updatedRooms, removedTaskCount: removedSurfaceTasks });
+            return;
         }
 
         // Navigate to ServiceForm instead of OfferSummary, passing all context
-        navigate("/projects/new/services", {
-            state: {
-                rooms: updatedRooms,
-                clientData,
-                projectDates,
-                draftId,
-            },
-        });
+        executeSaveAction("proceed-services", updatedRooms);
     };
 
     const getTotalArea = (type: SurfaceType) => {
         return surfaces.filter((s) => s.type === type).reduce((sum, s) => sum + s.getNetArea(), 0);
+    };
+
+    const handleGoToClientStep = () => {
+        navigate('/projects/new/client', {
+            state: {
+                clientData,
+                projectDates,
+                rooms: existingRooms,
+                draftId,
+                editProjectId,
+                editProjectMeta,
+            },
+        });
+    };
+
+    const handleGoToSummaryStep = () => {
+        navigate('/projects/new/offer', {
+            state: {
+                rooms: existingRooms,
+                clientData,
+                projectDates,
+                draftId,
+                editProjectId,
+                editProjectMeta,
+            },
+        });
+    };
+
+    const handleExitWithoutSaving = () => {
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(editProjectId ? `/projects/${editProjectId}` : '/projects');
+    };
+
+    const handleSaveAndExit = async () => {
+        if (editProjectId) {
+            await saveEditedProjectFromSnapshot(editProjectId);
+        }
+        clearProjectCreationDirty();
+        clearCurrentProjectSnapshot();
+        navigate(editProjectId ? `/projects/${editProjectId}` : '/projects');
     };
 
     return (
@@ -404,10 +633,53 @@ const RoomForm: React.FC = () => {
                 {/* Header with Project Context */}
                 <div className="flex flex-col gap-2 p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                        <p className="text-text-dark dark:text-off-white text-2xl sm:text-3xl font-black leading-tight tracking-[-0.033em]">
-                            {editingRoomIndex !== null ? t("Edycja Pokoju", "Edit Room") : t("Definicja Pokoju", "Room Definition")}
-                        </p>
-                        <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full w-fit">{t('Krok 2: Dodawanie pomieszczeń', 'Step 2: Adding rooms')}</span>
+                        <div>
+                            <p className="text-text-dark dark:text-off-white text-2xl sm:text-3xl font-black leading-tight tracking-[-0.033em]">
+                                {editingRoomIndex !== null ? t("Edycja Pokoju", "Edit Room") : t("Definicja Pokoju", "Room Definition")}
+                            </p>
+                            <span className="mt-2 inline-flex bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full w-fit">{t('Krok 2: Dodawanie pomieszczeń', 'Step 2: Adding rooms')}</span>
+                        </div>
+                        <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                        <button
+                            type="button"
+                            onClick={handleGoToClientStep}
+                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 1', 'Step 1')}
+                        </button>
+                        <button
+                            type="button"
+                            className="text-xs font-bold rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-primary"
+                        >
+                            {t('Krok 2', 'Step 2')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() =>
+                                navigate('/projects/new/services', {
+                                    state: {
+                                        rooms: existingRooms,
+                                        clientData,
+                                        projectDates,
+                                        draftId,
+                                        editProjectId,
+                                        editProjectMeta,
+                                    },
+                                })
+                            }
+                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 3', 'Step 3')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleGoToSummaryStep}
+                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 4', 'Step 4')}
+                        </button>
                     </div>
                     {clientData && (
                         <p className="text-sm text-gray-500">
@@ -768,27 +1040,59 @@ const RoomForm: React.FC = () => {
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="flex flex-col md:flex-row px-4 py-8 justify-end gap-4">
-                    <button
-                        onClick={handleSaveAndAddNext}
-                        disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
-                        className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-transparent ${
-                            editingRoomIndex !== null ? "border-green-600 text-green-600 hover:bg-green-50" : "border-primary text-primary hover:bg-primary/5"
-                        }`}
-                    >
-                        {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
-                        <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
-                    </button>
+                {isEditMode ? (
+                    <div className="grid grid-cols-1 md:grid-cols-3 px-4 py-8 gap-4 items-center">
+                        <button
+                            onClick={handleGoToClientStep}
+                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                        >
+                            <span className="material-symbols-outlined">arrow_back</span>
+                            {t('Dane klienta', 'Client details')}
+                        </button>
 
-                    <button
-                        onClick={handleSaveAndProceedToServices}
-                        disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
-                        className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {canGoToServicesWithoutSaving ? t('Usługi', 'Services') : t('Zapisz i przejdź do usług', 'Save and proceed to services')}
-                        <span className="material-symbols-outlined">arrow_forward</span>
-                    </button>
-                </div>
+                        <button
+                            onClick={handleSaveAndAddNext}
+                            disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
+                            className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-transparent md:justify-self-center ${
+                                editingRoomIndex !== null ? "border-green-600 text-green-600 hover:bg-green-50" : "border-primary text-primary hover:bg-primary/5"
+                            }`}
+                        >
+                            {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
+                            <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
+                        </button>
+
+                        <button
+                            onClick={handleSaveAndProceedToServices}
+                            disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
+                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {t('Usługi', 'Services')}
+                            <span className="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex flex-col md:flex-row px-4 py-8 justify-end gap-4">
+                        <button
+                            onClick={handleSaveAndAddNext}
+                            disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
+                            className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-transparent ${
+                                editingRoomIndex !== null ? "border-green-600 text-green-600 hover:bg-green-50" : "border-primary text-primary hover:bg-primary/5"
+                            }`}
+                        >
+                            {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
+                            <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
+                        </button>
+
+                        <button
+                            onClick={handleSaveAndProceedToServices}
+                            disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
+                            className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {canGoToServicesWithoutSaving ? t('Usługi', 'Services') : t('Zapisz i przejdź do usług', 'Save and proceed to services')}
+                            <span className="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                )}
 
                 {confirmAction && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -807,8 +1111,8 @@ const RoomForm: React.FC = () => {
                                                   "This room will be removed from the project. This action cannot be undone."
                                               )
                                             : t(
-                                                  "Przełączenie na tryb standardowy usunie obecne niestandardowe powierzchnie i wymiary tego pokoju.",
-                                                  "Switching to standard mode will remove the current custom surfaces and dimensions for this room."
+                                                  "Przełączenie z nieregularnego na standardowy wyzeruje obecne dane tego pokoju i usunie dane kolejnych kroków (usługi oraz podsumowanie) do ponownego przeliczenia.",
+                                                  "Switching from irregular to standard will reset current room data and clear downstream step data (services and summary) for recalculation."
                                               )}
                                     </p>
                                 </div>
@@ -847,7 +1151,43 @@ const RoomForm: React.FC = () => {
                                 >
                                     {confirmAction.type === "delete-room"
                                         ? t("Usuń pokój", "Delete room")
-                                        : t("Zmień typ", "Change type")}
+                                        : t("Tak, wyzeruj i przełącz", "Yes, reset and switch")}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {pendingSaveAction && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                        <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+                            <div className="px-6 py-5 border-b border-gray-100 dark:border-slate-800">
+                                <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Uwaga: część robót zostanie usunięta", "Warning: some work items will be removed")}</h3>
+                                <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
+                                    {t(
+                                        `Niektóre powierzchnie zniknęły po zmianie pokoju. Usuniętych pozycji: ${pendingSaveAction.removedTaskCount}. Zapisz kontynuując?`,
+                                        `Some surfaces no longer exist after room changes. Removed items: ${pendingSaveAction.removedTaskCount}. Continue and save?`
+                                    )}
+                                </p>
+                            </div>
+                            <div className="px-6 py-5 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setPendingSaveAction(null)}
+                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                                >
+                                    {t("Anuluj", "Cancel")}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const action = pendingSaveAction;
+                                        setPendingSaveAction(null);
+                                        executeSaveAction(action.action, action.updatedRooms);
+                                    }}
+                                    className="px-4 py-2 rounded-lg font-bold text-white bg-amber-600 hover:bg-amber-700"
+                                >
+                                    {t("Kontynuuj i zapisz", "Continue and save")}
                                 </button>
                             </div>
                         </div>
