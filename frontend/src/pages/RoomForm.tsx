@@ -5,6 +5,23 @@ import { useLanguage } from "../context/LanguageContext";
 import ScrollableSelect from "../components/ScrollableSelect";
 
 type Mode = "standard" | "custom";
+type SurfaceDraft = { width: string; height: string; area: string };
+type ConfirmAction = { type: "delete-room"; roomIndex: number } | { type: "switch-to-standard" } | null;
+
+const NON_NEGATIVE_NUMBER_PATTERN = /^\d*(\.\d*)?$/;
+
+const isNonNegativeNumberInput = (value: string) => value === "" || NON_NEGATIVE_NUMBER_PATTERN.test(value);
+
+const toEditableNumberString = (value?: number) => {
+    if (value === undefined || value === null || value === 0) return "";
+    return String(value);
+};
+
+const createSurfaceDraft = (surface: Surface): SurfaceDraft => ({
+    width: toEditableNumberString(surface.width),
+    height: toEditableNumberString(surface.height),
+    area: toEditableNumberString(surface.customArea),
+});
 
 // Helper to rehydrate surface objects (restore methods) from serialized state
 const rehydrateSurface = (s: any): Surface => {
@@ -56,56 +73,117 @@ const RoomForm: React.FC = () => {
 
     // Surfaces State
     const [surfaces, setSurfaces] = useState<Surface[]>([]);
+    const [surfaceDrafts, setSurfaceDrafts] = useState<SurfaceDraft[]>([]);
 
     // Opening Input State
     const [openingDims, setOpeningDims] = useState<{ w: string; h: string; type: OpeningType }>({ w: "", h: "", type: "okno" });
     const [activeSurfaceIndex, setActiveSurfaceIndex] = useState<number | null>(null);
+    const [hoveredRoomIndex, setHoveredRoomIndex] = useState<number | null>(null);
+    const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
+
+    const setSurfacesWithDrafts = (nextSurfaces: Surface[]) => {
+        setSurfaces(nextSurfaces);
+        setSurfaceDrafts(nextSurfaces.map(createSurfaceDraft));
+    };
+
+    const resetRoomForm = (roomCount: number) => {
+        setEditingRoomIndex(null);
+        setRoomName(`${t("Pokój", "Room")} ${roomCount + 1}`);
+        setMode("standard");
+        setLength("");
+        setWidth("");
+        setHeight("");
+        setSurfaces([]);
+        setSurfaceDrafts([]);
+        setOpeningDims({ w: "", h: "", type: "okno" });
+        setActiveSurfaceIndex(null);
+        setHoveredRoomIndex(null);
+    };
+
+    const handleDimensionChange = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
+        if (!isNonNegativeNumberInput(value)) return;
+        setter(value);
+    };
+
+    const handleOpeningDimensionChange = (field: "w" | "h", value: string) => {
+        if (!isNonNegativeNumberInput(value)) return;
+        setOpeningDims((current) => ({ ...current, [field]: value }));
+    };
+
+    const handleModeChange = (nextMode: Mode) => {
+        if (nextMode === mode) return;
+
+        const hasExistingRoomData = surfaces.length > 0 || length !== "" || width !== "" || height !== "";
+
+        if (mode === "custom" && nextMode === "standard" && hasExistingRoomData) {
+            setConfirmAction({ type: "switch-to-standard" });
+            return;
+        }
+
+        setMode(nextMode);
+    };
 
     // Initial Generation for Standard Mode (Only if not editing or explicitly setting standard mode)
     useEffect(() => {
-        if (mode === "standard" && editingRoomIndex === null) {
-            const l = parseFloat(length) || 0;
-            const w = parseFloat(width) || 0;
-            const h = parseFloat(height) || 0;
+        if (mode !== "standard") return;
 
-            if (l > 0 && w > 0 && h > 0) {
-                const newSurfaces: Surface[] = [];
-                newSurfaces.push(new Surface("Podłoga", SurfaceType.FLOOR, l, w));
-                newSurfaces.push(new Surface("Sufit", SurfaceType.CEILING, l, w));
-                newSurfaces.push(new Surface("Ściana 1", SurfaceType.WALL, l, h));
-                newSurfaces.push(new Surface("Ściana 2", SurfaceType.WALL, l, h));
-                newSurfaces.push(new Surface("Ściana 3", SurfaceType.WALL, w, h));
-                newSurfaces.push(new Surface("Ściana 4", SurfaceType.WALL, w, h));
+        const l = parseFloat(length) || 0;
+        const w = parseFloat(width) || 0;
+        const h = parseFloat(height) || 0;
 
-                setSurfaces(newSurfaces);
-            }
+        if (l > 0 && w > 0 && h > 0) {
+            const nextSurfaces: Surface[] = [];
+            nextSurfaces.push(new Surface("Podłoga", SurfaceType.FLOOR, l, w));
+            nextSurfaces.push(new Surface("Sufit", SurfaceType.CEILING, l, w));
+            nextSurfaces.push(new Surface("Ściana 1", SurfaceType.WALL, l, h));
+            nextSurfaces.push(new Surface("Ściana 2", SurfaceType.WALL, l, h));
+            nextSurfaces.push(new Surface("Ściana 3", SurfaceType.WALL, w, h));
+            nextSurfaces.push(new Surface("Ściana 4", SurfaceType.WALL, w, h));
+
+            setSurfacesWithDrafts(nextSurfaces);
+        } else {
+            setSurfacesWithDrafts([]);
         }
-    }, [length, width, height, mode, editingRoomIndex]);
+    }, [length, width, height, mode]);
 
     const handleAddSurface = (type: SurfaceType) => {
         const typeLabel = type === SurfaceType.WALL ? t("Ściana", "Wall") : type === SurfaceType.FLOOR ? t("Podłoga", "Floor") : t("Sufit", "Ceiling");
-        setSurfaces([...surfaces, new Surface(`${t("Nowa", "New")} ${typeLabel}`, type, 0, 0)]);
+        setSurfacesWithDrafts([...surfaces, new Surface(`${t("Nowa", "New")} ${typeLabel}`, type, 0, 0)]);
     };
 
     const handleUpdateSurface = (index: number, field: "name" | "width" | "height" | "area", value: string) => {
         const updatedSurfaces = [...surfaces];
+        const updatedDrafts = [...surfaceDrafts];
         const surface = updatedSurfaces[index];
 
         if (field === "name") surface.name = value;
-        if (field === "width") surface.width = parseFloat(value) || 0;
-        if (field === "height") surface.height = parseFloat(value) || 0;
+        if (field === "width") {
+            if (!isNonNegativeNumberInput(value)) return;
+            updatedDrafts[index] = { ...updatedDrafts[index], width: value };
+            surface.width = value === "" ? 0 : parseFloat(value);
+        }
+        if (field === "height") {
+            if (!isNonNegativeNumberInput(value)) return;
+            updatedDrafts[index] = { ...updatedDrafts[index], height: value };
+            surface.height = value === "" ? 0 : parseFloat(value);
+        }
         if (field === "area") {
+            if (!isNonNegativeNumberInput(value)) return;
+            updatedDrafts[index] = { ...updatedDrafts[index], area: value };
             const val = parseFloat(value);
-            surface.customArea = isNaN(val) ? undefined : val;
+            surface.customArea = value === "" || isNaN(val) ? undefined : val;
         }
 
         setSurfaces(updatedSurfaces);
+        setSurfaceDrafts(updatedDrafts);
     };
 
     const handleRemoveSurface = (index: number) => {
         const updatedSurfaces = [...surfaces];
         updatedSurfaces.splice(index, 1);
-        setSurfaces(updatedSurfaces);
+        setSurfacesWithDrafts(updatedSurfaces);
+        if (activeSurfaceIndex === index) setActiveSurfaceIndex(null);
+        if (activeSurfaceIndex !== null && activeSurfaceIndex > index) setActiveSurfaceIndex(activeSurfaceIndex - 1);
     };
 
     const handleAddOpening = (surfaceIndex: number) => {
@@ -115,7 +193,7 @@ const RoomForm: React.FC = () => {
         if (w > 0 && h > 0) {
             const updatedSurfaces = [...surfaces];
             updatedSurfaces[surfaceIndex].addOpening(new Opening(w, h, openingDims.type));
-            setSurfaces(updatedSurfaces);
+            setSurfacesWithDrafts(updatedSurfaces);
             setOpeningDims({ w: "", h: "", type: "okno" });
         }
     };
@@ -123,7 +201,7 @@ const RoomForm: React.FC = () => {
     const handleRemoveOpening = (surfaceIndex: number, openingIndex: number) => {
         const updatedSurfaces = [...surfaces];
         updatedSurfaces[surfaceIndex].removeOpening(openingIndex);
-        setSurfaces(updatedSurfaces);
+        setSurfacesWithDrafts(updatedSurfaces);
     };
 
     // --- Edit Logic ---
@@ -135,7 +213,7 @@ const RoomForm: React.FC = () => {
 
         // Rehydrate surfaces to ensure methods like getNetArea exist
         const hydratedSurfaces = roomData.surfaces.map((s: any) => rehydrateSurface(s));
-        setSurfaces(hydratedSurfaces);
+        setSurfacesWithDrafts(hydratedSurfaces);
 
         setMode("custom");
         setLength("");
@@ -145,13 +223,34 @@ const RoomForm: React.FC = () => {
     };
 
     const handleCancelEdit = () => {
-        setEditingRoomIndex(null);
-        setRoomName(`${t("Pokój", "Room")} ${existingRooms.length + 1}`);
-        setSurfaces([]);
+        resetRoomForm(existingRooms.length);
+    };
+
+    const handleConfirmSwitchToStandard = () => {
+        setConfirmAction(null);
         setMode("standard");
         setLength("");
         setWidth("");
         setHeight("");
+        setSurfaces([]);
+        setSurfaceDrafts([]);
+        setOpeningDims({ w: "", h: "", type: "okno" });
+        setActiveSurfaceIndex(null);
+    };
+
+    const handleDeleteRoom = (roomIndex: number) => {
+        const updatedRooms = existingRooms.filter((_, idx) => idx !== roomIndex);
+        navigate("/projects/new/room", {
+            state: {
+                rooms: updatedRooms,
+                clientData,
+                projectDates,
+            },
+            replace: true,
+        });
+
+        resetRoomForm(updatedRooms.length);
+        setConfirmAction(null);
     };
 
     // --- Save Logic ---
@@ -181,13 +280,7 @@ const RoomForm: React.FC = () => {
             replace: true,
         });
 
-        setEditingRoomIndex(null);
-        setRoomName(`${t("Pokój", "Room")} ${updatedRooms.length + 1}`);
-        setLength("");
-        setWidth("");
-        setHeight("");
-        setSurfaces([]);
-        setMode("standard");
+        resetRoomForm(updatedRooms.length);
         window.scrollTo(0, 0);
     };
 
@@ -243,15 +336,38 @@ const RoomForm: React.FC = () => {
                                 {existingRooms.map((r, idx) => (
                                     <button
                                         key={idx}
-                                        onClick={() => handleEditRoom(idx)}
+                                        type="button"
+                                        onMouseEnter={() => setHoveredRoomIndex(idx)}
+                                        onMouseLeave={() => setHoveredRoomIndex((current) => (current === idx ? null : current))}
+                                        onFocus={() => setHoveredRoomIndex(idx)}
+                                        onBlur={() => setHoveredRoomIndex((current) => (current === idx ? null : current))}
+                                        onClick={() => {
+                                            if (editingRoomIndex === idx && hoveredRoomIndex === idx) {
+                                                setConfirmAction({ type: "delete-room", roomIndex: idx });
+                                                return;
+                                            }
+
+                                            handleEditRoom(idx);
+                                        }}
                                         className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm border transition-all 
                                             ${
                                                 editingRoomIndex === idx
-                                                    ? "bg-primary text-white border-primary shadow-md"
+                                                    ? hoveredRoomIndex === idx
+                                                        ? "bg-red-500 text-white border-red-500 shadow-md"
+                                                        : "bg-primary text-white border-primary shadow-md"
                                                     : "bg-white dark:bg-slate-700 border-gray-200 dark:border-gray-600 hover:border-primary text-gray-700 dark:text-gray-200"
                                             }`}
+                                        title={
+                                            editingRoomIndex === idx
+                                                ? hoveredRoomIndex === idx
+                                                    ? t("Usuń ten pokój", "Delete this room")
+                                                    : t("Edytowany pokój", "Currently edited room")
+                                                : t("Edytuj pokój", "Edit room")
+                                        }
                                     >
-                                        <span className="material-symbols-outlined text-base">{editingRoomIndex === idx ? "edit" : "check_circle"}</span>
+                                        <span className="material-symbols-outlined text-base">
+                                            {editingRoomIndex === idx ? (hoveredRoomIndex === idx ? "delete" : "edit") : "check_circle"}
+                                        </span>
                                         {r.name}
                                     </button>
                                 ))}
@@ -279,24 +395,24 @@ const RoomForm: React.FC = () => {
 
                     <div className="flex flex-col sm:flex-row p-1 bg-slate-100 dark:bg-slate-800 rounded-lg self-stretch sm:self-start">
                         <button
-                            onClick={() => setMode("standard")}
-                            disabled={editingRoomIndex !== null}
+                            type="button"
+                            onClick={() => handleModeChange("standard")}
                             className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
                                 mode === "standard"
                                     ? "bg-white dark:bg-slate-600 shadow-sm text-primary"
                                     : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                            } ${editingRoomIndex !== null ? "opacity-50 cursor-not-allowed" : ""}`}
-                            title={editingRoomIndex !== null ? t("Podczas edycji dostępny jest tylko tryb nieregularny", "Only custom mode is available while editing") : ""}
+                            }`}
                         >
                             {t("Standardowy (Prostokąt)", "Standard (Rectangle)")}
                         </button>
                         <button
-                            onClick={() => setMode("custom")}
+                            type="button"
+                            onClick={() => handleModeChange("custom")}
                             className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
                                 mode === "custom"
                                     ? "bg-white dark:bg-slate-600 shadow-sm text-primary"
                                     : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                            } ${editingRoomIndex !== null ? "opacity-50 cursor-not-allowed" : ""}`}
+                            }`}
                         >
                             {t("Nieregularny (Własny)", "Irregular (Custom)")}
                         </button>
@@ -312,8 +428,10 @@ const RoomForm: React.FC = () => {
                                 <span className="mb-1 text-sm font-medium">{t("Długość (m)", "Length (m)")}</span>
                                 <input
                                     type="number"
+                                    min="0"
+                                    step="any"
                                     value={length}
-                                    onChange={(e) => setLength(e.target.value)}
+                                    onChange={(e) => handleDimensionChange(setLength, e.target.value)}
                                     className="form-input rounded-lg border-gray-300 dark:bg-slate-800 p-2"
                                 />
                             </label>
@@ -321,8 +439,10 @@ const RoomForm: React.FC = () => {
                                 <span className="mb-1 text-sm font-medium">{t("Szerokość (m)", "Width (m)")}</span>
                                 <input
                                     type="number"
+                                    min="0"
+                                    step="any"
                                     value={width}
-                                    onChange={(e) => setWidth(e.target.value)}
+                                    onChange={(e) => handleDimensionChange(setWidth, e.target.value)}
                                     className="form-input rounded-lg border-gray-300 dark:bg-slate-800 p-2"
                                 />
                             </label>
@@ -330,8 +450,10 @@ const RoomForm: React.FC = () => {
                                 <span className="mb-1 text-sm font-medium">{t("Wysokość (m)", "Height (m)")}</span>
                                 <input
                                     type="number"
+                                    min="0"
+                                    step="any"
                                     value={height}
-                                    onChange={(e) => setHeight(e.target.value)}
+                                    onChange={(e) => handleDimensionChange(setHeight, e.target.value)}
                                     className="form-input rounded-lg border-gray-300 dark:bg-slate-800 p-2"
                                 />
                             </label>
@@ -408,8 +530,10 @@ const RoomForm: React.FC = () => {
                                                 <label className="text-xs text-gray-500 whitespace-nowrap">{t("Szer", "W")}: </label>
                                                 <input
                                                     type="number"
+                                                    min="0"
+                                                    step="any"
                                                     disabled={mode === "standard"}
-                                                    value={surface.width || ""}
+                                                    value={surfaceDrafts[index]?.width ?? ""}
                                                     onChange={(e) => handleUpdateSurface(index, "width", e.target.value)}
                                                     className="w-16 p-1 text-sm border rounded bg-gray-50 dark:bg-slate-900 disabled:opacity-60"
                                                 />
@@ -419,8 +543,10 @@ const RoomForm: React.FC = () => {
                                                 <label className="text-xs text-gray-500 whitespace-nowrap">{t("Wys/Dł", "H/L")}: </label>
                                                 <input
                                                     type="number"
+                                                    min="0"
+                                                    step="any"
                                                     disabled={mode === "standard"}
-                                                    value={surface.height || ""}
+                                                    value={surfaceDrafts[index]?.height ?? ""}
                                                     onChange={(e) => handleUpdateSurface(index, "height", e.target.value)}
                                                     className="w-16 p-1 text-sm border rounded bg-gray-50 dark:bg-slate-900 disabled:opacity-60"
                                                 />
@@ -431,8 +557,10 @@ const RoomForm: React.FC = () => {
                                                     <label className="text-xs text-primary font-bold whitespace-nowrap">{t("lub m²:", "or m²:")}</label>
                                                     <input
                                                         type="number"
+                                                        min="0"
+                                                        step="any"
                                                         placeholder="Auto"
-                                                        value={surface.customArea || ""}
+                                                        value={surfaceDrafts[index]?.area ?? ""}
                                                         onChange={(e) => handleUpdateSurface(index, "area", e.target.value)}
                                                         className="w-16 p-1 text-sm border border-primary/30 rounded bg-primary/5 dark:bg-slate-900"
                                                     />
@@ -488,16 +616,20 @@ const RoomForm: React.FC = () => {
                                             </ScrollableSelect>
                                             <input
                                                 type="number"
+                                                min="0"
+                                                step="any"
                                                 placeholder={t("Szer (m)", "W (m)")}
                                                 value={openingDims.w}
-                                                onChange={(e) => setOpeningDims({ ...openingDims, w: e.target.value })}
+                                                onChange={(e) => handleOpeningDimensionChange("w", e.target.value)}
                                                 className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
                                             />
                                             <input
                                                 type="number"
+                                                min="0"
+                                                step="any"
                                                 placeholder={t("Wys (m)", "H (m)")}
                                                 value={openingDims.h}
-                                                onChange={(e) => setOpeningDims({ ...openingDims, h: e.target.value })}
+                                                onChange={(e) => handleOpeningDimensionChange("h", e.target.value)}
                                                 className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
                                             />
                                             <button
@@ -571,6 +703,70 @@ const RoomForm: React.FC = () => {
                         {t('Zapisz i przejdź do usług', 'Save and proceed to services')}
                     </button>
                 </div>
+
+                {confirmAction && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                        <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+                            <div className="flex items-start justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800">
+                                <div>
+                                    <h3 className="text-lg font-black text-gray-900 dark:text-white">
+                                        {confirmAction.type === "delete-room"
+                                            ? t("Usunąć pokój?", "Delete room?")
+                                            : t("Zmienić typ pokoju?", "Change room type?")}
+                                    </h3>
+                                    <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
+                                        {confirmAction.type === "delete-room"
+                                            ? t(
+                                                  "Ten pokój zostanie usunięty z projektu. Tej operacji nie można cofnąć.",
+                                                  "This room will be removed from the project. This action cannot be undone."
+                                              )
+                                            : t(
+                                                  "Przełączenie na tryb standardowy usunie obecne niestandardowe powierzchnie i wymiary tego pokoju.",
+                                                  "Switching to standard mode will remove the current custom surfaces and dimensions for this room."
+                                              )}
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setConfirmAction(null)}
+                                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                                >
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+
+                            <div className="px-6 py-5 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setConfirmAction(null)}
+                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                                >
+                                    {t("Anuluj", "Cancel")}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (confirmAction.type === "delete-room") {
+                                            handleDeleteRoom(confirmAction.roomIndex);
+                                            return;
+                                        }
+
+                                        handleConfirmSwitchToStandard();
+                                    }}
+                                    className={`px-4 py-2 rounded-lg font-bold text-white ${
+                                        confirmAction.type === "delete-room"
+                                            ? "bg-red-600 hover:bg-red-700"
+                                            : "bg-primary hover:bg-primary/90"
+                                    }`}
+                                >
+                                    {confirmAction.type === "delete-room"
+                                        ? t("Usuń pokój", "Delete room")
+                                        : t("Zmień typ", "Change type")}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

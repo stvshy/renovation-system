@@ -277,7 +277,7 @@ const ProjectDetails: React.FC = () => {
                                 {t('Finanse', 'Finances')}
                             </h3>
                             <div className="space-y-1">
-                                <p className="text-sm text-gray-500">{t('Wartosc calkowita', 'Total value')}</p>
+                                <p className="text-sm text-gray-500">{t('Wartość całkowita', 'Total value')}</p>
                                 <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
                         </div>
@@ -289,11 +289,12 @@ const ProjectDetails: React.FC = () => {
                             </div>
 
                             <div className="flex justify-between items-center h-8">
-                                <span className="text-xs text-gray-500">{t('Oplacono:', 'Paid:')}</span>
+                                <span className="text-xs text-gray-500">{t('Opłacono:', 'Paid:')}</span>
                                 {isEditingPaid ? (
                                     <div className="flex items-center gap-1 animate-fade-in">
                                         <input
                                             type="number"
+                                            min="0"
                                             value={paidInput}
                                             onChange={(e) => setPaidInput(e.target.value)}
                                             className="w-20 py-0 px-1 text-xs h-6 rounded border-gray-300 dark:bg-slate-900 dark:border-gray-600 focus:border-primary focus:ring-0"

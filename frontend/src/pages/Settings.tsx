@@ -239,6 +239,7 @@ const Settings: React.FC = () => {
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Stawka Robocizny', 'Labor Rate')}</span>
                                     <input
                                         type="number"
+                                        min="0"
                                         required
                                         className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newService.laborRate}

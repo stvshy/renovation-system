@@ -611,6 +611,7 @@ const ServiceForm: React.FC = () => {
                                     <div className="flex items-center">
                                         <input
                                             type="number"
+                                            min="0"
                                             className="form-input w-full rounded-l-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                             value={strategyParam}
                                             onChange={(e) => setStrategyParam(e.target.value)}
@@ -698,6 +699,7 @@ const ServiceForm: React.FC = () => {
                                             <div className="relative">
                                                 <input
                                                     type="number"
+                                                    min="0"
                                                     placeholder={t('Cena', 'Price')}
                                                     value={customMatPrice}
                                                     onChange={(e) => setCustomMatPrice(e.target.value)}
@@ -723,6 +725,7 @@ const ServiceForm: React.FC = () => {
                                                 <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">{t('Stan początkowy', 'Initial stock')}</label>
                                                 <input
                                                     type="number"
+                                                    min="0"
                                                     placeholder={t('Ilość w magazynie', 'Quantity in inventory')}
                                                     value={customMatInitialStock}
                                                     onChange={(e) => setCustomMatInitialStock(e.target.value)}
@@ -737,6 +740,7 @@ const ServiceForm: React.FC = () => {
                                                 <div className="relative">
                                                     <input
                                                         type="number"
+                                                        min="0"
                                                         placeholder={t('np. 10', 'e.g. 10')}
                                                         value={customMatCoverage}
                                                         onChange={(e) => setCustomMatCoverage(e.target.value)}
@@ -801,6 +805,7 @@ const ServiceForm: React.FC = () => {
                                     <div className="flex items-center">
                                         <input
                                             type="number"
+                                            min="0"
                                             className="form-input w-full rounded-l-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
                                             value={scopeType === "manual" ? manualQuantity : currentDimension.toFixed(2)}
                                             disabled={scopeType !== "manual"}

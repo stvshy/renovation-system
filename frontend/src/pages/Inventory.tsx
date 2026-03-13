@@ -237,6 +237,7 @@ const Inventory: React.FC = () => {
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Ilość', 'Quantity')}</span>
                                     <input
                                         type="number"
+                                        min="0"
                                         required
                                         className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newItem.quantity}
@@ -265,6 +266,7 @@ const Inventory: React.FC = () => {
                                     <input
                                         type="number"
                                         step="0.01"
+                                        min="0"
                                         required
                                         className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
                                         value={newItem.pricePerUnit}
