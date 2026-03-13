@@ -583,8 +583,8 @@ const OfferSummary: React.FC = () => {
                                 <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Lista zakupów', 'Shopping list')}</h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                     {t(
-                                        'Cały koszt materiałów jest już wliczony w kosztorys. Tu pokazujemy tylko to, czego brakuje w magazynie.',
-                                        'The full material cost is already included in the estimate. This section only shows what is missing from inventory.'
+                                        'Tych materiałów brakuje w magazynie. Ich koszt jest już wliczony w koszt całkowity.',
+                                        'These materials are missing from inventory. Their cost is already included in the total cost.'
                                     )}
                                 </p>
                             </div>
