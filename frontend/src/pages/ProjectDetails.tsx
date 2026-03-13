@@ -141,6 +141,36 @@ const ProjectDetails: React.FC = () => {
     const remainingAmount = project.value - paidAmount;
     const currencyCode = language === "en" ? "EUR" : "PLN";
 
+    const parseProjectDate = (value?: string) => {
+        if (!value) return null;
+        const parsed = new Date(`${value}T00:00:00`);
+        return Number.isNaN(parsed.getTime()) ? null : parsed;
+    };
+
+    const startDate = parseProjectDate(project.startDate);
+    const endDate = parseProjectDate(project.endDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let elapsedPercent = 0;
+    let remainingPercent = 0;
+
+    if (project.status === "Completed") {
+        elapsedPercent = 100;
+    } else if (startDate && endDate && endDate >= startDate) {
+        const totalDuration = Math.max(1, endDate.getTime() - startDate.getTime());
+
+        if (project.status === "Planned" || today < startDate) {
+            remainingPercent = 100;
+        } else if (today >= endDate) {
+            elapsedPercent = 100;
+        } else {
+            const elapsedDuration = Math.max(0, today.getTime() - startDate.getTime());
+            elapsedPercent = Math.min(100, Math.max(0, (elapsedDuration / totalDuration) * 100));
+            remainingPercent = Math.max(0, 100 - elapsedPercent);
+        }
+    }
+
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="layout-content-container flex flex-col w-full max-w-6xl gap-6">
@@ -222,8 +252,15 @@ const ProjectDetails: React.FC = () => {
                                 <span className="text-xs text-gray-500">{t('Start', 'Start')}</span>
                                 <span className="font-bold text-gray-800 dark:text-white">{project.startDate || "-"}</span>
                             </div>
-                            <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full mb-2 overflow-hidden">
-                                <div className="h-full bg-primary opacity-50 w-full"></div>
+                            <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full mb-2 overflow-hidden flex">
+                                <div
+                                    className="h-full bg-green-500 transition-all"
+                                    style={{ width: `${elapsedPercent}%` }}
+                                ></div>
+                                <div
+                                    className="h-full bg-yellow-100 dark:bg-yellow-800 transition-all"
+                                    style={{ width: `${remainingPercent}%` }}
+                                ></div>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-gray-500">{t('Koniec', 'End')}</span>

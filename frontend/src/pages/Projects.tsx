@@ -24,9 +24,33 @@ const Projects: React.FC = () => {
         load();
     }, [isDemoMode, demoRevision]);
 
-    const filteredProjects = statusFilter === 'All' 
-        ? projects 
-        : projects.filter(p => p.status === statusFilter);
+    const parseProjectDate = (value?: string) => {
+        if (!value) return Number.MAX_SAFE_INTEGER;
+        const timestamp = new Date(`${value}T00:00:00`).getTime();
+        return Number.isNaN(timestamp) ? Number.MAX_SAFE_INTEGER : timestamp;
+    };
+
+    const statusPriority: Record<Project['status'], number> = {
+        'In Progress': 0,
+        Planned: 1,
+        Completed: 2,
+        Archived: 3,
+    };
+
+    const sortProjects = (items: Project[]) =>
+        [...items].sort((left, right) => {
+            const priorityDiff = statusPriority[left.status] - statusPriority[right.status];
+            if (priorityDiff !== 0) return priorityDiff;
+
+            const startDiff = parseProjectDate(left.startDate) - parseProjectDate(right.startDate);
+            if (startDiff !== 0) return startDiff;
+
+            return left.name.localeCompare(right.name);
+        });
+
+    const filteredProjects = statusFilter === 'All'
+        ? sortProjects(projects)
+        : sortProjects(projects.filter(p => p.status === statusFilter));
 
     const statuses = [
         { label: t('Wszystkie', 'All'), value: 'All' },
