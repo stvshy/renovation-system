@@ -258,7 +258,7 @@ const ProjectDetails: React.FC = () => {
                                     style={{ width: `${elapsedPercent}%` }}
                                 ></div>
                                 <div
-                                    className="h-full bg-yellow-100 dark:bg-yellow-800 transition-all"
+                                    className={`h-full transition-all ${project.status === 'Planned' ? 'bg-blue-100 dark:bg-blue-900' : 'bg-yellow-100 dark:bg-yellow-900'}`}
                                     style={{ width: `${remainingPercent}%` }}
                                 ></div>
                             </div>

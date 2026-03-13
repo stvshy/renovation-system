@@ -38,6 +38,7 @@ export interface Project {
     color?: string; // Hex code for calendar
     rooms?: Room[]; // Persisted room data for details view
     clientData?: any; // Snapshot of client data
+    paidAmount?: number;
 }
 
 export interface RoomDimensions {
