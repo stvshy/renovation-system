@@ -48,6 +48,13 @@ const createSurfaceDraft = (surface: Surface): SurfaceDraft => ({
     area: toEditableNumberString(surface.customArea),
 });
 
+const getSurfaceIconSrc = (surfaceType: SurfaceType) => {
+    const base = import.meta.env.BASE_URL;
+    if (surfaceType === SurfaceType.WALL) return `${base}icons/siding.png`;
+    if (surfaceType === SurfaceType.FLOOR) return `${base}icons/draws.png`;
+    return `${base}icons/ceiling.png`;
+};
+
 const normalizeText = (value: string) =>
     value
         .normalize("NFD")
@@ -991,7 +998,7 @@ const RoomForm: React.FC = () => {
                             >
                                 <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                                     <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 items-center w-full">
-                                        <div className="md:col-span-3 flex flex-col min-h-[64px] justify-between">
+                                        <div className="md:col-span-3 flex items-center">
                                             {mode === "custom" ? (
                                                 <input
                                                     value={surface.name}
@@ -1000,26 +1007,14 @@ const RoomForm: React.FC = () => {
                                                 />
                                             ) : (
                                                 <span className="font-bold flex items-center gap-2 min-w-0">
-                                                    <span className="material-symbols-outlined text-gray-400 shrink-0">
-                                                        {surface.type === SurfaceType.WALL
-                                                            ? "grid_view"
-                                                            : surface.type === SurfaceType.FLOOR
-                                                            ? "check_box_outline_blank"
-                                                            : "roofing"}
-                                                    </span>
+                                                    <img
+                                                        src={getSurfaceIconSrc(surface.type)}
+                                                        alt={localizeSurfaceType(surface.type)}
+                                                        className="h-4 w-4 shrink-0 opacity-60"
+                                                    />
                                                     <span className="truncate">{localizeSurfaceName(surface.name)}</span>
                                                 </span>
                                             )}
-                                            <span className="self-end mt-2 text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-[14px] leading-none">
-                                                    {surface.type === SurfaceType.WALL
-                                                        ? "grid_view"
-                                                        : surface.type === SurfaceType.FLOOR
-                                                        ? "check_box_outline_blank"
-                                                        : "roofing"}
-                                                </span>
-                                                {localizeSurfaceType(surface.type)}
-                                            </span>
                                         </div>
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
@@ -1149,13 +1144,26 @@ const RoomForm: React.FC = () => {
                                             </button>
                                         </div>
                                     ) : (
-                                        <button
-                                            onClick={() => setActiveSurfaceIndex(index)}
-                                            className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full flex items-center gap-1 transition-colors mt-2"
-                                        >
-                                            <span className="material-symbols-outlined text-base">add_circle</span>
-                                            {t("Dodaj okno/drzwi", "Add window/door")}
-                                        </button>
+                                        <div className="mt-2 flex items-center justify-between gap-3">
+                                            <button
+                                                onClick={() => setActiveSurfaceIndex(index)}
+                                                className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full flex items-center gap-1 transition-colors"
+                                            >
+                                                <span className="material-symbols-outlined text-base">add_circle</span>
+                                                {t("Dodaj okno/drzwi", "Add window/door")}
+                                            </button>
+
+                                            {mode === "custom" && (
+                                                <div className="inline-flex items-center gap-1.5 text-sm font-bold text-gray-500 dark:text-gray-300">
+                                                    <img
+                                                        src={getSurfaceIconSrc(surface.type)}
+                                                        alt={localizeSurfaceType(surface.type)}
+                                                        className="h-4 w-4 opacity-70"
+                                                    />
+                                                    <span>{localizeSurfaceType(surface.type)}</span>
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </div>
