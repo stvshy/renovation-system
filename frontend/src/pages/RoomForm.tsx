@@ -878,14 +878,14 @@ const RoomForm: React.FC = () => {
                         />
                     </div>
 
-                    <div className="flex flex-col sm:flex-row p-1 bg-slate-100 dark:bg-slate-800 rounded-lg self-stretch sm:self-start">
+                    <div className="flex flex-col sm:flex-row p-1 bg-[rgba(17,115,212,0.1)] rounded-lg self-stretch sm:self-start divide-y sm:divide-y-0 sm:divide-x divide-primary/20">
                         <button
                             type="button"
                             onClick={() => handleModeChange("standard")}
                             className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
                                 mode === "standard"
-                                    ? "bg-white dark:bg-slate-600 shadow-sm text-primary"
-                                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                                    ? "bg-white shadow-sm text-primary px-5 py-2.5"
+                                    : "text-slate-600 hover:text-slate-800"
                             }`}
                         >
                             {t("Standardowy (Prostokąt)", "Standard (Rectangle)")}
@@ -895,8 +895,8 @@ const RoomForm: React.FC = () => {
                             onClick={() => handleModeChange("custom")}
                             className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
                                 mode === "custom"
-                                    ? "bg-white dark:bg-slate-600 shadow-sm text-primary"
-                                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                                    ? "bg-white shadow-sm text-primary px-5 py-2.5"
+                                    : "text-slate-600 hover:text-slate-800"
                             }`}
                         >
                             {t("Nieregularny (Własny)", "Irregular (Custom)")}
@@ -991,15 +991,15 @@ const RoomForm: React.FC = () => {
                             >
                                 <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                                     <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 items-center w-full">
-                                        <div className="md:col-span-3 flex items-center gap-2">
+                                        <div className="md:col-span-3 flex flex-col min-h-[64px] justify-between">
                                             {mode === "custom" ? (
                                                 <input
                                                     value={surface.name}
                                                     onChange={(e) => handleUpdateSurface(index, "name", e.target.value)}
-                                                    className="bg-transparent border-b border-dashed border-gray-300 flex-1 min-w-0 focus:outline-none focus:border-primary font-semibold"
+                                                    className="bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary font-semibold"
                                                 />
                                             ) : (
-                                                <span className="font-bold flex items-center gap-2 flex-1 min-w-0">
+                                                <span className="font-bold flex items-center gap-2 min-w-0">
                                                     <span className="material-symbols-outlined text-gray-400 shrink-0">
                                                         {surface.type === SurfaceType.WALL
                                                             ? "grid_view"
@@ -1010,7 +1010,16 @@ const RoomForm: React.FC = () => {
                                                     <span className="truncate">{localizeSurfaceName(surface.name)}</span>
                                                 </span>
                                             )}
-                                            <span className="text-xs text-gray-400 font-semibold shrink-0">{localizeSurfaceType(surface.type)}</span>
+                                            <span className="self-end mt-2 text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1">
+                                                <span className="material-symbols-outlined text-[14px] leading-none">
+                                                    {surface.type === SurfaceType.WALL
+                                                        ? "grid_view"
+                                                        : surface.type === SurfaceType.FLOOR
+                                                        ? "check_box_outline_blank"
+                                                        : "roofing"}
+                                                </span>
+                                                {localizeSurfaceType(surface.type)}
+                                            </span>
                                         </div>
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
@@ -1068,8 +1077,8 @@ const RoomForm: React.FC = () => {
                                     </div>
 
                                     {mode === "custom" && (
-                                        <button onClick={() => handleRemoveSurface(index)} className="text-red-400 hover:text-red-600 px-2 shrink-0">
-                                            <span className="material-symbols-outlined">delete</span>
+                                        <button onClick={() => handleRemoveSurface(index)} className="text-red-400 hover:text-red-600 px-2 shrink-0 mt-px">
+                                            <span className="material-symbols-outlined text-[17px]">delete</span>
                                         </button>
                                     )}
                                 </div>

@@ -356,16 +356,16 @@ const ClientForm: React.FC = () => {
                     
                     {/* Mode Selection */}
                     <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
-                        <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                        <div className="flex p-0.5 bg-[rgba(17,115,212,0.1)] rounded-lg divide-x divide-primary/20">
                             <button
                                 onClick={() => { setMode('new'); setSelectedClientId(''); setFirstName(''); setLastName(''); setErrors({}); }}
-                                className={`flex-1 px-4 py-2 rounded-md text-sm font-bold transition-all ${mode === 'new' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                                className={`flex-1 px-4 py-[8.5px] rounded-md text-sm font-bold leading-5 transition-all ${mode === 'new' ? 'bg-white text-primary shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
                             >
                                 {t('Nowy Klient', 'New Client')}
                             </button>
                             <button
                                 onClick={() => { setMode('existing'); setErrors({}); }}
-                                className={`flex-1 px-4 py-2 rounded-md text-sm font-bold transition-all ${mode === 'existing' ? 'bg-white dark:bg-slate-600 text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                                className={`flex-1 px-4 py-[8.5px] rounded-md text-sm font-bold leading-5 transition-all ${mode === 'existing' ? 'bg-white text-primary shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
                             >
                                 {t('Wybierz z listy', 'Select from list')}
                             </button>
@@ -380,7 +380,7 @@ const ClientForm: React.FC = () => {
                                     handleChange(setSelectedClientId, 'clientSelection')(e);
                                     setIsEditingSelectedClient(false);
                                 }}
-                                className={`form-select w-full rounded-lg border bg-background-light dark:bg-slate-800 p-3 
+                                className={`form-select w-full h-[42px] rounded-lg border bg-background-light dark:bg-slate-800 px-3 
                                     ${errors.clientSelection ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                             >
                                 <option value="">-- {t('Wybierz klienta', 'Select client')} --</option>
@@ -504,7 +504,7 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {/* Section: Project Dates */}
-                    <h2 className="text-xl font-bold text-primary border-b border-gray-200 dark:border-gray-700 pb-2">{t('Czas trwania projektu', 'Project timeline')}</h2>
+                    <h2 className="text-xl font-bold text-primary border-b border-gray-200 dark:border-gray-700 pb-2 mt-3">{t('Czas trwania projektu', 'Project timeline')}</h2>
                     <div className="flex flex-col md:flex-row gap-4">
                         <label className="flex flex-col flex-1">
                             <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Data rozpoczęcia*', 'Start date*')}</p>

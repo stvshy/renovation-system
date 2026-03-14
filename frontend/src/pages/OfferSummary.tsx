@@ -278,7 +278,7 @@ const OfferSummary: React.FC = () => {
                         )}
                         {clientData && (
                             <p className="text-sm text-gray-500 mt-1">
-                                {t('Klient:', 'Client:')} {clientData.firstName} {clientData.lastName}
+                                {t('Klient:', 'Client:')} <span className="font-semibold text-gray-700 dark:text-slate-200">{clientData.firstName} {clientData.lastName}</span>
                             </p>
                         )}
                         <div className="flex flex-wrap gap-2 mt-3">
@@ -564,7 +564,7 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="grid grid-cols-2 gap-x-16 gap-y-3 sm:gap-x-20 sm:gap-y-5 text-sm">
+                            <div className="grid grid-cols-[132px_132px] justify-end gap-x-3 text-sm">
                                 <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} text-gray-600 dark:text-gray-300`}>
@@ -605,7 +605,7 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="grid grid-cols-2 gap-x-16 gap-y-3 sm:gap-x-20 sm:gap-y-5 text-sm">
+                            <div className="grid grid-cols-[132px_132px] justify-end gap-x-3 text-sm">
                                 <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p className={`${shoppingListItems.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-amber-600 dark:text-amber-400'}`}>
@@ -613,7 +613,7 @@ const OfferSummary: React.FC = () => {
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Koszt zakupów', 'Purchase cost')}</p>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Do kupienia', 'To buy')}</p>
                                     <p className={`${shoppingListItems.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-red-600 dark:text-red-400'}`}>
                                         {shoppingListItems.length === 0 ? '–' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
                                     </p>
