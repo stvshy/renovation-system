@@ -885,13 +885,13 @@ const RoomForm: React.FC = () => {
                         />
                     </div>
 
-                    <div className="flex flex-col sm:flex-row p-1 bg-[rgba(17,115,212,0.1)] rounded-lg self-stretch sm:self-start divide-y sm:divide-y-0 sm:divide-x divide-primary/20">
+                    <div className="flex flex-col sm:flex-row p-0.5 bg-[rgba(17,115,212,0.1)] rounded-lg self-stretch sm:self-start sm:w-[560px] divide-y sm:divide-y-0 sm:divide-x divide-primary/20">
                         <button
                             type="button"
                             onClick={() => handleModeChange("standard")}
-                            className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
+                            className={`w-full sm:flex-1 px-4 py-1.5 rounded-md text-sm font-bold leading-5 transition-all ${
                                 mode === "standard"
-                                    ? "bg-white shadow-sm text-primary px-5 py-2.5"
+                                    ? "bg-white shadow-sm text-primary"
                                     : "text-slate-600 hover:text-slate-800"
                             }`}
                         >
@@ -900,9 +900,9 @@ const RoomForm: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => handleModeChange("custom")}
-                            className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
+                            className={`w-full sm:flex-1 px-4 py-1.5 rounded-md text-sm font-bold leading-5 transition-all ${
                                 mode === "custom"
-                                    ? "bg-white shadow-sm text-primary px-5 py-2.5"
+                                    ? "bg-white shadow-sm text-primary"
                                     : "text-slate-600 hover:text-slate-800"
                             }`}
                         >
@@ -1072,7 +1072,7 @@ const RoomForm: React.FC = () => {
                                     </div>
 
                                     {mode === "custom" && (
-                                        <button onClick={() => handleRemoveSurface(index)} className="text-red-400 hover:text-red-600 px-2 shrink-0 mt-px">
+                                        <button onClick={() => handleRemoveSurface(index)} className="text-red-400 hover:text-red-600 px-2 shrink-0 mt-[7px]">
                                             <span className="material-symbols-outlined text-[17px]">delete</span>
                                         </button>
                                     )}

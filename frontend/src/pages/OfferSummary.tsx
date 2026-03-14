@@ -47,7 +47,7 @@ const rehydrateRoom = (plainRoom: any): Room => {
             let strategy;
             if (t.strategyParams?.wastePercentage !== undefined && t.material?.unit === "mb") {
                 strategy = new LinearStrategy();
-            } else if (t.strategyParams?.wastePercentage !== undefined) {
+            } else if (t.strategFyParams?.wastePercentage !== undefined) {
                 strategy = new WasteFactorStrategy();
             } else if (
                 t.strategyParams?.itemCount !== undefined ||
@@ -75,10 +75,18 @@ const getAdditionalCostsFromSource = (clientData: any, editProjectMeta: any): Ad
     const fromClientData = clientData?.projectMeta?.additionalCosts;
     const fromMeta = editProjectMeta?.additionalCosts;
     const source = Array.isArray(fromClientData) ? fromClientData : Array.isArray(fromMeta) ? fromMeta : [];
+
+    const buildDeterministicAdditionalCostId = (item: any, index: number) => {
+        const createdAt = item?.createdAt || "legacy";
+        const note = item?.note || "";
+        const amount = Number(item?.amount) || 0;
+        return `legacy-${createdAt}-${amount}-${note}-${index}`;
+    };
+
     return source
         .filter((item) => item && typeof item.amount === "number" && item.amount >= 0)
-        .map((item) => ({
-            id: item.id || crypto.randomUUID(),
+        .map((item, index) => ({
+            id: item.id || buildDeterministicAdditionalCostId(item, index),
             amount: Number(item.amount) || 0,
             note: item.note || "",
             createdAt: item.createdAt || new Date().toISOString(),
@@ -99,6 +107,7 @@ const OfferSummary: React.FC = () => {
     const draftId = location.state?.draftId || draftSnapshot?.id;
     const editProjectId = location.state?.editProjectId;
     const editProjectMeta = location.state?.editProjectMeta;
+    const autoPrint = Boolean(location.state?.autoPrint);
     const isEditMode = Boolean(editProjectId);
 
     const currencyCode = language === "en" ? "EUR" : "PLN";
@@ -179,6 +188,12 @@ const OfferSummary: React.FC = () => {
 
         loadInventory();
     }, []);
+
+    useEffect(() => {
+        if (!autoPrint) return;
+        const timer = window.setTimeout(() => window.print(), 150);
+        return () => window.clearTimeout(timer);
+    }, [autoPrint]);
 
     const grandTotal = rooms.reduce((sum, room) => sum + room.calculateTotalRoomCost(), 0);
     const finalProjectTotal = grandTotal + additionalCostsTotal;

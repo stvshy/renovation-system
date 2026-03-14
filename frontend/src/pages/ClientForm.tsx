@@ -23,6 +23,7 @@ const ClientForm: React.FC = () => {
     const incomingProjectDates = location.state?.projectDates || draftProjectDates;
     const existingRooms = location.state?.rooms || draftSnapshot?.rooms || [];
     const isEditMode = Boolean(editProjectId);
+    const preservedProjectMeta = incomingClientData?.projectMeta || draftSnapshot?.clientData?.projectMeta;
 
     const [mode, setMode] = useState<'new' | 'existing'>(draftClientForm?.mode || (incomingClientData?.id ? 'existing' : 'new'));
     const [existingClients, setExistingClients] = useState<Client[]>([]);
@@ -93,6 +94,7 @@ const ClientForm: React.FC = () => {
             zipCode,
             phone,
             email,
+            projectMeta: preservedProjectMeta,
         };
 
         setCurrentProjectSnapshot({
@@ -169,6 +171,7 @@ const ClientForm: React.FC = () => {
             zipCode,
             phone,
             email,
+            projectMeta: preservedProjectMeta,
         },
         projectDates: {
             startDate,

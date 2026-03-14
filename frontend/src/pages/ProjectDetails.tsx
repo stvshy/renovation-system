@@ -66,10 +66,18 @@ const rehydrateRoom = (plainRoom: any): Room => {
 const getAdditionalCostsFromClientData = (clientData: any): AdditionalCost[] => {
     const costs = clientData?.projectMeta?.additionalCosts;
     if (!Array.isArray(costs)) return [];
+
+    const buildDeterministicAdditionalCostId = (entry: any, index: number) => {
+        const createdAt = entry?.createdAt || "legacy";
+        const note = entry?.note || "";
+        const amount = Number(entry?.amount) || 0;
+        return `legacy-${createdAt}-${amount}-${note}-${index}`;
+    };
+
     return costs
         .filter((entry) => entry && typeof entry.amount === "number" && entry.amount >= 0)
-        .map((entry) => ({
-            id: entry.id || crypto.randomUUID(),
+        .map((entry, index) => ({
+            id: entry.id || buildDeterministicAdditionalCostId(entry, index),
             amount: Number(entry.amount) || 0,
             note: entry.note || "",
             createdAt: entry.createdAt || new Date().toISOString(),
@@ -530,6 +538,23 @@ const ProjectDetails: React.FC = () => {
         });
     };
 
+    const handlePrintProjectSummary = () => {
+        navigate("/projects/new/offer", {
+            state: {
+                ...baseWizardState,
+                autoPrint: true,
+                draftSnapshot: {
+                    id: editSessionDraftId,
+                    currentStep: "offer",
+                    updatedAt: new Date().toISOString(),
+                    clientData: project.clientData,
+                    projectDates: baseWizardState.projectDates,
+                    rooms: project.rooms || [],
+                },
+            },
+        });
+    };
+
     const parseProjectDate = (value?: string) => {
         if (!value) return null;
         const parsed = new Date(`${value}T00:00:00`);
@@ -641,7 +666,15 @@ const ProjectDetails: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full md:w-auto">
+                        <button
+                            onClick={handlePrintProjectSummary}
+                            className="inline-flex items-center justify-center w-full sm:w-10 h-10 rounded-lg text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
+                            title={t('Drukuj podsumowanie projektu', 'Print project summary')}
+                            aria-label={t('Drukuj podsumowanie projektu', 'Print project summary')}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">print</span>
+                        </button>
                         <ScrollableSelect
                             value={project.status}
                             onChange={(e) => handleStatusChange(e.target.value as any)}
