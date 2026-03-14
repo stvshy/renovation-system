@@ -312,47 +312,47 @@ const ClientForm: React.FC = () => {
     };
 
     return (
-        <div className="px-3 sm:px-4 md:px-10 lg:px-20 xl:px-40 flex flex-1 justify-center py-4 sm:py-5">
-            <div className="layout-content-container flex flex-col w-full max-w-[960px] flex-1">
-                <div className="flex flex-wrap justify-between gap-3 p-4">
-                    <div>
-                        <p className="text-slate-800 dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em]">
-                            {isEditMode ? t('Edycja Projektu', 'Edit Project') : t('Nowy Projekt', 'New Project')}
-                        </p>
-                        {isEditMode && <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('Krok 1 z 4', 'Step 1 of 4')}</p>}
-                    </div>
-                    <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
-                </div>
-                
-                <div className="flex flex-col gap-6 p-4">
-                    {isEditMode && (
-                        <div className="flex flex-wrap gap-2 pb-2 border-b border-gray-200 dark:border-gray-700">
-                            <button type="button" className="text-xs font-bold rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-primary">
-                                {t('Krok 1', 'Step 1')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/projects/new/room', { state: buildWizardState() })}
-                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                            >
-                                {t('Krok 2', 'Step 2')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/projects/new/services', { state: buildWizardState() })}
-                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                            >
-                                {t('Krok 3', 'Step 3')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => navigate('/projects/new/offer', { state: buildWizardState() })}
-                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                            >
-                                {t('Krok 4', 'Step 4')}
-                            </button>
+        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
+            <div className="layout-content-container flex flex-col w-full max-w-[1200px] flex-1">
+                <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-4 p-4">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                        <div>
+                            <p className="text-text-dark dark:text-off-white text-[34px] sm:text-3xl font-black leading-tight">{t('Dane Klienta', 'Client Data')}</p>
+                            <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">
+                                <span>{t('WPROWADZANIE DANYCH KLIENTA', 'ENTERING CLIENT DATA')}</span>
+                            </span>
                         </div>
-                    )}
+                        <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                        <button type="button" className="text-[11.9px] font-bold rounded-lg border border-primary bg-primary/10 px-[10.3px] py-[4.4px] text-primary">
+                            {t('Krok 1', 'Step 1')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/projects/new/room', { state: buildWizardState() })}
+                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 2', 'Step 2')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/projects/new/services', { state: buildWizardState() })}
+                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 3', 'Step 3')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/projects/new/offer', { state: buildWizardState() })}
+                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                            {t('Krok 4', 'Step 4')}
+                        </button>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-6 p-4">
                     
                     {/* Mode Selection */}
                     <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
@@ -370,13 +370,9 @@ const ClientForm: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* Section: Client Data */}
-                    <h2 className="text-xl font-bold text-primary pb-2">{t('Dane Klienta', 'Client Details')}</h2>
-                    
                     {mode === 'existing' && (
                         <div className="mb-4">
-                            <div className="flex items-center justify-between gap-2 mb-2">
-                                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">{t('Wybierz klienta', 'Select client')}</label>
+                            <div className="flex items-center justify-end gap-2 mb-2">
                                 {selectedClientId && (
                                     <button
                                         type="button"

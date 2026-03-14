@@ -726,16 +726,18 @@ const RoomForm: React.FC = () => {
     };
 
     return (
-        <div className="px-3 sm:px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-4 sm:py-5">
-            <div className="layout-content-container flex flex-col w-full max-w-[960px] flex-1">
+        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
+            <div className="layout-content-container flex flex-col w-full max-w-[1200px] flex-1">
                 {/* Header with Project Context */}
                 <div className="flex flex-col gap-2 p-4 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <div>
-                            <p className="text-text-dark dark:text-off-white text-2xl sm:text-3xl font-black leading-tight tracking-[-0.033em]">
+                            <p className="text-text-dark dark:text-off-white text-[34px] sm:text-3xl font-black leading-tight tracking-[-0.033em]">
                                 {editingRoomIndex !== null ? t("Edycja Pokoju", "Edit Room") : t("Definicja Pokoju", "Room Definition")}
                             </p>
-                            <span className="mt-2 inline-flex bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full w-fit">{t('Krok 2: Dodawanie pomieszczeń', 'Step 2: Adding rooms')}</span>
+                            <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">
+                                <span>{t('DEFINICJA POMIESZCZEŃ', 'ROOM DEFINITION')}</span>
+                            </span>
                         </div>
                         <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
                     </div>
@@ -743,13 +745,13 @@ const RoomForm: React.FC = () => {
                         <button
                             type="button"
                             onClick={handleGoToClientStep}
-                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 1', 'Step 1')}
                         </button>
                         <button
                             type="button"
-                            className="text-xs font-bold rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-primary"
+                            className="text-[11.9px] font-bold rounded-lg border border-primary bg-primary/10 px-[10.3px] py-[4.4px] text-primary"
                         >
                             {t('Krok 2', 'Step 2')}
                         </button>
@@ -769,7 +771,7 @@ const RoomForm: React.FC = () => {
                                 });
                             }}
                             disabled={!canNavigateToNextSteps}
-                            className={`text-xs font-bold rounded-lg border px-2.5 py-1 transition-colors ${
+                            className={`text-[11.9px] font-bold rounded-lg border px-[10.3px] py-[4.4px] transition-colors ${
                                 canNavigateToNextSteps
                                     ? 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                                     : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
@@ -781,7 +783,7 @@ const RoomForm: React.FC = () => {
                             type="button"
                             onClick={handleGoToSummaryStep}
                             disabled={!canNavigateToNextSteps}
-                            className={`text-xs font-bold rounded-lg border px-2.5 py-1 transition-colors ${
+                            className={`text-[11.9px] font-bold rounded-lg border px-[10.3px] py-[4.4px] transition-colors ${
                                 canNavigateToNextSteps
                                     ? 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                                     : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
@@ -954,7 +956,7 @@ const RoomForm: React.FC = () => {
                         </div>
                     </div>
 
-                    {mode === "custom" && (
+                     {mode === "custom" && (
                         <div className="flex flex-wrap gap-2 mb-4 animate-fade-in">
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.WALL)}

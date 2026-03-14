@@ -676,8 +676,10 @@ const ServiceForm: React.FC = () => {
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <div>
-                            <p className="text-text-dark dark:text-off-white text-2xl sm:text-3xl font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
-                            <span className="mt-2 inline-flex bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider w-fit">{t('Krok 3 z 4', 'Step 3 of 4')}</span>
+                            <p className="text-text-dark dark:text-off-white text-[34px] sm:text-3xl font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
+                            <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">
+                                <span>{t('OKREŚLANIE PRAC PROJEKTOWYCH', 'DEFINING PROJECT WORK')}</span>
+                            </span>
                         </div>
                         <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
                     </div>
@@ -720,7 +722,7 @@ const ServiceForm: React.FC = () => {
                         </button>
                         <button
                             type="button"
-                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11.9px] font-bold rounded-lg border border-primary bg-primary/10 px-[10.3px] py-[4.4px] text-primary"
                         >
                             {t('Krok 3', 'Step 3')}
                         </button>

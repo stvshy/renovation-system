@@ -254,7 +254,7 @@ const OfferSummary: React.FC = () => {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-3 sm:p-4 sm:items-center">
                     <div>
-                        <p className="text-[#0d141b] dark:text-white text-2xl sm:text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
+                        <p className="text-[#0d141b] dark:text-white text-[34px] sm:text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
                         <div className="mt-1 flex items-center gap-2">
                             <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">{effectiveProjectName}</p>
                             <button
