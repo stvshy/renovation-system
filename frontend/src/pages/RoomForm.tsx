@@ -994,7 +994,9 @@ const RoomForm: React.FC = () => {
                                                 <input
                                                     value={surface.name}
                                                     onChange={(e) => handleUpdateSurface(index, "name", e.target.value)}
-                                                    className="font-bold bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary"
+                                                    className={`bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary ${
+                                                        surface.type === SurfaceType.WALL ? 'font-bold' : 'font-extrabold'
+                                                    }`}
                                                 />
                                             ) : (
                                                 <span className="font-bold flex items-center gap-2">
@@ -1008,13 +1010,15 @@ const RoomForm: React.FC = () => {
                                                     {localizeSurfaceName(surface.name)}
                                                 </span>
                                             )}
-                                            <span className="text-xs text-gray-400 block mt-1">{localizeSurfaceType(surface.type)}</span>
+                                            <span className={`text-xs block mt-1 ${surface.type === SurfaceType.WALL ? 'text-gray-400 font-medium' : 'text-gray-500 font-bold'}`}>
+                                                {localizeSurfaceType(surface.type)}
+                                            </span>
                                         </div>
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
                                         <div className="md:col-span-7 flex flex-row items-center gap-2 md:gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide">
                                             <div className="flex items-center gap-1 shrink-0">
-                                                <label className="text-xs text-gray-500 whitespace-nowrap">{t("Szer", "W")}: </label>
+                                                <label className="text-xs font-semibold text-gray-500 whitespace-nowrap">{t("Szer", "W")}: </label>
                                                 <input
                                                     type="number"
                                                     min="0"
@@ -1027,7 +1031,7 @@ const RoomForm: React.FC = () => {
                                                 <span className="text-xs text-gray-500 whitespace-nowrap">m</span>
                                             </div>
                                             <div className="flex items-center gap-1 shrink-0">
-                                                <label className="text-xs text-gray-500 whitespace-nowrap">{t("Wys/Dł", "H/L")}: </label>
+                                                <label className="text-xs font-semibold text-gray-500 whitespace-nowrap">{t("Wys/Dł", "H/L")}: </label>
                                                 <input
                                                     type="number"
                                                     min="0"
@@ -1083,7 +1087,7 @@ const RoomForm: React.FC = () => {
                                         </div>
                                     )}
                                     <div className="flex flex-wrap gap-2 items-center mb-2">
-                                        <span className="text-xs font-semibold text-gray-500">{t("Otwory", "Openings")}:</span>
+                                        <span className="text-xs font-bold text-gray-500">{t("Otwory", "Openings")}:</span>
                                         {surface.openings.map((op, opIdx) => (
                                             <div
                                                 key={opIdx}
@@ -1167,7 +1171,7 @@ const RoomForm: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 px-4 py-8 gap-4 items-center">
                         <button
                             onClick={handleGoToClientStep}
-                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:justify-self-start"
                         >
                             <span className="material-symbols-outlined">arrow_back</span>
                             {t('Dane klienta', 'Client details')}
@@ -1176,8 +1180,8 @@ const RoomForm: React.FC = () => {
                         <button
                             onClick={handleSaveAndAddNext}
                             disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
-                            className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-transparent md:justify-self-center ${
-                                editingRoomIndex !== null ? "border-green-600 text-green-600 hover:bg-green-50" : "border-primary text-primary hover:bg-primary/5"
+                            className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent md:justify-self-center ${
+                                editingRoomIndex !== null ? "border-green-600/80 text-green-600 hover:bg-green-50/50" : "border-primary/70 text-primary hover:bg-primary/5"
                             }`}
                         >
                             {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
@@ -1187,7 +1191,7 @@ const RoomForm: React.FC = () => {
                         <button
                             onClick={handleSaveAndProceedToServices}
                             disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
-                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed md:justify-self-end"
                         >
                             {t('Usługi', 'Services')}
                             <span className="material-symbols-outlined">arrow_forward</span>

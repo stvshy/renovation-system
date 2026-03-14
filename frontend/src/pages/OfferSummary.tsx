@@ -594,7 +594,7 @@ const OfferSummary: React.FC = () => {
                 </div>
 
                 <div className={`px-3 sm:px-4 mt-10 print:hidden ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
-                    <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border-0 shadow-none' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
+                    <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
                             <div>
                                 <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Lista zakupów', 'Shopping list')}</h2>

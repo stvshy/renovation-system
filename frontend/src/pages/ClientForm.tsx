@@ -424,7 +424,7 @@ const ClientForm: React.FC = () => {
                                     value={firstName} 
                                     onChange={handleChange(setFirstName, 'firstName')} 
                                     disabled={mode === 'existing' && !isEditingSelectedClient}
-                                    className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900 
+                                    className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-2.5 text-sm disabled:bg-gray-200 dark:disabled:bg-slate-900 
                                         ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                                     placeholder={t('Jan', 'John')} 
                                 />
@@ -436,7 +436,7 @@ const ClientForm: React.FC = () => {
                                     value={lastName} 
                                     onChange={handleChange(setLastName, 'lastName')}
                                     disabled={mode === 'existing' && !isEditingSelectedClient}
-                                    className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900 
+                                    className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-2.5 text-sm disabled:bg-gray-200 dark:disabled:bg-slate-900 
                                         ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                                     placeholder={t('Kowalski', 'Doe')} 
                                 />
@@ -451,7 +451,7 @@ const ClientForm: React.FC = () => {
                                     value={address} 
                                     onChange={(e) => setAddress(e.target.value)} 
                                     disabled={mode === 'existing' && !isEditingSelectedClient}
-                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
+                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-2.5 text-sm disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder={t('ul. Kwiatowa 15', '123 Main St')} 
                                 />
                             </label>
@@ -464,7 +464,7 @@ const ClientForm: React.FC = () => {
                                     value={city} 
                                     onChange={(e) => setCity(e.target.value)} 
                                     disabled={mode === 'existing' && !isEditingSelectedClient}
-                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
+                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-2.5 text-sm disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder={t('Warszawa', 'London')} 
                                 />
                             </label>
@@ -474,7 +474,7 @@ const ClientForm: React.FC = () => {
                                     value={zipCode} 
                                     onChange={(e) => setZipCode(e.target.value)} 
                                     disabled={mode === 'existing' && !isEditingSelectedClient}
-                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
+                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-2.5 text-sm disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder="00-001" 
                                 />
                             </label>
@@ -487,7 +487,7 @@ const ClientForm: React.FC = () => {
                                     value={phone} 
                                     onChange={(e) => setPhone(e.target.value)} 
                                     disabled={mode === 'existing' && !isEditingSelectedClient}
-                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
+                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-2.5 text-sm disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder="123-456-789" 
                                     type="tel" 
                                 />
@@ -498,7 +498,7 @@ const ClientForm: React.FC = () => {
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
                                     disabled={mode === 'existing' && !isEditingSelectedClient}
-                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-[15px] disabled:bg-gray-200 dark:disabled:bg-slate-900" 
+                                    className="form-input flex w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 p-2.5 text-sm disabled:bg-gray-200 dark:disabled:bg-slate-900" 
                                     placeholder={t('jan.kowalski@example.com', 'john.doe@example.com')} 
                                     type="email" 
                                 />
@@ -515,7 +515,7 @@ const ClientForm: React.FC = () => {
                                 type="date" 
                                 value={startDate} 
                                 onChange={handleChange(setStartDate, 'startDate')} 
-                                className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-[15px] dark:text-white
+                                className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-2.5 text-sm dark:text-white
                                     ${errors.startDate ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                             />
                             {errors.startDate && <p className="mt-1 text-xs text-red-500 font-medium">{errors.startDate}</p>}
@@ -526,7 +526,7 @@ const ClientForm: React.FC = () => {
                                 type="date" 
                                 value={endDate} 
                                 onChange={handleChange(setEndDate, 'endDate')} 
-                                className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-[15px] dark:text-white
+                                className={`form-input flex w-full rounded-lg border bg-background-light dark:bg-slate-800 p-2.5 text-sm dark:text-white
                                     ${errors.endDate ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                             />
                             {errors.endDate && <p className="mt-1 text-xs text-red-500 font-medium">{errors.endDate}</p>}
@@ -537,18 +537,18 @@ const ClientForm: React.FC = () => {
                         <div className="flex justify-end p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
                             <button
                                 onClick={handleNext}
-                                className="inline-flex items-center justify-center gap-2 h-12 px-2 text-slate-500 dark:text-slate-300 font-semibold text-base hover:text-slate-700 dark:hover:text-white transition-colors"
+                                className="inline-flex items-center justify-center gap-2 h-11 px-2 text-slate-500 dark:text-slate-300 font-semibold text-base hover:text-slate-700 dark:hover:text-white transition-colors"
                             >
                                 <span>{t('Przejdź do kolejnego kroku', 'Go to the next step')}</span>
                                 <span className="material-symbols-outlined">arrow_forward</span>
                             </button>
                         </div>
                     ) : (
-                        <div className="flex flex-col md:flex-row gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
-                            <button onClick={() => navigate('/projects')} className="w-full md:flex-1 flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-base hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                        <div className="flex flex-col md:flex-row gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full justify-end md:items-center">
+                            <button onClick={() => navigate('/projects')} className="w-full md:w-auto flex items-center justify-center gap-2 h-11 px-3 text-slate-500 dark:text-slate-300 font-semibold text-base hover:text-slate-700 dark:hover:text-white transition-colors">
                                 {t('Anuluj', 'Cancel')}
                             </button>
-                            <button onClick={handleNext} className="w-full md:flex-1 flex items-center justify-center gap-2 h-12 px-6 rounded-lg bg-primary text-white font-semibold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20">
+                            <button onClick={handleNext} className="w-full md:w-auto flex items-center justify-center gap-2 h-11 px-2 text-slate-500 dark:text-slate-300 font-semibold text-base hover:text-slate-700 dark:hover:text-white transition-colors md:ml-auto">
                                 {t('Zapisz i Dalej', 'Save and Continue')}
                             </button>
                         </div>

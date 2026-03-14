@@ -1183,8 +1183,12 @@ const ServiceForm: React.FC = () => {
                                     </div>
                                     <div className="text-right shrink-0">
                                         <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Koszt zakupów', 'Purchase cost')}</p>
-                                        <p className="text-lg font-black text-red-600 dark:text-red-400">{materialPlan.totalShortageCost.toFixed(2)} {currencyCode}</p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t('Liczba sztuk: ', 'Items: ')}{shoppingListItems.length}</p>
+                                        <p className="text-lg font-black text-red-600 dark:text-red-400">
+                                            {shoppingListItems.length === 0 ? '-' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
+                                        </p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                            {t('Liczba sztuk: ', 'Items: ')}{shoppingListItems.length === 0 ? '-' : shoppingListItems.length}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -1240,9 +1244,9 @@ const ServiceForm: React.FC = () => {
                                     <div className="text-right shrink-0">
                                         <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Suma', 'Total')}</p>
                                         <p className={`text-lg font-black ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                                            {additionalCostsTotal.toFixed(2)} {currencyCode}
+                                            {additionalCosts.length === 0 ? '-' : `${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
                                         </p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t('Pozycje: ', 'Items: ')}{additionalCosts.length} </p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t('Pozycje: ', 'Items: ')}{additionalCosts.length === 0 ? '-' : additionalCosts.length} </p>
                                     </div>
                                 </div>
                             </div>
