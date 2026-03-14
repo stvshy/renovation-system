@@ -814,10 +814,10 @@ const ServiceForm: React.FC = () => {
                             </div>
 
                             {/* Service Selection */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('Rodzaj prac', 'Type of work')}</label>
+                            <div className="mb-5">
+                                <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">{t('Rodzaj prac', 'Type of work')}</label>
                                 <ScrollableSelect
-                                    className="form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                    className="form-select w-full rounded-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                     value={selectedTemplateId}
                                     onChange={(e) => setSelectedTemplateId(e.target.value)}
                                 >
@@ -829,7 +829,7 @@ const ServiceForm: React.FC = () => {
                                 </ScrollableSelect>
 
                                 {selectedTemplate && (
-                                    <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 rounded-lg text-xs animate-fade-in">
+                                    <div className="mt-2 rounded-lg border border-blue-100 bg-blue-50 p-2.5 text-[11px] dark:border-blue-800 dark:bg-blue-900/10 animate-fade-in">
                                         <div className="flex items-start gap-2">
                                             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-base mt-0.5">info</span>
                                             <div>
@@ -873,19 +873,19 @@ const ServiceForm: React.FC = () => {
 
                             {/* Strategy Parameter Editing */}
                             {selectedTemplate && selectedTemplate.defaultStrategy !== "item" && (
-                                <div className="mb-6 animate-fade-in">
-                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <div className="mb-5 animate-fade-in">
+                                    <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                                         {selectedTemplate.defaultStrategy === "consumption" ? t("Wydajność materiału", "Material coverage") : t("Naddatek materiałowy", "Material waste allowance")}
                                     </label>
                                     <div className="flex items-center">
                                         <input
                                             type="number"
                                             min="0"
-                                            className="form-input w-full rounded-l-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                            className="form-input w-full rounded-l-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                             value={strategyParam}
                                             onChange={(e) => setStrategyParam(e.target.value)}
                                         />
-                                        <span className="bg-slate-100 dark:bg-slate-800 px-4 py-2 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-xl text-sm font-bold text-slate-500 min-w-[60px] text-center">
+                                        <span className="min-w-[56px] rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-3 py-2 text-xs font-bold text-slate-500 text-center dark:border-slate-700 dark:bg-slate-800">
                                             {selectedTemplate.defaultStrategy === "consumption" ? t("m²/jedn", "m²/unit") : "%"}
                                         </span>
                                     </div>
@@ -893,14 +893,14 @@ const ServiceForm: React.FC = () => {
                             )}
 
                             {/* Material Selection / Add Material */}
-                            <div className="mb-6 space-y-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <div className="mb-5 space-y-3">
+                                <div className="mb-2 flex items-center justify-between">
+                                    <label className="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                                         {t('Wybór materiału', 'Material selection')} {isAddingNewMaterial ? t('(Dodawanie)', '(Adding)') : t('(Magazyn)', '(Inventory)')}
                                     </label>
                                     <button
                                         onClick={() => setIsAddingNewMaterial(!isAddingNewMaterial)}
-                                        className={`text-xs font-bold px-3 py-1 rounded-full transition-all ${
+                                        className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all ${
                                             isAddingNewMaterial ? "bg-gray-200 text-gray-700" : "bg-primary/10 text-primary hover:bg-primary/20"
                                         }`}
                                     >
@@ -911,17 +911,14 @@ const ServiceForm: React.FC = () => {
                                 {!isAddingNewMaterial ? (
                                     <>
                                         {filteredInventory.length === 0 ? (
-                                            <div className="flex flex-col gap-2 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center">
-                                                <p className="text-sm text-slate-500">
-                                                    {t('Brak materiałów w magazynie dla kategorii', 'No inventory materials for category')} <b>{selectedCategory}</b>.
+                                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-center dark:border-slate-700 dark:bg-slate-800/50">
+                                                <p className="text-[13px] leading-5 text-slate-500 dark:text-slate-300">
+                                                    {t('Brak materiałów w magazynie dla kategorii', 'No inventory materials for category')} <b>{localizeCategory(selectedCategory)}</b>.
                                                 </p>
-                                                <button onClick={() => setIsAddingNewMaterial(true)} className="text-primary font-bold text-sm hover:underline">
-                                                    {t('Dodaj nowy materiał', 'Add new material')}
-                                                </button>
                                             </div>
                                         ) : (
                                             <ScrollableSelect
-                                                className="form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                                className="form-select w-full rounded-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                                 value={selectedMaterialId}
                                                 onChange={(e) => setSelectedMaterialId(e.target.value)}
                                             >
@@ -934,12 +931,12 @@ const ServiceForm: React.FC = () => {
                                         )}
                                     </>
                                 ) : (
-                                    <div className="p-4 bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 rounded-xl space-y-4 animate-fade-in">
+                                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/30 space-y-3 animate-fade-in">
                                         {/* Destination Switch */}
-                                        <div className="flex p-1 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 mb-2">
+                                        <div className="mb-1 flex rounded-lg border border-slate-200 bg-white p-1 dark:border-slate-800 dark:bg-slate-900">
                                             <button
                                                 onClick={() => setNewMatScope("inventory")}
-                                                className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                                                className={`flex-1 rounded-md py-1.5 text-[11px] font-bold transition-colors ${
                                                     newMatScope === "inventory" ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                 }`}
                                             >
@@ -947,7 +944,7 @@ const ServiceForm: React.FC = () => {
                                             </button>
                                             <button
                                                 onClick={() => setNewMatScope("project")}
-                                                className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                                                className={`flex-1 rounded-md py-1.5 text-[11px] font-bold transition-colors ${
                                                     newMatScope === "project" ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                 }`}
                                             >
@@ -961,7 +958,7 @@ const ServiceForm: React.FC = () => {
                                                 placeholder={t('Nazwa materiału', 'Material name')}
                                                 value={customMatName}
                                                 onChange={(e) => setCustomMatName(e.target.value)}
-                                                className="form-input w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm"
+                                                className="form-input w-full rounded-lg border-slate-200 text-sm dark:bg-slate-800"
                                             />
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
@@ -972,14 +969,14 @@ const ServiceForm: React.FC = () => {
                                                     placeholder={t('Cena', 'Price')}
                                                     value={customMatPrice}
                                                     onChange={(e) => setCustomMatPrice(e.target.value)}
-                                                    className="form-input w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm pr-12"
+                                                    className="form-input w-full rounded-lg border-slate-200 pr-12 text-sm dark:bg-slate-800"
                                                 />
                                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">{currencySymbol}</span>
                                             </div>
                                             <ScrollableSelect
                                                 value={customMatUnit}
                                                 onChange={(e) => setCustomMatUnit(e.target.value as Unit)}
-                                                className="form-select w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm"
+                                                className="form-select w-full rounded-lg border-slate-200 text-sm dark:bg-slate-800"
                                             >
                                                 {Object.values(Unit).map((u) => (
                                                     <option key={u} value={u}>
@@ -998,7 +995,7 @@ const ServiceForm: React.FC = () => {
                                                     placeholder={t('Ilość w magazynie', 'Quantity in inventory')}
                                                     value={customMatInitialStock}
                                                     onChange={(e) => setCustomMatInitialStock(e.target.value)}
-                                                    className="form-input w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm"
+                                                    className="form-input w-full rounded-lg border-slate-200 text-sm dark:bg-slate-800"
                                                 />
                                             </div>
                                         )}
@@ -1013,7 +1010,7 @@ const ServiceForm: React.FC = () => {
                                                         placeholder={t('np. 10', 'e.g. 10')}
                                                         value={customMatCoverage}
                                                         onChange={(e) => setCustomMatCoverage(e.target.value)}
-                                                        className="form-input w-full rounded-lg border-slate-200 dark:bg-slate-800 text-sm pr-16"
+                                                        className="form-input w-full rounded-lg border-slate-200 pr-16 text-sm dark:bg-slate-800"
                                                     />
                                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">
                                                         m² / {localizeUnit(customMatUnit)}
@@ -1026,11 +1023,11 @@ const ServiceForm: React.FC = () => {
                             </div>
 
                             {/* Scope & Quantity */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div className="mb-6 grid grid-cols-1 gap-5 md:grid-cols-2">
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('Miejsce prac', 'Work area')}</label>
+                                    <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">{t('Miejsce prac', 'Work area')}</label>
                                     <ScrollableSelect
-                                        className="form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                        className="form-select w-full rounded-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                         value={scopeType === "specific" ? `s-${specificSurfaceIndex}` : scopeType}
                                         onChange={(e) => {
                                             const val = e.target.value;
@@ -1068,19 +1065,19 @@ const ServiceForm: React.FC = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                    <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                                         {scopeType === "manual" ? t('Ilość robót', 'Work quantity') : t('Powierzchnia/Długość', 'Area/Length')}
                                     </label>
                                     <div className="flex items-center">
                                         <input
                                             type="number"
                                             min="0"
-                                            className="form-input w-full rounded-l-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
+                                            className="form-input w-full rounded-l-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
                                             value={scopeType === "manual" ? manualQuantity : currentDimension.toFixed(2)}
                                             disabled={scopeType !== "manual"}
                                             onChange={(e) => setManualQuantity(e.target.value)}
                                         />
-                                        <span className="bg-slate-100 dark:bg-slate-800 px-4 py-2 border border-l-0 border-slate-200 dark:border-slate-700 rounded-r-xl text-sm font-bold text-slate-500">
+                                        <span className="rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-3 py-2 text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
                                             {localizeUnit(getInputDimensionUnit())}
                                         </span>
                                     </div>
@@ -1089,20 +1086,20 @@ const ServiceForm: React.FC = () => {
 
                             {/* Error Message Box */}
                             {errorMessage && (
-                                <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3 animate-fade-in">
+                                <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20 animate-fade-in">
                                     <span className="material-symbols-outlined text-red-600 dark:text-red-400 mt-0.5">error</span>
                                     <div>
-                                        <p className="font-bold text-red-700 dark:text-red-300 text-sm">{t('Nie można dodać usługi', 'Cannot add service')}</p>
-                                        <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
+                                        <p className="text-xs font-bold text-red-700 dark:text-red-300">{t('Nie można dodać usługi', 'Cannot add service')}</p>
+                                        <p className="text-xs text-red-600 dark:text-red-400">{errorMessage}</p>
                                     </div>
                                 </div>
                             )}
 
                             <button
                                 onClick={handleAddService}
-                                className="w-full bg-primary text-white font-bold text-sm sm:text-base py-2.5 sm:py-4 rounded-xl hover:bg-primary/90 shadow-md hover:shadow-lg transition-all flex justify-center items-center gap-1.5 sm:gap-2 active:scale-[0.98]"
+                                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
                             >
-                                <span className="material-symbols-outlined text-[18px] sm:text-[22px]">add_task</span>
+                                <span className="material-symbols-outlined text-[18px]">add_task</span>
                                 {t('Dodaj do kosztorysu pokoju', 'Add to room estimate')}
                             </button>
                         </div>
@@ -1124,9 +1121,9 @@ const ServiceForm: React.FC = () => {
 
                             <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
                                 {activeRoom.tasks.length === 0 ? (
-                                    <div className="text-center text-slate-400 py-20 flex flex-col items-center gap-3">
+                                    <div className="flex flex-col items-center gap-3 py-16 text-center text-slate-400">
                                         <span className="material-symbols-outlined text-5xl text-slate-200 dark:text-slate-800">playlist_add</span>
-                                        <p className="text-sm">
+                                        <p className="text-[13px] leading-5 text-slate-500 dark:text-slate-300">
                                             {t('Lista zadań dla tego pokoju jest pusta.', 'Task list for this room is empty.')}
                                             <br />
                                             {t('Uzyj konfiguratora, aby dodac prace.', 'Use the configurator to add work items.')}
@@ -1197,7 +1194,7 @@ const ServiceForm: React.FC = () => {
 
                             <div className="p-4 space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar">
                                 {shoppingListItems.length === 0 ? (
-                                    <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/40 px-4 py-4 text-sm text-slate-600 dark:text-slate-300 text-center">
+                                    <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-center text-[13px] leading-5 text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
                                         {t('Wszystkie materiały są pokryte stanem magazynowym.', 'All material demand is currently covered by inventory.')}
                                     </div>
                                 ) : (
@@ -1257,7 +1254,7 @@ const ServiceForm: React.FC = () => {
 
                             <div className="p-4 space-y-3 max-h-[260px] overflow-y-auto custom-scrollbar">
                                 {additionalCosts.length === 0 ? (
-                                    <div className="w-full rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/40 px-4 py-4 text-sm text-slate-600 dark:text-slate-300 text-center">
+                                    <div className="w-full rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-center text-[13px] leading-5 text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
                                         {t('Brak kosztów dodatkowych.', 'No additional costs yet.')}
                                     </div>
                                 ) : (
