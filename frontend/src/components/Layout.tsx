@@ -17,7 +17,7 @@ const Layout: React.FC = () => {
     return (
         <div className="flex relative bg-background-light dark:bg-background-dark h-screen w-full font-display text-text-light dark:text-text-dark overflow-hidden">
             <Sidebar />
-            <main className="flex-1 min-w-0 h-screen overflow-x-hidden overflow-y-auto">
+            <main className="flex-1 min-w-0 h-screen overflow-x-hidden overflow-y-auto print:h-auto print:overflow-visible">
                 {isDemoMode && (
                     <div className="sticky top-0 z-40 flex items-center justify-between gap-3 bg-gradient-to-r from-sky-500 to-dependable-blue px-4 py-2 text-white shadow-md">
                         <div className="flex items-center gap-2 text-sm font-medium">

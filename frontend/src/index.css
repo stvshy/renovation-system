@@ -118,3 +118,28 @@ input[type="password"]::-ms-clear {
     color: rgb(241 245 249);
   }
 }
+
+@media print {
+  /* Ensure the main scrollable container doesn't clip content */
+  body, html {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Allow tables to lay out at full width without being clipped by overflow:hidden parents */
+  .overflow-x-auto,
+  .overflow-hidden {
+    overflow: visible !important;
+  }
+
+  /* Tables should fill the page width and not force a minimum width */
+  table {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Avoid page breaks inside rows */
+  tr {
+    break-inside: avoid;
+  }
+}

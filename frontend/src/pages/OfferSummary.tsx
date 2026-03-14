@@ -249,8 +249,8 @@ const OfferSummary: React.FC = () => {
     };
 
     return (
-        <div className="px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 print:px-0 flex flex-1 justify-center py-4 sm:py-5 print:py-0">
-            <div className="layout-content-container flex flex-col max-w-[960px] print:max-w-none flex-1">
+        <div className="px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 print:px-4 flex flex-1 justify-center py-4 sm:py-5 print:py-0 print:block print:overflow-visible">
+            <div className="layout-content-container flex flex-col max-w-[960px] print:max-w-none w-full flex-1 print:block print:overflow-visible">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-3 sm:p-4 sm:items-center">
                     <div>
@@ -357,41 +357,17 @@ const OfferSummary: React.FC = () => {
 
                 {/* Grand Total Card */}
                 <div className="p-3 sm:p-4 @container">
-                    <div className="flex flex-col items-center justify-center rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white dark:bg-background-dark/50 p-5 sm:p-8 border border-gray-200 dark:border-gray-700">
-                        <p className="text-gray-500 dark:text-gray-400 text-base sm:text-lg font-normal leading-normal font-display text-center">{t('Szacowany koszt całkowity', 'Estimated total cost')}</p>
-                        <p className="text-accent text-3xl sm:text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display text-center break-words">{finalProjectTotal.toFixed(2)} {currencyCode}</p>
-                        <p className="text-sm text-gray-400 mt-2 text-center">{t('Robocizna + Materiały + Koszty dodatkowe', 'Labor + Materials + Additional costs')}</p>
-                        {additionalCostsTotal > 0 && (
-                            <p className="text-xs text-red-600 dark:text-red-400 mt-1 text-center">
-                                {t('Koszty dodatkowe:', 'Additional costs:')} +{additionalCostsTotal.toFixed(2)} {currencyCode}
-                            </p>
-                        )}
+                    <div className="flex flex-col items-center justify-center rounded-xl shadow-[0_4px_20px_rgba(17,115,212,0.18)] bg-gradient-to-r from-sky-500 to-dependable-blue p-5 sm:p-8">
+                        <p className="text-white/80 text-base sm:text-lg font-normal leading-normal font-display text-center">{t('Szacowany koszt całkowity', 'Estimated total cost')}</p>
+                        <p className="text-white text-3xl sm:text-6xl font-black leading-tight tracking-[-0.033em] mt-2 font-display text-center break-words">{finalProjectTotal.toFixed(2)} {currencyCode}</p>
+                        <p className="text-white/70 text-sm mt-2 text-center">{t('Robocizna + Materiały + Koszty dodatkowe', 'Labor + Materials + Additional costs')}</p>
                         {projectDates && (
-                            <p className="text-xs text-primary mt-4 font-bold bg-primary/10 px-3 py-1 rounded-full inline-flex flex-wrap items-center justify-center text-center">
+                            <p className="text-xs text-white mt-4 font-bold bg-white/20 px-3 py-1 rounded-full inline-flex flex-wrap items-center justify-center text-center">
                                 {t('Realizacja:', 'Execution:')} {projectDates.startDate} — {projectDates.endDate}
                             </p>
                         )}
                     </div>
                 </div>
-
-                {additionalCosts.length > 0 && (
-                    <div className="px-3 sm:px-4 mt-2 print:mt-4">
-                        <div className="rounded-xl border border-rose-200 dark:border-rose-800 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden print:shadow-none">
-                            <div className="px-4 sm:px-6 py-4 border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10 flex items-center justify-between gap-3">
-                                <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Koszty dodatkowe', 'Additional costs')}</h2>
-                                <p className="text-sm font-black text-red-600 dark:text-red-400">+{additionalCostsTotal.toFixed(2)} {currencyCode}</p>
-                            </div>
-                            <div className="p-4 space-y-2">
-                                {additionalCosts.map((cost) => (
-                                    <div key={cost.id} className="flex items-start justify-between gap-3 rounded-lg border border-rose-100 dark:border-rose-900/40 bg-rose-50/40 dark:bg-rose-900/10 px-3 py-2">
-                                        <p className="text-sm text-gray-700 dark:text-slate-200 break-words">{cost.note}</p>
-                                        <p className="text-sm font-black text-red-600 dark:text-red-400 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 <div className="hidden px-3 sm:px-4 mt-2">
                     <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden">
@@ -456,7 +432,7 @@ const OfferSummary: React.FC = () => {
                     const roomTotal = room.calculateTotalRoomCost();
 
                     return (
-                        <div key={roomIndex} className="mb-10 animate-fade-in break-inside-avoid">
+                        <div key={roomIndex} className="mt-6 animate-fade-in print:break-inside-auto print:mt-6">
                             <h2 className="text-[#0d141b] dark:text-white text-xl sm:text-[22px] font-bold leading-tight tracking-[-0.015em] px-3 sm:px-4 pb-3 pt-6 sm:pt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 font-display border-b border-gray-200 dark:border-gray-700 mx-2 sm:mx-4">
                                 <span className="flex items-center gap-2 min-w-0">
                                     <span className="material-symbols-outlined">meeting_room</span>
@@ -488,9 +464,9 @@ const OfferSummary: React.FC = () => {
                                                         <p>{t('Ilość', 'Quantity')}</p>
                                                         <p className="text-right">{quantity.toFixed(2)} {localizeUnit(task.material.unit)}</p>
                                                         <p>{t('Koszt Mat.', 'Material Cost')}</p>
-                                                        <p className="text-right text-green-600 dark:text-green-400">{materialCost.toFixed(2)} {currencyCode}</p>
+                                                        <p className="text-right text-amber-600 dark:text-amber-400">{materialCost.toFixed(2)} {currencyCode}</p>
                                                         <p>{t('Robocizna', 'Labor')}</p>
-                                                        <p className="text-right text-blue-600 dark:text-blue-400">{laborCost.toFixed(2)} {currencyCode}</p>
+                                                        <p className="text-right text-green-600 dark:text-green-400">{laborCost.toFixed(2)} {currencyCode}</p>
                                                         <p className="font-semibold text-gray-900 dark:text-white">{t('Razem', 'Total')}</p>
                                                         <p className="text-right font-semibold text-gray-900 dark:text-white">{totalTaskCost.toFixed(2)} {currencyCode}</p>
                                                     </div>
@@ -554,8 +530,8 @@ const OfferSummary: React.FC = () => {
                                                     <td className="px-3 sm:px-6 py-4 text-right whitespace-nowrap">
                                                         {quantity.toFixed(2)} {localizeUnit(task.material.unit)}
                                                     </td>
-                                                    <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 whitespace-nowrap">{materialCost.toFixed(2)} {currencyCode}</td>
-                                                    <td className="px-3 sm:px-6 py-4 text-right text-blue-600 dark:text-blue-400 whitespace-nowrap">{laborCost.toFixed(2)} {currencyCode}</td>
+                                                    <td className="px-3 sm:px-6 py-4 text-right text-amber-600 dark:text-amber-400 whitespace-nowrap">{materialCost.toFixed(2)} {currencyCode}</td>
+                                                    <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 whitespace-nowrap">{laborCost.toFixed(2)} {currencyCode}</td>
                                                     <td className="px-3 sm:px-6 py-4 text-right font-bold text-gray-900 dark:text-white whitespace-nowrap">
                                                         {totalTaskCost.toFixed(2)} {currencyCode}
                                                     </td>
@@ -576,30 +552,66 @@ const OfferSummary: React.FC = () => {
                     );
                 })}
 
-                <div className="px-3 sm:px-4 mt-2 print:mt-6 break-inside-avoid">
-                    <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden print:shadow-none">
-                        <div className="px-4 sm:px-6 py-4 border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className={`px-3 sm:px-4 mt-6 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-auto print:mt-6`}>
+                    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden print:shadow-none">
+                        <div className="px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div>
-                                <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Lista zakupów', 'Shopping list')}</h2>
+                                <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Koszty dodatkowe', 'Additional costs')}</h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                    {t(
-                                        'Tych materiałów brakuje w magazynie. Ich koszt jest już wliczony w koszt całkowity.',
-                                        'These materials are missing from inventory. Their cost is already included in the total cost.'
-                                    )}
+                                    {additionalCosts.length === 0
+                                        ? t('Brak niestandardowych kosztów w ramach projektu.', 'No custom project costs.')
+                                        : t('Niestandardowe koszty w ramach projektu. Są już wliczone w koszt całkowity.', 'Custom project costs. They are already included in the total cost.')
+                                    }
                                 </p>
                             </div>
                             <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
                                 <div>
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
-                                    <p className="text-xl font-black text-amber-600 dark:text-amber-400">{shoppingListItems.length}</p>
+                                    <p className="text-xl font-black text-gray-600 dark:text-gray-300">{additionalCosts.length === 0 ? '–' : additionalCosts.length}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Koszt zakupów', 'Purchase cost')}</p>
-                                    <p className="text-xl font-black text-red-600 dark:text-red-400">{materialPlan.totalShortageCost.toFixed(2)} {currencyCode}</p>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Suma', 'Total')}</p>
+                                    <p className="text-xl font-black text-gray-600 dark:text-gray-300">{additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}</p>
                                 </div>
                             </div>
                         </div>
 
+                        <div className="p-4 space-y-2">
+                            {additionalCosts.map((cost) => (
+                                <div key={cost.id} className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 px-3 py-2">
+                                    <p className="text-sm text-gray-700 dark:text-slate-200 break-words">{cost.note}</p>
+                                    <p className="text-sm font-black text-gray-600 dark:text-gray-300 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div className={`px-3 sm:px-4 mt-6 ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-auto print:mt-6`}>
+                    <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border-0 shadow-none' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
+                        <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
+                            <div>
+                                <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Lista zakupów', 'Shopping list')}</h2>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                    {shoppingListItems.length === 0
+                                        ? t('Magazyn pokrywa wszystkie materiały z projektu.', 'Inventory covers all materials for this project.')
+                                        : t('Tych materiałów brakuje w magazynie. Ich koszt jest już wliczony w koszt całkowity.', 'These materials are missing from inventory. Their cost is already included in the total cost.')
+                                    }
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
+                                <div>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
+                                    <p className={`text-xl font-black ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-amber-600 dark:text-amber-400'}`}>{shoppingListItems.length === 0 ? '–' : shoppingListItems.length}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Koszt zakupów', 'Purchase cost')}</p>
+                                    <p className={`text-xl font-black ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-red-600 dark:text-red-400'}`}>{shoppingListItems.length === 0 ? '–' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {shoppingListItems.length > 0 && (
                         <div className="overflow-x-auto print:overflow-visible">
                             <table className="w-full min-w-[720px] print:min-w-0 text-sm text-left text-gray-600 dark:text-gray-300">
                                 <thead className="text-xs uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -621,16 +633,10 @@ const OfferSummary: React.FC = () => {
                                             <td className="px-4 py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
                                         </tr>
                                     ))}
-                                    {shoppingListItems.length === 0 && (
-                                        <tr>
-                                            <td colSpan={5} className="px-4 py-8 text-center text-sm text-emerald-700 dark:text-emerald-300">
-                                                {t('Na ten moment magazyn pokrywa wszystkie materiały z projektu.', 'At the moment inventory covers all materials required by this project.')}
-                                            </td>
-                                        </tr>
-                                    )}
                                 </tbody>
                             </table>
                         </div>
+                        )}
                     </div>
                 </div>
 
