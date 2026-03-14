@@ -325,7 +325,7 @@ const ClientForm: React.FC = () => {
                         <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
                     </div>
                     <div className="flex flex-wrap gap-2 pt-1">
-                        <button type="button" className="text-[11.9px] font-bold rounded-lg border border-primary bg-primary/10 px-[10.3px] py-[4.4px] text-primary">
+                        <button type="button" className="text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary">
                             {t('Krok 1', 'Step 1')}
                         </button>
                         <button

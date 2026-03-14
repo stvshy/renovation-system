@@ -722,7 +722,7 @@ const ServiceForm: React.FC = () => {
                         </button>
                         <button
                             type="button"
-                            className="text-[11.9px] font-bold rounded-lg border border-primary bg-primary/10 px-[10.3px] py-[4.4px] text-primary"
+                            className="text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary"
                         >
                             {t('Krok 3', 'Step 3')}
                         </button>
@@ -747,7 +747,7 @@ const ServiceForm: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 px-3 sm:px-4">
                     {/* LEFT COLUMN: Configuration */}
                     <div className="lg:col-span-7 flex flex-col gap-6">
                         {/* Room Tabs + Room Info — connected visually */}
@@ -762,7 +762,7 @@ const ServiceForm: React.FC = () => {
                                         ${
                                             activeRoomIndex === idx
                                                 ? "bg-primary text-white border-2 border-primary"
-                                                : "bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 border border-transparent"
+                                                : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 border border-transparent"
                                         }`}
                                 >
                                     {room.name}
@@ -898,7 +898,7 @@ const ServiceForm: React.FC = () => {
                             )}
 
                             {/* Material Selection / Add Material */}
-                            <div className="mb-5 space-y-3">
+                            <div className="mb-5">
                                 <div className="mb-2 flex items-center justify-between">
                                     <label className="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                                         {t('Wybór materiału', 'Material selection')} {isAddingNewMaterial ? t('(Dodawanie)', '(Adding)') : t('(Magazyn)', '(Inventory)')}

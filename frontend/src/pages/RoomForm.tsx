@@ -751,7 +751,7 @@ const RoomForm: React.FC = () => {
                         </button>
                         <button
                             type="button"
-                            className="text-[11.9px] font-bold rounded-lg border border-primary bg-primary/10 px-[10.3px] py-[4.4px] text-primary"
+                            className="text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary"
                         >
                             {t('Krok 2', 'Step 2')}
                         </button>
