@@ -359,7 +359,7 @@ const OfferSummary: React.FC = () => {
                 <div className="p-3 sm:p-4 @container print:break-inside-avoid">
                     <div className="print-total-card flex flex-col items-center justify-center rounded-xl shadow-[0_4px_20px_rgba(17,115,212,0.18)] bg-gradient-to-r from-sky-500 to-dependable-blue p-5 sm:p-8 print:bg-white print:shadow-none print:border print:border-gray-200">
                         <p className="text-white/80 text-base sm:text-lg font-normal leading-normal font-display text-center print:text-gray-600">{t('Szacowany koszt całkowity', 'Estimated total cost')}</p>
-                        <p className="text-white text-3xl sm:text-6xl font-black leading-tight tracking-[0.07px] mt-2 font-display text-center break-words print-total-amount print:text-primary">{finalProjectTotal.toFixed(2)} {currencyCode}</p>
+                        <p className="text-white text-3xl sm:text-6xl font-black leading-tight tracking-[0.03em] mt-2 font-display text-center break-words print-total-amount print:text-primary">{finalProjectTotal.toFixed(2)} {currencyCode}</p>
                         <p className="text-white/70 text-sm mt-2 text-center print:text-gray-500">{t('Robocizna + Materiały + Koszty dodatkowe', 'Labor + Materials + Additional costs')}</p>
                         {projectDates && (
                             <p className="text-xs text-white mt-4 font-bold bg-white/20 px-3 py-1 rounded-full inline-flex flex-wrap items-center justify-center text-center print:bg-primary/10 print:text-primary">
@@ -486,22 +486,22 @@ const OfferSummary: React.FC = () => {
                                 <table className="w-full min-w-[720px] print:min-w-0 print:table-fixed text-sm text-left text-gray-500 dark:text-gray-400 font-display">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 print:w-[19%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3">
                                                 {t('Opis Zadania', 'Task Description')}
                                             </th>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 print:w-[15%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3">
                                                 {t('Materiał', 'Material')}
                                             </th>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[12%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right">
                                                 {t('Ilość', 'Quantity')}
                                             </th>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[13%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right">
                                                 {t('Koszt Mat.', 'Material Cost')}
                                             </th>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[15%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right">
                                                 {t('Robocizna', 'Labor')}
                                             </th>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[14%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right">
                                                 {t('Razem', 'Total')}
                                             </th>
                                         </tr>
@@ -518,21 +518,21 @@ const OfferSummary: React.FC = () => {
                                                     key={index}
                                                     className="bg-white dark:bg-background-dark/50 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                                                 >
-                                                    <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 dark:text-white break-words print:w-[30%]">
+                                                    <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 dark:text-white break-words">
                                                         {task.description}
                                                     </td>
-                                                    <td className="px-3 sm:px-6 py-4 break-words print:w-[24%]">
+                                                    <td className="px-3 sm:px-6 py-4 break-words">
                                                         {task.material.name}
                                                         {task.material.inventoryId && (
                                                             <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-1 rounded print:hidden">{t('Magazyn', 'Inventory')}</span>
                                                         )}
                                                     </td>
-                                                    <td className="px-3 sm:px-6 py-4 text-right whitespace-nowrap print:w-[12%]">
+                                                    <td className="px-3 sm:px-6 py-4 text-right whitespace-nowrap">
                                                         {quantity.toFixed(2)} {localizeUnit(task.material.unit)}
                                                     </td>
-                                                    <td className="px-3 sm:px-6 py-4 text-right text-amber-600 dark:text-amber-400 print:text-black whitespace-nowrap print:w-[12%]">{materialCost.toFixed(2)} {currencyCode}</td>
-                                                    <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 print:text-black whitespace-nowrap print:w-[12%]">{laborCost.toFixed(2)} {currencyCode}</td>
-                                                    <td className="px-3 sm:px-6 py-4 text-right font-bold text-gray-900 dark:text-white whitespace-nowrap print:w-[10%]">
+                                                    <td className="px-3 sm:px-6 py-4 text-right text-amber-600 dark:text-amber-400 print:text-black whitespace-nowrap">{materialCost.toFixed(2)} {currencyCode}</td>
+                                                    <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 print:text-black whitespace-nowrap">{laborCost.toFixed(2)} {currencyCode}</td>
+                                                    <td className="px-3 sm:px-6 py-4 text-right font-bold text-gray-900 dark:text-white whitespace-nowrap">
                                                         {totalTaskCost.toFixed(2)} {currencyCode}
                                                     </td>
                                                 </tr>

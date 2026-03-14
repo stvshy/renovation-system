@@ -120,7 +120,6 @@ input[type="password"]::-ms-clear {
 }
 
 @media print {
-  /* Ensure the main scrollable container doesn't clip content */
   body, html {
     height: auto !important;
     overflow: visible !important;
@@ -156,13 +155,11 @@ input[type="password"]::-ms-clear {
     -webkit-text-fill-color: transparent;
   }
 
-  /* Allow OfferSummary tables to lay out at full width without clipping */
   .offer-summary-page .overflow-x-auto,
   .offer-summary-page .overflow-hidden {
     overflow: visible !important;
   }
 
-  /* Tables on OfferSummary should fit A4 width */
   .offer-summary-page table {
     min-width: 0 !important;
     width: 100% !important;
@@ -188,7 +185,6 @@ input[type="password"]::-ms-clear {
     margin-top: 1rem !important;
   }
 
-  /* Avoid page breaks inside rows */
   .offer-summary-page tr {
     break-inside: avoid;
     page-break-inside: avoid;
