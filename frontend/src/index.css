@@ -124,22 +124,73 @@ input[type="password"]::-ms-clear {
   body, html {
     height: auto !important;
     overflow: visible !important;
+    background: #fff !important;
+    font-size: 15px;
   }
 
-  /* Allow tables to lay out at full width without being clipped by overflow:hidden parents */
-  .overflow-x-auto,
-  .overflow-hidden {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  .print-color-exact,
+  .print-total-amount,
+  .print-total-card {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .offer-summary-page {
+    background: #fff !important;
+  }
+
+  .print-total-card {
+    background: #fff !important;
+  }
+
+  .print-total-amount {
+    background-image: linear-gradient(90deg, rgba(56, 150, 232, 0.85), rgba(17, 115, 212, 0.9));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Allow OfferSummary tables to lay out at full width without clipping */
+  .offer-summary-page .overflow-x-auto,
+  .offer-summary-page .overflow-hidden {
     overflow: visible !important;
   }
 
-  /* Tables should fill the page width and not force a minimum width */
-  table {
+  /* Tables on OfferSummary should fit A4 width */
+  .offer-summary-page table {
     min-width: 0 !important;
     width: 100% !important;
+    table-layout: fixed;
+  }
+
+  .offer-summary-page td,
+  .offer-summary-page th {
+    word-break: break-word;
+  }
+
+  .offer-summary-page .print\:break-inside-avoid {
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+  }
+
+  .offer-summary-page .print\:break-inside-auto {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .offer-summary-page .print\:mt-6 {
+    margin-top: 1rem !important;
   }
 
   /* Avoid page breaks inside rows */
-  tr {
+  .offer-summary-page tr {
     break-inside: avoid;
+    page-break-inside: avoid;
   }
 }
