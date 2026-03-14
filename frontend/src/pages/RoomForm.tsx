@@ -960,19 +960,19 @@ const RoomForm: React.FC = () => {
                         <div className="flex flex-wrap gap-2 mb-4 animate-fade-in">
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.WALL)}
-                                className="btn-secondary text-xs px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                className="btn-secondary text-sm px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
                                 + {t("Ściana", "Wall")}
                             </button>
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.FLOOR)}
-                                className="btn-secondary text-xs px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                className="btn-secondary text-sm px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
                                 + {t("Podłoga", "Floor")}
                             </button>
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.CEILING)}
-                                className="btn-secondary text-xs px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                className="btn-secondary text-sm px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
                                 + {t("Sufit", "Ceiling")}
                             </button>
@@ -991,28 +991,26 @@ const RoomForm: React.FC = () => {
                             >
                                 <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                                     <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 items-center w-full">
-                                        <div className="md:col-span-3">
+                                        <div className="md:col-span-3 flex items-center gap-2">
                                             {mode === "custom" ? (
                                                 <input
                                                     value={surface.name}
                                                     onChange={(e) => handleUpdateSurface(index, "name", e.target.value)}
-                                                    className="bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary font-semibold"
+                                                    className="bg-transparent border-b border-dashed border-gray-300 flex-1 min-w-0 focus:outline-none focus:border-primary font-semibold"
                                                 />
                                             ) : (
-                                                <span className="font-bold flex items-center gap-2">
-                                                    <span className="material-symbols-outlined text-gray-400">
+                                                <span className="font-bold flex items-center gap-2 flex-1 min-w-0">
+                                                    <span className="material-symbols-outlined text-gray-400 shrink-0">
                                                         {surface.type === SurfaceType.WALL
                                                             ? "grid_view"
                                                             : surface.type === SurfaceType.FLOOR
                                                             ? "check_box_outline_blank"
                                                             : "roofing"}
                                                     </span>
-                                                    {localizeSurfaceName(surface.name)}
+                                                    <span className="truncate">{localizeSurfaceName(surface.name)}</span>
                                                 </span>
                                             )}
-                                            <span className="text-xs block mt-1 text-gray-500 font-semibold">
-                                                {localizeSurfaceType(surface.type)}
-                                            </span>
+                                            <span className="text-xs text-gray-400 font-semibold shrink-0">{localizeSurfaceType(surface.type)}</span>
                                         </div>
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
@@ -1026,7 +1024,7 @@ const RoomForm: React.FC = () => {
                                                     disabled={mode === "standard" || autoAreaLocked}
                                                     value={surfaceDrafts[index]?.width ?? ""}
                                                     onChange={(e) => handleUpdateSurface(index, "width", e.target.value)}
-                                                    className="w-16 p-1 text-sm border rounded bg-gray-50 dark:bg-slate-900 disabled:opacity-60"
+                                                    className="w-16 p-1 text-sm border rounded bg-white dark:bg-slate-800 disabled:opacity-60"
                                                 />
                                                 <span className="text-xs text-gray-500 whitespace-nowrap">m</span>
                                             </div>
@@ -1039,7 +1037,7 @@ const RoomForm: React.FC = () => {
                                                     disabled={mode === "standard" || autoAreaLocked}
                                                     value={surfaceDrafts[index]?.height ?? ""}
                                                     onChange={(e) => handleUpdateSurface(index, "height", e.target.value)}
-                                                    className="w-16 p-1 text-sm border rounded bg-gray-50 dark:bg-slate-900 disabled:opacity-60"
+                                                    className="w-16 p-1 text-sm border rounded bg-white dark:bg-slate-800 disabled:opacity-60"
                                                 />
                                                 <span className="text-xs text-gray-500 whitespace-nowrap">m</span>
                                             </div>
