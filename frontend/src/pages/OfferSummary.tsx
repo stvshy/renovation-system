@@ -486,7 +486,7 @@ const OfferSummary: React.FC = () => {
                                 <table className="w-full min-w-[720px] print:min-w-0 print:table-fixed text-sm text-left text-gray-500 dark:text-gray-400 font-display">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 print:w-[17%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3 print:w-[19%]">
                                                 {t('Opis Zadania', 'Task Description')}
                                             </th>
                                             <th scope="col" className="px-3 sm:px-6 py-3 print:w-[15%]">
@@ -498,10 +498,10 @@ const OfferSummary: React.FC = () => {
                                             <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[13%]">
                                                 {t('Koszt Mat.', 'Material Cost')}
                                             </th>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[14%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[15%]">
                                                 {t('Robocizna', 'Labor')}
                                             </th>
-                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[16%]">
+                                            <th scope="col" className="px-3 sm:px-6 py-3 text-right print:w-[14%]">
                                                 {t('Razem', 'Total')}
                                             </th>
                                         </tr>
