@@ -696,7 +696,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 1', 'Step 1')}
                         </button>
@@ -714,13 +714,13 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 2', 'Step 2')}
                         </button>
                         <button
                             type="button"
-                            className="text-xs font-bold rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-primary"
+                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 3', 'Step 3')}
                         </button>
@@ -738,7 +738,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 4', 'Step 4')}
                         </button>
@@ -801,7 +801,7 @@ const ServiceForm: React.FC = () => {
                                     <button
                                         key={cat}
                                         onClick={() => setSelectedCategory(cat)}
-                                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all
+                                        className={`px-[17.8px] py-2 rounded-lg text-[12.3px] font-bold transition-all
                                             ${
                                                 selectedCategory === cat
                                                     ? "bg-white dark:bg-slate-700 text-primary shadow-sm"
@@ -833,7 +833,7 @@ const ServiceForm: React.FC = () => {
                                         <div className="flex items-start gap-2">
                                             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-base mt-0.5">info</span>
                                             <div>
-                                                <p className="font-bold text-blue-700 dark:text-blue-300 mb-1">
+                                                <p className="mb-1 text-sm font-bold text-blue-700 dark:text-blue-300">
                                                     {t("Strategia", "Strategy")}:{" "}
                                                     {selectedTemplate.defaultStrategy === "consumption"
                                                         ? t("Wydajność (Zużycie)", "Coverage (Consumption)")
@@ -843,7 +843,7 @@ const ServiceForm: React.FC = () => {
                                                         ? t("Liniowa (mb)", "Linear (lm)")
                                                         : t("Na sztuki", "Per item")}
                                                 </p>
-                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
                                                     {selectedTemplate.defaultStrategy === "consumption" &&
                                                         t(
                                                             `System obliczy ilość materiału dzieląc powierzchnię przez wydajność (np. m²/litr). Robocizna naliczana za m². Domyślna wydajność: ${selectedTemplate.defaultParam} jednostek/m².`,
@@ -881,11 +881,11 @@ const ServiceForm: React.FC = () => {
                                         <input
                                             type="number"
                                             min="0"
-                                            className="form-input w-full rounded-l-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                            className="form-input h-11 w-full rounded-l-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                             value={strategyParam}
                                             onChange={(e) => setStrategyParam(e.target.value)}
                                         />
-                                        <span className="min-w-[56px] rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-3 py-2 text-xs font-bold text-slate-500 text-center dark:border-slate-700 dark:bg-slate-800">
+                                        <span className="flex h-11 min-w-[56px] items-center justify-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-3 text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
                                             {selectedTemplate.defaultStrategy === "consumption" ? t("m²/jedn", "m²/unit") : "%"}
                                         </span>
                                     </div>
@@ -1027,7 +1027,7 @@ const ServiceForm: React.FC = () => {
                                 <div>
                                     <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">{t('Miejsce prac', 'Work area')}</label>
                                     <ScrollableSelect
-                                        className="form-select w-full rounded-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                        className="form-select h-11 w-full rounded-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                         value={scopeType === "specific" ? `s-${specificSurfaceIndex}` : scopeType}
                                         onChange={(e) => {
                                             const val = e.target.value;
@@ -1072,12 +1072,12 @@ const ServiceForm: React.FC = () => {
                                         <input
                                             type="number"
                                             min="0"
-                                            className="form-input w-full rounded-l-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
+                                            className="form-input h-11 w-full rounded-l-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
                                             value={scopeType === "manual" ? manualQuantity : currentDimension.toFixed(2)}
                                             disabled={scopeType !== "manual"}
                                             onChange={(e) => setManualQuantity(e.target.value)}
                                         />
-                                        <span className="rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-3 py-2 text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+                                        <span className="flex h-11 items-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-3 text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
                                             {localizeUnit(getInputDimensionUnit())}
                                         </span>
                                     </div>
