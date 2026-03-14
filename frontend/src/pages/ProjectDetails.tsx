@@ -1130,7 +1130,6 @@ const ProjectDetails: React.FC = () => {
 
                     <div className="space-y-3">
                         <label className="flex flex-col gap-1">
-                            <span className="text-xs font-bold text-gray-500 uppercase">{t("Nowa notatka", "New note")}</span>
                             <textarea
                                 value={newProjectNoteInput}
                                 onChange={(e) => setNewProjectNoteInput(e.target.value)}

@@ -727,12 +727,12 @@ const RoomForm: React.FC = () => {
 
     return (
         <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
-            <div className="layout-content-container flex flex-col w-full max-w-[1200px] flex-1">
+            <div className="layout-content-container flex flex-col w-full max-w-[1280px] flex-1">
                 {/* Header with Project Context */}
-                <div className="flex flex-col gap-2 p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4 pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <div>
-                            <p className="text-text-dark dark:text-off-white text-[34px] sm:text-3xl font-black leading-tight tracking-[-0.033em]">
+                            <p className="text-text-dark dark:text-off-white text-[34px] font-black leading-tight tracking-[-0.033em]">
                                 {editingRoomIndex !== null ? t("Edycja Pokoju", "Edit Room") : t("Definicja Pokoju", "Room Definition")}
                             </p>
                             <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">

@@ -671,12 +671,12 @@ const ServiceForm: React.FC = () => {
 
     return (
         <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
-            <div className="layout-content-container flex flex-col w-full max-w-[1200px] flex-1 gap-6">
+            <div className="layout-content-container flex flex-col w-full max-w-[1280px] flex-1 gap-6">
                 {/* Header */}
-                <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
+                <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4 pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <div>
-                            <p className="text-text-dark dark:text-off-white text-[34px] sm:text-3xl font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
+                            <p className="text-text-dark dark:text-off-white text-[34px] font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
                             <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">
                                 <span>{t('OKREŚLANIE PRAC PROJEKTOWYCH', 'DEFINING PROJECT WORK')}</span>
                             </span>
@@ -750,8 +750,10 @@ const ServiceForm: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8">
                     {/* LEFT COLUMN: Configuration */}
                     <div className="lg:col-span-7 flex flex-col gap-6">
-                        {/* Room Tabs - Modified Style with Hidden Scrollbar */}
-                        <div className="flex gap-2 overflow-x-auto items-end border-b border-gray-200 dark:border-gray-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        {/* Room Tabs + Room Info — connected visually */}
+                        <div className="flex flex-col">
+                        {/* Room Tabs */}
+                        <div className="flex gap-2 overflow-x-auto items-end border-b border-slate-200 dark:border-slate-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {rooms.map((room, idx) => (
                                 <button
                                     key={idx}
@@ -769,7 +771,7 @@ const ServiceForm: React.FC = () => {
                         </div>
 
                         {/* Room Info Summary */}
-                        <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl flex flex-wrap gap-6 text-sm text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-b-xl flex flex-wrap gap-6 text-sm text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 border-t-0 shadow-sm">
                             <div className="flex items-center gap-2">
                                 <span className="material-symbols-outlined text-primary">grid_view</span>
                                 <span>
@@ -789,6 +791,7 @@ const ServiceForm: React.FC = () => {
                                 </span>
                             </div>
                         </div>
+                        </div>{/* end tabs+info wrapper */}
 
                         {/* Configurator Card */}
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-lg">
@@ -1180,7 +1183,7 @@ const ServiceForm: React.FC = () => {
                                             )}
                                         </p>
                                     </div>
-                                    {!(shoppingListItems.length === 0 && additionalCosts.length === 0) && (
+                                    {shoppingListItems.length > 0 && (
                                         <div className="text-right shrink-0">
                                             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Koszt zakupów', 'Purchase cost')}</p>
                                             <p className="text-lg font-black text-red-600 dark:text-red-400">
@@ -1242,7 +1245,7 @@ const ServiceForm: React.FC = () => {
                                             {t('Niestandardowe koszty w ramach projektu.', 'Custom costs related to the project.')}
                                         </p>
                                     </div>
-                                    {!(shoppingListItems.length === 0 && additionalCosts.length === 0) && (
+                                    {additionalCosts.length > 0 && (
                                         <div className="text-right shrink-0">
                                             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Suma', 'Total')}</p>
                                             <p className={`text-lg font-black ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>

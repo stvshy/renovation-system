@@ -249,12 +249,12 @@ const OfferSummary: React.FC = () => {
     };
 
     return (
-        <div className="offer-summary-page px-2 sm:px-4 md:px-10 lg:px-20 xl:px-40 print:px-4 flex flex-1 justify-center py-4 sm:py-5 print:py-0 print:block print:overflow-visible print:bg-white">
-            <div className="layout-content-container flex flex-col max-w-[960px] print:max-w-none w-full flex-1 print:block print:overflow-visible print:bg-white">
+        <div className="offer-summary-page px-3 sm:px-4 md:px-10 lg:px-20 print:px-4 flex flex-1 justify-center py-4 sm:py-5 print:py-0 print:block print:overflow-visible print:bg-white">
+            <div className="layout-content-container flex flex-col max-w-[1280px] print:max-w-none w-full flex-1 print:block print:overflow-visible print:bg-white">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-3 sm:p-4 sm:items-center">
                     <div>
-                        <p className="text-[#0d141b] dark:text-white text-[34px] sm:text-4xl font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
+                        <p className="text-[#0d141b] dark:text-white text-[34px] font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
                         <div className="mt-1 flex items-center gap-2">
                             <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">{effectiveProjectName}</p>
                             <button
@@ -296,7 +296,7 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 1', 'Step 1')}
                             </button>
@@ -314,7 +314,7 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 2', 'Step 2')}
                             </button>
@@ -332,13 +332,13 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-xs font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 py-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 3', 'Step 3')}
                             </button>
                             <button
                                 type="button"
-                                className="text-xs font-bold rounded-lg border border-primary bg-primary/10 px-2.5 py-1 text-primary print:hidden"
+                                className="text-[11.9px] font-bold rounded-lg border border-primary bg-primary/10 px-[10.3px] py-[4.4px] text-primary print:hidden"
                             >
                                 {t('Krok 4', 'Step 4')}
                             </button>
