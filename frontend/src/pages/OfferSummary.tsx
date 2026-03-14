@@ -552,7 +552,7 @@ const OfferSummary: React.FC = () => {
                     );
                 })}
 
-                <div className={`px-3 sm:px-4 mt-6 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
+                <div className={`px-3 sm:px-4 mt-10 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
                     <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden print:shadow-none">
                         <div className="px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div>
@@ -565,29 +565,35 @@ const OfferSummary: React.FC = () => {
                                 </p>
                             </div>
                             <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
-                                <div>
+                                <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
-                                    <p className="text-xl font-black text-gray-600 dark:text-gray-300">{additionalCosts.length === 0 ? '–' : additionalCosts.length}</p>
+                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} text-gray-600 dark:text-gray-300`}>
+                                        {additionalCosts.length === 0 ? '–' : additionalCosts.length}
+                                    </p>
                                 </div>
-                                <div>
+                                <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Suma', 'Total')}</p>
-                                    <p className="text-xl font-black text-gray-600 dark:text-gray-300">{additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}</p>
+                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} text-gray-600 dark:text-gray-300`}>
+                                        {additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="p-4 space-y-2">
-                            {additionalCosts.map((cost) => (
-                                <div key={cost.id} className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 px-3 py-2">
-                                    <p className="text-sm text-gray-700 dark:text-slate-200 break-words">{cost.note}</p>
-                                    <p className="text-sm font-black text-gray-600 dark:text-gray-300 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</p>
-                                </div>
-                            ))}
-                        </div>
+                        {additionalCosts.length > 0 && (
+                            <div className="p-4 space-y-2">
+                                {additionalCosts.map((cost) => (
+                                    <div key={cost.id} className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 px-3 py-2">
+                                        <p className="text-sm text-gray-700 dark:text-slate-200 break-words">{cost.note}</p>
+                                        <p className="text-sm font-black text-gray-600 dark:text-gray-300 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                <div className={`px-3 sm:px-4 mt-6 print:hidden ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
+                <div className={`px-3 sm:px-4 mt-10 print:hidden ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border-0 shadow-none' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
                             <div>
@@ -600,13 +606,17 @@ const OfferSummary: React.FC = () => {
                                 </p>
                             </div>
                             <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
-                                <div>
+                                <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
-                                    <p className={`text-xl font-black ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-amber-600 dark:text-amber-400'}`}>{shoppingListItems.length === 0 ? '–' : shoppingListItems.length}</p>
+                                    <p className={`${shoppingListItems.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-amber-600 dark:text-amber-400'}`}>
+                                        {shoppingListItems.length === 0 ? '–' : shoppingListItems.length}
+                                    </p>
                                 </div>
-                                <div>
+                                <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Koszt zakupów', 'Purchase cost')}</p>
-                                    <p className={`text-xl font-black ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-red-600 dark:text-red-400'}`}>{shoppingListItems.length === 0 ? '–' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}</p>
+                                    <p className={`${shoppingListItems.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-red-600 dark:text-red-400'}`}>
+                                        {shoppingListItems.length === 0 ? '–' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
+                                    </p>
                                 </div>
                             </div>
                         </div>
