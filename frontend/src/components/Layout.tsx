@@ -23,7 +23,7 @@ const Layout: React.FC = () => {
                         <div className="flex items-center gap-2 text-sm font-medium">
                             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold print:bg-white/25">
                                 <span className="print:hidden">▶</span>
-                                <span className="hidden print:inline material-symbols-outlined text-xs leading-none">home_repair_service</span>
+                                <span className="hidden print:inline material-symbols-outlined text-xs leading-none">construction</span>
                             </span>
                             <span className="print:hidden">{t("Tryb Demo – dane są tymczasowe i resetują się przy każdym wejściu.", "Demo Mode – data is temporary and resets on every visit.")}</span>
                             <span className="hidden print:inline">{t("Wersja demonstracyjna Renovation System", "Renovation System Demo Version")}</span>
