@@ -1181,15 +1181,17 @@ const ServiceForm: React.FC = () => {
                                             )}
                                         </p>
                                     </div>
-                                    <div className="text-right shrink-0">
-                                        <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Koszt zakupów', 'Purchase cost')}</p>
-                                        <p className="text-lg font-black text-red-600 dark:text-red-400">
-                                            {shoppingListItems.length === 0 ? '-' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
-                                        </p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                            {t('Liczba sztuk: ', 'Items: ')}{shoppingListItems.length === 0 ? '-' : shoppingListItems.length}
-                                        </p>
-                                    </div>
+                                    {!(shoppingListItems.length === 0 && additionalCosts.length === 0) && (
+                                        <div className="text-right shrink-0">
+                                            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Koszt zakupów', 'Purchase cost')}</p>
+                                            <p className="text-lg font-black text-red-600 dark:text-red-400">
+                                                {shoppingListItems.length === 0 ? '-' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
+                                            </p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                {t('Liczba sztuk: ', 'Items: ')}{shoppingListItems.length === 0 ? '-' : shoppingListItems.length}
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -1241,13 +1243,15 @@ const ServiceForm: React.FC = () => {
                                             {t('Niestandardowe koszty w ramach projektu.', 'Custom costs related to the project.')}
                                         </p>
                                     </div>
-                                    <div className="text-right shrink-0">
-                                        <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Suma', 'Total')}</p>
-                                        <p className={`text-lg font-black ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                                            {additionalCosts.length === 0 ? '-' : `${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
-                                        </p>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t('Pozycje: ', 'Items: ')}{additionalCosts.length === 0 ? '-' : additionalCosts.length} </p>
-                                    </div>
+                                    {!(shoppingListItems.length === 0 && additionalCosts.length === 0) && (
+                                        <div className="text-right shrink-0">
+                                            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Suma', 'Total')}</p>
+                                            <p className={`text-lg font-black ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                                                {additionalCosts.length === 0 ? '-' : `${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
+                                            </p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t('Pozycje: ', 'Items: ')}{additionalCosts.length === 0 ? '-' : additionalCosts.length} </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -1364,7 +1368,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                         >
                             <span className="material-symbols-outlined">arrow_back</span>
                             {t('Pokoje', 'Rooms')}
@@ -1372,7 +1376,7 @@ const ServiceForm: React.FC = () => {
 
                         <button
                             onClick={handleFinish}
-                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                         >
                             {t('Podsumowanie', 'Summary')}
                             <span className="material-symbols-outlined">arrow_forward</span>
@@ -1393,7 +1397,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                         >
                             <span className="material-symbols-outlined">arrow_back</span>
                             {t('Edytuj Pokoje', 'Edit Rooms')}
@@ -1401,7 +1405,7 @@ const ServiceForm: React.FC = () => {
 
                         <button
                             onClick={handleFinish}
-                            className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                         >
                             <span className="material-symbols-outlined">assignment_turned_in</span>
                             {t('Przejdź do podsumowania', 'Go to Summary')}

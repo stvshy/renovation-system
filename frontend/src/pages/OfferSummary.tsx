@@ -381,13 +381,13 @@ const OfferSummary: React.FC = () => {
                                     )}
                                 </p>
                             </div>
-                            <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
+                            <div className="grid grid-cols-2 gap-x-12 gap-y-3 sm:gap-x-16 sm:gap-y-5 text-sm">
                                 <div>
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p className="text-xl font-black text-amber-600 dark:text-amber-400">{shoppingListItems.length}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Koszt zakupów', 'Purchase cost')}</p>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('', 'Purchase cosKoszt zakupówt')}</p>
                                     <p className="text-xl font-black text-red-600 dark:text-red-400">{materialPlan.totalShortageCost.toFixed(2)} {currencyCode}</p>
                                 </div>
                             </div>
@@ -564,7 +564,7 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
+                            <div className="grid grid-cols-2 gap-x-16 gap-y-3 sm:gap-x-20 sm:gap-y-5 text-sm">
                                 <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} text-gray-600 dark:text-gray-300`}>
@@ -605,7 +605,7 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="grid grid-cols-2 gap-3 sm:gap-5 text-sm">
+                            <div className="grid grid-cols-2 gap-x-16 gap-y-3 sm:gap-x-20 sm:gap-y-5 text-sm">
                                 <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p className={`${shoppingListItems.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-amber-600 dark:text-amber-400'}`}>
@@ -651,7 +651,7 @@ const OfferSummary: React.FC = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-end gap-3 sm:gap-4 p-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 p-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
                     <button
                         onClick={() =>
                             navigate("/projects/new/services", {
@@ -665,17 +665,19 @@ const OfferSummary: React.FC = () => {
                                 },
                             })
                         }
-                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-colors"
                     >
                         <span className="truncate">{t('Wróć do edycji usług', 'Back to services')}</span>
                     </button>
-                    <button
-                        onClick={handleSubmitProject}
-                        disabled={isSaving}
-                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
-                    >
-                        <span className="truncate">{isSaving ? t('Zapisywanie...', 'Saving...') : t('Zatwierdz i Zapisz Projekt', 'Confirm and Save Project')}</span>
-                    </button>
+                    <div className="sm:ml-auto">
+                        <button
+                            onClick={handleSubmitProject}
+                            disabled={isSaving}
+                            className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
+                        >
+                            <span className="truncate">{isSaving ? t('Zapisywanie...', 'Saving...') : t('Zatwierdz i Zapisz Projekt', 'Confirm and Save Project')}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

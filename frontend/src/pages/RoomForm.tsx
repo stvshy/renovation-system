@@ -948,9 +948,9 @@ const RoomForm: React.FC = () => {
                 <div className="p-4 mt-4 space-y-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
                         <h2 className="text-xl font-bold text-dependable-blue dark:text-primary">{t("Lista Powierzchni", "Surface List")}</h2>
-                        <div className="text-right text-sm text-gray-500">
-                            <p>{t("Ściany", "Walls")}: {getTotalArea(SurfaceType.WALL).toFixed(2)} m²</p>
-                            <p>{t("Podłoga", "Floor")}: {getTotalArea(SurfaceType.FLOOR).toFixed(2)} m²</p>
+                        <div className="text-right text-sm text-gray-500 ">
+                            <p>{t("Ściany", "Walls")}: <span className="font-bold">{getTotalArea(SurfaceType.WALL).toFixed(2)} m²</span></p>
+                            <p>{t("Podłoga", "Floor")}: <span className="font-bold">{getTotalArea(SurfaceType.FLOOR).toFixed(2)} m²</span></p>
                         </div>
                     </div>
 
@@ -994,9 +994,7 @@ const RoomForm: React.FC = () => {
                                                 <input
                                                     value={surface.name}
                                                     onChange={(e) => handleUpdateSurface(index, "name", e.target.value)}
-                                                    className={`bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary ${
-                                                        surface.type === SurfaceType.WALL ? 'font-bold' : 'font-extrabold'
-                                                    }`}
+                                                    className="bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary font-semibold"
                                                 />
                                             ) : (
                                                 <span className="font-bold flex items-center gap-2">
@@ -1010,7 +1008,7 @@ const RoomForm: React.FC = () => {
                                                     {localizeSurfaceName(surface.name)}
                                                 </span>
                                             )}
-                                            <span className={`text-xs block mt-1 ${surface.type === SurfaceType.WALL ? 'text-gray-400 font-medium' : 'text-gray-500 font-bold'}`}>
+                                            <span className="text-xs block mt-1 text-gray-500 font-semibold">
                                                 {localizeSurfaceType(surface.type)}
                                             </span>
                                         </div>
@@ -1168,7 +1166,7 @@ const RoomForm: React.FC = () => {
 
                 {/* Footer Buttons */}
                 {isEditMode ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 px-4 py-8 gap-4 items-center">
+                    <div className="grid grid-cols-1 md:grid-cols-3 px-4 py-8 gap-4 items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         <button
                             onClick={handleGoToClientStep}
                             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:justify-self-start"
@@ -1180,11 +1178,11 @@ const RoomForm: React.FC = () => {
                         <button
                             onClick={handleSaveAndAddNext}
                             disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
-                            className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent md:justify-self-center ${
+                            className={`flex items-center gap-2 justify-center px-4 py-2.5 rounded-xl border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent md:justify-self-center ${
                                 editingRoomIndex !== null ? "border-green-600/80 text-green-600 hover:bg-green-50/50" : "border-primary/70 text-primary hover:bg-primary/5"
                             }`}
                         >
-                            {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
+                            {editingRoomIndex !== null ? t('Zapisz', 'Save') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
                             <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
                         </button>
 
@@ -1198,17 +1196,17 @@ const RoomForm: React.FC = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-col md:flex-row px-4 py-8 justify-end gap-4">
+                    <div className="flex flex-col md:flex-row px-4 py-8 justify-end gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         {showManualSaveInCreate ? (
                             <>
                                 <button
                                     onClick={handleSaveAndAddNext}
                                     disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
-                                    className={`flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-transparent ${
-                                        editingRoomIndex !== null ? "border-green-600 text-green-600 hover:bg-green-50" : "border-primary text-primary hover:bg-primary/5"
+                                    className={`flex items-center gap-2 justify-center px-4 py-2.5 rounded-xl border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent ${
+                                        editingRoomIndex !== null ? "border-green-600/80 text-green-600 hover:bg-green-50/50" : "border-primary/70 text-primary hover:bg-primary/5"
                                     }`}
                                 >
-                                    {editingRoomIndex !== null ? t('Zapisz zmiany i dodaj kolejny', 'Save changes and add next') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
+                                    {editingRoomIndex !== null ? t('Zapisz', 'Save') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
                                     <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
                                 </button>
 

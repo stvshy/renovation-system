@@ -537,18 +537,18 @@ const ClientForm: React.FC = () => {
                         <div className="flex justify-end p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
                             <button
                                 onClick={handleNext}
-                                className="inline-flex items-center justify-center gap-2 h-11 px-2 text-slate-500 dark:text-slate-300 font-semibold text-base hover:text-slate-700 dark:hover:text-white transition-colors"
+                                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                             >
-                                <span>{t('Przejdź do kolejnego kroku', 'Go to the next step')}</span>
+                                <span>{t('Pokoje', 'Rooms')}</span>
                                 <span className="material-symbols-outlined">arrow_forward</span>
                             </button>
                         </div>
                     ) : (
                         <div className="flex flex-col md:flex-row gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full justify-end md:items-center">
-                            <button onClick={() => navigate('/projects')} className="w-full md:w-auto flex items-center justify-center gap-2 h-11 px-3 text-slate-500 dark:text-slate-300 font-semibold text-base hover:text-slate-700 dark:hover:text-white transition-colors">
+                            <button onClick={() => navigate('/projects')} className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all">
                                 {t('Anuluj', 'Cancel')}
                             </button>
-                            <button onClick={handleNext} className="w-full md:w-auto flex items-center justify-center gap-2 h-11 px-2 text-slate-500 dark:text-slate-300 font-semibold text-base hover:text-slate-700 dark:hover:text-white transition-colors md:ml-auto">
+                            <button onClick={handleNext} className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:ml-auto">
                                 {t('Zapisz i Dalej', 'Save and Continue')}
                             </button>
                         </div>
