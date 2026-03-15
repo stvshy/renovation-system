@@ -28,7 +28,7 @@ type ConfirmAction =
     | { type: "delete-surface"; surfaceIndex: number; taskCount: number }
     | null;
 type PendingSaveAction = {
-    action: "add-next" | "proceed-services";
+    action: "add-next" | "proceed-services" | "proceed-summary";
     updatedRooms: any[];
     removedTaskCount: number;
 } | null;
@@ -587,7 +587,7 @@ const RoomForm: React.FC = () => {
         return { updatedRooms, removedSurfaceTasks };
     };
 
-    const executeSaveAction = (action: "add-next" | "proceed-services", updatedRooms: any[]) => {
+    const executeSaveAction = (action: "add-next" | "proceed-services" | "proceed-summary", updatedRooms: any[]) => {
         if (action === "add-next") {
             navigate("/projects/new/room", {
                 state: {
@@ -603,6 +603,20 @@ const RoomForm: React.FC = () => {
 
             resetRoomForm(updatedRooms.length);
             window.scrollTo(0, 0);
+            return;
+        }
+
+        if (action === "proceed-summary") {
+            navigate("/projects/new/offer", {
+                state: {
+                    rooms: updatedRooms,
+                    clientData,
+                    projectDates,
+                    draftId,
+                    editProjectId,
+                    editProjectMeta,
+                },
+            });
             return;
         }
 
@@ -627,44 +641,33 @@ const RoomForm: React.FC = () => {
         executeSaveAction("add-next", updatedRooms);
     };
 
-    const handleSaveAndProceedToServices = () => {
+    const handleProceedWithAutoSave = (target: "services" | "summary") => {
         if (!isEditMode && !showManualSaveInCreate) {
             if (!canNavigateToNextSteps) return;
-            navigate("/projects/new/services", {
-                state: {
-                    rooms: roomsForNavigation,
-                    clientData,
-                    projectDates,
-                    draftId,
-                    editProjectId,
-                    editProjectMeta,
-                },
-            });
+            executeSaveAction(target === "services" ? "proceed-services" : "proceed-summary", roomsForNavigation);
             return;
         }
 
         if (canGoToServicesWithoutSaving) {
-            navigate("/projects/new/services", {
-                state: {
-                    rooms: existingRooms,
-                    clientData,
-                    projectDates,
-                    draftId,
-                    editProjectId,
-                    editProjectMeta,
-                },
-            });
+            executeSaveAction(target === "services" ? "proceed-services" : "proceed-summary", existingRooms);
             return;
         }
 
         const { updatedRooms, removedSurfaceTasks } = buildUpdatedRoomsAfterSave();
         if (removedSurfaceTasks > 0) {
-            setPendingSaveAction({ action: "proceed-services", updatedRooms, removedTaskCount: removedSurfaceTasks });
+            setPendingSaveAction({
+                action: target === "services" ? "proceed-services" : "proceed-summary",
+                updatedRooms,
+                removedTaskCount: removedSurfaceTasks,
+            });
             return;
         }
 
-        // Navigate to ServiceForm instead of OfferSummary, passing all context
-        executeSaveAction("proceed-services", updatedRooms);
+        executeSaveAction(target === "services" ? "proceed-services" : "proceed-summary", updatedRooms);
+    };
+
+    const handleSaveAndProceedToServices = () => {
+        handleProceedWithAutoSave("services");
     };
 
     const handleAddNextRoomAuto = () => {
@@ -705,17 +708,7 @@ const RoomForm: React.FC = () => {
 
     const handleGoToSummaryStep = () => {
         if (!canNavigateToNextSteps) return;
-
-        navigate('/projects/new/offer', {
-            state: {
-                rooms: roomsForNavigation,
-                clientData,
-                projectDates,
-                draftId,
-                editProjectId,
-                editProjectMeta,
-            },
-        });
+        handleProceedWithAutoSave("summary");
     };
 
     const handleExitWithoutSaving = () => {
@@ -765,19 +758,7 @@ const RoomForm: React.FC = () => {
                         </button>
                         <button
                             type="button"
-                            onClick={() => {
-                                if (!canNavigateToNextSteps) return;
-                                navigate('/projects/new/services', {
-                                    state: {
-                                        rooms: roomsForNavigation,
-                                        clientData,
-                                        projectDates,
-                                        draftId,
-                                        editProjectId,
-                                        editProjectMeta,
-                                    },
-                                });
-                            }}
+                            onClick={() => handleProceedWithAutoSave("services")}
                             disabled={!canNavigateToNextSteps}
                             className={`text-[11.9px] font-bold rounded-lg border px-[10.3px] py-[4.4px] transition-colors ${
                                 canNavigateToNextSteps
@@ -1184,24 +1165,13 @@ const RoomForm: React.FC = () => {
 
                 {/* Footer Buttons */}
                 {isEditMode ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 px-4 py-8 gap-4 items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="grid grid-cols-1 md:grid-cols-2 px-4 py-8 gap-4 items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         <button
                             onClick={handleGoToClientStep}
                             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:justify-self-start"
                         >
                             <span className="material-symbols-outlined">arrow_back</span>
                             {t('Dane klienta', 'Client details')}
-                        </button>
-
-                        <button
-                            onClick={handleSaveAndAddNext}
-                            disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
-                            className={`flex items-center gap-2 justify-center px-4 py-2.5 rounded-xl border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent md:justify-self-center ${
-                                editingRoomIndex !== null ? "border-green-600/80 text-green-600 hover:bg-green-50/50" : "border-primary/70 text-primary hover:bg-primary/5"
-                            }`}
-                        >
-                            {editingRoomIndex !== null ? t('Zapisz', 'Save') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
-                            <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
                         </button>
 
                         <button
@@ -1220,12 +1190,10 @@ const RoomForm: React.FC = () => {
                                 <button
                                     onClick={handleSaveAndAddNext}
                                     disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
-                                    className={`flex items-center gap-2 justify-center px-4 py-2.5 rounded-xl border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent ${
-                                        editingRoomIndex !== null ? "border-green-600/80 text-green-600 hover:bg-green-50/50" : "border-primary/70 text-primary hover:bg-primary/5"
-                                    }`}
+                                    className="flex items-center gap-2 justify-center px-4 py-2.5 rounded-xl border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent border-primary/70 text-primary hover:bg-primary/5"
                                 >
-                                    {editingRoomIndex !== null ? t('Zapisz', 'Save') : t('Zapisz i dodaj kolejny pokój', 'Save and add another room')}
-                                    <span className="material-symbols-outlined">{editingRoomIndex !== null ? "save" : "add_circle"}</span>
+                                    {t('Dodaj kolejny pokój', 'Add another room')}
+                                    <span className="material-symbols-outlined">add_circle</span>
                                 </button>
 
                                 <button
@@ -1281,8 +1249,8 @@ const RoomForm: React.FC = () => {
                                               )
                                             : confirmAction.type === "delete-surface"
                                             ? t(
-                                                  `Ta powierzchnia ma przypisane roboty (${confirmAction.taskCount}). Po usunięciu powierzchni te roboty zostaną usunięte w kolejnych krokach.`,
-                                                  `This surface has assigned work items (${confirmAction.taskCount}). After removing the surface, those items will be removed in the next steps.`
+                                                  `Ta powierzchnia ma przypisane roboty (${confirmAction.taskCount}) z kroku 3. Po usunięciu powierzchni te roboty zostaną usunięte także w kroku 4.`,
+                                                  `This surface has assigned work items (${confirmAction.taskCount}) from Step 3. After removing the surface, those items will also be removed in Step 4.`
                                               )
                                                                                         : shouldWarnDownstreamImpact
                                                                                         ? t(

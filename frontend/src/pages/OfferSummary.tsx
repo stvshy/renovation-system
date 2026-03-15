@@ -47,7 +47,7 @@ const rehydrateRoom = (plainRoom: any): Room => {
             let strategy;
             if (t.strategyParams?.wastePercentage !== undefined && t.material?.unit === "mb") {
                 strategy = new LinearStrategy();
-            } else if (t.strategFyParams?.wastePercentage !== undefined) {
+            } else if (t.strategyParams?.wastePercentage !== undefined) {
                 strategy = new WasteFactorStrategy();
             } else if (
                 t.strategyParams?.itemCount !== undefined ||
