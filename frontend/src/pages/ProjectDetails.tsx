@@ -609,11 +609,11 @@ const ProjectDetails: React.FC = () => {
         const daysToEnd = Math.ceil((endDate.getTime() - today.getTime()) / dayMs);
         if (daysToEnd > 0) {
             timelineInfoText = t(`Do końca: ${daysToEnd} dni`, `${daysToEnd} days left`);
-            timelineInfoClass = "text-amber-600 dark:text-amber-400";
+            timelineInfoClass = "text-amber-500 dark:text-amber-400";
             timelineInfoIcon = "timer";
         } else if (daysToEnd === 0) {
             timelineInfoText = t("Koniec: dzisiaj", "Ends today");
-            timelineInfoClass = "text-amber-600 dark:text-amber-400";
+            timelineInfoClass = "text-amber-500 dark:text-amber-400";
             timelineInfoIcon = "timer";
         } else {
             timelineInfoText = t(`Po terminie o ${Math.abs(daysToEnd)} dni`, `${Math.abs(daysToEnd)} days overdue`);
@@ -697,10 +697,10 @@ const ProjectDetails: React.FC = () => {
 
                 {/* Step Dashboard */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <div className="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-slate-900 p-5 shadow-sm">
+                    <div className="rounded-2xl border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/30 dark:to-slate-900 p-5 shadow-sm">
                         <div className="flex items-start justify-between gap-3">
                             <div>
-                                <p className="text-xs uppercase tracking-wide font-semibold text-indigo-500">{t("Krok 1", "Step 1")}</p>
+                                <p className="text-xs uppercase tracking-wide font-semibold text-blue-500">{t("Krok 1", "Step 1")}</p>
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("Dane klienta i terminy", "Client and timeline")}</h3>
                                 <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
                                     {project.clientName} | {project.startDate || "-"} - {project.endDate || "-"}
@@ -709,7 +709,7 @@ const ProjectDetails: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleEditClientStep}
-                                className="inline-flex items-center gap-1 rounded-lg border border-indigo-300 dark:border-indigo-700 px-3 py-1.5 text-sm font-bold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/60 dark:hover:bg-indigo-900/30"
+                                className="inline-flex items-center gap-1 rounded-lg border border-blue-300 dark:border-blue-700 px-3 py-1.5 text-sm font-bold text-blue-700 dark:text-blue-300 hover:bg-blue-100/60 dark:hover:bg-blue-900/30"
                             >
                                 <span className="material-symbols-outlined text-base">edit</span>
                                 {t("Edytuj", "Edit")}
@@ -717,10 +717,10 @@ const ProjectDetails: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="rounded-2xl border border-teal-200 dark:border-teal-800 bg-gradient-to-br from-teal-50 to-white dark:from-teal-950/30 dark:to-slate-900 p-5 shadow-sm">
+                    <div className="rounded-2xl border border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-white dark:from-green-950/30 dark:to-slate-900 p-5 shadow-sm">
                         <div className="flex items-start justify-between gap-3">
                             <div>
-                                <p className="text-xs uppercase tracking-wide font-semibold text-teal-500">{t("Krok 2", "Step 2")}</p>
+                                <p className="text-xs uppercase tracking-wide font-semibold text-green-600 dark:text-green-400">{t("Krok 2", "Step 2")}</p>
                                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("Zakres i pomieszczenia", "Scope and rooms")}</h3>
                                 <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
                                     {t("Liczba pomieszczeń", "Rooms")}: {hydratedRooms.length}
@@ -729,7 +729,7 @@ const ProjectDetails: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleEditRoomsStep}
-                                className="inline-flex items-center gap-1 rounded-lg border border-teal-300 dark:border-teal-700 px-3 py-1.5 text-sm font-bold text-teal-700 dark:text-teal-300 hover:bg-teal-100/60 dark:hover:bg-teal-900/30"
+                                className="inline-flex items-center gap-1 rounded-lg border border-green-300 dark:border-green-700 px-3 py-1.5 text-sm font-bold text-green-700 dark:text-green-400 hover:bg-green-100/60 dark:hover:bg-green-900/30"
                             >
                                 <span className="material-symbols-outlined text-base">edit</span>
                                 {t("Edytuj", "Edit")}
@@ -925,7 +925,7 @@ const ProjectDetails: React.FC = () => {
                             {remainingAmount > 0 && (
                                 <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
                                     <span className="text-xs text-gray-400">{t('Pozostało:', 'Remaining:')}</span>
-                                    <span className="text-xs font-bold text-orange-500">{remainingAmount.toLocaleString()} {currencyCode}</span>
+                                    <span className="text-xs font-bold text-amber-500 dark:text-amber-400">{remainingAmount.toLocaleString()} {currencyCode}</span>
                                 </div>
                             )}
                         </div>
@@ -967,7 +967,7 @@ const ProjectDetails: React.FC = () => {
                                                 <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
                                                     {t("Pow.", "Area")}: {room.getFloorArea().toFixed(2)} m²
                                                 </span>
-                                                <span className="text-sm font-mono font-bold text-gray-600 dark:text-gray-300">
+                                                <span className="text-sm font-mono font-bold text-primary">
                                                     {room.calculateTotalRoomCost().toFixed(2)} {currencyCode}
                                                 </span>
                                             </div>
