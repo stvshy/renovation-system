@@ -1081,7 +1081,7 @@ const ProjectDetails: React.FC = () => {
                         </div>
                         <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
                             <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Materiały do dokupienia", "Items to buy")}</p>
-                            <p className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">
+                            <p className="text-2xl font-black text-[rgb(245,159,11)] dark:text-amber-400 mt-1">
                                 {materialSummary.filter((item) => item.toBuy > 0).length}
                             </p>
                         </div>
@@ -1128,7 +1128,7 @@ const ProjectDetails: React.FC = () => {
                                             {material.available.toFixed(2)} {unitLabel(material.unit)}
                                         </td>
                                         <td className="px-4 py-3 text-right whitespace-nowrap font-bold">
-                                            <span className={material.toBuy > 0 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}>
+                                            <span className={material.toBuy > 0 ? "text-amber-500 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-500"}>
                                                 {material.toBuy.toFixed(2)} {unitLabel(material.unit)}
                                             </span>
                                         </td>
