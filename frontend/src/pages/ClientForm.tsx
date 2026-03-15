@@ -377,7 +377,7 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {mode === 'existing' && (
-                        <div className="mb-4">
+                        <div className={selectedClientId ? 'mb-[-20px]' : 'mb-4'}>
                             <ScrollableSelect
                                 value={selectedClientId}
                                 onChange={(e) => {

@@ -477,7 +477,7 @@ const RoomForm: React.FC = () => {
 
         const surfaceName = surfaces[index]?.name;
         const assignedTaskCount = surfaceName ? getAssignedTaskCountForSurface(index, surfaceName) : 0;
-        if (assignedTaskCount > 0) {
+        if (isEditMode && assignedTaskCount > 0) {
             setConfirmAction({ type: "delete-surface", surfaceIndex: index, taskCount: assignedTaskCount });
             return;
         }

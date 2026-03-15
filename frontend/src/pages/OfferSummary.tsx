@@ -502,7 +502,10 @@ const OfferSummary: React.FC = () => {
                                 <table className="w-full min-w-[720px] print:min-w-0 print:table-fixed text-sm text-left text-gray-500 dark:text-gray-400 font-display">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
-                                            <th scope="col" className="px-3 sm:px-6 py-3">
+                                            <th
+                                                scope="col"
+                                                className={`px-3 sm:px-6 py-3 ${language === 'en' ? 'print:w-[19%]' : ''}`}
+                                            >
                                                 {t('Opis Zadania', 'Task Description')}
                                             </th>
                                             <th scope="col" className="px-3 sm:px-6 py-3">
@@ -534,7 +537,9 @@ const OfferSummary: React.FC = () => {
                                                     key={index}
                                                     className="bg-white dark:bg-background-dark/50 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                                                 >
-                                                    <td className="px-3 sm:px-6 py-4 font-medium text-gray-900 dark:text-white break-words">
+                                                    <td
+                                                        className={`px-3 sm:px-6 py-4 font-medium text-gray-900 dark:text-white break-words ${language === 'en' ? 'print:w-[28%]' : ''}`}
+                                                    >
                                                         {task.description}
                                                     </td>
                                                     <td className="px-3 sm:px-6 py-4 break-words">
