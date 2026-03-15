@@ -424,9 +424,33 @@ const RoomForm: React.FC = () => {
 
     const handleRemoveSurface = (index: number) => {
         const getAssignedTaskCountForSurface = (surfaceName: string) => {
-            if (editingRoomIndex === null) return 0;
-            const sourceRoom = existingRooms[editingRoomIndex];
-            if (!sourceRoom?.tasks || !Array.isArray(sourceRoom.tasks)) return 0;
+            const currentRoomSnapshot = serializeRoomState(roomName, surfaces);
+            let sourceRoom = editingRoomIndex !== null ? existingRooms[editingRoomIndex] : null;
+
+            if (!sourceRoom) {
+                sourceRoom = existingRooms.find((room) => {
+                    if (!room || !Array.isArray(room.surfaces)) return false;
+                    return serializeRoomState(room.name, room.surfaces.map((s: any) => rehydrateSurface(s))) === currentRoomSnapshot;
+                });
+            }
+
+            if (!sourceRoom) {
+                sourceRoom = existingRooms.find((room) => room?.name === roomName) || null;
+            }
+
+            if (!sourceRoom?.tasks || !Array.isArray(sourceRoom.tasks)) {
+                // Conservative fallback: if we cannot map the source room reliably, scan all rooms for task labels
+                // that reference this surface name to avoid silent data loss in downstream steps.
+                return existingRooms.reduce((count, room) => {
+                    if (!room?.tasks || !Array.isArray(room.tasks) || !Array.isArray(room.surfaces)) return count;
+                    const roomSurfaceNames = room.surfaces.map((surface: any) => surface.name);
+                    const matched = room.tasks.filter(
+                        (task: any) => extractSpecificSurfaceName(task.description || "", roomSurfaceNames) === surfaceName
+                    ).length;
+                    return count + matched;
+                }, 0);
+            }
+
             const sourceSurfaceNames = Array.isArray(sourceRoom.surfaces) ? sourceRoom.surfaces.map((surface: any) => surface.name) : [];
             return sourceRoom.tasks.filter((task: any) => extractSpecificSurfaceName(task.description || "", sourceSurfaceNames) === surfaceName).length;
         };
@@ -1165,7 +1189,7 @@ const RoomForm: React.FC = () => {
 
                 {/* Footer Buttons */}
                 {isEditMode ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 px-4 py-8 gap-4 items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="grid grid-cols-1 md:grid-cols-2 px-3 sm:px-4 py-8 gap-4 items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         <button
                             onClick={handleGoToClientStep}
                             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:justify-self-start"
@@ -1184,7 +1208,7 @@ const RoomForm: React.FC = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-col md:flex-row px-4 py-8 justify-end gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-col md:flex-row px-3 sm:px-4 py-8 justify-end gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         {showManualSaveInCreate ? (
                             <>
                                 <button

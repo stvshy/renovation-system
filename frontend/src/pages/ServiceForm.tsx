@@ -1275,11 +1275,11 @@ const ServiceForm: React.FC = () => {
                                     additionalCosts.map((cost) => (
                                         <div key={cost.id} className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-3">
                                             <div className="flex items-start justify-between gap-3">
-                                                <div>
+                                                <div className="space-y-0.5">
                                                     <p className="font-bold text-sm text-slate-900 dark:text-white break-words">{cost.note}</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{new Date(cost.createdAt).toLocaleDateString()}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(cost.createdAt).toLocaleDateString()}</p>
                                                 </div>
-                                                <div className="text-right shrink-0 self-center flex items-center gap-2">
+                                                <div className="text-right shrink-0 self-start flex items-center gap-2">
                                                     <p className="text-sm font-black text-red-600 dark:text-red-400">+{cost.amount.toFixed(2)} {currencyCode}</p>
                                                     <button
                                                         type="button"
@@ -1365,7 +1365,7 @@ const ServiceForm: React.FC = () => {
 
                 {/* Footer Navigation */}
                 {isEditMode ? (
-                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4">
                         <button
                             onClick={() =>
                                 navigate("/projects/new/room", {
@@ -1394,7 +1394,7 @@ const ServiceForm: React.FC = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4">
                         <button
                             onClick={() =>
                                 navigate("/projects/new/room", {

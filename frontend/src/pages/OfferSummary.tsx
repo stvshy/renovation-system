@@ -569,8 +569,8 @@ const OfferSummary: React.FC = () => {
                 })}
 
                 <div className={`px-3 sm:px-4 mt-10 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
-                    <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-background-dark/50 shadow-[0_0_10px_rgba(0,0,0,0.08)] overflow-hidden print:shadow-none">
-                        <div className="px-4 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${additionalCosts.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-rose-200 dark:border-rose-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
+                        <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${additionalCosts.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10'}`}>
                             <div>
                                 <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Koszty dodatkowe', 'Additional costs')}</h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -583,13 +583,13 @@ const OfferSummary: React.FC = () => {
                             <div className="ml-auto grid grid-cols-[120px_170px] gap-x-3 text-sm">
                                 <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
-                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} text-gray-600 dark:text-gray-300`}>
+                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold text-gray-600 dark:text-gray-300' : 'text-xl font-black text-rose-600 dark:text-rose-400'}`}>
                                         {additionalCosts.length === 0 ? '–' : additionalCosts.length}
                                     </p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Suma', 'Total')}</p>
-                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold' : 'text-xl font-black'} text-gray-600 dark:text-gray-300`}>
+                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold text-gray-600 dark:text-gray-300' : 'text-xl font-black text-red-600 dark:text-red-400'}`}>
                                         {additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
                                     </p>
                                 </div>
@@ -597,11 +597,16 @@ const OfferSummary: React.FC = () => {
                         </div>
 
                         {additionalCosts.length > 0 && (
-                            <div className="p-4 space-y-2">
+                            <div className="p-4 space-y-3">
                                 {additionalCosts.map((cost) => (
-                                    <div key={cost.id} className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/30 px-3 py-2">
-                                        <p className="text-sm text-gray-700 dark:text-slate-200 break-words">{cost.note}</p>
-                                        <p className="text-sm font-black text-gray-600 dark:text-gray-300 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                    <div key={cost.id} className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-3">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="space-y-0.5">
+                                                <p className="font-bold text-sm text-slate-900 dark:text-white break-words">{cost.note}</p>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(cost.createdAt).toLocaleDateString(language === "en" ? "en-US" : "pl-PL")}</p>
+                                            </div>
+                                            <p className="text-sm font-black text-red-600 dark:text-red-400 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -667,7 +672,7 @@ const OfferSummary: React.FC = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 p-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 px-3 sm:px-4 py-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
                     <button
                         onClick={() =>
                             navigate("/projects/new/services", {

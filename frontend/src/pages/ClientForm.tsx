@@ -535,7 +535,7 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {isEditMode ? (
-                        <div className="flex justify-end p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
+                        <div className="flex justify-end px-3 sm:px-4 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
                             <button
                                 onClick={handleNext}
                                 className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
@@ -545,7 +545,7 @@ const ClientForm: React.FC = () => {
                             </button>
                         </div>
                     ) : (
-                        <div className="flex flex-col md:flex-row gap-3 p-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full justify-end md:items-center">
+                        <div className="flex flex-col md:flex-row gap-3 px-3 sm:px-4 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full justify-end md:items-center">
                             <button onClick={() => navigate('/projects')} className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all">
                                 {t('Anuluj', 'Cancel')}
                             </button>
