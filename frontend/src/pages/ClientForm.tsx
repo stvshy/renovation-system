@@ -99,6 +99,7 @@ const ClientForm: React.FC = () => {
 
         setCurrentProjectSnapshot({
             id: draftId,
+            editProjectId: editProjectId || undefined,
             currentStep: 'client',
             updatedAt: new Date().toISOString(),
             clientData,

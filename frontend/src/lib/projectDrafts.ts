@@ -1,7 +1,8 @@
 export type ProjectWizardStep = "client" | "room" | "services" | "offer";
 
 export type ProjectDraft = {
-    id: string;
+    id?: string;
+    editProjectId?: string;
     currentStep: ProjectWizardStep;
     updatedAt: string;
     clientData?: any;
@@ -309,11 +310,13 @@ export const setCurrentProjectSnapshot = (snapshot: ProjectDraft) => {
         JSON.stringify(nextSnapshot)
     );
 
-    // Keep a stable baseline for the currently edited draft, so navigation guards
+    // Keep a stable baseline for the currently edited draft/project, so navigation guards
     // do not depend on repeated remote fetches and serialization differences.
-    if (nextSnapshot.id) {
+    const baselineKey = nextSnapshot.id ?? nextSnapshot.editProjectId;
+    if (baselineKey) {
         const baseline = getCurrentProjectBaseline();
-        if (!baseline || baseline.id !== nextSnapshot.id) {
+        const existingKey = baseline?.id ?? baseline?.editProjectId;
+        if (!baseline || existingKey !== baselineKey) {
             setCurrentProjectBaseline(nextSnapshot);
         }
     }
@@ -358,6 +361,26 @@ const normalizeDraftForCompare = (draft: ProjectDraft | null) => {
     if (!draft) return null;
     const { updatedAt, ...rest } = draft;
     return rest;
+};
+
+const normalizeClientDataForCompare = (clientData: any) => {
+    if (!clientData) return null;
+    return {
+        id: clientData.id,
+        firstName: clientData.firstName ?? "",
+        lastName: clientData.lastName ?? "",
+        address: clientData.address ?? "",
+        city: clientData.city ?? "",
+        zipCode: clientData.zipCode ?? "",
+        phone: clientData.phone ?? "",
+        email: clientData.email ?? "",
+        additionalCosts: Array.isArray(clientData.projectMeta?.additionalCosts)
+            ? clientData.projectMeta.additionalCosts
+                  .filter((c: any) => c && typeof c.amount === "number" && c.amount > 0)
+                  .map((c: any) => ({ amount: Number(c.amount), note: c.note ?? "" }))
+                  .sort((a: any, b: any) => a.amount - b.amount || a.note.localeCompare(b.note))
+            : [],
+    };
 };
 
 const normalizeRoomsForCompare = (rooms: any[] | undefined) => {
@@ -456,8 +479,11 @@ const buildComparableDraft = (draft: ProjectDraft, step: ProjectWizardStep) => {
 
     const base = {
         id: normalized.id,
-        clientData: normalized.clientData,
-        projectDates: normalized.projectDates,
+        clientData: normalizeClientDataForCompare(normalized.clientData),
+        projectDates: {
+            startDate: normalized.projectDates?.startDate ?? "",
+            endDate: normalized.projectDates?.endDate ?? "",
+        },
         rooms: normalizeRoomsForCompare(normalized.rooms),
     } as any;
 
@@ -478,21 +504,31 @@ export const hasUnsavedProjectChanges = async (): Promise<boolean> => {
     const snapshot = getCurrentProjectSnapshot();
     if (!snapshot) return false;
 
-    // New wizard (without saved draft ID) is always treated as unsaved work.
-    if (!snapshot.id) return true;
+    // New wizard (without saved draft ID or edit project ID) is always treated as unsaved work.
+    if (!snapshot.id && !snapshot.editProjectId) return true;
 
     const baseline = getCurrentProjectBaseline();
-    if (baseline && baseline.id === snapshot.id) {
+    const sameKey =
+        baseline &&
+        ((snapshot.id && baseline.id === snapshot.id) ||
+            (snapshot.editProjectId && baseline.editProjectId === snapshot.editProjectId));
+
+    if (sameKey) {
         const comparableSnapshot = buildComparableDraft(snapshot, snapshot.currentStep);
-        const comparableBaseline = buildComparableDraft(baseline, snapshot.currentStep);
+        const comparableBaseline = buildComparableDraft(baseline!, snapshot.currentStep);
         return JSON.stringify(comparableSnapshot) !== JSON.stringify(comparableBaseline);
     }
 
-    const storedDraft = await getProjectDraftById(snapshot.id);
-    if (!storedDraft) return true;
+    // For draft mode, fall back to comparing against the stored draft
+    if (snapshot.id) {
+        const storedDraft = await getProjectDraftById(snapshot.id);
+        if (!storedDraft) return true;
 
-    const comparableSnapshot = buildComparableDraft(snapshot, snapshot.currentStep);
-    const comparableStored = buildComparableDraft(storedDraft, snapshot.currentStep);
+        const comparableSnapshot = buildComparableDraft(snapshot, snapshot.currentStep);
+        const comparableStored = buildComparableDraft(storedDraft, snapshot.currentStep);
+        return JSON.stringify(comparableSnapshot) !== JSON.stringify(comparableStored);
+    }
 
-    return JSON.stringify(comparableSnapshot) !== JSON.stringify(comparableStored);
+    // Edit mode without a baseline (edge case) — treat as no unsaved changes
+    return false;
 };

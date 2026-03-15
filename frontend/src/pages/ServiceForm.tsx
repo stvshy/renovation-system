@@ -246,6 +246,7 @@ const ServiceForm: React.FC = () => {
 
         setCurrentProjectSnapshot({
             id: draftId,
+            editProjectId: editProjectId || undefined,
             currentStep: "services",
             updatedAt: new Date().toISOString(),
             clientData: clientDataWithProjectMeta,

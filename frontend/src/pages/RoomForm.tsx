@@ -297,6 +297,7 @@ const RoomForm: React.FC = () => {
 
         setCurrentProjectSnapshot({
             id: draftId,
+            editProjectId: editProjectId || undefined,
             currentStep: "room",
             updatedAt: new Date().toISOString(),
             clientData,

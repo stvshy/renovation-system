@@ -168,6 +168,7 @@ const OfferSummary: React.FC = () => {
 
         setCurrentProjectSnapshot({
             id: draftId,
+            editProjectId: editProjectId || undefined,
             currentStep: "offer",
             updatedAt: new Date().toISOString(),
             clientData: clientDataWithProjectMeta,
