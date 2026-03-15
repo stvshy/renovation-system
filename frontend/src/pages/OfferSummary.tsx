@@ -497,6 +497,7 @@ const OfferSummary: React.FC = () => {
                                 )}
                             </div>
 
+                         
                             {/* Detailed table for tablet/desktop + print */}
                             <div className="hidden sm:block print:block mt-4 bg-white dark:bg-background-dark/50 rounded-xl shadow-[0_0_4px_rgba(0,0,0,0.1)] border border-gray-200 dark:border-gray-700 overflow-x-auto print:overflow-visible mx-2 sm:mx-4 print:mx-0 print:shadow-none">
                                 <table className="w-full min-w-[720px] print:min-w-0 print:table-fixed text-sm text-left text-gray-500 dark:text-gray-400 font-display">
@@ -568,11 +569,11 @@ const OfferSummary: React.FC = () => {
                     );
                 })}
 
-                <div className={`px-3 sm:px-4 mt-10 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
-                    <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${additionalCosts.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-rose-200 dark:border-rose-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
-                        <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${additionalCosts.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10'}`}>
+                <div className={`px-3 sm:px-4 mt-14 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6 print:px-0`}>
+                    <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none print:border print:border-gray-300 ${additionalCosts.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-rose-200 dark:border-rose-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
+                        <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 print:bg-white print:border-b print:border-gray-200 ${additionalCosts.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10'}`}>
                             <div>
-                                <h2 className="text-lg font-black text-[#0d141b] dark:text-white">{t('Koszty dodatkowe', 'Additional costs')}</h2>
+                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white print:text-black">{t('Koszty dodatkowe', 'Additional costs')}</h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                     {additionalCosts.length === 0
                                         ? t('Brak niestandardowych kosztów w ramach projektu.', 'No custom project costs.')
@@ -582,14 +583,14 @@ const OfferSummary: React.FC = () => {
                             </div>
                             <div className="ml-auto grid grid-cols-[120px_170px] gap-x-3 text-sm">
                                 <div className="text-right">
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
-                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold text-gray-600 dark:text-gray-300' : 'text-xl font-black text-rose-600 dark:text-rose-400'}`}>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400 print:text-xs print:font-black print:text-black">{t('Pozycje', 'Items')}</p>
+                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold text-gray-600 dark:text-gray-300' : 'text-xl font-black text-rose-600 dark:text-rose-400'} print:text-xs print:font-semibold print:text-black`}>
                                         {additionalCosts.length === 0 ? '–' : additionalCosts.length}
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Suma', 'Total')}</p>
-                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold text-gray-600 dark:text-gray-300' : 'text-xl font-black text-red-600 dark:text-red-400'}`}>
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400 print:text-xs print:font-black print:text-black">{t('Suma', 'Total')}</p>
+                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold text-gray-600 dark:text-gray-300' : 'text-xl font-black text-red-600 dark:text-red-400'} print:text-sm print:font-semibold print:text-black`}>
                                         {additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
                                     </p>
                                 </div>
@@ -599,13 +600,13 @@ const OfferSummary: React.FC = () => {
                         {additionalCosts.length > 0 && (
                             <div className="p-4 space-y-3">
                                 {additionalCosts.map((cost) => (
-                                    <div key={cost.id} className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-3">
+                                    <div key={cost.id} className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 print:border-gray-300 print:bg-white">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="space-y-0.5">
-                                                <p className="font-bold text-sm text-slate-900 dark:text-white break-words">{cost.note}</p>
-                                                <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(cost.createdAt).toLocaleDateString(language === "en" ? "en-US" : "pl-PL")}</p>
+                                                <p className="font-bold text-sm text-slate-900 dark:text-white break-words print:text-black">{cost.note}</p>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 print:text-black">{new Date(cost.createdAt).toLocaleDateString(language === "en" ? "en-US" : "pl-PL")}</p>
                                             </div>
-                                            <p className="text-sm font-black text-red-600 dark:text-red-400 whitespace-nowrap">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                            <p className="text-sm font-black text-red-600 dark:text-red-400 whitespace-nowrap print:text-black">+{cost.amount.toFixed(2)} {currencyCode}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -614,7 +615,7 @@ const OfferSummary: React.FC = () => {
                     </div>
                 </div>
 
-                <div className={`px-3 sm:px-4 mt-10 print:hidden ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
+                <div className={`px-3 sm:px-4 mt-14 print:hidden ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
                             <div>

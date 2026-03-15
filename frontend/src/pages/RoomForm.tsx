@@ -423,7 +423,7 @@ const RoomForm: React.FC = () => {
     };
 
     const handleRemoveSurface = (index: number) => {
-        const getAssignedTaskCountForSurface = (surfaceName: string) => {
+        const getAssignedTaskCountForSurface = (surfaceIndex: number, surfaceName: string) => {
             const currentRoomSnapshot = serializeRoomState(roomName, surfaces);
             let sourceRoom = editingRoomIndex !== null ? existingRooms[editingRoomIndex] : null;
 
@@ -444,19 +444,39 @@ const RoomForm: React.FC = () => {
                 return existingRooms.reduce((count, room) => {
                     if (!room?.tasks || !Array.isArray(room.tasks) || !Array.isArray(room.surfaces)) return count;
                     const roomSurfaceNames = room.surfaces.map((surface: any) => surface.name);
-                    const matched = room.tasks.filter(
-                        (task: any) => extractSpecificSurfaceName(task.description || "", roomSurfaceNames) === surfaceName
-                    ).length;
+                    const matched = room.tasks.filter((task: any) => {
+                        const assignedName = extractSpecificSurfaceName(task.description || "");
+                        return assignedName ? assignedName === surfaceName : false;
+                    }).length;
                     return count + matched;
                 }, 0);
             }
 
             const sourceSurfaceNames = Array.isArray(sourceRoom.surfaces) ? sourceRoom.surfaces.map((surface: any) => surface.name) : [];
-            return sourceRoom.tasks.filter((task: any) => extractSpecificSurfaceName(task.description || "", sourceSurfaceNames) === surfaceName).length;
+            const sourceSurfaceNameAtIndex = sourceSurfaceNames[surfaceIndex];
+            const referenceNames = new Set<string>([surfaceName]);
+            if (sourceSurfaceNameAtIndex) {
+                referenceNames.add(sourceSurfaceNameAtIndex);
+            }
+
+            // Surface names may have been edited in the current form. Map historical names to current names.
+            const draftRoom = new Room(roomName || sourceRoom.name);
+            surfaces.forEach((surface) => draftRoom.addSurface(surface));
+            const previousToCurrentMap = buildSurfaceNameMapByTypeOrder(sourceRoom, draftRoom);
+            previousToCurrentMap.forEach((currentName, previousName) => {
+                if (currentName === surfaceName) {
+                    referenceNames.add(previousName);
+                }
+            });
+
+            return sourceRoom.tasks.filter((task: any) => {
+                const assignedName = extractSpecificSurfaceName(task.description || "");
+                return assignedName ? referenceNames.has(assignedName) : false;
+            }).length;
         };
 
         const surfaceName = surfaces[index]?.name;
-        const assignedTaskCount = surfaceName ? getAssignedTaskCountForSurface(surfaceName) : 0;
+        const assignedTaskCount = surfaceName ? getAssignedTaskCountForSurface(index, surfaceName) : 0;
         if (assignedTaskCount > 0) {
             setConfirmAction({ type: "delete-surface", surfaceIndex: index, taskCount: assignedTaskCount });
             return;
