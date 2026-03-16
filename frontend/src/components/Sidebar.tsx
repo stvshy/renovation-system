@@ -269,7 +269,7 @@ const Sidebar: React.FC = () => {
             </aside>
 
             {/* Mobile navbar (bottom) */}
-            <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800 flex justify-between items-center px-1 py-1 print:hidden shadow-t-md">
+            <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800 flex justify-between items-center px-1 py-1.5 print:hidden shadow-t-md">
                 {mobileNavItems.map((item, idx) => (
                     <button
                         key={item.to}
@@ -280,7 +280,13 @@ const Sidebar: React.FC = () => {
                         }}
                         aria-label={item.label}
                     >
-                        <span className={`material-symbols-outlined text-2xl ${location.pathname.startsWith(item.to) ? 'text-primary' : 'text-gray-500 dark:text-gray-300 group-hover:text-primary'}`}>{item.icon}</span>
+                        <span
+                            className={`material-symbols-outlined ${
+                                item.to === '/clients' ? 'text-[30px]' : 'text-[26px]'
+                            } ${location.pathname.startsWith(item.to) ? 'text-primary' : 'text-gray-500 dark:text-gray-300 group-hover:text-primary'}`}
+                        >
+                            {item.icon}
+                        </span>
                     </button>
                 ))}
                 {/* Profile/menu icon (last) */}
@@ -289,7 +295,9 @@ const Sidebar: React.FC = () => {
                     onClick={() => setShowMobileMenu(true)}
                     aria-label={t('Konto i więcej', 'Account and more')}
                 >
-                    <span className="material-symbols-outlined text-2xl text-gray-500 dark:text-gray-300 group-hover:text-primary">person</span>
+                    <span className="material-symbols-outlined text-[28px] text-gray-500 dark:text-gray-300 group-hover:text-primary">
+                        person
+                    </span>
                 </button>
             </nav>
 
@@ -297,39 +305,52 @@ const Sidebar: React.FC = () => {
             {showMobileMenu && (
                 createPortal(
                     <div className="fixed inset-0 z-[10060] flex items-end sm:hidden bg-black/40 backdrop-blur-sm">
-                        <div ref={drawerRef} className="w-full rounded-t-2xl bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden animate-slideUp">
-                            {/* Pasek do łapania */}
-                            <div className="w-full flex justify-center items-center pt-2 pb-1 select-none cursor-grab">
-                                <div className="w-12 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600" />
-                            </div>
-                            <div className="flex flex-col items-center gap-4 py-4 px-6">
-                                <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-16 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                                    <span className="material-symbols-outlined text-4xl">person</span>
-                                </div>
-                                <div className="flex flex-col items-center">
-                                    <h1 className="text-gray-800 dark:text-gray-200 text-lg font-medium" title={user?.email}>
-                                        {user?.email?.split('@')[0] || t('Użytkownik', 'User')}
-                                    </h1>
-                                    <p className="text-gray-500 dark:text-gray-400 text-xs" title={user?.email}>
-                                        {user?.email}
-                                    </p>
-                                </div>
+                        <div
+                            ref={drawerRef}
+                            className="w-full rounded-t-2xl bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden animate-slideUp"
+                        >
+                            <div className="flex items-center justify-between px-4 pt-4 pb-3">
                                 <button
                                     onClick={handleLogout}
-                                    className="w-full flex items-center justify-center cursor-pointer rounded-lg h-10 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-200 text-sm font-bold tracking-wide gap-2 px-4"
+                                    className="flex items-center justify-center text-red-600 active:scale-95 transition-transform"
+                                    aria-label={t('Wyloguj', 'Sign out')}
                                 >
-                                    <span className="material-symbols-outlined text-lg">logout</span>
-                                    <span className="truncate">{t('Wyloguj', 'Sign out')}</span>
+                                    <span className="material-symbols-outlined text-[24px] leading-none">logout</span>
                                 </button>
-                                <div className="flex justify-center pt-1 w-full">
-                                    <LanguageToggleButton size="xxs" className="border border-gray-300 dark:border-gray-600 rounded-full p-0 w-10 h-10" />
-                                </div>
                                 <button
                                     onClick={() => setShowMobileMenu(false)}
-                                    className="mt-2 text-gray-400 hover:text-primary text-xs"
+                                    className="flex items-center justify-center text-gray-500 dark:text-gray-300 active:scale-95 transition-transform"
+                                    aria-label={t('Zamknij', 'Close')}
                                 >
-                                    {t('Zamknij', 'Close')}
+                                    <span className="material-symbols-outlined text-[24px] leading-none">close</span>
                                 </button>
+                            </div>
+                            <div className="flex flex-col items-center gap-4 py-1 pb-6 px-6">
+                                <div className="flex flex-col items-center gap-2 -mt-[42px]">
+                                    <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-16 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                        <span className="material-symbols-outlined text-4xl">person</span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <h1
+                                            className="text-gray-800 dark:text-gray-200 text-lg font-medium"
+                                            title={user?.email}
+                                        >
+                                            {user?.email?.split('@')[0] || t('Użytkownik', 'User')}
+                                        </h1>
+                                        <p
+                                            className="text-gray-500 dark:text-gray-400 text-xs"
+                                            title={user?.email}
+                                        >
+                                            {user?.email}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex justify-center pt-1 w-full">
+                                    <LanguageToggleButton
+                                        size="xxs"
+                                        className="border border-gray-300 dark:border-gray-600 rounded-full p-0 w-[26px] h-[26px] -mt-[6px]"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>,
