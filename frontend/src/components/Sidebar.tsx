@@ -221,7 +221,7 @@ const Sidebar: React.FC = () => {
                                     </div>
                                     <div className="flex flex-col overflow-hidden min-w-0">
                                         <h1 className="text-gray-800 dark:text-gray-200 text-base font-medium truncate" title={user?.email}>
-                                            {user?.email?.split('@')[0] || t('Użytkownik Testowy', 'Test User')}
+                                            {user?.email?.split('@')[0] || t('Użytkownik Demo', 'Demo User')}
                                         </h1>
                                         <p className="text-gray-500 dark:text-gray-400 text-xs truncate" title={user?.email}>
                                             {user?.email}
@@ -343,7 +343,7 @@ const Sidebar: React.FC = () => {
                                         className="text-gray-800 dark:text-gray-200 text-base font-medium"
                                             title={user?.email}
                                         >
-                                            {user?.email?.split('@')[0] || t('Użytkownik Testowy', 'Test User')}
+                                            {user?.email?.split('@')[0] || t('Użytkownik Demo', 'User Demo')}
                                         </h1>
                                         <p
                                             className="text-gray-500 dark:text-gray-400 text-xs"
