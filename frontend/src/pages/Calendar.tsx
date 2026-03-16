@@ -78,14 +78,20 @@ const Calendar: React.FC = () => {
                             <span className="material-symbols-outlined text-[20px] leading-none">add</span>
                         </button>
                     </div>
-                    <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-                        <button onClick={handlePrevMonth} className="flex items-center justify-center rounded-xl h-[42px] w-[42px] sm:h-12 sm:w-12 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                    <div className="flex items-stretch w-full sm:w-auto sm:items-center sm:gap-2">
+                        <button
+                            onClick={handlePrevMonth}
+                            className="flex items-center justify-center h-[42px] w-[42px] sm:h-12 sm:w-12 rounded-l-xl rounded-r-none sm:rounded-xl bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        >
                             <span className="material-symbols-outlined">chevron_left</span>
                         </button>
-                        <p className="text-[#0d141b] dark:text-white text-base sm:text-xl font-bold font-display w-auto sm:w-48 text-center">
+                        <p className="flex h-[42px] flex-1 items-center justify-center border-y border-gray-200 bg-white text-slate-900 text-base font-bold font-display text-center sm:h-auto sm:w-48 sm:flex-none sm:border-0 sm:bg-transparent sm:text-xl sm:text-[#0d141b] dark:sm:text-white">
                             {monthNames[month]} {year}
                         </p>
-                        <button onClick={handleNextMonth} className="flex items-center justify-center rounded-xl h-[42px] w-[42px] sm:h-12 sm:w-12 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        <button
+                            onClick={handleNextMonth}
+                            className="flex items-center justify-center h-[42px] w-[42px] sm:h-12 sm:w-12 rounded-r-xl rounded-l-none sm:rounded-xl bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                        >
                             <span className="material-symbols-outlined">chevron_right</span>
                         </button>
                     </div>
