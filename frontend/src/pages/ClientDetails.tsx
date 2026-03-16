@@ -76,8 +76,8 @@ const ClientDetails: React.FC = () => {
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
             <div className="layout-content-container flex flex-col w-full max-w-5xl gap-6">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4 pb-0 md:pb-6 border-b md:border-b border-transparent md:border-gray-200 dark:border-transparent md:dark:border-gray-700">
+                    <div className="flex items-center gap-3 md:gap-4">
                         <div className="size-14 aspect-square rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-black leading-none shrink-0">
                             {client.firstName[0]}
                             {client.lastName[0]}
@@ -95,52 +95,54 @@ const ClientDetails: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <div className="flex flex-row gap-2 w-full md:w-auto">
                         <button
                             onClick={() => setIsEditModalOpen(true)}
-                            className="flex items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-transparent border border-gray-400 dark:border-gray-500 text-gray-700 dark:text-gray-200 font-bold text-sm tracking-wide hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 overflow-hidden rounded-xl h-9 sm:h-[46.2px] px-3 sm:px-5 bg-transparent border border-gray-400 dark:border-gray-500 text-gray-700 dark:text-gray-200 font-bold text-[13px] sm:text-sm tracking-wide hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
                         >
-                            <span className="material-symbols-outlined text-[18px] leading-none">edit</span>
-                            {t('Edytuj Dane', 'Edit Details')}
+                            <span className="material-symbols-outlined text-[17px] sm:text-[18px] leading-none">edit</span>
+                            <span className="sm:hidden">{t('Edytuj', 'Edit')}</span>
+                            <span className="hidden sm:inline">{t('Edytuj Dane', 'Edit Details')}</span>
                         </button>
                         <button
                             onClick={handleNewProject}
-                            className="flex items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white font-bold text-sm tracking-wide shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 overflow-hidden rounded-xl h-9 sm:h-[46.2px] px-3 sm:px-5 bg-primary text-white font-bold text-[13px] sm:text-sm tracking-wide shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
                         >
-                            <span className="material-symbols-outlined text-[18px] leading-none">add_circle</span>
-                            {t('Nowy Projekt', 'New Project')}
+                            <span className="material-symbols-outlined text-[17px] sm:text-[18px] leading-none">add_circle</span>
+                            <span className="sm:hidden">{t('Projekt', 'Project')}</span>
+                            <span className="hidden sm:inline">{t('Nowy Projekt', 'New Project')}</span>
                         </button>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Contact Info Card */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-1 h-fit">
-                        <h2 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
-                            <span className="material-symbols-outlined">contact_page</span>
+                    <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-1 h-fit">
+                        <h2 className="text-xs sm:text-sm font-bold text-gray-400 uppercase mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
+                            <span className="material-symbols-outlined text-sm sm:text-base">contact_page</span>
                             {t('Dane kontaktowe', 'Contact details')}
                         </h2>
                         <div className="space-y-4">
                             <div className="flex items-start gap-3">
-                                <span className="material-symbols-outlined text-gray-400 mt-1">call</span>
+                                <span className="material-symbols-outlined text-xs sm:text-sm text-gray-400 mt-1">call</span>
                                 <div>
-                                    <p className="text-xs text-gray-500">{t('Telefon', 'Phone')}</p>
-                                    <p className="font-medium text-gray-800 dark:text-gray-200">{client.phone}</p>
+                                    <p className="text-[11px] sm:text-xs text-gray-500">{t('Telefon', 'Phone')}</p>
+                                    <p className="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-200">{client.phone}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <span className="material-symbols-outlined text-gray-400 mt-1">mail</span>
+                                <span className="material-symbols-outlined text-xs sm:text-sm text-gray-400 mt-1">mail</span>
                                 <div>
-                                    <p className="text-xs text-gray-500">Email</p>
-                                    <p className="font-medium text-gray-800 dark:text-gray-200 break-all">{client.email}</p>
+                                    <p className="text-[11px] sm:text-xs text-gray-500">Email</p>
+                                    <p className="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-200 break-all">{client.email}</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-3">
-                                <span className="material-symbols-outlined text-gray-400 mt-1">home</span>
+                                <span className="material-symbols-outlined text-xs sm:text-sm text-gray-400 mt-1">home</span>
                                 <div>
-                                    <p className="text-xs text-gray-500">{t('Adres', 'Address')}</p>
-                                    <p className="font-medium text-gray-800 dark:text-gray-200">{client.address}</p>
-                                    <p className="font-medium text-gray-800 dark:text-gray-200">
+                                    <p className="text-[11px] sm:text-xs text-gray-500">{t('Adres', 'Address')}</p>
+                                    <p className="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-200">{client.address}</p>
+                                    <p className="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-200">
                                         {client.zipCode} {client.city}
                                     </p>
                                 </div>
@@ -149,9 +151,9 @@ const ClientDetails: React.FC = () => {
                     </div>
 
                     {/* Projects List */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-2">
-                        <h2 className="text-sm font-bold text-gray-400 uppercase mb-4 flex items-center gap-2">
-                            <span className="material-symbols-outlined">folder</span>
+                    <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-2">
+                        <h2 className="text-xs sm:text-sm font-bold text-gray-400 uppercase mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
+                            <span className="material-symbols-outlined text-sm sm:text-base">folder</span>
                             {t('Historia projektów', 'Project history')}
                         </h2>
 
@@ -163,32 +165,32 @@ const ClientDetails: React.FC = () => {
                                 </button>
                             </div>
                         ) : (
-                            <div className="space-y-3">
+                            <div className="space-y-2.5 sm:space-y-3">
                                 {clientProjects.map((project) => (
                                     <div
                                         key={project.id}
                                         onClick={() => navigate(`/projects/${project.id}`)}
-                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer group"
+                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer group"
                                     >
                                         <div className="flex items-center gap-4">
                                             <div
-                                                className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm"
+                                                className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-xs sm:text-sm"
                                                 style={{ backgroundColor: project.color ? `${project.color}30` : "#ccc", color: project.color }}
                                             >
                                                 {project.name[0]}
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-gray-800 dark:text-white group-hover:text-primary transition-colors">
+                                                <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-white group-hover:text-primary transition-colors">
                                                     {project.name}
                                                 </h3>
-                                                <p className="text-xs text-gray-500">
+                                                <p className="text-[11px] sm:text-xs text-gray-500">
                                                     {project.startDate || t('Brak daty', 'No date')} — {project.status}
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="text-left sm:text-right w-full sm:w-auto">
-                                            <p className="font-bold text-gray-800 dark:text-white">{project.value.toLocaleString()} {currencyCode}</p>
-                                            <span className="material-symbols-outlined text-gray-300 group-hover:text-primary">arrow_forward</span>
+                                        <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-end text-left sm:text-right w-full sm:w-auto">
+                                            <p className="text-sm sm:text-base font-bold text-gray-800 dark:text-white">{project.value.toLocaleString()} {currencyCode}</p>
+                                            <span className="material-symbols-outlined text-sm sm:text-base text-gray-900 sm:text-gray-300 group-hover:text-primary ml-2 sm:ml-0 mt-0 sm:mt-1">arrow_forward</span>
                                         </div>
                                     </div>
                                 ))}
