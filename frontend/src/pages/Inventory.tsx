@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { PackagePlus } from "lucide-react";
 import { getInventory, saveInventoryItem, deleteInventoryItem } from "../lib/storage";
 import { InventoryItem } from "../types";
@@ -51,6 +51,12 @@ const Inventory: React.FC = () => {
     const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [filterOpen, setFilterOpen] = useState(false);
+    const [selectedCategories, setSelectedCategories] = useState<Record<string, boolean>>(() =>
+        Object.fromEntries(CATEGORIES.map((c) => [c, true]))
+    );
+    const [sortBy, setSortBy] = useState<"latest" | "name">("latest");
+    const filterPanelRef = useRef<HTMLDivElement>(null);
 
     // Form State
     const [newItem, setNewItem] = useState<Partial<InventoryItem>>({
@@ -69,6 +75,15 @@ const Inventory: React.FC = () => {
         };
         load();
     }, [isDemoMode, demoRevision]);
+
+    useEffect(() => {
+        if (!filterOpen) return;
+        const handleClickOutside = (e: MouseEvent) => {
+            if (filterPanelRef.current && !filterPanelRef.current.contains(e.target as Node)) setFilterOpen(false);
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [filterOpen]);
 
     const openAddModal = () => {
         setEditingItem(null);
@@ -108,10 +123,15 @@ const Inventory: React.FC = () => {
         setIsModalOpen(false);
     };
 
-    const filteredItems = items.filter((i) => {
-        const search = searchTerm.toLowerCase();
-        return (i.name?.toLowerCase() || "").includes(search) || (i.category?.toLowerCase() || "").includes(search);
-    });
+    const filteredItems = items
+        .filter((i) => {
+            const search = searchTerm.toLowerCase();
+            const matchesSearch = (i.name?.toLowerCase() || "").includes(search) || (i.category?.toLowerCase() || "").includes(search);
+            const category = i.category || "Inne";
+            const matchesCategory = selectedCategories[category] !== false;
+            return matchesSearch && matchesCategory;
+        })
+        .sort((a, b) => (sortBy === "name" ? (a.name || "").localeCompare(b.name || "") : 0));
 
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
@@ -133,18 +153,95 @@ const Inventory: React.FC = () => {
                 </div>
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
-                    <div className="flex flex-col md:flex-row gap-4 mb-4 items-center">
-                        <div className="flex-1 w-full">
-                            <div className="relative w-full">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span className="material-symbols-outlined text-slate-400">search</span>
+                    <div className="flex flex-col md:flex-row gap-4 md:mb-4 mb-2 items-center">
+                        <div className="flex-1 w-full flex border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl">
+                            <div className="relative flex-1 flex items-center rounded-l-xl overflow-hidden">
+                                <div className="absolute left-3 flex items-center pointer-events-none">
+                                    <span className="material-symbols-outlined text-slate-400 text-xl">search</span>
                                 </div>
                                 <input
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="form-input w-full pl-11 pr-4 py-3 h-11 sm:h-[47.3px] rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-[15px] sm:text-base placeholder:text-[15px] sm:placeholder:text-base focus:ring-primary focus:border-primary shadow-sm"
+                                    className="form-input w-full pl-11 pr-4 py-3 h-11 sm:h-[47.3px] rounded-l-xl rounded-r-none border-0 border-r border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-[15px] sm:text-base placeholder:text-[15px] sm:placeholder:text-base focus:ring-0 focus:border-0 focus:border-r focus:border-slate-200 dark:focus:border-slate-700"
                                     placeholder={t('Wyszukaj materiał...', 'Search material...')}
                                 />
+                            </div>
+                            <div className="relative rounded-r-xl" ref={filterPanelRef}>
+                                <button
+                                    type="button"
+                                    onClick={() => setFilterOpen((o) => !o)}
+                                    className="flex items-center justify-center h-11 w-11 sm:h-[47.3px] sm:w-12 bg-gray-100 dark:bg-gray-700 text-slate-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors border-0 border-l border-slate-200 dark:border-slate-700 rounded-r-xl"
+                                    title={t('Filtruj i sortuj', 'Filter & sort')}
+                                    aria-expanded={filterOpen}
+                                >
+                                    <span className="material-symbols-outlined text-[22px]">filter_list</span>
+                                </button>
+                                {filterOpen && (
+                                    <div className="absolute right-0 top-full mt-1 z-20 w-64 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg py-3">
+                                        <div className="px-3 pb-2 border-b border-slate-100 dark:border-slate-700">
+                                            <p className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
+                                                {t('Kategorie', 'Categories')}
+                                            </p>
+                                        </div>
+                                        <div className="px-2 py-2 max-h-48 overflow-y-auto">
+                                            {CATEGORIES.map((cat) => (
+                                                <label
+                                                    key={cat}
+                                                    className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedCategories[cat] !== false}
+                                                        onChange={(e) =>
+                                                            setSelectedCategories((prev) => ({ ...prev, [cat]: e.target.checked }))
+                                                        }
+                                                        className="rounded border-slate-300 text-primary focus:ring-primary"
+                                                    />
+                                                    <span
+                                                        className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                                                        style={{
+                                                            backgroundColor: `${getCategoryColor(cat)}30`,
+                                                            color: getCategoryColor(cat),
+                                                        }}
+                                                    >
+                                                        {localizeCategory(cat)}
+                                                    </span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                        <div className="px-3 pt-2 border-t border-slate-100 dark:border-slate-700">
+                                            <p className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 mb-2">
+                                                {t('Sortuj', 'Sort by')}
+                                            </p>
+                                            <div className="flex flex-col gap-1">
+                                                <label className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="sort"
+                                                        checked={sortBy === "latest"}
+                                                        onChange={() => setSortBy("latest")}
+                                                        className="border-slate-300 text-primary focus:ring-primary"
+                                                    />
+                                                    <span className="text-sm text-slate-700 dark:text-slate-200">
+                                                        {t('Najnowsze', 'Latest')}
+                                                    </span>
+                                                </label>
+                                                <label className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer">
+                                                    <input
+                                                        type="radio"
+                                                        name="sort"
+                                                        checked={sortBy === "name"}
+                                                        onChange={() => setSortBy("name")}
+                                                        className="border-slate-300 text-primary focus:ring-primary"
+                                                    />
+                                                    <span className="text-sm text-slate-700 dark:text-slate-200">
+                                                        {t('Nazwa A–Z', 'Name A–Z')}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="flex gap-3 w-full md:w-auto">
@@ -202,8 +299,14 @@ const Inventory: React.FC = () => {
                                             <td className="px-4 py-4 text-sm font-bold text-gray-900 dark:text-white">
                                                 {item.name}
                                             </td>
-                                            <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
-                                                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs">
+                                            <td className="px-4 py-4 text-sm">
+                                                <span
+                                                    className="inline-flex px-2 py-1 rounded-full text-xs font-semibold"
+                                                    style={{
+                                                        backgroundColor: `${getCategoryColor(item.category || "Inne")}30`,
+                                                        color: getCategoryColor(item.category || "Inne"),
+                                                    }}
+                                                >
                                                     {localizeCategory(item.category || '')}
                                                 </span>
                                             </td>
