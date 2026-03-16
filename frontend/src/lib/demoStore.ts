@@ -113,6 +113,24 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
                 createdAt: '2026-02-11T08:40:00.000Z',
             },
         ],
+        clientData: {
+            projectMeta: {
+                additionalCosts: [
+                    {
+                        id: 'demo-extra-1-1',
+                        amount: 2200,
+                        note: 'Dodatkowa izolacja akustyczna w sypialni',
+                        createdAt: '2026-02-12T09:25:00.000Z',
+                    },
+                    {
+                        id: 'demo-extra-1-2',
+                        amount: 650,
+                        note: 'Pilna dostawa materiałów przed weekendem',
+                        createdAt: '2026-02-20T14:10:00.000Z',
+                    },
+                ],
+            },
+        },
     },
     {
         id: 'demo-project-2',
@@ -176,6 +194,18 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
                 createdAt: '2026-02-18T09:00:00.000Z',
             },
         ],
+        clientData: {
+            projectMeta: {
+                additionalCosts: [
+                    {
+                        id: 'demo-extra-4-1',
+                        amount: 1400,
+                        note: 'Wzmocnienie instalacji elektrycznej pod nowy piekarnik',
+                        createdAt: '2026-02-22T11:45:00.000Z',
+                    },
+                ],
+            },
+        },
     },
     {
         id: 'demo-project-5',
@@ -197,6 +227,18 @@ const DEMO_PROJECTS_DEFAULT: Project[] = [
                 createdAt: '2026-05-20T07:35:00.000Z',
             },
         ],
+        clientData: {
+            projectMeta: {
+                additionalCosts: [
+                    {
+                        id: 'demo-extra-5-1',
+                        amount: 3100,
+                        note: 'Dodatkowe okablowanie stanowisk i testy sieci',
+                        createdAt: '2026-05-22T08:15:00.000Z',
+                    },
+                ],
+            },
+        },
     },
     {
         id: 'demo-project-6',
@@ -247,6 +289,24 @@ const DEMO_PROJECTS_EN: Project[] = [
                 createdAt: '2026-02-11T08:40:00.000Z',
             },
         ],
+        clientData: {
+            projectMeta: {
+                additionalCosts: [
+                    {
+                        id: 'demo-extra-1-1',
+                        amount: 2200,
+                        note: 'Additional acoustic insulation in the bedroom',
+                        createdAt: '2026-02-12T09:25:00.000Z',
+                    },
+                    {
+                        id: 'demo-extra-1-2',
+                        amount: 650,
+                        note: 'Express material delivery before the weekend',
+                        createdAt: '2026-02-20T14:10:00.000Z',
+                    },
+                ],
+            },
+        },
     },
     {
         id: 'demo-project-2',
@@ -310,6 +370,18 @@ const DEMO_PROJECTS_EN: Project[] = [
                 createdAt: '2026-02-18T09:00:00.000Z',
             },
         ],
+        clientData: {
+            projectMeta: {
+                additionalCosts: [
+                    {
+                        id: 'demo-extra-4-1',
+                        amount: 1400,
+                        note: 'Electrical upgrade for the new oven load',
+                        createdAt: '2026-02-22T11:45:00.000Z',
+                    },
+                ],
+            },
+        },
     },
     {
         id: 'demo-project-5',
@@ -331,6 +403,18 @@ const DEMO_PROJECTS_EN: Project[] = [
                 createdAt: '2026-05-20T07:35:00.000Z',
             },
         ],
+        clientData: {
+            projectMeta: {
+                additionalCosts: [
+                    {
+                        id: 'demo-extra-5-1',
+                        amount: 3100,
+                        note: 'Extra workstation cabling and network validation',
+                        createdAt: '2026-05-22T08:15:00.000Z',
+                    },
+                ],
+            },
+        },
     },
     {
         id: 'demo-project-6',
@@ -987,10 +1071,16 @@ const attachRoomSnapshots = (projects: Project[], language: 'pl' | 'en'): Projec
     return projects.map((project) => {
         const rooms = roomCatalog[project.id];
         const totals = rooms ? calculateProjectTotalsFromRooms(rooms) : null;
+        const additionalCostsTotal = Array.isArray(project.clientData?.projectMeta?.additionalCosts)
+            ? project.clientData.projectMeta.additionalCosts.reduce((sum: number, item: any) => {
+                  const amount = Number(item?.amount);
+                  return Number.isFinite(amount) && amount > 0 ? sum + amount : sum;
+              }, 0)
+            : 0;
         return {
             ...project,
             rooms: rooms ? clone(rooms) : project.rooms,
-            value: totals ? Number(totals.value.toFixed(2)) : project.value,
+            value: totals ? Number((totals.value + additionalCostsTotal).toFixed(2)) : project.value,
             area: totals ? Number(totals.area.toFixed(2)) : project.area,
         };
     });
@@ -1057,7 +1147,15 @@ const attachClientSnapshots = (projects: Project[], clients: Client[]): Project[
             ...project,
             clientName: client ? `${client.firstName} ${client.lastName}` : project.clientName,
             address: client ? `${client.address}, ${client.city}` : project.address,
-            clientData: client ? { ...client } : project.clientData,
+            clientData: client
+                ? {
+                      ...client,
+                      ...(project.clientData || {}),
+                      projectMeta: {
+                          ...(project.clientData?.projectMeta || {}),
+                      },
+                  }
+                : project.clientData,
         };
     });
 };
