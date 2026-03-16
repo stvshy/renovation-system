@@ -88,7 +88,7 @@ const Clients: React.FC = () => {
                             placeholder={t('Szukaj klienta...', 'Search client...')} 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="form-input w-full pl-10 pr-4 py-3 h-11 sm:h-auto rounded-xl border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-[15px] sm:text-base placeholder:text-[15px] sm:placeholder:text-base"
+                            className="form-input w-full pl-11 pr-4 py-3 h-11 sm:h-auto rounded-xl border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-[15px] sm:text-base placeholder:text-[15px] sm:placeholder:text-base"
                         />
                      </div>
                 </div>
