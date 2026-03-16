@@ -153,7 +153,7 @@ const Inventory: React.FC = () => {
                 </div>
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
-                    <div className="flex flex-col md:flex-row gap-4 md:mb-4 mb-2 items-center">
+                    <div className="flex flex-col md:flex-row gap-4 md:mb-4 mb-0.5 items-center">
                         <div className="flex-1 w-full flex border border-slate-200 dark:border-slate-700 shadow-sm rounded-xl">
                             <div className="relative flex-1 flex items-center rounded-l-xl overflow-hidden">
                                 <div className="absolute left-3 flex items-center pointer-events-none">
