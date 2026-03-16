@@ -125,16 +125,16 @@ const Projects: React.FC = () => {
         <>
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
             <div className="flex flex-col w-full max-w-7xl mx-auto">
-                <header className="flex flex-wrap items-center justify-between gap-4 border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2 mb-2">
+                <header className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6 px-2">
                     <div className="flex items-center text-slate-900 dark:text-slate-50">
                         <div className="size-8 mr-3 mt-1 text-primary flex items-center justify-center">
                             <span className="material-symbols-outlined text-[34px] leading-none">folder</span>
                         </div>
                         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Projekty', 'Projects')}</h1>
                     </div>
-                    <button 
+                    <button
                         onClick={() => navigate('/projects/new/client')}
-                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-slate-50 text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
+                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
                     >
                         <span className="material-symbols-outlined text-lg">add</span>
                         <span className="truncate">{t('Nowy Projekt', 'New Project')}</span>
