@@ -130,7 +130,7 @@ const Inventory: React.FC = () => {
                                 <input
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="form-input w-full pl-10 pr-4 py-3 rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-sm focus:ring-primary focus:border-primary shadow-sm"
+                                    className="form-input w-full pl-10 pr-4 py-3 h-11 sm:h-auto rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-[15px] sm:text-sm placeholder:text-[15px] sm:placeholder:text-sm focus:ring-primary focus:border-primary shadow-sm"
                                     placeholder={t('Wyszukaj materiał...', 'Search material...')}
                                 />
                             </div>
