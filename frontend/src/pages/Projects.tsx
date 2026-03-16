@@ -125,7 +125,7 @@ const Projects: React.FC = () => {
         <>
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
             <div className="flex flex-col w-full max-w-7xl mx-auto">
-                <header className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6 px-2">
+                <header className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6">
                     <div className="flex items-center text-slate-900 dark:text-slate-50">
                         <div className="size-8 mr-3 mt-1 text-primary flex items-center justify-center">
                             <span className="material-symbols-outlined text-[34px] leading-none">folder</span>
@@ -134,7 +134,7 @@ const Projects: React.FC = () => {
                     </div>
                     <button
                         onClick={() => navigate('/projects/new/client')}
-                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
+                        className="flex w-full sm:w-auto items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
                     >
                         <span className="material-symbols-outlined text-lg">add</span>
                         <span className="truncate">{t('Nowy Projekt', 'New Project')}</span>
@@ -143,7 +143,7 @@ const Projects: React.FC = () => {
                 
                 {/* Status Tabs */}
                 <div className="flex justify-center py-2 -mx-1 mb-2">
-                <div className="w-full overflow-x-auto rounded-xl [scrollbar-width:thin] [&::-webkit-scrollbar]:h-[5px] sm:[&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full">
+                <div className="w-full overflow-x-auto rounded-xl [scrollbar-width:thin] [&::-webkit-scrollbar]:h-[5px] sm:[&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:mx-3 sm:[&::-webkit-scrollbar-track]:mx-0 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:rounded-[999px]">
                 <div className="inline-flex min-w-max h-10 items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 mx-auto">
                         {statuses.map((status) => (
                             <label key={status.value} className="flex cursor-pointer h-full items-center justify-center rounded-lg px-[11px] sm:px-4 has-[:checked]:bg-white dark:has-[:checked]:bg-slate-700 has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-slate-50 text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal transition-all duration-200 whitespace-nowrap">

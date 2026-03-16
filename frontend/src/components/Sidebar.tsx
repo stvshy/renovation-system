@@ -334,13 +334,13 @@ const Sidebar: React.FC = () => {
                                 </button>
                             </div>
                             <div className="flex flex-col items-center gap-4 py-1 pb-6 px-6">
-                                <div className="flex flex-col items-center gap-2 -mt-[42px]">
-                                    <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-16 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                                        <span className="material-symbols-outlined text-4xl">person</span>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <h1
-                                            className="text-gray-800 dark:text-gray-200 text-lg font-medium"
+                            <div className="flex flex-col items-center gap-1.5 -mt-[36px]">
+                                <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-14 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                    <span className="material-symbols-outlined text-3xl">person</span>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <h1
+                                        className="text-gray-800 dark:text-gray-200 text-base font-medium"
                                             title={user?.email}
                                         >
                                             {user?.email?.split('@')[0] || t('Użytkownik', 'User')}

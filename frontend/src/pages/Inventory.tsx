@@ -104,8 +104,8 @@ const Inventory: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6 px-2">
-                    <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6">
+                    <div className="flex items-center gap-3 -ml-[1.5px] sm:-ml-[1.5px] text-slate-900 dark:text-slate-50">
                         <div className="size-8 mb-1 mr-1 text-primary">
                             <span className="material-symbols-outlined !text-4xl">warehouse</span>
                         </div>
