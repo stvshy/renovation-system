@@ -98,16 +98,16 @@ const ClientDetails: React.FC = () => {
                     <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                         <button
                             onClick={() => setIsEditModalOpen(true)}
-                            className="flex items-center justify-center gap-2 h-10 sm:h-12 px-4 bg-transparent border border-gray-400 dark:border-gray-500 text-gray-700 dark:text-gray-200 rounded-xl font-bold text-sm sm:text-base hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
+                            className="flex items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-transparent border border-gray-400 dark:border-gray-500 text-gray-700 dark:text-gray-200 font-bold text-sm tracking-wide hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
                         >
-                            <span className="material-symbols-outlined">edit</span>
+                            <span className="material-symbols-outlined text-[18px] leading-none">edit</span>
                             {t('Edytuj Dane', 'Edit Details')}
                         </button>
                         <button
                             onClick={handleNewProject}
-                            className="flex items-center justify-center gap-2 h-10 sm:h-12 px-4 sm:px-6 bg-primary text-white rounded-xl font-bold text-sm sm:text-base shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
+                            className="flex items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white font-bold text-sm tracking-wide shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
                         >
-                            <span className="material-symbols-outlined">add_circle</span>
+                            <span className="material-symbols-outlined text-[18px] leading-none">add_circle</span>
                             {t('Nowy Projekt', 'New Project')}
                         </button>
                     </div>
