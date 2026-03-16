@@ -129,7 +129,7 @@ const Settings: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div>
                         <div className="flex items-center gap-3 -ml-[4.5px] sm:-ml-[4.5px] text-slate-900 dark:text-slate-50">
                             <div className="size-8 mb-1 text-primary -mt-1">
@@ -137,7 +137,7 @@ const Settings: React.FC = () => {
                             </div>
                             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Ustawienia', 'Settings')}</h1>
                         </div>
-                        <p className="text-gray-500 mt-2">{t('Definiuj rodzaje prac i stawki robocizny.', 'Define service types and labor rates.')}</p>
+                        <p className="hidden sm:block text-gray-500 mt-2">{t('Definiuj rodzaje prac i stawki robocizny.', 'Define service types and labor rates.')}</p>
                     </div>
                     <button
                         onClick={openAddModal}
@@ -153,6 +153,7 @@ const Settings: React.FC = () => {
                         <Grid2x2Plus size={18} strokeWidth={2.2} />
                         {t('Dodaj Rodzaj Prac', 'Add Service Type')}
                     </button>
+                    <p className="w-full sm:hidden -mt-2 text-sm text-gray-500">{t('Definiuj rodzaje prac i stawki robocizny.', 'Define service types and labor rates.')}</p>
                 </div>
 
                 <div className="space-y-8">
