@@ -146,7 +146,7 @@ const Projects: React.FC = () => {
                     <div className="w-full overflow-x-auto rounded-xl">
                     <div className="inline-flex min-w-max h-10 items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 mx-auto">
                         {statuses.map((status) => (
-                            <label key={status.value} className="flex cursor-pointer h-full items-center justify-center rounded-lg px-4 has-[:checked]:bg-white dark:has-[:checked]:bg-slate-700 has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-slate-50 text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal transition-all duration-200 whitespace-nowrap">
+                            <label key={status.value} className="flex cursor-pointer h-full items-center justify-center rounded-lg px-[11px] sm:px-4 has-[:checked]:bg-white dark:has-[:checked]:bg-slate-700 has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-slate-50 text-slate-500 dark:text-slate-400 text-xs sm:text-sm font-medium leading-normal transition-all duration-200 whitespace-nowrap">
                                 <span className="truncate">{status.label}</span>
                                 <input 
                                     className="invisible w-0" 
