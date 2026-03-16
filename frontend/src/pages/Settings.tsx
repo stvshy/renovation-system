@@ -328,15 +328,15 @@ const Settings: React.FC = () => {
                                 </label>
                             </div>
 
-                            <div className="flex justify-end gap-2">
+                            <div className="!mt-7 flex justify-end gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="h-12 px-4 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
+                                    className="h-11 px-4 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
                                 >
                                     {t('Anuluj', 'Cancel')}
                                 </button>
-                                <button type="submit" className="h-12 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/90">
+                                <button type="submit" className="h-11 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/90">
                                     {t('Zapisz', 'Save')}
                                 </button>
                             </div>

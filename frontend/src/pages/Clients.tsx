@@ -180,8 +180,8 @@ const Clients: React.FC = () => {
                                 </label>
                             </div>
                             <div className="pt-4 flex justify-end gap-2">
-                                <button type="button" onClick={() => setIsModalOpen(false)} className="h-12 px-4 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700">{t('Anuluj', 'Cancel')}</button>
-                                <button type="submit" className="h-12 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/90">{t('Zapisz', 'Save')}</button>
+                                <button type="button" onClick={() => setIsModalOpen(false)} className="h-11 px-4 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700">{t('Anuluj', 'Cancel')}</button>
+                                <button type="submit" className="h-11 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/90">{t('Zapisz', 'Save')}</button>
                             </div>
                         </form>
                     </div>
