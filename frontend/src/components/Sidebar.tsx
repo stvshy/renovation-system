@@ -11,6 +11,7 @@ import { saveEditedProjectFromSnapshot } from '../lib/projectWizardSave';
 
 type ToastState = { message: string; kind: 'success' | 'error' };
 
+
 const Sidebar: React.FC = () => {
     const { user, signOut } = useAuth();
     const { t } = useLanguage();
@@ -21,6 +22,7 @@ const Sidebar: React.FC = () => {
     const [pendingTargetPath, setPendingTargetPath] = useState<string | null>(null);
     const [showExitWizardModal, setShowExitWizardModal] = useState(false);
     const [isHandlingWizardExit, setIsHandlingWizardExit] = useState(false);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
     const toastTimerRef = useRef<number | null>(null);
 
     const isProjectCreationRoute = location.pathname.startsWith('/projects/new');
@@ -137,10 +139,59 @@ const Sidebar: React.FC = () => {
         navigate('/login');
     };
 
+    // MOBILE NAVBAR (bottom, icons only)
+    // Hidden on sm and up
+    const mobileNavItems = [
+        { to: '/projects', icon: 'folder', label: t('Projekty', 'Projects') },
+        { to: '/inventory', icon: 'warehouse', label: t('Magazyn', 'Inventory') },
+        { to: '/clients', icon: 'groups', label: t('Klienci', 'Clients') },
+        { to: '/calendar', icon: 'calendar_month', label: t('Kalendarz', 'Calendar') },
+        { to: '/settings', icon: 'settings', label: t('Ustawienia', 'Settings') },
+    ];
+
+    // Touch gesture for closing mobile drawer
+    const drawerRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        if (!showMobileMenu) return;
+        let startY = 0;
+        let currentY = 0;
+        let dragging = false;
+        const drawer = drawerRef.current;
+        if (!drawer) return;
+        const handleTouchStart = (e: TouchEvent) => {
+            dragging = true;
+            startY = e.touches[0].clientY;
+        };
+        const handleTouchMove = (e: TouchEvent) => {
+            if (!dragging) return;
+            currentY = e.touches[0].clientY;
+            const diff = currentY - startY;
+            if (diff > 0) {
+                drawer.style.transform = `translateY(${diff}px)`;
+            }
+        };
+        const handleTouchEnd = () => {
+            if (!dragging) return;
+            dragging = false;
+            const diff = currentY - startY;
+            drawer.style.transform = '';
+            if (diff > 60) setShowMobileMenu(false);
+        };
+        drawer.addEventListener('touchstart', handleTouchStart);
+        drawer.addEventListener('touchmove', handleTouchMove);
+        drawer.addEventListener('touchend', handleTouchEnd);
+        return () => {
+            drawer.removeEventListener('touchstart', handleTouchStart);
+            drawer.removeEventListener('touchmove', handleTouchMove);
+            drawer.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [showMobileMenu]);
+
     return (
         <>
+            {/* Desktop sidebar */}
             <aside
-                className={`flex flex-col ${isExpanded ? 'w-64' : 'w-16 sm:w-20'} bg-white dark:bg-background-dark shadow-md h-screen sticky top-0 border-r border-gray-200 dark:border-gray-800 print:hidden transition-[width] duration-300 shrink-0`}
+                className={`hidden sm:flex flex-col ${isExpanded ? 'w-64' : 'w-16 sm:w-20'} bg-white dark:bg-background-dark shadow-md h-screen sticky top-0 border-r border-gray-200 dark:border-gray-800 print:hidden transition-[width] duration-300 shrink-0`}
                 aria-label={t('Nawigacja boczna', 'Sidebar navigation')}
             >
                 <div className="flex flex-col flex-1">
@@ -216,6 +267,75 @@ const Sidebar: React.FC = () => {
                     </div>
                 </div>
             </aside>
+
+            {/* Mobile navbar (bottom) */}
+            <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-background-dark border-t border-gray-200 dark:border-gray-800 flex justify-between items-center px-1 py-1 print:hidden shadow-t-md">
+                {mobileNavItems.map((item, idx) => (
+                    <button
+                        key={item.to}
+                        className="flex flex-col items-center justify-center flex-1 py-1 px-0 group"
+                        onClick={() => {
+                            if (item.to === '/settings') handleProtectedNavigation('/settings');
+                            else handleProtectedNavigation(item.to);
+                        }}
+                        aria-label={item.label}
+                    >
+                        <span className={`material-symbols-outlined text-2xl ${location.pathname.startsWith(item.to) ? 'text-primary' : 'text-gray-500 dark:text-gray-300 group-hover:text-primary'}`}>{item.icon}</span>
+                    </button>
+                ))}
+                {/* Profile/menu icon (last) */}
+                <button
+                    className="flex flex-col items-center justify-center flex-1 py-1 px-0 group"
+                    onClick={() => setShowMobileMenu(true)}
+                    aria-label={t('Konto i więcej', 'Account and more')}
+                >
+                    <span className="material-symbols-outlined text-2xl text-gray-500 dark:text-gray-300 group-hover:text-primary">person</span>
+                </button>
+            </nav>
+
+            {/* Mobile menu modal/drawer */}
+            {showMobileMenu && (
+                createPortal(
+                    <div className="fixed inset-0 z-[10060] flex items-end sm:hidden bg-black/40 backdrop-blur-sm">
+                        <div ref={drawerRef} className="w-full rounded-t-2xl bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden animate-slideUp">
+                            {/* Pasek do łapania */}
+                            <div className="w-full flex justify-center items-center pt-2 pb-1 select-none cursor-grab">
+                                <div className="w-12 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600" />
+                            </div>
+                            <div className="flex flex-col items-center gap-4 py-4 px-6">
+                                <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-16 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                    <span className="material-symbols-outlined text-4xl">person</span>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                    <h1 className="text-gray-800 dark:text-gray-200 text-lg font-medium" title={user?.email}>
+                                        {user?.email?.split('@')[0] || t('Użytkownik', 'User')}
+                                    </h1>
+                                    <p className="text-gray-500 dark:text-gray-400 text-xs" title={user?.email}>
+                                        {user?.email}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full flex items-center justify-center cursor-pointer rounded-lg h-10 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-200 text-sm font-bold tracking-wide gap-2 px-4"
+                                >
+                                    <span className="material-symbols-outlined text-lg">logout</span>
+                                    <span className="truncate">{t('Wyloguj', 'Sign out')}</span>
+                                </button>
+                                <div className="flex justify-center pt-1 w-full">
+                                    <LanguageToggleButton size="xxs" className="border border-gray-300 dark:border-gray-600 rounded-full p-0 w-10 h-10" />
+                                </div>
+                                <button
+                                    onClick={() => setShowMobileMenu(false)}
+                                    className="mt-2 text-gray-400 hover:text-primary text-xs"
+                                >
+                                    {t('Zamknij', 'Close')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>,
+                    document.body
+                )
+            )}
 
             {toast &&
                 createPortal(
