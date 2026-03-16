@@ -79,13 +79,13 @@ const Calendar: React.FC = () => {
                         </button>
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-                        <button onClick={handlePrevMonth} className="flex items-center justify-center rounded-xl h-12 w-12 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        <button onClick={handlePrevMonth} className="flex items-center justify-center rounded-xl h-[42px] w-[42px] sm:h-12 sm:w-12 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <span className="material-symbols-outlined">chevron_left</span>
                         </button>
                         <p className="text-[#0d141b] dark:text-white text-base sm:text-xl font-bold font-display w-auto sm:w-48 text-center">
                             {monthNames[month]} {year}
                         </p>
-                        <button onClick={handleNextMonth} className="flex items-center justify-center rounded-xl h-12 w-12 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        <button onClick={handleNextMonth} className="flex items-center justify-center rounded-xl h-[42px] w-[42px] sm:h-12 sm:w-12 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <span className="material-symbols-outlined">chevron_right</span>
                         </button>
                     </div>
