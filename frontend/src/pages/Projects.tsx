@@ -123,28 +123,26 @@ const Projects: React.FC = () => {
 
     return (
         <>
-        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
-            <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
-                <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-3 border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2">
+        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
+            <div className="flex flex-col w-full max-w-7xl mx-auto">
+                <header className="flex flex-wrap items-center justify-between gap-4 border-b border-solid border-slate-200 dark:border-slate-800 pb-4 px-2 mb-2">
                     <div className="flex items-center text-slate-900 dark:text-slate-50">
                         <div className="size-8 mr-3 mt-1 text-primary flex items-center justify-center">
                             <span className="material-symbols-outlined text-[34px] leading-none">folder</span>
                         </div>
-                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-none pt-1 text-gray-900 dark:text-white">{t('Projekty', 'Projects')}</h1>
+                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Projekty', 'Projects')}</h1>
                     </div>
-                    <div className="flex w-full sm:w-auto sm:flex-1 sm:justify-end gap-2 sm:gap-4">
-                        <button 
-                            onClick={() => navigate('/projects/new/client')}
-                            className="flex w-full sm:w-auto min-w-[120px] items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors"
-                        >
-                            <span className="material-symbols-outlined text-lg mr-2">add</span>
-                            <span className="truncate">{t('Nowy Projekt', 'New Project')}</span>
-                        </button>
-                    </div>
+                    <button 
+                        onClick={() => navigate('/projects/new/client')}
+                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-slate-50 text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
+                    >
+                        <span className="material-symbols-outlined text-lg">add</span>
+                        <span className="truncate">{t('Nowy Projekt', 'New Project')}</span>
+                    </button>
                 </header>
                 
                 {/* Status Tabs */}
-                <div className="flex justify-center px-2 py-4">
+                <div className="flex justify-center py-2 -mx-1 mb-2">
                     <div className="w-full overflow-x-auto rounded-xl">
                     <div className="inline-flex min-w-max h-10 items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 mx-auto">
                         {statuses.map((status) => (
@@ -164,7 +162,7 @@ const Projects: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-4 px-2">
+                <div className="flex flex-col gap-4 -mx-[1px]">
                     {isLoading ? (
                         <div className="text-center py-10">{t('Ładowanie projektów...', 'Loading projects...')}</div>
                     ) : visibleItems.length === 0 ? (
@@ -285,7 +283,7 @@ const Projects: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={() => setDraftToDelete(null)}
-                                className="h-11 sm:h-10 px-3 sm:px-4 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 text-sm sm:text-base font-semibold hover:bg-gray-100 dark:hover:bg-slate-800 inline-flex items-center gap-1.5 sm:gap-2"
+                                className="h-12 px-3 sm:px-4 rounded-xl border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 text-sm sm:text-base font-semibold hover:bg-gray-100 dark:hover:bg-slate-800 inline-flex items-center gap-1.5 sm:gap-2"
                             >
                                 <span className="material-symbols-outlined text-[18px] sm:text-[20px]">arrow_back</span>
                                 <span className="sm:hidden">{t('Wróć', 'Back')}</span>
@@ -295,7 +293,7 @@ const Projects: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleConfirmDraftDelete}
-                                className="h-11 sm:h-10 px-3 sm:px-4 rounded-lg font-semibold text-sm sm:text-base text-white bg-red-600 hover:bg-red-700 inline-flex items-center gap-1.5 sm:gap-2"
+                                className="h-12 px-3 sm:px-4 rounded-xl font-semibold text-sm sm:text-base text-white bg-red-600 hover:bg-red-700 inline-flex items-center gap-1.5 sm:gap-2"
                             >
                                 <span className="material-symbols-outlined text-[18px] sm:text-[20px]">delete</span>
                                 <span className="sm:hidden">{t('Usuń', 'Delete')}</span>

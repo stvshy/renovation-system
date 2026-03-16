@@ -127,9 +127,9 @@ const Settings: React.FC = () => {
     }, {} as Record<string, ServiceTemplate[]>);
 
     return (
-        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
+        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6 px-2">
                     <div>
                         <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
                             <div className="size-8 mb-1 text-primary -mt-1">
@@ -141,7 +141,7 @@ const Settings: React.FC = () => {
                     </div>
                     <button
                         onClick={openAddModal}
-                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-lg h-10 sm:h-12 px-4 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
+                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
                     >
                         <Grid2x2Plus size={18} strokeWidth={2.2} />
                         {t('Dodaj Rodzaj Prac', 'Add Service Type')}
@@ -214,7 +214,7 @@ const Settings: React.FC = () => {
                                 <span className="text-xs font-bold text-gray-500 uppercase">{t('Nazwa usługi', 'Service name')}</span>
                                 <input
                                     required
-                                    className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-input w-full rounded-xl dark:bg-slate-800 mt-1"
                                     value={newService.name}
                                     onChange={(e) => setNewService({ ...newService, name: e.target.value })}
                                 />
@@ -224,7 +224,7 @@ const Settings: React.FC = () => {
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Kategoria', 'Category')}</span>
                                     <ScrollableSelect
-                                        className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-select w-full rounded-xl dark:bg-slate-800 mt-1"
                                         value={newService.category}
                                         onChange={(e) => setNewService({ ...newService, category: e.target.value })}
                                     >
@@ -241,7 +241,7 @@ const Settings: React.FC = () => {
                                         type="number"
                                         min="0"
                                         required
-                                        className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-input w-full rounded-xl dark:bg-slate-800 mt-1"
                                         value={newService.laborRate}
                                         onChange={(e) => setNewService({ ...newService, laborRate: parseFloat(e.target.value) })}
                                     />
@@ -288,7 +288,7 @@ const Settings: React.FC = () => {
                                             </div>
                                         </div>
                                         <ScrollableSelect
-                                            className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
+                                            className="form-select w-full rounded-xl dark:bg-slate-800 mt-1"
                                             value={newService.defaultStrategy}
                                             onChange={(e) => setNewService({ ...newService, defaultStrategy: e.target.value as any })}
                                         >
@@ -302,7 +302,7 @@ const Settings: React.FC = () => {
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Domyślny zakres', 'Default scope')}</span>
                                     <ScrollableSelect
-                                        className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-select w-full rounded-xl dark:bg-slate-800 mt-1"
                                         value={newService.suggestedScope}
                                         onChange={(e) => setNewService({ ...newService, suggestedScope: e.target.value as any })}
                                     >
@@ -319,11 +319,11 @@ const Settings: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
+                                    className="h-12 px-4 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
                                 >
                                     {t('Anuluj', 'Cancel')}
                                 </button>
-                                <button type="submit" className="px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90">
+                                <button type="submit" className="h-12 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/90">
                                     {t('Zapisz', 'Save')}
                                 </button>
                             </div>

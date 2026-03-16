@@ -60,9 +60,9 @@ const Calendar: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
-            <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto">
-                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-4 p-2 sm:p-0 sm:items-center mb-3 sm:mb-4">
+        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
+            <div className="flex flex-col w-full max-w-7xl mx-auto">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-4 px-2 sm:items-center mb-4 sm:mb-6">
                     <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
                         <div className="size-8 mb-1 mr-1 text-primary -mt-1">
                             <span className="material-symbols-outlined !text-4xl">calendar_month</span>
@@ -70,21 +70,21 @@ const Calendar: React.FC = () => {
                         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Kalendarz', 'Calendar')}</h1>
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-                        <button onClick={handlePrevMonth} className="flex items-center justify-center rounded-lg h-10 w-10 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        <button onClick={handlePrevMonth} className="flex items-center justify-center rounded-xl h-12 w-12 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <span className="material-symbols-outlined">chevron_left</span>
                         </button>
                         <p className="text-[#0d141b] dark:text-white text-base sm:text-xl font-bold font-display w-auto sm:w-48 text-center">
                             {monthNames[month]} {year}
                         </p>
-                        <button onClick={handleNextMonth} className="flex items-center justify-center rounded-lg h-10 w-10 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        <button onClick={handleNextMonth} className="flex items-center justify-center rounded-xl h-12 w-12 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <span className="material-symbols-outlined">chevron_right</span>
                         </button>
                     </div>
                     <button
                         onClick={() => navigate('/projects/new/client')}
-                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors"
+                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
                     >
-                        <span className="material-symbols-outlined text-lg mr-2">add</span>
+                        <span className="material-symbols-outlined text-lg">add</span>
                         <span className="truncate">{t('Dodaj nowy projekt', 'Add new project')}</span>
                     </button>
                 </div>

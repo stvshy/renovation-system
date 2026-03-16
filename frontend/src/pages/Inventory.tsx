@@ -102,14 +102,14 @@ const Inventory: React.FC = () => {
     });
 
     return (
-        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
+        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-3 sm:mb-5">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6 px-2">
                     <div className="flex items-center gap-3 text-slate-900 dark:text-slate-50">
                         <div className="size-8 mb-1 mr-1 text-primary">
                             <span className="material-symbols-outlined !text-4xl">warehouse</span>
                         </div>
-                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight pt-1 text-gray-900 dark:text-white">{t('Magazyn', 'Inventory')}</h1>
+                        <h1 className="relative top-[2.3px] text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Magazyn', 'Inventory')}</h1>
                     </div>
                 </div>
 
@@ -131,7 +131,7 @@ const Inventory: React.FC = () => {
                         <div className="flex gap-3 w-full md:w-auto">
                             <button
                                 onClick={openAddModal}
-                                className="flex w-full md:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-10 sm:h-12 px-6 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
+                                className="flex w-full md:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
                             >
                                 <PackagePlus size={18} strokeWidth={2.2} />
                                 <span className="truncate">{t('Dodaj materiał', 'Add material')}</span>
@@ -226,7 +226,7 @@ const Inventory: React.FC = () => {
                                 <span className="text-xs font-bold text-gray-500 uppercase">{t('Nazwa materiału', 'Material name')}</span>
                                 <input
                                     required
-                                    className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-input w-full rounded-xl dark:bg-slate-800 mt-1"
                                     value={newItem.name}
                                     onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                                 />
@@ -239,7 +239,7 @@ const Inventory: React.FC = () => {
                                         type="number"
                                         min="0"
                                         required
-                                        className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-input w-full rounded-xl dark:bg-slate-800 mt-1"
                                         value={newItem.quantity}
                                         onChange={(e) => setNewItem({ ...newItem, quantity: parseFloat(e.target.value) })}
                                     />
@@ -247,7 +247,7 @@ const Inventory: React.FC = () => {
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Jednostka', 'Unit')}</span>
                                     <ScrollableSelect
-                                        className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-select w-full rounded-xl dark:bg-slate-800 mt-1"
                                         value={newItem.unit}
                                         onChange={(e) => setNewItem({ ...newItem, unit: e.target.value as any })}
                                     >
@@ -268,7 +268,7 @@ const Inventory: React.FC = () => {
                                         step="0.01"
                                         min="0"
                                         required
-                                        className="form-input w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-input w-full rounded-xl dark:bg-slate-800 mt-1"
                                         value={newItem.pricePerUnit}
                                         onChange={(e) => setNewItem({ ...newItem, pricePerUnit: parseFloat(e.target.value) })}
                                     />
@@ -276,7 +276,7 @@ const Inventory: React.FC = () => {
                                 <label className="block">
                                     <span className="text-xs font-bold text-gray-500 uppercase">{t('Kategoria', 'Category')}</span>
                                     <ScrollableSelect
-                                        className="form-select w-full rounded-lg dark:bg-slate-800 mt-1"
+                                        className="form-select w-full rounded-xl dark:bg-slate-800 mt-1"
                                         value={newItem.category}
                                         onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
                                     >
@@ -296,11 +296,11 @@ const Inventory: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
+                                    className="h-12 px-4 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
                                 >
                                     {t('Anuluj', 'Cancel')}
                                 </button>
-                                <button type="submit" className="px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90">
+                                <button type="submit" className="h-12 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/90">
                                     {t('Zapisz', 'Save')}
                                 </button>
                             </div>
