@@ -104,7 +104,7 @@ const Calendar: React.FC = () => {
                     </button>
                 </div>
                 
-                <div className="overflow-x-auto -mx-2 px-2 [touch-action:pan-x]" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="overflow-x-auto -mx-2 px-2" style={{ WebkitOverflowScrolling: 'touch' }}>
                     <div className="min-w-[560px] sm:min-w-[700px] bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
                         {/* Header Row */}
                         <div className="grid grid-cols-7 text-center border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-slate-800">
@@ -144,7 +144,7 @@ const Calendar: React.FC = () => {
                                             </span>
                                         </div>
                                         
-                                        <div className="flex flex-col gap-1 overflow-y-auto max-h-[72px] sm:max-h-[100px] custom-scrollbar">
+                                        <div className="flex flex-col gap-1">
                                             {activeProjects.map((proj, idx) => (
                                                 <div 
                                                     key={idx}
@@ -152,7 +152,7 @@ const Calendar: React.FC = () => {
                                                         e.stopPropagation();
                                                         navigate(`/projects/${proj.id}`);
                                                     }}
-                                                    className="px-1.5 sm:px-2 py-1 text-[9px] sm:text-[10px] font-bold rounded shadow-sm border-l-4 truncate cursor-pointer hover:opacity-80 transition-opacity text-slate-800"
+                                                    className="px-1.5 sm:px-2 h-5 sm:h-6 flex items-center text-[9px] sm:text-[10px] font-bold rounded shadow-sm border-l-4 truncate cursor-pointer hover:opacity-80 transition-opacity text-slate-800"
                                                     style={{ 
                                                         backgroundColor: proj.color ? `${proj.color}40` : '#e2e8f0', // 25% opacity
                                                         borderLeftColor: proj.color || '#94a3b8',
