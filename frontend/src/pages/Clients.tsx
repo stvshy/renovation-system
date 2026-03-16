@@ -108,11 +108,11 @@ const Clients: React.FC = () => {
                                 className="bg-white dark:bg-slate-800/50 p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 cursor-pointer hover:shadow-md hover:border-primary/30 transition-all group"
                             >
                                 <div className="flex items-center gap-3 mb-3">
-                                    <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold">
+                                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-sm sm:text-base">
                                         {client.firstName?.[0] || '?'}{client.lastName?.[0] || '?'}
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-lg text-slate-800 dark:text-white leading-tight group-hover:text-primary transition-colors">
+                                        <h3 className="font-bold text-base sm:text-lg text-slate-800 dark:text-white leading-tight group-hover:text-primary transition-colors">
                                             {client.firstName} {client.lastName}
                                         </h3>
                                         <p className="text-xs text-slate-500">{client.city}</p>
