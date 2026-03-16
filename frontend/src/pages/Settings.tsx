@@ -50,6 +50,7 @@ const Settings: React.FC = () => {
     const [services, setServices] = useState<ServiceTemplate[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<ServiceTemplate | null>(null);
+    const [itemToDelete, setItemToDelete] = useState<ServiceTemplate | null>(null);
 
     // Form State
     const [newService, setNewService] = useState<Partial<ServiceTemplate>>({
@@ -90,12 +91,16 @@ const Settings: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    const handleDelete = async (id: string) => {
-        if (window.confirm(t("Czy na pewno chcesz usunąć ten rodzaj prac?", "Are you sure you want to delete this service type?"))) {
-            await deleteServiceTemplate(id);
-            const data = await getServiceCatalog();
-            setServices(data);
-        }
+    const handleRequestDelete = (item: ServiceTemplate) => {
+        setItemToDelete(item);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!itemToDelete) return;
+        await deleteServiceTemplate(itemToDelete.id);
+        const data = await getServiceCatalog();
+        setServices(data);
+        setItemToDelete(null);
     };
 
     const handleSave = async (e: React.FormEvent) => {
@@ -171,15 +176,15 @@ const Settings: React.FC = () => {
                                         <div className="absolute top-2 right-2 flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => openEditModal(service)}
-                                                className="p-1 text-blue-600 bg-transparent rounded hover:bg-blue-50"
+                                                className="p-0.5 text-blue-600 bg-transparent rounded transition-colors hover:bg-blue-50/20 active:bg-blue-100/15 dark:hover:bg-blue-900/10 dark:active:bg-blue-900/15"
                                             >
                                                 <span className="material-symbols-outlined text-sm">edit</span>
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(service.id)}
-                                                className="p-1 text-red-500 bg-transparent rounded hover:bg-red-50"
+                                                onClick={() => handleRequestDelete(service)}
+                                                className="p-0.5 text-red-500 bg-transparent rounded transition-colors hover:bg-red-50/20 active:bg-red-100/15 dark:hover:bg-red-900/10 dark:active:bg-red-900/15"
                                             >
-                                                <span className="material-symbols-outlined text-sm">delete</span>
+                                                <span className="material-symbols-outlined text-[14.5px]">delete</span>
                                             </button>
                                         </div>
                                         <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white pr-10">{localizeServiceName(service.name)}</h3>
@@ -336,6 +341,40 @@ const Settings: React.FC = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {itemToDelete && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
+                        <div className="px-5 pt-4 pb-3">
+                            <h3 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white leading-tight">
+                                {t('Usunąć ten rodzaj prac?', 'Delete this service type?')}
+                            </h3>
+                            <p className="mt-2 text-sm sm:text-base text-gray-500 dark:text-slate-400 leading-relaxed">
+                                {t(
+                                    'Ta pozycja zostanie trwale usunięta z ustawień. Tej operacji nie można cofnąć.',
+                                    'This item will be permanently removed from settings. This action cannot be undone.'
+                                )}
+                            </p>
+                        </div>
+                        <div className="px-5 pt-1 pb-3 flex items-center justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setItemToDelete(null)}
+                                className="h-11 px-4 rounded-xl border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 font-semibold hover:bg-gray-100 dark:hover:bg-slate-800"
+                            >
+                                {t('Anuluj', 'Cancel')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleConfirmDelete}
+                                className="h-11 px-4 rounded-xl font-semibold text-white bg-red-600 hover:bg-red-700"
+                            >
+                                {t('Usuń', 'Delete')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
