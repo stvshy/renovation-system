@@ -38,12 +38,12 @@ const Inventory: React.FC = () => {
     // Category colors – visible on white, no red (reserved for delete)
     const CATEGORY_COLORS: Record<string, string> = {
         Malowanie: "#7C3AED",   // violet
-        Podłogi: "#0D9488",    // teal
+        Podłogi: "#059669",    // emerald (same as former Carpentry)
         Sufity: "#2563EB",     // blue
         Elektryka: "#EA580C",  // orange
-        Stolarka: "#059669",   // emerald
+        Stolarka: "#F59E0B",   // amber (Other)
         Glazurnictwo: "#BE185D", // pink
-        Inne: "#F59E0B",       // amber
+        Inne: "#06B6D4",       // lighter cyan (Carpentry)
     };
     const getCategoryColor = (category: string) => CATEGORY_COLORS[category] || CATEGORY_COLORS.Inne;
     const [items, setItems] = useState<InventoryItem[]>([]);
