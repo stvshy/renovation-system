@@ -34,6 +34,18 @@ const Inventory: React.FC = () => {
         if (unit === Unit.KG) return "kg";
         return unit;
     };
+
+    // Category colors – visible on white, no red (reserved for delete)
+    const CATEGORY_COLORS: Record<string, string> = {
+        Malowanie: "#7C3AED",   // violet
+        Podłogi: "#0D9488",    // teal
+        Sufity: "#2563EB",     // blue
+        Elektryka: "#EA580C",  // orange
+        Stolarka: "#059669",   // emerald
+        Glazurnictwo: "#BE185D", // pink
+        Inne: "#F59E0B",       // amber
+    };
+    const getCategoryColor = (category: string) => CATEGORY_COLORS[category] || CATEGORY_COLORS.Inne;
     const [items, setItems] = useState<InventoryItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
@@ -146,17 +158,26 @@ const Inventory: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                    {/* Desktop / tablet table */}
+                    <div className="hidden sm:block overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
                         <table className="w-full text-left">
                             <thead className="bg-gray-50 dark:bg-gray-900/50">
                                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400">{t('Nazwa materiału', 'Material name')}</th>
-                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400">{t('Kategoria', 'Category')}</th>
-                                    <th className="hidden sm:table-cell px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">{t('Ilość', 'Quantity')}</th>
+                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                        {t('Nazwa materiału', 'Material name')}
+                                    </th>
+                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400">
+                                        {t('Kategoria', 'Category')}
+                                    </th>
+                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">
+                                        {t('Ilość', 'Quantity')}
+                                    </th>
                                     <th className="hidden md:table-cell px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">
                                         {t('Cena jedn.', 'Unit price')}
                                     </th>
-                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">{t('Akcje', 'Actions')}</th>
+                                    <th className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 text-right">
+                                        {t('Akcje', 'Actions')}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -178,11 +199,15 @@ const Inventory: React.FC = () => {
                                             key={item.id}
                                             className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors last:border-0"
                                         >
-                                            <td className="px-4 py-4 text-sm font-bold text-gray-900 dark:text-white">{item.name}</td>
-                                            <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
-                                                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs">{localizeCategory(item.category || "")}</span>
+                                            <td className="px-4 py-4 text-sm font-bold text-gray-900 dark:text-white">
+                                                {item.name}
                                             </td>
-                                            <td className="hidden sm:table-cell px-4 py-4 text-sm text-gray-700 dark:text-gray-300 text-right font-mono">
+                                            <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
+                                                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs">
+                                                    {localizeCategory(item.category || '')}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-4 text-sm text-gray-700 dark:text-gray-300 text-right font-mono">
                                                 {item.quantity} {localizeUnit(item.unit)}
                                             </td>
                                             <td className="hidden md:table-cell px-4 py-4 text-sm text-gray-700 dark:text-gray-300 text-right">
@@ -211,6 +236,82 @@ const Inventory: React.FC = () => {
                                 )}
                             </tbody>
                         </table>
+                    </div>
+
+                    {/* Mobile cards */}
+                    <div className="sm:hidden space-y-3">
+                        {isLoading ? (
+                            <div className="flex justify-center py-8 text-sm text-gray-500">
+                                {t('Ładowanie...', 'Loading...')}
+                            </div>
+                        ) : filteredItems.length === 0 ? (
+                            <div className="flex justify-center py-8 text-sm text-gray-500">
+                                {t('Brak materiałów w magazynie.', 'No materials in inventory.')}
+                            </div>
+                        ) : (
+                            filteredItems.map((item) => {
+                                const pillColor = getCategoryColor(item.category || "Inne");
+                                return (
+                                <div
+                                    key={item.id}
+                                    className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900/70 px-4 py-3 shadow-xs"
+                                >
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="min-w-0 flex-1">
+                                            <div className="mb-[8.5px] -ml-[2px]">
+                                                <span
+                                                    className="inline-flex shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                                                    style={{
+                                                        backgroundColor: `${pillColor}30`,
+                                                        color: pillColor,
+                                                    }}
+                                                >
+                                                    {localizeCategory(item.category || '')}
+                                                </span>
+                                            </div>
+                                            <p className="text-[15px] font-bold text-gray-900 dark:text-white truncate mb-2">
+                                                {item.name}
+                                            </p>
+                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-gray-600 dark:text-gray-300">
+                                                <div className="flex items-center gap-1">
+                                                    <span className="uppercase tracking-wide text-gray-400 text-[10px]">
+                                                        {t('Ilość', 'Quantity')}
+                                                    </span>
+                                                    <span className="font-mono text-[11px] text-gray-900 dark:text-gray-100">
+                                                        {item.quantity} {localizeUnit(item.unit)}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <span className="uppercase tracking-wide text-gray-400 text-[10px]">
+                                                        {t('Cena jedn.', 'Unit price')}
+                                                    </span>
+                                                    <span className="text-[11px] font-semibold text-gray-900 dark:text-gray-100">
+                                                        {item.pricePerUnit.toFixed(2)} {currencyCode}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-0.5 items-center shrink-0 justify-center">
+                                            <button
+                                                onClick={() => openEditModal(item)}
+                                                className="inline-flex items-center justify-center p-1 text-blue-600 dark:text-blue-400 hover:opacity-80 transition-opacity"
+                                                title={t('Edytuj', 'Edit')}
+                                            >
+                                                <span className="material-symbols-outlined text-[16px]">edit</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(item.id)}
+                                                className="inline-flex items-center justify-center p-1 text-red-500 dark:text-red-400 hover:opacity-80 transition-opacity"
+                                                title={t('Usuń', 'Delete')}
+                                            >
+                                                <span className="material-symbols-outlined text-[16px]">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             </div>
