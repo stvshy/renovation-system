@@ -158,8 +158,8 @@ const Settings: React.FC = () => {
 
                 <div className="space-y-8">
                     {Object.keys(groupedServices).map((category) => (
-                        <div key={category} className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-gray-100 dark:border-gray-700">
-                            <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <div key={category} className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 sm:p-6 border border-gray-100 dark:border-gray-700">
+                            <h2 className="-mt-0.5 sm:mt-0 text-lg sm:text-xl font-bold text-gray-800 dark:text-white mb-2.5 sm:mb-4 border-b border-gray-100 dark:border-gray-700 pb-1.5 sm:pb-2">
                                 {localizeCategory(category)}
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -171,19 +171,19 @@ const Settings: React.FC = () => {
                                         <div className="absolute top-2 right-2 flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={() => openEditModal(service)}
-                                                className="p-1 text-blue-600 bg-white dark:bg-slate-800 rounded shadow-sm hover:bg-blue-50"
+                                                className="p-1 text-blue-600 bg-transparent rounded hover:bg-blue-50"
                                             >
                                                 <span className="material-symbols-outlined text-sm">edit</span>
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(service.id)}
-                                                className="p-1 text-red-500 bg-white dark:bg-slate-800 rounded shadow-sm hover:bg-red-50"
+                                                className="p-1 text-red-500 bg-transparent rounded hover:bg-red-50"
                                             >
                                                 <span className="material-symbols-outlined text-sm">delete</span>
                                             </button>
                                         </div>
-                                        <h3 className="font-bold text-gray-900 dark:text-white pr-10">{localizeServiceName(service.name)}</h3>
-                                        <div className="mt-2 text-sm text-gray-500 dark:text-gray-400 space-y-1">
+                                        <h3 className="font-bold text-sm sm:text-base text-gray-900 dark:text-white pr-10">{localizeServiceName(service.name)}</h3>
+                                        <div className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 space-y-1">
                                             <p className="flex justify-between">
                                                 <span>{t('Robocizna:', 'Labor:')}</span>
                                                 <span className="font-semibold text-gray-700 dark:text-gray-300">
@@ -217,7 +217,7 @@ const Settings: React.FC = () => {
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        <form onSubmit={handleSave} className="p-6 space-y-4">
+                        <form onSubmit={handleSave} className="px-6 pt-6 pb-4 space-y-4">
                             <label className="block">
                                 <span className="text-xs font-bold text-gray-500 uppercase">{t('Nazwa usługi', 'Service name')}</span>
                                 <input
@@ -266,7 +266,7 @@ const Settings: React.FC = () => {
                                                     help
                                                 </span>
                                                 {/* Tooltip Positioned BELOW (top-full + mt-2) */}
-                                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 p-4 bg-slate-800 text-white text-xs rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[60] pointer-events-none transform -translate-y-2 group-hover:translate-y-0">
+                                                <div className="hidden group-hover:block absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 p-4 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-[60] pointer-events-none">
                                                     <p className="font-bold mb-2 text-primary border-b border-gray-600 pb-2 text-sm">{t('Logika obliczeń:', 'Calculation logic:')}</p>
                                                     <ul className="space-y-3">
                                                         <li>
@@ -323,7 +323,7 @@ const Settings: React.FC = () => {
                                 </label>
                             </div>
 
-                            <div className="pt-4 flex justify-end gap-2">
+                            <div className="flex justify-end gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
