@@ -4,6 +4,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { RiMenuUnfold3Line, RiMenuUnfold4Line } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useDemo } from '../context/DemoContext';
 import LanguageToggleButton from './LanguageToggleButton';
 import { clearProjectCreationDirty, getProjectCreationDirty } from '../lib/projectCreationGuard';
 import { clearCurrentProjectSnapshot, getCurrentProjectSnapshot, hasUnsavedProjectChanges, saveCurrentProjectDraft } from '../lib/projectDrafts';
@@ -14,6 +15,7 @@ type ToastState = { message: string; kind: 'success' | 'error' };
 
 const Sidebar: React.FC = () => {
     const { user, signOut } = useAuth();
+    const { isDemoMode, exitDemoMode } = useDemo();
     const { t } = useLanguage();
     const navigate = useNavigate();
     const location = useLocation();
@@ -135,6 +137,12 @@ const Sidebar: React.FC = () => {
     };
 
     const handleLogout = async () => {
+        if (isDemoMode) {
+            exitDemoMode();
+            navigate('/login');
+            return;
+        }
+
         await signOut();
         navigate('/login');
     };
@@ -348,7 +356,7 @@ const Sidebar: React.FC = () => {
                                 <div className="flex justify-center pt-1 w-full">
                                     <LanguageToggleButton
                                         size="xxs"
-                                        className="border border-gray-300 dark:border-gray-600 rounded-full p-0 w-[26px] h-[26px] -mt-[6px]"
+                                        className="border border-gray-300 dark:border-gray-600 rounded-full p-0 w-[26px] h-[26px] "
                                     />
                                 </div>
                             </div>
