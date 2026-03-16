@@ -104,13 +104,20 @@ const Inventory: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6">
+                <div className="flex items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div className="flex items-center gap-3 -ml-[1.5px] sm:-ml-[1.5px] text-slate-900 dark:text-slate-50">
                         <div className="size-8 mb-1 mr-1 text-primary">
                             <span className="material-symbols-outlined !text-4xl">warehouse</span>
                         </div>
                         <h1 className="relative top-[2.3px] text-3xl sm:text-4xl font-black tracking-tight text-gray-900 dark:text-white">{t('Magazyn', 'Inventory')}</h1>
                     </div>
+                    <button
+                        onClick={openAddModal}
+                        className="sm:hidden flex size-[42px] shrink-0 items-center justify-center rounded-xl bg-primary text-white hover:bg-primary/90 transition-colors shadow-sm"
+                        aria-label={t('Dodaj materiał', 'Add material')}
+                    >
+                        <PackagePlus size={18} strokeWidth={2.2} />
+                    </button>
                 </div>
 
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-4 border border-gray-100 dark:border-gray-700">
@@ -131,7 +138,7 @@ const Inventory: React.FC = () => {
                         <div className="flex gap-3 w-full md:w-auto">
                             <button
                                 onClick={openAddModal}
-                                className="flex w-full md:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
+                                className="hidden sm:flex w-full md:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors shadow-sm"
                             >
                                 <PackagePlus size={18} strokeWidth={2.2} />
                                 <span className="truncate">{t('Dodaj materiał', 'Add material')}</span>

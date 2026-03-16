@@ -129,7 +129,7 @@ const Settings: React.FC = () => {
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8 [scrollbar-gutter:stable]">
             <div className="max-w-7xl w-full mx-auto">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6">
+                <div className="flex items-start justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div>
                         <div className="flex items-center gap-3 -ml-[4.5px] sm:-ml-[4.5px] text-slate-900 dark:text-slate-50">
                             <div className="size-8 mb-1 text-primary -mt-1">
@@ -141,7 +141,14 @@ const Settings: React.FC = () => {
                     </div>
                     <button
                         onClick={openAddModal}
-                        className="flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
+                        className="sm:hidden flex size-[42px] shrink-0 items-center justify-center rounded-xl bg-primary text-white hover:bg-primary/90 transition-colors shadow-sm"
+                        aria-label={t('Dodaj Rodzaj Prac', 'Add Service Type')}
+                    >
+                        <Grid2x2Plus size={18} strokeWidth={2.2} />
+                    </button>
+                    <button
+                        onClick={openAddModal}
+                        className="hidden sm:flex w-full sm:w-auto min-w-[84px] items-center justify-center gap-2 overflow-hidden rounded-xl h-[46.2px] px-5 bg-primary text-white text-sm font-bold tracking-wide hover:bg-primary/90 transition-colors"
                     >
                         <Grid2x2Plus size={18} strokeWidth={2.2} />
                         {t('Dodaj Rodzaj Prac', 'Add Service Type')}
