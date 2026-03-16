@@ -214,7 +214,7 @@ const Settings: React.FC = () => {
                     {/* Removed overflow-hidden to allow tooltip to pop out */}
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in relative">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800 rounded-t-2xl">
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editingItem ? t('Edytuj usługę', 'Edit Service') : t('Nowa usługa', 'New Service')}</h2>
+                            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{editingItem ? t('Edytuj usługę', 'Edit Service') : t('Nowa usługa', 'New Service')}</h2>
                             <button
                                 onClick={() => setIsModalOpen(false)}
                                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"

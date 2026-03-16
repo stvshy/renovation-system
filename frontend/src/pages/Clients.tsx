@@ -137,9 +137,9 @@ const Clients: React.FC = () => {
             {/* Add Client Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800">
-                            <h2 className="text-lg font-bold">{t('Nowy Klient', 'New Client')}</h2>
+                            <h2 className="text-xl sm:text-2xl font-black">{t('Nowy Klient', 'New Client')}</h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
                                 <span className="material-symbols-outlined">close</span>
                             </button>

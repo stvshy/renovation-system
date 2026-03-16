@@ -220,7 +220,7 @@ const Inventory: React.FC = () => {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800">
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editingItem ? t('Edytuj materiał', 'Edit Material') : t('Nowy materiał', 'New Material')}</h2>
+                            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{editingItem ? t('Edytuj materiał', 'Edit Material') : t('Nowy materiał', 'New Material')}</h2>
                             <button
                                 onClick={() => setIsModalOpen(false)}
                                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
@@ -303,11 +303,14 @@ const Inventory: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="h-12 px-4 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
+                                    className="h-11 px-4 rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700"
                                 >
                                     {t('Anuluj', 'Cancel')}
                                 </button>
-                                <button type="submit" className="h-12 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/90">
+                                <button
+                                    type="submit"
+                                    className="h-11 px-4 rounded-xl bg-primary text-white font-bold hover:bg-primary/90"
+                                >
                                     {t('Zapisz', 'Save')}
                                 </button>
                             </div>

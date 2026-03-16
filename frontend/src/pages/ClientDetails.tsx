@@ -74,7 +74,7 @@ const ClientDetails: React.FC = () => {
 
     return (
         <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
-            <div className="layout-content-container flex flex-col w-full max-w-5xl gap-6">
+            <div className="layout-content-container flex flex-col w-full max-w-5xl gap-4 sm:gap-6">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4 pb-0 md:pb-6 border-b md:border-b border-transparent md:border-gray-200 dark:border-transparent md:dark:border-gray-700">
                     <div className="flex items-center gap-3 md:gap-4">
@@ -115,10 +115,10 @@ const ClientDetails: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                     {/* Contact Info Card */}
-                    <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-1 h-fit">
-                        <h2 className="text-xs sm:text-sm font-bold text-gray-400 uppercase mb-3 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
+                    <div className="bg-white dark:bg-slate-800 p-3.5 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 md:col-span-1 h-fit">
+                        <h2 className="text-xs sm:text-sm font-bold text-gray-400 uppercase mb-2.5 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
                             <span className="material-symbols-outlined text-sm sm:text-base">contact_page</span>
                             {t('Dane kontaktowe', 'Contact details')}
                         </h2>
@@ -203,9 +203,9 @@ const ClientDetails: React.FC = () => {
             {/* Edit Modal */}
             {isEditModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-fade-in">
                         <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-slate-800">
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{t('Edytuj Klienta', 'Edit Client')}</h2>
+                            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">{t('Edytuj Klienta', 'Edit Client')}</h2>
                             <button
                                 onClick={() => setIsEditModalOpen(false)}
                                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
