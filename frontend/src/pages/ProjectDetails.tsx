@@ -1736,7 +1736,7 @@ const ProjectDetails: React.FC = () => {
             {isDeleteProjectModalOpen && (
                 <div className="fixed inset-0 z-[10052] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-xl overflow-hidden">
-                        <div className="px-5 pt-4 pb-3">
+                        <div className="relative px-5 pt-4 pb-3">
                             <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Usunąć projekt?", "Delete project?")}</h3>
                             <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
                                 {t(
@@ -1744,8 +1744,15 @@ const ProjectDetails: React.FC = () => {
                                     "This action cannot be undone. The project will be removed from the project list and calendar."
                                 )}
                             </p>
+                            <button
+                                type="button"
+                                onClick={() => setIsDeleteProjectModalOpen(false)}
+                                className="absolute top-[21px] right-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                            >
+                                <span className="material-symbols-outlined text-[20px] leading-none">close</span>
+                            </button>
                         </div>
-                        <div className="px-5 pt-2 pb-4 flex justify-end gap-2">
+                        <div className="px-5 pt-1 pb-4 flex justify-end gap-2">
                             <button
                                 type="button"
                                 onClick={() => setIsDeleteProjectModalOpen(false)}
