@@ -844,10 +844,10 @@ const ServiceForm: React.FC = () => {
 
                                 {selectedTemplate && (
                                     <div className="mt-2 rounded-lg border border-blue-100 bg-blue-50 p-2 sm:p-2.5 text-[10px] sm:text-[11px] dark:border-blue-800 dark:bg-blue-900/10 animate-fade-in">
-                                        <div className="flex items-start gap-2">
-                                            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm sm:text-base mt-0.5">info</span>
-                                            <div>
-                                                <p className="mb-1 text-[13px] sm:text-sm font-bold text-blue-700 dark:text-blue-300">
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm sm:text-base relative -top-px">info</span>
+                                                <p className="text-[13px] sm:text-sm font-bold text-blue-700 dark:text-blue-300">
                                                     {t("Strategia", "Strategy")}:{" "}
                                                     {selectedTemplate.defaultStrategy === "consumption"
                                                         ? t("Wydajność (Zużycie)", "Coverage (Consumption)")
@@ -857,29 +857,29 @@ const ServiceForm: React.FC = () => {
                                                         ? t("Liniowa (mb)", "Linear (lm)")
                                                         : t("Na sztuki", "Per item")}
                                                 </p>
-                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[10px] sm:text-[11px]">
-                                                    {selectedTemplate.defaultStrategy === "consumption" &&
-                                                        t(
-                                                            `System obliczy ilość materiału dzieląc powierzchnię przez wydajność (np. m²/litr). Robocizna naliczana za m². Domyślna wydajność: ${selectedTemplate.defaultParam} jednostek/m².`,
-                                                            `The system calculates required material by dividing area by coverage (for example m²/liter). Labor is charged per m². Default coverage: ${selectedTemplate.defaultParam} units/m².`
-                                                        )}
-                                                    {selectedTemplate.defaultStrategy === "waste" &&
-                                                        t(
-                                                            `System obliczy ilość materiału dodając ${selectedTemplate.defaultParam}% zapasu na docinki (odpad) do całkowitej powierzchni. Robocizna naliczana za m².`,
-                                                            `The system calculates required material by adding ${selectedTemplate.defaultParam}% extra waste allowance to the total area. Labor is charged per m².`
-                                                        )}
-                                                    {selectedTemplate.defaultStrategy === "linear" &&
-                                                        t(
-                                                            `Obliczenia dla elementów liniowych (np. listwy). Dodaje ${selectedTemplate.defaultParam}% zapasu do długości obwodu. Robocizna za mb.`,
-                                                            `Calculations for linear elements (for example skirting). Adds ${selectedTemplate.defaultParam}% allowance to perimeter length. Labor is charged per lm.`
-                                                        )}
-                                                    {selectedTemplate.defaultStrategy === "item" &&
-                                                        t(
-                                                            `Proste mnożenie: Ilość sztuk × Cena. Robocizna naliczana od sztuki (punktu).`,
-                                                            `Simple multiplication: Quantity × Price. Labor is charged per item.`
-                                                        )}
-                                                </p>
                                             </div>
+                                            <p className="mt-1 text-slate-600 dark:text-slate-400 leading-relaxed text-[10px] sm:text-[11px]">
+                                                {selectedTemplate.defaultStrategy === "consumption" &&
+                                                    t(
+                                                        `System obliczy ilość materiału dzieląc powierzchnię przez wydajność (np. m²/litr). Robocizna naliczana za m². Domyślna wydajność: ${selectedTemplate.defaultParam} jednostek/m².`,
+                                                        `The system calculates required material by dividing area by coverage (for example m²/liter). Labor is charged per m². Default coverage: ${selectedTemplate.defaultParam} units/m².`
+                                                    )}
+                                                {selectedTemplate.defaultStrategy === "waste" &&
+                                                    t(
+                                                        `System obliczy ilość materiału dodając ${selectedTemplate.defaultParam}% zapasu na docinki (odpad) do całkowitej powierzchni. Robocizna naliczana za m².`,
+                                                        `The system calculates required material by adding ${selectedTemplate.defaultParam}% extra waste allowance to the total area. Labor is charged per m².`
+                                                    )}
+                                                {selectedTemplate.defaultStrategy === "linear" &&
+                                                    t(
+                                                        `Obliczenia dla elementów liniowych (np. listwy). Dodaje ${selectedTemplate.defaultParam}% zapasu do długości obwodu. Robocizna za mb.`,
+                                                        `Calculations for linear elements (for example skirting). Adds ${selectedTemplate.defaultParam}% allowance to perimeter length. Labor is charged per lm.`
+                                                    )}
+                                                {selectedTemplate.defaultStrategy === "item" &&
+                                                    t(
+                                                        `Proste mnożenie: Ilość sztuk × Cena. Robocizna naliczana od sztuki (punktu).`,
+                                                        `Simple multiplication: Quantity × Price. Labor is charged per item.`
+                                                    )}
+                                            </p>
                                         </div>
                                     </div>
                                 )}
@@ -1188,30 +1188,33 @@ const ServiceForm: React.FC = () => {
 
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg overflow-hidden">
                             <div className="p-3 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-amber-50/60 dark:bg-amber-900/10">
-                                <div className="flex items-center justify-between gap-3">
-                                    <div>
-                                        <h3 className="font-bold text-[15px] sm:text-base text-slate-800 dark:text-white flex items-center gap-1.5 sm:gap-2">
-                                            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[18px] sm:text-[24px]">shopping_cart</span>
-                                            {t('Lista zakupów projektu', 'Project shopping list')}
+                                <div className="space-y-0.5">
+                                    <div className="flex items-baseline justify-between gap-3">
+                                        <h3 className="min-w-0 font-bold text-[15px] sm:text-base text-slate-800 dark:text-white flex items-baseline gap-1.5 sm:gap-2">
+                                            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[18px] sm:text-[24px] shrink-0 relative top-[3px] sm:top-[5px]">shopping_cart</span>
+                                            <span className="truncate">{t('Lista zakupów projektu', 'Project shopping list')}</span>
                                         </h3>
-                                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+
+                                        {shoppingListItems.length > 0 && (
+                                            <p className="text-base sm:text-lg font-black text-red-600 dark:text-red-400 leading-none shrink-0">
+                                                {shoppingListItems.length === 0 ? '-' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-baseline justify-between gap-3">
+                                        <p className="min-w-0 text-xs text-slate-500 dark:text-slate-400 leading-snug">
                                             {t(
                                                 'Materiały, których brakuje w magazynie.',
                                                 'Materials needed but not in stock.'
                                             )}
                                         </p>
-                                    </div>
-                                    {shoppingListItems.length > 0 && (
-                                        <div className="text-right shrink-0 flex flex-col gap-0.5">
-                                            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Koszt zakupów', 'Purchase cost')}</p>
-                                            <p className="text-base sm:text-lg font-black text-red-600 dark:text-red-400 leading-tight">
-                                                {shoppingListItems.length === 0 ? '-' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
-                                            </p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                                        {shoppingListItems.length > 0 && (
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 shrink-0 leading-none">
                                                 {t('Liczba sztuk: ', 'Items: ')}{shoppingListItems.length === 0 ? '-' : shoppingListItems.length}
                                             </p>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
@@ -1226,7 +1229,7 @@ const ServiceForm: React.FC = () => {
                                             <div className="flex items-start justify-between gap-3">
                                                 <div>
                                                     <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white">{item.materialName}</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                                         {t('Potrzebne', 'Required')}: {item.required.toFixed(2)} {localizeUnit(item.unit)}, {t('Magazyn', 'In stock')}: {item.available.toFixed(2)} {localizeUnit(item.unit)}
                                                     </p>
                                                 </div>
@@ -1243,35 +1246,44 @@ const ServiceForm: React.FC = () => {
 
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg overflow-hidden">
                             <div className="p-3 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-rose-50/60 dark:bg-rose-900/10">
-                                <div className="flex items-center justify-between gap-3">
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <h3 className="font-bold text-[15px] sm:text-base text-slate-800 dark:text-white flex items-center gap-1.5 sm:gap-2">
-                                                <span className="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[18px] sm:text-[24px]">request_quote</span>
-                                                {t('Koszty dodatkowe', 'Additional costs')}
+                                <div className="space-y-0.5">
+                                    <div className="flex items-baseline justify-between gap-3">
+                                        <div className="min-w-0 flex items-baseline gap-2">
+                                            <h3 className="min-w-0 font-bold text-[15px] sm:text-base text-slate-800 dark:text-white flex items-baseline gap-1.5 sm:gap-2">
+                                                <span className="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[18px] sm:text-[24px] shrink-0 relative top-[3px] sm:top-[5.5px]">request_quote</span>
+                                                <span className="truncate">{t('Koszty dodatkowe', 'Additional costs')}</span>
                                             </h3>
                                             <button
                                                 type="button"
                                                 onClick={handleOpenAddAdditionalCostModal}
-                                                className="inline-flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-900/60 transition-colors"
+                                                className="inline-flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-900/60 transition-colors shrink-0 relative top-[2.3px]"
                                                 title={t('Dodaj koszt dodatkowy', 'Add additional cost')}
                                             >
                                                 <span className="material-symbols-outlined text-[14px] sm:text-[16px] leading-none">add</span>
                                             </button>
                                         </div>
-                                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                                            {t('Niestandardowe koszty w ramach projektu.', 'Custom costs related to the project.')}
-                                        </p>
-                                    </div>
-                                    {additionalCosts.length > 0 && (
-                                        <div className="text-right shrink-0 flex flex-col gap-0.5">
-                                            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Suma', 'Total')}</p>
-                                            <p className={`text-base sm:text-lg font-black leading-tight ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+
+                                        {additionalCosts.length > 0 && (
+                                            <p
+                                                className={`text-base sm:text-lg font-black leading-none shrink-0 ${
+                                                    additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'
+                                                }`}
+                                            >
                                                 {additionalCosts.length === 0 ? '-' : `${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
                                             </p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">{t('Pozycje: ', 'Items: ')}{additionalCosts.length === 0 ? '-' : additionalCosts.length} </p>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-baseline justify-between gap-3">
+                                        <p className="min-w-0 text-xs text-slate-500 dark:text-slate-400 leading-snug">
+                                            {t('Niestandardowe koszty w ramach projektu.', 'Custom costs related to the project.')}
+                                        </p>
+                                        {additionalCosts.length > 0 && (
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 shrink-0 leading-none">
+                                                {t('Pozycje: ', 'Items: ')}{additionalCosts.length === 0 ? '-' : additionalCosts.length}
+                                            </p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
@@ -1284,7 +1296,7 @@ const ServiceForm: React.FC = () => {
                                     additionalCosts.map((cost) => (
                                         <div key={cost.id} className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-2.5 sm:p-3">
                                             <div className="flex items-start justify-between gap-3">
-                                                <div className="space-y-0.5">
+                                                <div className="space-y-1">
                                                     <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white break-words">{cost.note}</p>
                                                     <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(cost.createdAt).toLocaleDateString()}</p>
                                                 </div>
