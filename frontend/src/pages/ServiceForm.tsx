@@ -756,18 +756,18 @@ const ServiceForm: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 px-3 sm:px-4">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 px-2 sm:px-4">
                     {/* LEFT COLUMN: Configuration */}
-                    <div className="lg:col-span-7 flex flex-col gap-6">
+                    <div className="lg:col-span-7 flex flex-col gap-4 sm:gap-6">
                         {/* Room Tabs + Room Info — connected visually */}
                         <div className="flex flex-col">
                         {/* Room Tabs */}
-                        <div className="flex gap-2 overflow-x-auto items-end border-b border-slate-200 dark:border-slate-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                        <div className="flex gap-1.5 sm:gap-2 overflow-x-auto items-end border-b border-slate-200 dark:border-slate-700 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {rooms.map((room, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setActiveRoomIndex(idx)}
-                                    className={`px-4 py-2 rounded-t-lg font-bold text-sm transition-all whitespace-nowrap mb-[-1px] border-b-0
+                                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-t-lg font-bold text-xs sm:text-sm transition-all whitespace-nowrap mb-[-1px] border-b-0
                                         ${
                                             activeRoomIndex === idx
                                                 ? "bg-primary text-white border-2 border-primary"
@@ -780,21 +780,21 @@ const ServiceForm: React.FC = () => {
                         </div>
 
                         {/* Room Info Summary */}
-                        <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-b-xl flex flex-wrap gap-6 text-sm text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 border-t-0 shadow-sm">
+                        <div className="bg-slate-50 dark:bg-slate-800/50 p-3 sm:p-4 rounded-b-xl flex flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 border-t-0 shadow-sm">
                             <div className="flex items-center gap-2">
-                                <span className="material-symbols-outlined text-primary">grid_view</span>
+                                <span className="material-symbols-outlined text-primary text-[18px] sm:text-[24px]">grid_view</span>
                                 <span>
                                     {t("Ściany", "Walls")}: <b>{activeRoom.getTotalWallArea().toFixed(2)} m²</b>
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="material-symbols-outlined text-primary">check_box_outline_blank</span>
+                                <span className="material-symbols-outlined text-primary text-[18px] sm:text-[24px]">check_box_outline_blank</span>
                                 <span>
                                     {t("Podłoga", "Floor")}: <b>{activeRoom.getFloorArea().toFixed(2)} m²</b>
                                 </span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="material-symbols-outlined text-primary">roofing</span>
+                                <span className="material-symbols-outlined text-primary text-[18px] sm:text-[24px]">roofing</span>
                                 <span>
                                     {t("Sufit", "Ceiling")}: <b>{activeRoom.getCeilingArea().toFixed(2)} m²</b>
                                 </span>
@@ -803,19 +803,19 @@ const ServiceForm: React.FC = () => {
                         </div>{/* end tabs+info wrapper */}
 
                         {/* Configurator Card */}
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-lg">
-                            <h3 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
+                            <h3 className="text-base sm:text-xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6 flex items-center gap-1.5 sm:gap-2">
                                 <span className="material-symbols-outlined">settings_suggest</span>
                                 {t('Parametry usługi', 'Service parameters')}
                             </h3>
 
                             {/* Categories */}
-                            <div className="flex flex-wrap gap-2 mb-6 p-1 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                            <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6 p-1 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
                                 {categories.map((cat) => (
                                     <button
                                         key={cat}
                                         onClick={() => setSelectedCategory(cat)}
-                                        className={`px-[17.8px] py-2 rounded-lg text-[12.3px] font-bold transition-all
+                                        className={`px-3 sm:px-[17.8px] py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-[12.3px] font-bold transition-all
                                             ${
                                                 selectedCategory === cat
                                                     ? "bg-white dark:bg-slate-700 text-primary shadow-sm"
@@ -828,10 +828,10 @@ const ServiceForm: React.FC = () => {
                             </div>
 
                             {/* Service Selection */}
-                            <div className="mb-5">
-                                <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">{t('Rodzaj prac', 'Type of work')}</label>
+                            <div className="mb-4 sm:mb-5">
+                                <label className="mb-1.5 sm:mb-2 block text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">{t('Rodzaj prac', 'Type of work')}</label>
                                 <ScrollableSelect
-                                    className="form-select w-full rounded-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                    className="form-select w-full rounded-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                     value={selectedTemplateId}
                                     onChange={(e) => setSelectedTemplateId(e.target.value)}
                                 >
@@ -843,11 +843,11 @@ const ServiceForm: React.FC = () => {
                                 </ScrollableSelect>
 
                                 {selectedTemplate && (
-                                    <div className="mt-2 rounded-lg border border-blue-100 bg-blue-50 p-2.5 text-[11px] dark:border-blue-800 dark:bg-blue-900/10 animate-fade-in">
+                                    <div className="mt-2 rounded-lg border border-blue-100 bg-blue-50 p-2 sm:p-2.5 text-[10px] sm:text-[11px] dark:border-blue-800 dark:bg-blue-900/10 animate-fade-in">
                                         <div className="flex items-start gap-2">
-                                            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-base mt-0.5">info</span>
+                                            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm sm:text-base mt-0.5">info</span>
                                             <div>
-                                                <p className="mb-1 text-sm font-bold text-blue-700 dark:text-blue-300">
+                                                <p className="mb-1 text-[13px] sm:text-sm font-bold text-blue-700 dark:text-blue-300">
                                                     {t("Strategia", "Strategy")}:{" "}
                                                     {selectedTemplate.defaultStrategy === "consumption"
                                                         ? t("Wydajność (Zużycie)", "Coverage (Consumption)")
@@ -857,7 +857,7 @@ const ServiceForm: React.FC = () => {
                                                         ? t("Liniowa (mb)", "Linear (lm)")
                                                         : t("Na sztuki", "Per item")}
                                                 </p>
-                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-[10px] sm:text-[11px]">
                                                     {selectedTemplate.defaultStrategy === "consumption" &&
                                                         t(
                                                             `System obliczy ilość materiału dzieląc powierzchnię przez wydajność (np. m²/litr). Robocizna naliczana za m². Domyślna wydajność: ${selectedTemplate.defaultParam} jednostek/m².`,
@@ -887,19 +887,19 @@ const ServiceForm: React.FC = () => {
 
                             {/* Strategy Parameter Editing */}
                             {selectedTemplate && selectedTemplate.defaultStrategy !== "item" && (
-                                <div className="mb-5 animate-fade-in">
-                                    <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                                <div className="mb-4 sm:mb-5 animate-fade-in">
+                                    <label className="mb-1.5 sm:mb-2 block text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                                         {selectedTemplate.defaultStrategy === "consumption" ? t("Wydajność materiału", "Material coverage") : t("Naddatek materiałowy", "Material waste allowance")}
                                     </label>
                                     <div className="flex items-center">
                                         <input
                                             type="number"
                                             min="0"
-                                            className="form-input h-11 w-full rounded-l-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                            className="form-input h-10 sm:h-11 w-full rounded-l-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                             value={strategyParam}
                                             onChange={(e) => setStrategyParam(e.target.value)}
                                         />
-                                        <span className="flex h-11 min-w-[56px] items-center justify-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-3 text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+                                        <span className="flex h-10 sm:h-11 min-w-[52px] sm:min-w-[56px] items-center justify-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-2.5 sm:px-3 text-[10px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
                                             {selectedTemplate.defaultStrategy === "consumption" ? t("m²/jedn", "m²/unit") : "%"}
                                         </span>
                                     </div>
@@ -907,14 +907,14 @@ const ServiceForm: React.FC = () => {
                             )}
 
                             {/* Material Selection / Add Material */}
-                            <div className="mb-5">
-                                <div className="mb-2 flex items-center justify-between">
-                                    <label className="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                            <div className="mb-4 sm:mb-5">
+                                <div className="mb-1.5 sm:mb-2 flex items-center justify-between gap-2">
+                                    <label className="text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                                         {t('Wybór materiału', 'Material selection')} {isAddingNewMaterial ? t('(Dodawanie)', '(Adding)') : t('(Magazyn)', '(Inventory)')}
                                     </label>
                                     <button
                                         onClick={() => setIsAddingNewMaterial(!isAddingNewMaterial)}
-                                        className={`rounded-full px-3 py-1 text-[11px] font-bold transition-all ${
+                                        className={`rounded-full px-2.5 sm:px-3 py-1 text-[10px] sm:text-[11px] font-bold transition-all whitespace-nowrap ${
                                             isAddingNewMaterial ? "bg-gray-200 text-gray-700" : "bg-primary/10 text-primary hover:bg-primary/20"
                                         }`}
                                     >
@@ -926,13 +926,13 @@ const ServiceForm: React.FC = () => {
                                     <>
                                         {filteredInventory.length === 0 ? (
                                             <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-center dark:border-slate-700 dark:bg-slate-800/50">
-                                                <p className="text-[13px] leading-5 text-slate-500 dark:text-slate-300">
+                                                <p className="text-xs sm:text-[13px] leading-5 text-slate-500 dark:text-slate-300">
                                                     {t('Brak materiałów w magazynie dla kategorii', 'No inventory materials for category')} <b>{localizeCategory(selectedCategory)}</b>.
                                                 </p>
                                             </div>
                                         ) : (
                                             <ScrollableSelect
-                                                className="form-select w-full rounded-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                                className="form-select w-full rounded-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                                 value={selectedMaterialId}
                                                 onChange={(e) => setSelectedMaterialId(e.target.value)}
                                             >
@@ -945,12 +945,12 @@ const ServiceForm: React.FC = () => {
                                         )}
                                     </>
                                 ) : (
-                                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/30 space-y-3 animate-fade-in">
+                                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-2.5 sm:p-3 dark:border-slate-700 dark:bg-slate-800/30 space-y-2.5 sm:space-y-3 animate-fade-in">
                                         {/* Destination Switch */}
                                         <div className="mb-1 flex rounded-lg border border-slate-200 bg-white p-1 dark:border-slate-800 dark:bg-slate-900">
                                             <button
                                                 onClick={() => setNewMatScope("inventory")}
-                                                className={`flex-1 rounded-md py-1.5 text-[11px] font-bold transition-colors ${
+                                                className={`flex-1 rounded-md py-1.5 text-[10px] sm:text-[11px] font-bold transition-colors ${
                                                     newMatScope === "inventory" ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                 }`}
                                             >
@@ -958,7 +958,7 @@ const ServiceForm: React.FC = () => {
                                             </button>
                                             <button
                                                 onClick={() => setNewMatScope("project")}
-                                                className={`flex-1 rounded-md py-1.5 text-[11px] font-bold transition-colors ${
+                                                className={`flex-1 rounded-md py-1.5 text-[10px] sm:text-[11px] font-bold transition-colors ${
                                                     newMatScope === "project" ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                 }`}
                                             >
@@ -972,10 +972,10 @@ const ServiceForm: React.FC = () => {
                                                 placeholder={t('Nazwa materiału', 'Material name')}
                                                 value={customMatName}
                                                 onChange={(e) => setCustomMatName(e.target.value)}
-                                                className="form-input w-full rounded-lg border-slate-200 text-sm dark:bg-slate-800"
+                                                className="form-input w-full rounded-lg border-slate-200 text-[13px] sm:text-sm dark:bg-slate-800"
                                             />
                                         </div>
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
                                             <div className="relative">
                                                 <input
                                                     type="number"
@@ -983,14 +983,14 @@ const ServiceForm: React.FC = () => {
                                                     placeholder={t('Cena', 'Price')}
                                                     value={customMatPrice}
                                                     onChange={(e) => setCustomMatPrice(e.target.value)}
-                                                    className="form-input w-full rounded-lg border-slate-200 pr-12 text-sm dark:bg-slate-800"
+                                                    className="form-input w-full rounded-lg border-slate-200 pr-10 sm:pr-12 text-[13px] sm:text-sm dark:bg-slate-800"
                                                 />
-                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">{currencySymbol}</span>
+                                                <span className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-[10px] sm:text-xs text-slate-400">{currencySymbol}</span>
                                             </div>
                                             <ScrollableSelect
                                                 value={customMatUnit}
                                                 onChange={(e) => setCustomMatUnit(e.target.value as Unit)}
-                                                className="form-select w-full rounded-lg border-slate-200 text-sm dark:bg-slate-800"
+                                                className="form-select w-full rounded-lg border-slate-200 text-[13px] sm:text-sm dark:bg-slate-800"
                                             >
                                                 {Object.values(Unit).map((u) => (
                                                     <option key={u} value={u}>
@@ -1009,7 +1009,7 @@ const ServiceForm: React.FC = () => {
                                                     placeholder={t('Ilość w magazynie', 'Quantity in inventory')}
                                                     value={customMatInitialStock}
                                                     onChange={(e) => setCustomMatInitialStock(e.target.value)}
-                                                    className="form-input w-full rounded-lg border-slate-200 text-sm dark:bg-slate-800"
+                                                    className="form-input w-full rounded-lg border-slate-200 text-[13px] sm:text-sm dark:bg-slate-800"
                                                 />
                                             </div>
                                         )}
@@ -1024,9 +1024,9 @@ const ServiceForm: React.FC = () => {
                                                         placeholder={t('np. 10', 'e.g. 10')}
                                                         value={customMatCoverage}
                                                         onChange={(e) => setCustomMatCoverage(e.target.value)}
-                                                        className="form-input w-full rounded-lg border-slate-200 pr-16 text-sm dark:bg-slate-800"
+                                                    className="form-input w-full rounded-lg border-slate-200 pr-14 sm:pr-16 text-[13px] sm:text-sm dark:bg-slate-800"
                                                     />
-                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">
+                                                    <span className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">
                                                         m² / {localizeUnit(customMatUnit)}
                                                     </span>
                                                 </div>
@@ -1037,11 +1037,11 @@ const ServiceForm: React.FC = () => {
                             </div>
 
                             {/* Scope & Quantity */}
-                            <div className="mb-6 grid grid-cols-1 gap-5 md:grid-cols-2">
+                            <div className="mb-5 sm:mb-6 grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
                                 <div>
-                                    <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">{t('Miejsce prac', 'Work area')}</label>
+                                    <label className="mb-1.5 sm:mb-2 block text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">{t('Miejsce prac', 'Work area')}</label>
                                     <ScrollableSelect
-                                        className="form-select h-11 w-full rounded-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                        className="form-select h-10 sm:h-11 w-full rounded-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                         value={scopeType === "specific" ? `s-${specificSurfaceIndex}` : scopeType}
                                         onChange={(e) => {
                                             const val = e.target.value;
@@ -1079,19 +1079,19 @@ const ServiceForm: React.FC = () => {
                                 </div>
 
                                 <div>
-                                    <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                                    <label className="mb-1.5 sm:mb-2 block text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                                         {scopeType === "manual" ? t('Ilość robót', 'Work quantity') : t('Powierzchnia/Długość', 'Area/Length')}
                                     </label>
                                     <div className="flex items-center">
                                         <input
                                             type="number"
                                             min="0"
-                                            className="form-input h-11 w-full rounded-l-xl border-slate-200 text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
+                                            className="form-input h-10 sm:h-11 w-full rounded-l-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
                                             value={scopeType === "manual" ? manualQuantity : currentDimension.toFixed(2)}
                                             disabled={scopeType !== "manual"}
                                             onChange={(e) => setManualQuantity(e.target.value)}
                                         />
-                                        <span className="flex h-11 items-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-3 text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+                                        <span className="flex h-10 sm:h-11 items-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-2.5 sm:px-3 text-[10px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
                                             {localizeUnit(getInputDimensionUnit())}
                                         </span>
                                     </div>
@@ -1100,18 +1100,18 @@ const ServiceForm: React.FC = () => {
 
                             {/* Error Message Box */}
                             {errorMessage && (
-                                <div className="mb-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20 animate-fade-in">
-                                    <span className="material-symbols-outlined text-red-600 dark:text-red-400 mt-0.5">error</span>
+                                <div className="mb-4 flex items-start gap-2.5 sm:gap-3 rounded-xl border border-red-200 bg-red-50 p-2.5 sm:p-3 dark:border-red-800 dark:bg-red-900/20 animate-fade-in">
+                                    <span className="material-symbols-outlined text-red-600 dark:text-red-400 text-[18px] sm:text-[24px] mt-0.5">error</span>
                                     <div>
-                                        <p className="text-xs font-bold text-red-700 dark:text-red-300">{t('Nie można dodać usługi', 'Cannot add service')}</p>
-                                        <p className="text-xs text-red-600 dark:text-red-400">{errorMessage}</p>
+                                        <p className="text-[11px] sm:text-xs font-bold text-red-700 dark:text-red-300">{t('Nie można dodać usługi', 'Cannot add service')}</p>
+                                        <p className="text-[11px] sm:text-xs text-red-600 dark:text-red-400">{errorMessage}</p>
                                     </div>
                                 </div>
                             )}
 
                             <button
                                 onClick={handleAddService}
-                                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
+                                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary py-2.5 sm:py-3 text-[13px] sm:text-sm font-bold text-white shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
                             >
                                 <span className="material-symbols-outlined text-[18px]">add_task</span>
                                 {t('Dodaj do kosztorysu pokoju', 'Add to room estimate')}
@@ -1120,24 +1120,34 @@ const ServiceForm: React.FC = () => {
                     </div>
 
                     {/* RIGHT COLUMN: Live Summary */}
-                    <div className="lg:col-span-5 flex flex-col gap-4 min-h-[500px]">
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col min-h-[320px] max-h-[700px]">
-                        <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
-                                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">receipt_long</span>
-                                    {activeRoom.name}
-                                </h3>
-                                <div className="flex justify-between items-end mt-2">
-                                    <p className="text-xs text-slate-500">{activeRoom.tasks.length} {t('pozycji w kosztorysie', 'items in estimate')}</p>
-                                    <p className="text-lg sm:text-xl font-black text-primary">{activeRoom.calculateTotalRoomCost().toFixed(2)} {currencyCode}</p>
+                    <div className="lg:col-span-5 flex flex-col gap-3 sm:gap-4 min-h-[500px]">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col min-h-[300px] sm:min-h-[320px] max-h-[700px]">
+                        <div className="p-3 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
+                                <div className="flex items-center justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <span className="material-symbols-outlined text-primary text-[18px] sm:text-[24px] shrink-0">receipt_long</span>
+                                            <h3 className="font-bold text-[15px] sm:text-base text-slate-800 dark:text-white truncate">
+                                                {activeRoom.name}
+                                            </h3>
+                                        </div>
+                                    </div>
+
+                                    <p className="text-base sm:text-xl font-black text-primary shrink-0">
+                                        {activeRoom.calculateTotalRoomCost().toFixed(2)} {currencyCode}
+                                    </p>
                                 </div>
+
+                                <p className="mt-1 text-[11px] sm:text-xs text-slate-500">
+                                    {activeRoom.tasks.length} {t('pozycji w kosztorysie', 'items in estimate')}
+                                </p>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                            <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 custom-scrollbar">
                                 {activeRoom.tasks.length === 0 ? (
-                                    <div className="flex flex-col items-center gap-3 py-16 text-center text-slate-400">
-                                        <span className="material-symbols-outlined text-5xl text-slate-200 dark:text-slate-800">playlist_add</span>
-                                        <p className="text-[13px] leading-5 text-slate-500 dark:text-slate-300">
+                                    <div className="flex flex-col items-center gap-2.5 sm:gap-3 py-12 sm:py-16 text-center text-slate-400">
+                                        <span className="material-symbols-outlined text-4xl sm:text-5xl text-slate-200 dark:text-slate-800">playlist_add</span>
+                                        <p className="text-xs sm:text-[13px] leading-5 text-slate-500 dark:text-slate-300">
                                             {t('Lista zadań dla tego pokoju jest pusta.', 'Task list for this room is empty.')}
                                             <br />
                                             {t('Uzyj konfiguratora, aby dodac prace.', 'Use the configurator to add work items.')}
@@ -1147,12 +1157,12 @@ const ServiceForm: React.FC = () => {
                                     activeRoom.tasks.map((task, idx) => (
                                         <div
                                             key={idx}
-                                            className="flex justify-between items-start p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl group border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all"
+                                            className="flex justify-between items-start p-3 sm:p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl group border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all"
                                         >
-                                            <div className="flex-1 min-w-0 pr-4">
-                                                <p className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{localizeServiceName(task.description)}</p>
+                                            <div className="flex-1 min-w-0 pr-3 sm:pr-4">
+                                                <p className="font-bold text-[13px] sm:text-sm text-slate-800 dark:text-slate-200 truncate">{localizeServiceName(task.description)}</p>
                                                 <p className="text-xs text-slate-500 italic mt-0.5">{task.material.name}</p>
-                                                <div className="flex gap-4 mt-2">
+                                                <div className="flex gap-2 sm:gap-4 mt-2">
                                                     <span className="text-[10px] bg-white dark:bg-slate-700 px-1.5 py-0.5 rounded border dark:border-slate-600 text-slate-600 dark:text-slate-300">
                                                         {t('Mat:', 'Mat:')} {task.calculateMaterialCost().toFixed(2)} {currencyCode}
                                                     </span>
@@ -1162,7 +1172,7 @@ const ServiceForm: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="flex flex-col items-end shrink-0">
-                                                <p className="text-sm font-black text-slate-900 dark:text-white">{task.calculateTotalCost().toFixed(2)} {currencyCode}</p>
+                                                <p className="text-[13px] sm:text-sm font-black text-slate-900 dark:text-white">{task.calculateTotalCost().toFixed(2)} {currencyCode}</p>
                                                 <button
                                                     onClick={() => handleRemoveTask(idx)}
                                                     className="mt-2 text-slate-300 hover:text-red-500 transition-colors"
@@ -1178,11 +1188,11 @@ const ServiceForm: React.FC = () => {
                         </div>
 
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg overflow-hidden">
-                            <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-amber-50/60 dark:bg-amber-900/10">
+                            <div className="p-3 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-amber-50/60 dark:bg-amber-900/10">
                                 <div className="flex items-center justify-between gap-3">
                                     <div>
-                                        <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400">shopping_cart</span>
+                                        <h3 className="font-bold text-[15px] sm:text-base text-slate-800 dark:text-white flex items-center gap-1.5 sm:gap-2">
+                                            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[18px] sm:text-[24px]">shopping_cart</span>
                                             {t('Lista zakupów projektu', 'Project shopping list')}
                                         </h3>
                                         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -1193,12 +1203,12 @@ const ServiceForm: React.FC = () => {
                                         </p>
                                     </div>
                                     {shoppingListItems.length > 0 && (
-                                        <div className="text-right shrink-0">
+                                        <div className="text-right shrink-0 flex flex-col gap-0.5">
                                             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Koszt zakupów', 'Purchase cost')}</p>
-                                            <p className="text-lg font-black text-red-600 dark:text-red-400">
+                                            <p className="text-base sm:text-lg font-black text-red-600 dark:text-red-400 leading-tight">
                                                 {shoppingListItems.length === 0 ? '-' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
                                             </p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">
                                                 {t('Liczba sztuk: ', 'Items: ')}{shoppingListItems.length === 0 ? '-' : shoppingListItems.length}
                                             </p>
                                         </div>
@@ -1206,23 +1216,23 @@ const ServiceForm: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="p-4 space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar">
+                            <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3 max-h-[320px] overflow-y-auto custom-scrollbar">
                                 {shoppingListItems.length === 0 ? (
-                                    <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-center text-[13px] leading-5 text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
+                                    <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-3 sm:px-4 py-2.5 sm:py-3 text-center text-xs sm:text-[13px] leading-5 text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
                                         {t('Wszystkie materiały są pokryte stanem magazynowym.', 'All material demand is currently covered by inventory.')}
                                     </div>
                                 ) : (
                                     shoppingListItems.map((item) => (
-                                        <div key={item.key} className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-3">
+                                        <div key={item.key} className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-2.5 sm:p-3">
                                             <div className="flex items-start justify-between gap-3">
                                                 <div>
-                                                    <p className="font-bold text-sm text-slate-900 dark:text-white">{item.materialName}</p>
+                                                    <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white">{item.materialName}</p>
                                                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                                         {t('Potrzebne', 'Required')}: {item.required.toFixed(2)} {localizeUnit(item.unit)}, {t('Magazyn', 'In stock')}: {item.available.toFixed(2)} {localizeUnit(item.unit)}
                                                     </p>
                                                 </div>
                                                 <div className="text-right shrink-0">
-                                                    <p className="text-sm font-black text-amber-700 dark:text-amber-300">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</p>
+                                                    <p className="text-[13px] sm:text-sm font-black text-amber-700 dark:text-amber-300">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</p>
                                                     <p className="text-xs text-slate-500 dark:text-slate-400">{item.shortageCost.toFixed(2)} {currencyCode}</p>
                                                 </div>
                                             </div>
@@ -1233,21 +1243,21 @@ const ServiceForm: React.FC = () => {
                         </div>
 
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg overflow-hidden">
-                            <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-rose-50/60 dark:bg-rose-900/10">
+                            <div className="p-3 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-rose-50/60 dark:bg-rose-900/10">
                                 <div className="flex items-center justify-between gap-3">
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-rose-600 dark:text-rose-400">request_quote</span>
+                                            <h3 className="font-bold text-[15px] sm:text-base text-slate-800 dark:text-white flex items-center gap-1.5 sm:gap-2">
+                                                <span className="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[18px] sm:text-[24px]">request_quote</span>
                                                 {t('Koszty dodatkowe', 'Additional costs')}
                                             </h3>
                                             <button
                                                 type="button"
                                                 onClick={handleOpenAddAdditionalCostModal}
-                                                className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-900/60 transition-colors"
+                                                className="inline-flex items-center justify-center h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 hover:bg-rose-200 dark:hover:bg-rose-900/60 transition-colors"
                                                 title={t('Dodaj koszt dodatkowy', 'Add additional cost')}
                                             >
-                                                <span className="material-symbols-outlined text-[16px] leading-none">add</span>
+                                                <span className="material-symbols-outlined text-[14px] sm:text-[16px] leading-none">add</span>
                                             </button>
                                         </div>
                                         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -1255,32 +1265,32 @@ const ServiceForm: React.FC = () => {
                                         </p>
                                     </div>
                                     {additionalCosts.length > 0 && (
-                                        <div className="text-right shrink-0">
+                                        <div className="text-right shrink-0 flex flex-col gap-0.5">
                                             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{t('Suma', 'Total')}</p>
-                                            <p className={`text-lg font-black ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                                            <p className={`text-base sm:text-lg font-black leading-tight ${additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                                                 {additionalCosts.length === 0 ? '-' : `${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
                                             </p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t('Pozycje: ', 'Items: ')}{additionalCosts.length === 0 ? '-' : additionalCosts.length} </p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">{t('Pozycje: ', 'Items: ')}{additionalCosts.length === 0 ? '-' : additionalCosts.length} </p>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="p-4 space-y-3 max-h-[260px] overflow-y-auto custom-scrollbar">
+                            <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3 max-h-[260px] overflow-y-auto custom-scrollbar">
                                 {additionalCosts.length === 0 ? (
-                                    <div className="w-full rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-center text-[13px] leading-5 text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
+                                    <div className="w-full rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-3 sm:px-4 py-2.5 sm:py-3 text-center text-xs sm:text-[13px] leading-5 text-slate-600 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
                                         {t('Brak kosztów dodatkowych.', 'No additional costs yet.')}
                                     </div>
                                 ) : (
                                     additionalCosts.map((cost) => (
-                                        <div key={cost.id} className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-3">
+                                        <div key={cost.id} className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-2.5 sm:p-3">
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="space-y-0.5">
-                                                    <p className="font-bold text-sm text-slate-900 dark:text-white break-words">{cost.note}</p>
+                                                    <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white break-words">{cost.note}</p>
                                                     <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(cost.createdAt).toLocaleDateString()}</p>
                                                 </div>
                                                 <div className="text-right shrink-0 self-start flex items-center gap-2">
-                                                    <p className="text-sm font-black text-red-600 dark:text-red-400">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                                    <p className="text-[13px] sm:text-sm font-black text-red-600 dark:text-red-400">+{cost.amount.toFixed(2)} {currencyCode}</p>
                                                     <button
                                                         type="button"
                                                         onClick={() => handleRemoveAdditionalCost(cost.id)}
