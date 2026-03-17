@@ -135,6 +135,7 @@ const ProjectDetails: React.FC = () => {
     const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
     const [editingNoteContent, setEditingNoteContent] = useState("");
     const [isDeleteProjectModalOpen, setIsDeleteProjectModalOpen] = useState(false);
+    const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -160,6 +161,25 @@ const ProjectDetails: React.FC = () => {
         };
         load();
     }, [id, navigate, isDemoMode, demoRevision]);
+
+    useEffect(() => {
+        if (!isProjectMenuOpen) return;
+        const onPointerDown = (event: PointerEvent) => {
+            const target = event.target as HTMLElement | null;
+            if (!target) return;
+            if (target.closest("[data-project-menu-root]")) return;
+            setIsProjectMenuOpen(false);
+        };
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setIsProjectMenuOpen(false);
+        };
+        document.addEventListener("pointerdown", onPointerDown);
+        document.addEventListener("keydown", onKeyDown);
+        return () => {
+            document.removeEventListener("pointerdown", onPointerDown);
+            document.removeEventListener("keydown", onKeyDown);
+        };
+    }, [isProjectMenuOpen]);
 
     useEffect(() => {
         if (!isEditingNameModalOpen || !project) return;
@@ -650,6 +670,7 @@ const ProjectDetails: React.FC = () => {
                             >
                                 <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
                             </button>
+
                             <span className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
                                 {project.status === "In Progress"
                                     ? t('W trakcie', 'In Progress')
@@ -659,11 +680,71 @@ const ProjectDetails: React.FC = () => {
                                     ? t('Zakończony', 'Completed')
                                     : project.status}
                             </span>
+
+                            <div className="relative sm:hidden" data-project-menu-root>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsProjectMenuOpen((prev) => !prev)}
+                                    className="inline-flex size-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                                    aria-label={t("Menu projektu", "Project menu")}
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">more_horiz</span>
+                                </button>
+
+                                {isProjectMenuOpen && (
+                                    <div className="absolute left-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setIsProjectMenuOpen(false);
+                                                setIsDeleteProjectModalOpen(true);
+                                            }}
+                                            className="w-full px-3 py-2.5 text-left text-sm font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                        >
+                                            <span className="inline-flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                                                {t("Usuń projekt", "Delete project")}
+                                            </span>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-start sm:items-center gap-1.5 sm:gap-2 break-words text-sm sm:text-base">
-                            <span className="material-symbols-outlined text-xs sm:text-sm shrink-0 mt-0.5 sm:mt-0">location_on</span>
-                            {project.address}
-                        </p>
+                        <div className="mt-1 flex items-start sm:items-center gap-2 min-w-0">
+                            <p className="text-gray-500 dark:text-gray-400 flex items-start sm:items-center gap-1.5 sm:gap-2 break-words text-sm sm:text-base min-w-0">
+                                <span className="material-symbols-outlined text-xs sm:text-sm shrink-0 mt-0.5 sm:mt-0">location_on</span>
+                                <span className="min-w-0 break-words">{project.address}</span>
+                            </p>
+
+                            <div className="relative hidden sm:block shrink-0 -ml-1" data-project-menu-root>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsProjectMenuOpen((prev) => !prev)}
+                                    className="inline-flex size-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+                                    aria-label={t("Menu projektu", "Project menu")}
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">more_horiz</span>
+                                </button>
+
+                                {isProjectMenuOpen && (
+                                    <div className="absolute left-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setIsProjectMenuOpen(false);
+                                                setIsDeleteProjectModalOpen(true);
+                                            }}
+                                            className="w-full px-3 py-2.5 text-left text-sm font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                        >
+                                            <span className="inline-flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                                                {t("Usuń projekt", "Delete project")}
+                                            </span>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex flex-row flex-wrap sm:flex-nowrap items-center gap-2 w-full md:w-auto">
@@ -1392,11 +1473,11 @@ const ProjectDetails: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-slate-700 flex justify-end">
+                <div className="mt-6 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-slate-700 flex justify-center sm:justify-end">
                     <button
                         type="button"
                         onClick={() => setIsDeleteProjectModalOpen(true)}
-                        className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg border border-red-300 dark:border-red-700 bg-red-600 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
+                        className="hidden items-center gap-1.5 sm:gap-2 rounded-lg border border-red-300 dark:border-red-700 bg-red-600 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
                     >
                         <span className="material-symbols-outlined text-sm sm:text-base">delete</span>
                         <span>{t("Usuń projekt", "Delete project")}</span>
@@ -1655,7 +1736,7 @@ const ProjectDetails: React.FC = () => {
             {isDeleteProjectModalOpen && (
                 <div className="fixed inset-0 z-[10052] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                     <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-xl overflow-hidden">
-                        <div className="px-5 py-4 border-b border-gray-100 dark:border-slate-800">
+                        <div className="px-5 pt-4 pb-3">
                             <h3 className="text-lg font-black text-gray-900 dark:text-white">{t("Usunąć projekt?", "Delete project?")}</h3>
                             <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
                                 {t(
@@ -1664,7 +1745,7 @@ const ProjectDetails: React.FC = () => {
                                 )}
                             </p>
                         </div>
-                        <div className="px-5 py-4 flex justify-end gap-2">
+                        <div className="px-5 pt-2 pb-4 flex justify-end gap-2">
                             <button
                                 type="button"
                                 onClick={() => setIsDeleteProjectModalOpen(false)}
