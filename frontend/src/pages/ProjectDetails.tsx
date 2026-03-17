@@ -635,22 +635,22 @@ const ProjectDetails: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-1 justify-center p-4 sm:p-6 md:p-8">
-            <div className="layout-content-container flex flex-col w-full max-w-7xl gap-6">
+        <div className="flex flex-1 justify-center p-3 sm:p-6 md:p-8">
+            <div className="layout-content-container flex flex-col w-full max-w-7xl gap-4 sm:gap-6">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-200 dark:border-gray-700 pb-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 border-b border-gray-200 dark:border-gray-700 pb-4 sm:pb-6">
                     <div className="min-w-0 w-full">
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 dark:text-white break-words">{project.name}</h1>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                            <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-gray-900 dark:text-white break-words">{project.name}</h1>
                             <button
                                 type="button"
                                 onClick={() => setIsEditingNameModalOpen(true)}
-                                className="inline-flex items-center justify-center rounded-md p-1.5 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+                                className="inline-flex items-center justify-center rounded-md p-1 sm:p-1.5 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
                                 title={t("Edytuj nazwę projektu", "Edit project name")}
                             >
-                                <span className="material-symbols-outlined text-base">edit</span>
+                                <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
                             </button>
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
+                            <span className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
                                 {project.status === "In Progress"
                                     ? t('W trakcie', 'In Progress')
                                     : project.status === "Planned"
@@ -660,25 +660,25 @@ const ProjectDetails: React.FC = () => {
                                     : project.status}
                             </span>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-start sm:items-center gap-2 break-words">
-                            <span className="material-symbols-outlined text-sm">location_on</span>
+                        <p className="text-gray-500 dark:text-gray-400 mt-1 flex items-start sm:items-center gap-1.5 sm:gap-2 break-words text-sm sm:text-base">
+                            <span className="material-symbols-outlined text-xs sm:text-sm shrink-0 mt-0.5 sm:mt-0">location_on</span>
                             {project.address}
                         </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full md:w-auto">
+                    <div className="flex flex-row flex-wrap sm:flex-nowrap items-center gap-2 w-full md:w-auto">
                         <button
                             onClick={handlePrintProjectSummary}
-                            className="inline-flex items-center justify-center w-full sm:w-10 h-10 rounded-lg text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
+                            className="inline-flex items-center justify-center size-9 sm:w-10 sm:h-10 rounded-lg text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
                             title={t('Drukuj podsumowanie projektu', 'Print project summary')}
                             aria-label={t('Drukuj podsumowanie projektu', 'Print project summary')}
                         >
-                            <span className="material-symbols-outlined text-[18px]">print</span>
+                            <span className="material-symbols-outlined text-[16px] sm:text-[18px]">print</span>
                         </button>
                         <ScrollableSelect
                             value={project.status}
                             onChange={(e) => handleStatusChange(e.target.value as any)}
-                            className="form-select w-full sm:w-auto rounded-lg border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-sm py-2 pl-3 pr-8"
+                            className="form-select flex-1 min-w-0 sm:w-auto rounded-lg border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-xs sm:text-sm py-1.5 sm:py-2 pl-2.5 sm:pl-3 pr-7 sm:pr-8"
                         >
                             <option value="Planned">{t('Planowany', 'Planned')}</option>
                             <option value="In Progress">{t('W trakcie', 'In Progress')}</option>
@@ -687,84 +687,84 @@ const ProjectDetails: React.FC = () => {
                         </ScrollableSelect>
                         <button
                             onClick={() => navigate("/calendar")}
-                            className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 font-bold text-sm transition-colors"
+                            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 font-bold text-xs sm:text-sm transition-colors"
                         >
                             <span className="material-symbols-outlined text-sm">calendar_month</span>
-                            {t('Kalendarz', 'Calendar')}
+                            <span className="hidden sm:inline">{t('Kalendarz', 'Calendar')}</span>
                         </button>
                     </div>
                 </div>
 
                 {/* Step Dashboard */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <div className="rounded-2xl border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/30 dark:to-slate-900 p-5 shadow-sm">
-                        <div className="flex items-start justify-between gap-3">
-                            <div>
-                                <p className="text-xs uppercase tracking-wide font-semibold text-blue-500">{t("Krok 1", "Step 1")}</p>
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("Dane klienta i terminy", "Client and timeline")}</h3>
-                                <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
+                    <div className="rounded-xl sm:rounded-2xl border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/30 dark:to-slate-900 p-3 sm:p-5 shadow-sm">
+                        <div className="flex items-start justify-between gap-2 sm:gap-3">
+                            <div className="min-w-0">
+                                <p className="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-blue-500">{t("Krok 1", "Step 1")}</p>
+                                <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{t("Dane klienta i terminy", "Client and timeline")}</h3>
+                                <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1 line-clamp-2 sm:line-clamp-none">
                                     {project.clientName} | {project.startDate || "-"} - {project.endDate || "-"}
                                 </p>
                             </div>
                             <button
                                 type="button"
                                 onClick={handleEditClientStep}
-                                className="inline-flex items-center gap-1 rounded-lg border border-blue-300 dark:border-blue-700 px-3 py-1.5 text-sm font-bold text-blue-700 dark:text-blue-300 hover:bg-blue-100/60 dark:hover:bg-blue-900/30"
+                                className="inline-flex items-center gap-1 rounded-lg border border-blue-300 dark:border-blue-700 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-300 hover:bg-blue-100/60 dark:hover:bg-blue-900/30 shrink-0"
                             >
-                                <span className="material-symbols-outlined text-base">edit</span>
-                                {t("Edytuj", "Edit")}
+                                <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
+                                <span className="hidden sm:inline">{t("Edytuj", "Edit")}</span>
                             </button>
                         </div>
                     </div>
 
-                    <div className="rounded-2xl border border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-white dark:from-green-950/30 dark:to-slate-900 p-5 shadow-sm">
-                        <div className="flex items-start justify-between gap-3">
-                            <div>
-                                <p className="text-xs uppercase tracking-wide font-semibold text-green-600 dark:text-green-400">{t("Krok 2", "Step 2")}</p>
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("Zakres i pomieszczenia", "Scope and rooms")}</h3>
-                                <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
+                    <div className="rounded-xl sm:rounded-2xl border border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-white dark:from-green-950/30 dark:to-slate-900 p-3 sm:p-5 shadow-sm">
+                        <div className="flex items-start justify-between gap-2 sm:gap-3">
+                            <div className="min-w-0">
+                                <p className="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-green-600 dark:text-green-400">{t("Krok 2", "Step 2")}</p>
+                                <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{t("Zakres i pomieszczenia", "Scope and rooms")}</h3>
+                                <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1">
                                     {t("Liczba pomieszczeń", "Rooms")}: {hydratedRooms.length}
                                 </p>
                             </div>
                             <button
                                 type="button"
                                 onClick={handleEditRoomsStep}
-                                className="inline-flex items-center gap-1 rounded-lg border border-green-300 dark:border-green-700 px-3 py-1.5 text-sm font-bold text-green-700 dark:text-green-400 hover:bg-green-100/60 dark:hover:bg-green-900/30"
+                                className="inline-flex items-center gap-1 rounded-lg border border-green-300 dark:border-green-700 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-green-700 dark:text-green-400 hover:bg-green-100/60 dark:hover:bg-green-900/30 shrink-0"
                             >
-                                <span className="material-symbols-outlined text-base">edit</span>
-                                {t("Edytuj", "Edit")}
+                                <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
+                                <span className="hidden sm:inline">{t("Edytuj", "Edit")}</span>
                             </button>
                         </div>
                     </div>
 
-                    <div className="rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/30 dark:to-slate-900 p-5 shadow-sm">
-                        <div className="flex items-start justify-between gap-3">
-                            <div>
-                                <p className="text-xs uppercase tracking-wide font-semibold text-amber-500">{t("Krok 3", "Step 3")}</p>
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("Usługi i materiały", "Services and materials")}</h3>
-                                <p className="text-sm text-gray-600 dark:text-slate-300 mt-1">
+                    <div className="rounded-xl sm:rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/30 dark:to-slate-900 p-3 sm:p-5 shadow-sm">
+                        <div className="flex items-start justify-between gap-2 sm:gap-3">
+                            <div className="min-w-0">
+                                <p className="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-amber-500">{t("Krok 3", "Step 3")}</p>
+                                <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{t("Usługi i materiały", "Services and materials")}</h3>
+                                <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1">
                                     {t("Pozycje materiałowe", "Material lines")}: {materialSummary.length}
                                 </p>
                             </div>
                             <button
                                 type="button"
                                 onClick={handleEditServicesStep}
-                                className="inline-flex items-center gap-1 rounded-lg border border-amber-300 dark:border-amber-700 px-3 py-1.5 text-sm font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-100/60 dark:hover:bg-amber-900/30"
+                                className="inline-flex items-center gap-1 rounded-lg border border-amber-300 dark:border-amber-700 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-100/60 dark:hover:bg-amber-900/30 shrink-0"
                             >
-                                <span className="material-symbols-outlined text-base">edit</span>
-                                {t("Edytuj", "Edit")}
+                                <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
+                                <span className="hidden sm:inline">{t("Edytuj", "Edit")}</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 {/* Info Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                     {/* Client Info */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col">
-                        <div className="mb-4 flex items-center justify-between">
-                            <h3 className="text-sm font-bold text-gray-400 uppercase flex items-center gap-2">
-                                <span className="material-symbols-outlined text-lg">person</span>
+                    <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col">
+                        <div className="mb-3 sm:mb-4 flex items-center justify-between">
+                            <h3 className="text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
+                                <span className="material-symbols-outlined text-base sm:text-lg">person</span>
                                 {t('Dane Klienta', 'Client Details')}
                             </h3>
                             <button
@@ -773,7 +773,7 @@ const ProjectDetails: React.FC = () => {
                                 className="inline-flex items-center justify-center rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-700"
                                 title={t("Edytuj dane klienta", "Edit client details")}
                             >
-                                <span className="material-symbols-outlined text-base">edit</span>
+                                <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
                             </button>
                         </div>
                         {project.clientData ? (
@@ -782,33 +782,33 @@ const ProjectDetails: React.FC = () => {
                                     type="button"
                                     onClick={() => project.clientId && navigate(`/clients/${project.clientId}`)}
                                     disabled={!project.clientId}
-                                    className="w-full text-left rounded-lg p-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/40 disabled:cursor-default"
+                                    className="w-full text-left rounded-lg p-1.5 sm:p-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/40 disabled:cursor-default"
                                 >
-                                    <div className="flex flex-col justify-center space-y-2">
-                                        <p className="font-bold text-lg text-gray-800 dark:text-white">{project.clientName}</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-300">{project.clientData.phone}</p>
-                                        <p className="text-sm text-gray-600 dark:text-gray-300">{project.clientData.email}</p>
-                                        <p className="text-sm text-gray-500 italic mt-2">{project.address}</p>
+                                    <div className="flex flex-col justify-center space-y-1 sm:space-y-2">
+                                        <p className="font-bold text-base sm:text-lg text-gray-800 dark:text-white">{project.clientName}</p>
+                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{project.clientData.phone}</p>
+                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 break-all">{project.clientData.email}</p>
+                                        <p className="text-xs sm:text-sm text-gray-500 italic mt-1 sm:mt-2">{project.address}</p>
                                     </div>
                                 </button>
                             </div>
                         ) : (
                             <div className="flex-1 flex items-center">
-                                <p className="text-gray-500">{t('Brak szczegółowych danych klienta', 'No detailed client data')}</p>
+                                <p className="text-gray-500 text-sm sm:text-base">{t('Brak szczegółowych danych klienta', 'No detailed client data')}</p>
                             </div>
                         )}
-                        <div className="mt-auto pt-4 border-t border-gray-100 dark:border-slate-700">
-                            <p className="text-[14px] text-gray-500 dark:text-slate-400">
+                        <div className="mt-auto pt-3 sm:pt-4 border-t border-gray-100 dark:border-slate-700">
+                            <p className="text-xs sm:text-[14px] text-gray-500 dark:text-slate-400">
                                 {t("Przypisane projekty", "Assigned projects")}: <span className="font-bold text-gray-700 dark:text-slate-200">{clientProjectCount}</span>
                             </p>
                         </div>
                     </div>
 
                     {/* Timeline */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
-                        <div className="mb-4 flex items-center justify-between">
-                            <h3 className="text-sm font-bold text-gray-400 uppercase flex items-center gap-2">
-                                <span className="material-symbols-outlined text-lg">schedule</span>
+                    <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
+                        <div className="mb-3 sm:mb-4 flex items-center justify-between">
+                            <h3 className="text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
+                                <span className="material-symbols-outlined text-base sm:text-lg">schedule</span>
                                 {t('Termin Realizacji', 'Project Timeline')}
                             </h3>
                             <button
@@ -817,15 +817,15 @@ const ProjectDetails: React.FC = () => {
                                 className="inline-flex items-center justify-center rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-700"
                                 title={t("Edytuj terminy", "Edit timeline")}
                             >
-                                <span className="material-symbols-outlined text-base">edit</span>
+                                <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
                             </button>
                         </div>
                         <div className="flex-1 flex flex-col justify-center">
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="text-xs text-gray-500">{t('Start', 'Start')}</span>
-                                <span className="font-bold text-gray-800 dark:text-white">{project.startDate || "-"}</span>
+                            <div className="flex justify-between items-center mb-1.5 sm:mb-2">
+                                <span className="text-[10px] sm:text-xs text-gray-500">{t('Start', 'Start')}</span>
+                                <span className="font-bold text-sm sm:text-base text-gray-800 dark:text-white">{project.startDate || "-"}</span>
                             </div>
-                            <div className="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full mb-2 overflow-hidden flex">
+                            <div className="w-full h-1.5 sm:h-2 bg-gray-100 dark:bg-gray-700 rounded-full mb-1.5 sm:mb-2 overflow-hidden flex">
                                 <div
                                     className="h-full bg-green-500 transition-all"
                                     style={{ width: `${elapsedPercent}%` }}
@@ -836,14 +836,14 @@ const ProjectDetails: React.FC = () => {
                                 ></div>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-gray-500">{t('Koniec', 'End')}</span>
-                                <span className="font-bold text-gray-800 dark:text-white">{project.endDate || "-"}</span>
+                                <span className="text-[10px] sm:text-xs text-gray-500">{t('Koniec', 'End')}</span>
+                                <span className="font-bold text-sm sm:text-base text-gray-800 dark:text-white">{project.endDate || "-"}</span>
                             </div>
                         </div>
                         {timelineInfoText && (
-                            <div className="mt-auto translate-y-1 pt-4 border-t border-gray-100 dark:border-slate-700">
-                                <p className={`text-[14px] font-bold inline-flex items-center gap-1.5 ${timelineInfoClass}`}>
-                                    <span className="material-symbols-outlined text-base">{timelineInfoIcon}</span>
+                            <div className="mt-auto translate-y-1 pt-3 sm:pt-4 border-t border-gray-100 dark:border-slate-700">
+                                <p className={`text-xs sm:text-[14px] font-bold inline-flex items-center gap-1 sm:gap-1.5 ${timelineInfoClass}`}>
+                                    <span className="material-symbols-outlined text-sm sm:text-base">{timelineInfoIcon}</span>
                                     {timelineInfoText}
                                 </p>
                             </div>
@@ -851,11 +851,11 @@ const ProjectDetails: React.FC = () => {
                     </div>
 
                     {/* Finances */}
-                    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
+                    <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
                         <div>
-                            <div className="mb-4 flex items-center justify-between">
-                                <h3 className="text-sm font-bold text-gray-400 uppercase flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-lg">attach_money</span>
+                            <div className="mb-3 sm:mb-4 flex items-center justify-between">
+                                <h3 className="text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
+                                    <span className="material-symbols-outlined text-base sm:text-lg">attach_money</span>
                                     {t('Finanse', 'Finances')}
                                 </h3>
                                 <button
@@ -864,38 +864,38 @@ const ProjectDetails: React.FC = () => {
                                     className="inline-flex items-center justify-center rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-700"
                                     title={t("Dodaj koszt dodatkowy", "Add additional cost")}
                                 >
-                                    <span className="material-symbols-outlined text-base">add</span>
+                                    <span className="material-symbols-outlined text-sm sm:text-base">add</span>
                                 </button>
                             </div>
-                            <div className="space-y-1">
-                                <p className="text-sm text-gray-500">{t('Wartość całkowita', 'Total value')}</p>
-                                <p className="text-3xl font-black text-primary">{project.value.toLocaleString()} {currencyCode}</p>
+                            <div className="space-y-0.5 sm:space-y-1">
+                                <p className="text-xs sm:text-sm text-gray-500">{t('Wartość całkowita', 'Total value')}</p>
+                                <p className="text-2xl sm:text-3xl font-black text-primary">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
                             {additionalCosts.length > 0 && (
-                                <div className="mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-200/70 dark:border-amber-800/70 bg-amber-50/40 dark:bg-amber-900/10 px-2.5 py-1.5">
-                                    <p className="text-[11px] font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300">
+                                <div className="mt-2 sm:mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-200/70 dark:border-amber-800/70 bg-amber-50/40 dark:bg-amber-900/10 px-2 sm:px-2.5 py-1 sm:py-1.5">
+                                    <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300 truncate min-w-0">
                                         {t("Koszty dodatkowe", "Additional costs")}: +{additionalCostsTotal.toFixed(2)} {currencyCode}
                                     </p>
                                     <button
                                         type="button"
                                         onClick={() => setIsAdditionalCostsPanelOpen(true)}
-                                        className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold text-amber-800 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900/30"
+                                        className="inline-flex items-center gap-0.5 sm:gap-1 rounded-md px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-amber-800 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900/30 shrink-0"
                                     >
-                                        <span className="material-symbols-outlined text-sm">visibility</span>
-                                        {t("Podgląd", "Preview")}
+                                        <span className="material-symbols-outlined text-xs sm:text-sm">visibility</span>
+                                        <span className="hidden sm:inline">{t("Podgląd", "Preview")}</span>
                                     </button>
                                 </div>
                             )}
                         </div>
 
-                        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-2">
+                        <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-1.5 sm:gap-2">
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-gray-500">{t('Powierzchnia:', 'Area:')}</span>
-                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{project.area.toFixed(0)} m²</span>
+                                <span className="text-[10px] sm:text-xs text-gray-500">{t('Powierzchnia:', 'Area:')}</span>
+                                <span className="text-[10px] sm:text-xs font-bold text-gray-700 dark:text-gray-300">{project.area.toFixed(0)} m²</span>
                             </div>
 
-                            <div className="flex justify-between items-center h-8">
-                                <span className="text-xs text-gray-500">{t('Opłacono:', 'Paid:')}</span>
+                            <div className="flex justify-between items-center min-h-[28px] sm:h-8">
+                                <span className="text-[10px] sm:text-xs text-gray-500">{t('Opłacono:', 'Paid:')}</span>
                                 {isEditingPaid ? (
                                     <div className="flex items-center gap-1 animate-fade-in">
                                         <input
@@ -903,19 +903,19 @@ const ProjectDetails: React.FC = () => {
                                             min="0"
                                             value={paidInput}
                                             onChange={(e) => setPaidInput(e.target.value)}
-                                            className="w-20 py-0 px-1 text-xs h-6 rounded border-gray-300 dark:bg-slate-900 dark:border-gray-600 focus:border-primary focus:ring-0"
+                                            className="w-16 sm:w-20 py-0 px-1 text-xs h-6 rounded border-gray-300 dark:bg-slate-900 dark:border-gray-600 focus:border-primary focus:ring-0"
                                         />
                                         <button onClick={handleSavePaidAmount} className="text-green-600 hover:text-green-700 dark:text-green-400">
-                                            <span className="material-symbols-outlined text-lg">check</span>
+                                            <span className="material-symbols-outlined text-base sm:text-lg">check</span>
                                         </button>
                                         <button onClick={() => setIsEditingPaid(false)} className="text-red-500 hover:text-red-600">
-                                            <span className="material-symbols-outlined text-lg">close</span>
+                                            <span className="material-symbols-outlined text-base sm:text-lg">close</span>
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="flex items-center gap-2 group cursor-pointer" onClick={handleEditPaidClick}>
-                                        <span className="text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} {currencyCode}</span>
-                                        <span className="material-symbols-outlined text-[14px] text-gray-300 group-hover:text-primary transition-colors">
+                                    <div className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer" onClick={handleEditPaidClick}>
+                                        <span className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} {currencyCode}</span>
+                                        <span className="material-symbols-outlined text-xs sm:text-[14px] text-gray-300 group-hover:text-primary transition-colors">
                                             edit
                                         </span>
                                     </div>
@@ -924,8 +924,8 @@ const ProjectDetails: React.FC = () => {
 
                             {remainingAmount > 0 && (
                                 <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
-                                    <span className="text-xs text-gray-400">{t('Pozostało:', 'Remaining:')}</span>
-                                    <span className="text-xs font-bold text-amber-500 dark:text-amber-400">{remainingAmount.toLocaleString()} {currencyCode}</span>
+                                    <span className="text-[10px] sm:text-xs text-gray-400">{t('Pozostało:', 'Remaining:')}</span>
+                                    <span className="text-[10px] sm:text-xs font-bold text-amber-500 dark:text-amber-400">{remainingAmount.toLocaleString()} {currencyCode}</span>
                                 </div>
                             )}
                         </div>
@@ -933,24 +933,24 @@ const ProjectDetails: React.FC = () => {
                 </div>
 
                 {/* Rooms Breakdown */}
-                <div className="mt-4">
-                    <div className="flex items-center justify-between gap-3 mb-4">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Zakres Prac i Ustalenia', 'Scope of Work and Agreements')}</h2>
+                <div className="mt-2 sm:mt-4">
+                    <div className="flex items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
+                        <h2 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">{t('Zakres Prac i Ustalenia', 'Scope of Work and Agreements')}</h2>
                         <button
                             type="button"
                             onClick={handleEditRoomsStep}
-                            className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                            className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
                         >
-                            <span className="material-symbols-outlined text-base">edit</span>
-                            {t("Edytuj", "Edit")}
+                            <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
+                            <span className="hidden sm:inline">{t("Edytuj", "Edit")}</span>
                         </button>
                     </div>
                     {hydratedRooms.length === 0 ? (
-                        <div className="p-10 text-center bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 text-gray-500">
+                        <div className="p-6 sm:p-10 text-center bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 text-gray-500 text-sm sm:text-base">
                             {t('Brak szczegółowych danych o pokojach dla tego projektu.', 'No detailed room data for this project.')}
                         </div>
                     ) : (
-                        <div className="space-y-6">
+                        <div className="space-y-4 sm:space-y-6">
                             {hydratedRooms.map((room, idx) => {
                                 const wallSurfaces = room.surfaces.filter((surface) => surface.type === SurfaceType.WALL);
                                 const floorSurface = room.surfaces.find((surface) => surface.type === SurfaceType.FLOOR);
@@ -958,27 +958,27 @@ const ProjectDetails: React.FC = () => {
 
                                 return (
                                     <div key={idx} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-                                        <div className="bg-gray-50 dark:bg-gray-700/50 px-6 py-3 border-b border-gray-200 dark:border-gray-700 flex flex-wrap justify-between items-center gap-2">
-                                            <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-primary">meeting_room</span>
+                                        <div className="bg-gray-50 dark:bg-gray-700/50 px-3 sm:px-6 py-2 sm:py-3 border-b border-gray-200 dark:border-gray-700 flex flex-wrap justify-between items-center gap-2">
+                                            <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-white flex items-center gap-1.5 sm:gap-2">
+                                                <span className="material-symbols-outlined text-primary text-base sm:text-lg">meeting_room</span>
                                                 {room.name}
                                             </h3>
-                                            <div className="flex items-center gap-4">
-                                                <span className="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                                            <div className="flex items-center gap-2 sm:gap-4">
+                                                <span className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-300">
                                                     {t("Pow.", "Area")}: {room.getFloorArea().toFixed(2)} m²
                                                 </span>
-                                                <span className="text-sm font-mono font-bold text-primary">
+                                                <span className="text-xs sm:text-sm font-mono font-bold text-primary">
                                                     {room.calculateTotalRoomCost().toFixed(2)} {currencyCode}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 p-5">
-                                            <div className="rounded-xl border border-gray-100 dark:border-slate-700 p-4 bg-gray-50/60 dark:bg-slate-900/30">
-                                                <h4 className="text-sm uppercase tracking-wide text-gray-500 dark:text-slate-400 font-bold mb-3">
+                                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-5 p-3 sm:p-5">
+                                            <div className="rounded-lg sm:rounded-xl border border-gray-100 dark:border-slate-700 p-3 sm:p-4 bg-gray-50/60 dark:bg-slate-900/30">
+                                                <h4 className="text-xs sm:text-sm uppercase tracking-wide text-gray-500 dark:text-slate-400 font-bold mb-2 sm:mb-3">
                                                     {t("Wymiary i powierzchnie", "Dimensions and surfaces")}
                                                 </h4>
-                                                <div className="space-y-2 text-sm text-gray-700 dark:text-slate-300">
+                                                <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-700 dark:text-slate-300">
                                                     <p>
                                                         {t("Podłoga", "Floor")}: {floorSurface ? `${floorSurface.width} x ${floorSurface.height} m` : "-"}
                                                     </p>
@@ -993,11 +993,11 @@ const ProjectDetails: React.FC = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="rounded-xl border border-gray-100 dark:border-slate-700 p-4 bg-gray-50/60 dark:bg-slate-900/30">
-                                                <h4 className="text-sm uppercase tracking-wide text-gray-500 dark:text-slate-400 font-bold mb-3">
+                                            <div className="rounded-lg sm:rounded-xl border border-gray-100 dark:border-slate-700 p-3 sm:p-4 bg-gray-50/60 dark:bg-slate-900/30">
+                                                <h4 className="text-xs sm:text-sm uppercase tracking-wide text-gray-500 dark:text-slate-400 font-bold mb-2 sm:mb-3">
                                                     {t("Otwory i powierzchnie dodatkowe", "Openings and additional surfaces")}
                                                 </h4>
-                                                <div className="space-y-2 text-sm text-gray-700 dark:text-slate-300">
+                                                <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm text-gray-700 dark:text-slate-300">
                                                     {room.surfaces.some((surface) => surface.openings.length > 0) ? (
                                                         room.surfaces.map((surface) =>
                                                             surface.openings.map((opening, openingIndex) => (
@@ -1009,7 +1009,7 @@ const ProjectDetails: React.FC = () => {
                                                     ) : (
                                                         <p className="text-gray-500 dark:text-slate-400">{t("Brak zdefiniowanych otworów", "No openings defined")}</p>
                                                     )}
-                                                    <p className="pt-2 border-t border-dashed border-gray-200 dark:border-slate-700 font-semibold">
+                                                    <p className="pt-1.5 sm:pt-2 border-t border-dashed border-gray-200 dark:border-slate-700 font-semibold text-xs sm:text-sm">
                                                         {t("Łączna powierzchnia ścian netto", "Total net wall area")}: {room.getTotalWallArea().toFixed(2)} m²
                                                     </p>
                                                 </div>
@@ -1017,13 +1017,13 @@ const ProjectDetails: React.FC = () => {
                                         </div>
 
                                         <div className="p-0 overflow-x-auto border-t border-gray-100 dark:border-slate-700">
-                                            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                                <thead className="text-xs text-gray-700 uppercase bg-gray-50/50 dark:bg-gray-800 dark:text-gray-400">
+                                            <table className="w-full text-xs sm:text-sm text-left text-gray-500 dark:text-gray-400">
+                                                <thead className="text-[10px] sm:text-xs text-gray-700 uppercase bg-gray-50/50 dark:bg-gray-800 dark:text-gray-400">
                                                     <tr>
-                                                        <th className="px-6 py-2">{t('Praca', 'Work item')}</th>
-                                                        <th className="px-6 py-2">{t('Materiał', 'Material')}</th>
-                                                        <th className="px-6 py-2 text-right">{t('Ilość', 'Quantity')}</th>
-                                                        <th className="px-6 py-2 text-right">{t('Koszt', 'Cost')}</th>
+                                                        <th className="px-3 sm:px-6 py-1.5 sm:py-2">{t('Praca', 'Work item')}</th>
+                                                        <th className="px-3 sm:px-6 py-1.5 sm:py-2">{t('Materiał', 'Material')}</th>
+                                                        <th className="px-3 sm:px-6 py-1.5 sm:py-2 text-right">{t('Ilość', 'Quantity')}</th>
+                                                        <th className="px-3 sm:px-6 py-1.5 sm:py-2 text-right">{t('Koszt', 'Cost')}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -1032,12 +1032,12 @@ const ProjectDetails: React.FC = () => {
                                                             key={tIdx}
                                                             className="border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/30"
                                                         >
-                                                            <td className="px-6 py-3 font-medium text-gray-900 dark:text-white min-w-[220px]">{task.description}</td>
-                                                            <td className="px-6 py-3 min-w-[190px]">{task.material.name}</td>
-                                                            <td className="px-6 py-3 text-right whitespace-nowrap">
+                                                            <td className="px-3 sm:px-6 py-2 sm:py-3 font-medium text-gray-900 dark:text-white min-w-[140px] sm:min-w-[220px]">{task.description}</td>
+                                                            <td className="px-3 sm:px-6 py-2 sm:py-3 min-w-[100px] sm:min-w-[190px]">{task.material.name}</td>
+                                                            <td className="px-3 sm:px-6 py-2 sm:py-3 text-right whitespace-nowrap">
                                                                 {task.calculateMaterialQuantity().toFixed(2)} {unitLabel(task.material.unit)}
                                                             </td>
-                                                            <td className="px-6 py-3 text-right whitespace-nowrap">{task.calculateTotalCost().toFixed(2)} {currencyCode}</td>
+                                                            <td className="px-3 sm:px-6 py-2 sm:py-3 text-right whitespace-nowrap">{task.calculateTotalCost().toFixed(2)} {currencyCode}</td>
                                                         </tr>
                                                     ))}
                                                 </tbody>
