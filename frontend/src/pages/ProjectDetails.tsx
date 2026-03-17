@@ -867,9 +867,9 @@ const ProjectDetails: React.FC = () => {
                                     <span className="material-symbols-outlined text-sm sm:text-base">add</span>
                                 </button>
                             </div>
-                            <div className="space-y-0.5 sm:space-y-1">
-                                <p className="text-xs sm:text-sm text-gray-500">{t('Wartość całkowita', 'Total value')}</p>
-                                <p className="text-[20.6px] sm:text-3xl font-black text-primary mt-[-0.5px]">{project.value.toLocaleString()} {currencyCode}</p>
+                            <div className="flex flex-col">
+                                <p className="text-xs sm:text-sm text-gray-500 mb-0.5 sm:mb-1">{t('Wartość całkowita', 'Total value')}</p>
+                                <p className="text-[18px] sm:text-3xl font-black text-primary mt-[-0.65px]">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
                             {additionalCosts.length > 0 && (
                                 <div className="mt-2 sm:mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-200/70 dark:border-amber-800/70 bg-amber-50/40 dark:bg-amber-900/10 px-2 sm:px-2.5 py-1 sm:py-1.5">
@@ -881,7 +881,7 @@ const ProjectDetails: React.FC = () => {
                                         onClick={() => setIsAdditionalCostsPanelOpen(true)}
                                         className="inline-flex items-center gap-0.5 sm:gap-1 rounded-md px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-amber-800 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900/30 shrink-0"
                                     >
-                                        <span className="material-symbols-outlined text-xs sm:text-sm">visibility</span>
+                                        <span className="material-symbols-outlined text-sm sm:text-sm">visibility</span>
                                         <span className="hidden sm:inline">{t("Podgląd", "Preview")}</span>
                                     </button>
                                 </div>
@@ -1132,17 +1132,17 @@ const ProjectDetails: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-3 sm:mb-4">
                         <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 sm:p-4">
                             <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Pozycje materiałowe", "Material lines")}</p>
-                            <p className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white mt-0.5 sm:mt-1">{materialSummary.length}</p>
+                            <p className="text-[18px] sm:text-2xl font-black text-gray-900 dark:text-white mt-0.5 sm:mt-1">{materialSummary.length}</p>
                         </div>
                         <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 sm:p-4">
                             <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Materiały do dokupienia", "Items to buy")}</p>
-                            <p className="text-xl sm:text-2xl font-black text-[rgb(245,159,11)] dark:text-amber-400 mt-0.5 sm:mt-1">
+                            <p className="text-[18px] sm:text-2xl font-black text-[rgb(245,159,11)] dark:text-amber-400 mt-0.5 sm:mt-1">
                                 {materialSummary.filter((item) => item.toBuy > 0).length}
                             </p>
                         </div>
                         <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 sm:p-4">
                             <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Łączny koszt zakupu", "Total purchase cost")}</p>
-                            <p className={`text-xl sm:text-2xl font-black mt-0.5 sm:mt-1 ${totalShoppingCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+                            <p className={`text-[18px] sm:text-2xl font-black mt-0.5 sm:mt-1 ${totalShoppingCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
                                 {totalShoppingCost.toFixed(2)} {currencyCode}
                             </p>
                         </div>
@@ -1167,10 +1167,8 @@ const ProjectDetails: React.FC = () => {
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="min-w-0">
                                                     <p className="text-xs font-black text-gray-900 dark:text-white break-words">{material.materialName}</p>
-                                                    <p className="text-[10px] text-gray-500 dark:text-slate-400">{unitLabel(material.unit)}</p>
                                                 </div>
                                                 <div className="shrink-0 text-right">
-                                                    <p className="text-[10px] text-gray-500 dark:text-slate-400">{t("Koszt zakupu", "Purchase cost")}</p>
                                                     <p className={`text-xs font-black ${costPositive ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
                                                         {material.shortageCost.toFixed(2)} {currencyCode}
                                                     </p>
@@ -1312,7 +1310,7 @@ const ProjectDetails: React.FC = () => {
                                     "Wpisz treść notatki.",
                                     "Type your content here."
                                 )}
-                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[80px] sm:min-h-[96px] text-sm"
+                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[80px] sm:min-h-[96px] text-sm placeholder:text-xs sm:placeholder:text-sm"
                             />
                         </label>
                         <div className="flex justify-end">
