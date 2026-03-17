@@ -377,18 +377,18 @@ const Inventory: React.FC = () => {
                                             </p>
                                             <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-gray-600 dark:text-gray-300">
                                                 <div className="flex items-center gap-1">
-                                                    <span className="uppercase tracking-wide text-gray-400 text-[10px]">
-                                                        {t('Ilość', 'Quantity')}
+                                                    <span className="uppercase tracking-wide text-gray-400 text-[10px] mt-[1px] sm:mt-0">
+                                                        {t('Ilość:', 'Quantity:')}
                                                     </span>
                                                     <span className="font-mono text-[11px] text-gray-900 dark:text-gray-100">
                                                         {item.quantity} {localizeUnit(item.unit)}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-1">
-                                                    <span className="uppercase tracking-wide text-gray-400 text-[10px]">
-                                                        {t('Cena jedn.', 'Unit price')}
+                                                    <span className="uppercase tracking-wide text-gray-400 text-[10px] mb-[0px] sm:mt-0">
+                                                        {t(' Cena jedn.:', ' Unit price:')}
                                                     </span>
-                                                    <span className="text-[11px] font-semibold text-gray-900 dark:text-gray-100">
+                                                    <span className="text-[11px] font-semibold text-gray-900 dark:text-gray-100 mb-[0.5px] sm:mt-0">
                                                         {item.pricePerUnit.toFixed(2)} {currencyCode}
                                                     </span>
                                                 </div>

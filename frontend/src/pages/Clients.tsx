@@ -80,7 +80,7 @@ const Clients: React.FC = () => {
                 </header>
 
                 {/* Search Bar */}
-                <div className="py-2">
+                <div className="pt-2 pb-4 md:py-2">
                      <div className="relative w-full">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400">search</span>
                         <input 
