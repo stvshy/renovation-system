@@ -1163,7 +1163,12 @@ const RoomForm: React.FC = () => {
                                                 className="inline-flex items-center gap-1 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 text-xs px-2 py-1 rounded border border-red-100 dark:border-red-800"
                                             >
                                                 <span>{op.type === "okno" ? "🪟" : "🚪"} {op.width}m x {op.height}m</span>
-                                                <button onClick={() => handleRemoveOpening(index, opIdx)} className="hover:text-red-800 ml-1">
+                                                <button
+                                                    onClick={() => handleRemoveOpening(index, opIdx)}
+                                                    className="hover:text-red-800 ml-1 inline-flex items-center justify-center text-sm sm:text-xs leading-none align-middle"
+                                                    aria-label={t("Usuń otwór", "Remove opening")}
+                                                    title={t("Usuń otwór", "Remove opening")}
+                                                >
                                                     ×
                                                 </button>
                                             </div>
@@ -1173,46 +1178,64 @@ const RoomForm: React.FC = () => {
 
                                     {/* Add Opening Form - Improved Styling */}
                                     {activeSurfaceIndex === index ? (
-                                        <div className="flex flex-wrap items-center gap-2 mt-2 bg-gray-50 dark:bg-gray-700 p-2 rounded animate-fade-in w-full sm:w-fit">
-                                            <ScrollableSelect
-                                                value={openingDims.type}
-                                                onChange={(e) => setOpeningDims({ ...openingDims, type: e.target.value as OpeningType })}
-                                                className="form-select text-xs !h-8 !min-h-0 !py-0 !px-2 leading-none rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800 min-w-[90px]"
-                                            >
-                                                <option value="okno">{t("Okno", "Window")}</option>
-                                                <option value="drzwi">{t("Drzwi", "Door")}</option>
-                                            </ScrollableSelect>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                step="any"
-                                                placeholder={t("Szer (m)", "W (m)")}
-                                                value={openingDims.w}
-                                                onChange={(e) => handleOpeningDimensionChange("w", e.target.value)}
-                                                className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
-                                            />
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                step="any"
-                                                placeholder={t("Wys (m)", "H (m)")}
-                                                value={openingDims.h}
-                                                onChange={(e) => handleOpeningDimensionChange("h", e.target.value)}
-                                                className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
-                                            />
-                                            <div className="flex items-center gap-2 ml-auto sm:ml-0">
-                                                <button
-                                                    onClick={() => handleAddOpening(index)}
-                                                    className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 h-8 rounded font-bold"
-                                                >
-                                                    {t("Dodaj", "Add")}
-                                                </button>
-                                                <button
-                                                    onClick={() => setActiveSurfaceIndex(null)}
-                                                    className="text-gray-500 hover:text-gray-700 text-xs px-2 h-8"
-                                                >
-                                                    {t("Anuluj", "Cancel")}
-                                                </button>
+                                        <div className="mt-2 bg-gray-50 dark:bg-gray-700 p-2 rounded animate-fade-in w-full sm:w-fit">
+                                            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2">
+                                                {/* Row 1 (mobile): type + W + H + X */}
+                                                <div className="flex items-center gap-2 flex-nowrap w-full sm:w-auto">
+                                                    <ScrollableSelect
+                                                        value={openingDims.type}
+                                                        onChange={(e) => setOpeningDims({ ...openingDims, type: e.target.value as OpeningType })}
+                                                        className="form-select text-xs !h-8 !min-h-0 !py-0 !px-2 leading-none rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800 min-w-[90px]"
+                                                    >
+                                                        <option value="okno">{t("Okno", "Window")}</option>
+                                                        <option value="drzwi">{t("Drzwi", "Door")}</option>
+                                                    </ScrollableSelect>
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        step="any"
+                                                        placeholder={t("Szer (m)", "W (m)")}
+                                                        value={openingDims.w}
+                                                        onChange={(e) => handleOpeningDimensionChange("w", e.target.value)}
+                                                        className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
+                                                    />
+                                                    <div className="flex items-center gap-1">
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="any"
+                                                            placeholder={t("Wys (m)", "H (m)")}
+                                                            value={openingDims.h}
+                                                            onChange={(e) => handleOpeningDimensionChange("h", e.target.value)}
+                                                            className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setActiveSurfaceIndex(null)}
+                                                            className="sm:hidden inline-flex items-center justify-center h-6 w-6 bg-transparent text-gray-400 hover:text-gray-700"
+                                                            aria-label={t("Zamknij", "Close")}
+                                                            title={t("Zamknij", "Close")}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[16px] leading-none">close</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {/* Row 2 (mobile): actions */}
+                                                <div className="flex items-center justify-center sm:justify-start gap-2 mt-[7.5px] sm:mt-0 w-full sm:w-auto">
+                                                    <button
+                                                        onClick={() => handleAddOpening(index)}
+                                                        className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 h-8 w-20 sm:w-auto rounded-md font-bold"
+                                                    >
+                                                        {t("Dodaj", "Add")}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setActiveSurfaceIndex(null)}
+                                                        className="text-gray-500 hover:text-gray-700 text-xs px-2 h-8 w-20 sm:w-auto border border-gray-500/40 rounded-md"
+                                                    >
+                                                        {t("Anuluj", "Cancel")}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (
