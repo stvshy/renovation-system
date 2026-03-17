@@ -188,19 +188,19 @@ const Projects: React.FC = () => {
                                     <div
                                         key={draft.id}
                                         onClick={() => handleDraftResume(draft)}
-                                        className="cursor-pointer flex items-center gap-4 bg-slate-100/75 dark:bg-slate-800/35 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-dashed border-slate-300 dark:border-slate-700 opacity-85"
+                                        className="cursor-pointer flex items-center gap-3 sm:gap-4 bg-slate-100/75 dark:bg-slate-800/35 p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-dashed border-slate-300 dark:border-slate-700 opacity-85"
                                     >
-                                        <div className="flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-300 shrink-0 size-12 font-bold text-lg bg-slate-200 dark:bg-slate-700/70">
-                                            <span className="material-symbols-outlined">draft</span>
+                                        <div className="flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-300 shrink-0 size-10 sm:size-12 font-bold text-lg bg-slate-200 dark:bg-slate-700/70">
+                                            <span className="material-symbols-outlined text-[20px] sm:text-[24px]">draft</span>
                                         </div>
                                         <div className="flex flex-col justify-center flex-grow min-w-0">
                                             <div className="flex items-center gap-2">
-                                                <p className="text-slate-800 dark:text-slate-100 text-base font-semibold leading-normal line-clamp-1">{draftTitle}</p>
+                                                <p className="text-slate-800 dark:text-slate-100 text-[15px] sm:text-base font-semibold leading-normal line-clamp-1">{draftTitle}</p>
                                                 <span className="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                                                     {t('Roboczy', 'Draft')}
                                                 </span>
                                             </div>
-                                            <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">
+                                            <p className="text-slate-500 dark:text-slate-400 text-[13px] sm:text-sm font-normal leading-normal line-clamp-2">
                                                 {getDraftSubtitle(draft)}
                                             </p>
                                         </div>
@@ -228,17 +228,17 @@ const Projects: React.FC = () => {
                                 <div 
                                     key={project.id} 
                                     onClick={() => navigate(`/projects/${project.id}`)}
-                                    className="cursor-pointer flex items-center gap-4 bg-white dark:bg-slate-800/50 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-slate-100 dark:border-slate-800"
+                                    className="cursor-pointer flex items-center gap-3 sm:gap-4 bg-white dark:bg-slate-800/50 p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-slate-100 dark:border-slate-800"
                                 >
                                     <div 
-                                        className="flex items-center justify-center rounded-lg text-primary shrink-0 size-12 font-bold text-lg"
+                                        className="flex items-center justify-center rounded-lg text-primary shrink-0 size-10 sm:size-12 font-bold text-lg"
                                         style={{ backgroundColor: project.color ? `${project.color}30` : '#e0e7ff', color: project.color }}
                                     >
                                         {project.name.charAt(0).toUpperCase()}
                                     </div>
                                     <div className="flex flex-col justify-center flex-grow">
                                         <div className="flex items-center gap-2">
-                                            <p className="text-slate-900 dark:text-slate-50 text-base font-semibold leading-normal line-clamp-1">{project.name}</p>
+                                            <p className="text-slate-900 dark:text-slate-50 text-[15px] sm:text-base font-semibold leading-normal line-clamp-1">{project.name}</p>
                                             <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap
                                                 ${project.status === 'Completed' ? 'bg-green-100 text-green-700' :
                                                   project.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
@@ -248,7 +248,7 @@ const Projects: React.FC = () => {
                                                 {statuses.find(s => s.value === project.status)?.label || project.status}
                                             </span>
                                         </div>
-                                        <p className="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal line-clamp-2">
+                                        <p className="text-slate-500 dark:text-slate-400 text-[13px] sm:text-sm font-normal leading-normal line-clamp-2">
                                             {project.value.toLocaleString()} {currencyCode} | {project.area.toFixed(0)} m² | {project.address}
                                         </p>
                                         {project.startDate && project.endDate && (
