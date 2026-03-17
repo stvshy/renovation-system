@@ -1495,7 +1495,7 @@ const RoomForm: React.FC = () => {
                                     </h3>
                                     <p
                                         lang={language === "pl" ? "pl-PL" : "en-US"}
-                                        className="mt-2 text-sm text-gray-500 dark:text-slate-400"
+                                        className="mt-3 text-sm text-gray-500 dark:text-slate-400"
                                         style={{
                                             textAlign: "justify",
                                             textJustify: "inter-word",
@@ -1535,13 +1535,13 @@ const RoomForm: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setConfirmAction(null)}
-                                    className="absolute top-4 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                                    className="absolute top-[20px] right-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                                 >
                                     <span className="material-symbols-outlined text-[20px] leading-none">close</span>
                                 </button>
                             </div>
 
-                            <div className="px-5 pt-1 pb-4 flex justify-end gap-2">
+                            <div className="px-5 pt-1.5 pb-4 flex justify-end gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setConfirmAction(null)}
