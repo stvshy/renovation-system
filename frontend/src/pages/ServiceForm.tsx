@@ -1346,21 +1346,60 @@ const ServiceForm: React.FC = () => {
                                     </div>
                                 ) : (
                                     additionalCosts.map((cost) => (
-                                        <div key={cost.id} className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-2.5 sm:p-3">
-                                            <div className="flex items-baseline justify-between gap-3">
+                                        <div
+                                            key={cost.id}
+                                            className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-2.5 sm:p-3"
+                                        >
+                                            {/* Mobile layout: title full width on top, date left, amount + delete right */}
+                                            <div className="flex flex-col gap-1 sm:hidden">
+                                                <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white break-words leading-tight">
+                                                    {cost.note}
+                                                </p>
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                        {new Date(cost.createdAt).toLocaleDateString()}
+                                                    </p>
+                                                    <div className="flex items-baseline gap-2">
+                                                        <p className="text-[13px] sm:text-sm font-black text-red-600 dark:text-red-400 leading-tight">
+                                                            +{cost.amount.toFixed(2)} {currencyCode}
+                                                        </p>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRemoveAdditionalCost(cost.id)}
+                                                            className="text-slate-400 hover:text-red-600 dark:hover:text-red-400"
+                                                            title={t('Usuń koszt', 'Remove cost')}
+                                                        >
+                                                            <span className="material-symbols-outlined text-base relative top-[2.9px]">
+                                                                delete
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Desktop / tablet layout: original two-column structure */}
+                                            <div className="hidden sm:flex items-baseline justify-between gap-3">
                                                 <div className="min-w-0 space-y-1">
-                                                    <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white break-words leading-tight">{cost.note}</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(cost.createdAt).toLocaleDateString()}</p>
+                                                    <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white break-words leading-tight">
+                                                        {cost.note}
+                                                    </p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                        {new Date(cost.createdAt).toLocaleDateString()}
+                                                    </p>
                                                 </div>
                                                 <div className="text-right shrink-0 flex items-baseline gap-2">
-                                                    <p className="text-[13px] sm:text-sm font-black text-red-600 dark:text-red-400 leading-tight">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                                    <p className="text-[13px] sm:text-sm font-black text-red-600 dark:text-red-400 leading-tight">
+                                                        +{cost.amount.toFixed(2)} {currencyCode}
+                                                    </p>
                                                     <button
                                                         type="button"
                                                         onClick={() => handleRemoveAdditionalCost(cost.id)}
                                                         className="text-slate-400 hover:text-red-600 dark:hover:text-red-400"
                                                         title={t('Usuń koszt', 'Remove cost')}
                                                     >
-                                                        <span className="material-symbols-outlined text-base relative top-[2.7px]">delete</span>
+                                                        <span className="material-symbols-outlined text-base relative top-[2.9px]">
+                                                            delete
+                                                        </span>
                                                     </button>
                                                 </div>
                                             </div>
