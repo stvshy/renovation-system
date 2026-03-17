@@ -895,11 +895,11 @@ const ServiceForm: React.FC = () => {
                                         <input
                                             type="number"
                                             min="0"
-                                            className="form-input h-10 sm:h-11 w-full rounded-l-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                                            className="form-input h-11 w-full rounded-l-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                             value={strategyParam}
                                             onChange={(e) => setStrategyParam(e.target.value)}
                                         />
-                                        <span className="flex h-10 sm:h-11 min-w-[52px] sm:min-w-[56px] items-center justify-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-2.5 sm:px-3 text-[10px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+                                        <span className="flex h-11 min-w-[52px] sm:min-w-[56px] items-center justify-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-2.5 sm:px-3 text-[10px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
                                             {selectedTemplate.defaultStrategy === "consumption" ? t("m²/jedn", "m²/unit") : "%"}
                                         </span>
                                     </div>
@@ -1086,12 +1086,12 @@ const ServiceForm: React.FC = () => {
                                         <input
                                             type="number"
                                             min="0"
-                                            className="form-input h-10 sm:h-11 w-full rounded-l-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
+                                            className="form-input h-11 w-full rounded-l-xl border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary disabled:bg-slate-50 dark:disabled:bg-slate-900"
                                             value={scopeType === "manual" ? manualQuantity : currentDimension.toFixed(2)}
                                             disabled={scopeType !== "manual"}
                                             onChange={(e) => setManualQuantity(e.target.value)}
                                         />
-                                        <span className="flex h-10 sm:h-11 items-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-2.5 sm:px-3 text-[10px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+                                        <span className="flex h-11 items-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-2.5 sm:px-3 text-[10px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
                                             {localizeUnit(getInputDimensionUnit())}
                                         </span>
                                     </div>
@@ -1124,23 +1124,22 @@ const ServiceForm: React.FC = () => {
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col min-h-[300px] sm:min-h-[320px] max-h-[700px]">
                         <div className="p-3 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
                                 <div className="flex items-center justify-between gap-3">
-                                    <div className="min-w-0">
+                                    <div className="min-w-0 flex flex-col">
                                         <div className="flex items-center gap-2 min-w-0">
                                             <span className="material-symbols-outlined text-primary text-[18px] sm:text-[24px] shrink-0">receipt_long</span>
                                             <h3 className="font-bold text-[15px] sm:text-base text-slate-800 dark:text-white truncate">
                                                 {activeRoom.name}
                                             </h3>
                                         </div>
+                                        <p className="mt-[5.5px] text-[11px] sm:text-xs text-slate-500">
+                                            {activeRoom.tasks.length} {t('pozycji w kosztorysie', 'items in estimate')}
+                                        </p>
                                     </div>
 
-                                    <p className="text-base sm:text-xl font-black text-primary shrink-0">
+                                    <p className="text-base sm:text-xl font-black text-primary shrink-0 self-center">
                                         {activeRoom.calculateTotalRoomCost().toFixed(2)} {currencyCode}
                                     </p>
                                 </div>
-
-                                <p className="mt-1 text-[11px] sm:text-xs text-slate-500">
-                                    {activeRoom.tasks.length} {t('pozycji w kosztorysie', 'items in estimate')}
-                                </p>
                             </div>
 
                             <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 custom-scrollbar">
