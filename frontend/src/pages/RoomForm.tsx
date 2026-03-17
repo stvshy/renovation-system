@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Hypher from "hypher";
+import plPatterns from "hyphenation.pl";
 import {
     Room,
     Surface,
@@ -36,6 +38,17 @@ type OpeningTemplate = { width: number; height: number; type: OpeningType };
 type PendingStandardConversion = { wallOpenings: OpeningTemplate[][] } | null;
 
 const NON_NEGATIVE_NUMBER_PATTERN = /^\d*(\.\d*)?$/;
+const PL_HYPHENATOR = new Hypher(plPatterns as any);
+const SOFT_HYPHEN = "\u00AD";
+const POLISH_WORD_PATTERN = /[A-Za-zĄąĆćĘęŁłŃńÓóŚśŹźŻż]{6,}/g;
+
+const hyphenatePolish = (value: string) => {
+    if (!value) return value;
+    return value.replace(POLISH_WORD_PATTERN, (word) => {
+        const chunks = PL_HYPHENATOR.hyphenate(word);
+        return chunks.length > 1 ? chunks.join(SOFT_HYPHEN) : word;
+    });
+};
 
 const isNonNegativeNumberInput = (value: string) => value === "" || NON_NEGATIVE_NUMBER_PATTERN.test(value);
 
@@ -202,7 +215,7 @@ const rehydrateSurface = (s: any): Surface => {
 const RoomForm: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const draftSnapshot = location.state?.draftSnapshot;
     const draftId = location.state?.draftId || draftSnapshot?.id;
     const editProjectId = location.state?.editProjectId;
@@ -1471,8 +1484,8 @@ const RoomForm: React.FC = () => {
                 {confirmAction && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                         <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
-                            <div className="flex items-start justify-between px-5 pt-4 pb-3">
-                                <div className="pr-3">
+                            <div className="relative px-5 pt-4 pb-3">
+                                <div>
                                     <h3 className="text-lg font-black text-gray-900 dark:text-white leading-snug">
                                         {confirmAction.type === "delete-room"
                                             ? t("Usunąć pokój?", "Delete room?")
@@ -1480,38 +1493,55 @@ const RoomForm: React.FC = () => {
                                             ? t("Usunąć powierzchnię?", "Delete surface?")
                                             : t("Zmienić typ pokoju?", "Change room type?")}
                                     </h3>
-                                    <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
-                                        {confirmAction.type === "delete-room"
-                                            ? t(
-                                                  "Ten pokój zostanie usunięty z projektu. Tej operacji nie można cofnąć.",
-                                                  "This room will be removed from the project. This action cannot be undone."
-                                              )
-                                            : confirmAction.type === "delete-surface"
-                                            ? t(
-                                                  `Ta powierzchnia ma przypisane roboty (${confirmAction.taskCount}) z kroku 3. Po usunięciu powierzchni te roboty zostaną usunięte także w kroku 4.`,
-                                                  `This surface has assigned work items (${confirmAction.taskCount}) from Step 3. After removing the surface, those items will also be removed in Step 4.`
-                                              )
-                                                                                        : shouldWarnDownstreamImpact
-                                                                                        ? t(
-                                                                                                    "Przełączenie z nieregularnego na standardowy przeliczy roboty w kolejnych krokach na nowe wymiary. Jeśli jakaś powierzchnia zniknie, przypisane do niej roboty zostaną usunięte po dodatkowym ostrzeżeniu.",
-                                                                                                    "Switching from irregular to standard will recalculate downstream work items using the new dimensions. If a surface disappears, work assigned to it will be removed after an additional warning."
-                                                                                            )
-                                                                                        : t(
-                                                                                                    "Zmiana typu przeliczy obecny pokój nieregularny na pokój prostokątny, zachowując łączne pola powierzchni i przenosząc otwory.",
-                                                                                                    "Switching type will convert the current irregular room to a rectangular room, preserving total surface areas and transferring openings."
-                                                                                            )}
+                                    <p
+                                        lang={language === "pl" ? "pl-PL" : "en-US"}
+                                        className="mt-2 text-sm text-gray-500 dark:text-slate-400"
+                                        style={{
+                                            textAlign: "justify",
+                                            textJustify: "inter-word",
+                                            hyphens: language === "pl" ? "manual" : "auto",
+                                            WebkitHyphens: language === "pl" ? "manual" : "auto",
+                                            msHyphens: language === "pl" ? "manual" : "auto",
+                                            overflowWrap: "normal",
+                                            wordBreak: "normal",
+                                        }}
+                                    >
+                                        {(() => {
+                                            const message =
+                                                confirmAction.type === "delete-room"
+                                                    ? t(
+                                                          "Ten pokój zostanie usunięty z projektu. Tej operacji nie można cofnąć.",
+                                                          "This room will be removed from the project. This action cannot be undone."
+                                                      )
+                                                    : confirmAction.type === "delete-surface"
+                                                    ? t(
+                                                          `Ta powierzchnia ma przypisane roboty (${confirmAction.taskCount}) z kroku 3. Po usunięciu powierzchni te roboty zostaną usunięte także w kroku 4.`,
+                                                          `This surface has assigned work items (${confirmAction.taskCount}) from Step 3. After removing the surface, those items will also be removed in Step 4.`
+                                                      )
+                                                    : shouldWarnDownstreamImpact
+                                                    ? t(
+                                                          "Przełączenie z nieregularnego na standardowy przeliczy roboty w kolejnych krokach na nowe wymiary. Jeśli jakaś powierzchnia zniknie, przypisane do niej roboty zostaną usunięte po dodatkowym ostrzeżeniu.",
+                                                          "Switching from irregular to standard will recalculate downstream work items using the new dimensions. If a surface disappears, work assigned to it will be removed after an additional warning."
+                                                      )
+                                                    : t(
+                                                          "Zmiana typu przeliczy obecny pokój nieregularny na pokój prostokątny, zachowując łączne pola powierzchni i przenosząc otwory.",
+                                                          "Switching type will convert the current irregular room to a rectangular room, preserving total surface areas and transferring openings."
+                                                      );
+
+                                            return language === "pl" ? hyphenatePolish(message) : message;
+                                        })()}
                                     </p>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => setConfirmAction(null)}
-                                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 -mt-0.5"
+                                    className="absolute top-4 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
                                 >
                                     <span className="material-symbols-outlined text-[20px] leading-none">close</span>
                                 </button>
                             </div>
 
-                            <div className="px-5 pt-2 pb-4 flex justify-end gap-2">
+                            <div className="px-5 pt-1 pb-4 flex justify-end gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setConfirmAction(null)}
