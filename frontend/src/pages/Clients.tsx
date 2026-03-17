@@ -81,7 +81,7 @@ const Clients: React.FC = () => {
 
                 {/* Search Bar */}
                 <div className="py-2">
-                     <div className="relative max-w-xl mx-auto w-full">
+                     <div className="relative w-full">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400">search</span>
                         <input 
                             type="text" 
@@ -93,7 +93,7 @@ const Clients: React.FC = () => {
                      </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-xl mx-auto w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
                     {isLoading ? (
                         <div className="col-span-full text-center py-10">{t('Ładowanie klientów...', 'Loading clients...')}</div>
                     ) : filteredClients.length === 0 ? (
