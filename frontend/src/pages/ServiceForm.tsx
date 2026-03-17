@@ -1351,7 +1351,7 @@ const ServiceForm: React.FC = () => {
                                             className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-2.5 sm:p-3"
                                         >
                                             {/* Mobile layout: title full width on top, date left, amount + delete right */}
-                                            <div className="flex flex-col gap-1 sm:hidden">
+                                            <div className="flex flex-col gap-[2px] sm:hidden">
                                                 <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white break-words leading-tight">
                                                     {cost.note}
                                                 </p>
