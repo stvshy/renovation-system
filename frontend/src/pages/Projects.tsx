@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { getProjects } from '../lib/storage';
@@ -20,8 +20,23 @@ const Projects: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState<string>('All');
     const [isLoading, setIsLoading] = useState(true);
     const [draftToDelete, setDraftToDelete] = useState<string | null>(null);
+    const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
+    const activeDraftRef = useRef<HTMLDivElement | null>(null);
+    const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const ignoreNextClickRef = useRef(false);
 
     const currencyCode = language === 'en' ? 'EUR' : 'PLN';
+
+    useEffect(() => {
+        if (activeDraftId == null) return;
+        const handlePointerDown = (e: PointerEvent) => {
+            if (activeDraftRef.current && !activeDraftRef.current.contains(e.target as Node)) {
+                setActiveDraftId(null);
+            }
+        };
+        document.addEventListener('pointerdown', handlePointerDown);
+        return () => document.removeEventListener('pointerdown', handlePointerDown);
+    }, [activeDraftId]);
 
     useEffect(() => {
         const load = async () => {
@@ -184,11 +199,48 @@ const Projects: React.FC = () => {
                             if (item.kind === 'draft') {
                                 const { draft } = item;
                                 const draftTitle = getDraftTitle(draft);
+                                const isActive = activeDraftId === draft.id;
                                 return (
                                     <div
                                         key={draft.id}
-                                        onClick={() => handleDraftResume(draft)}
-                                        className="cursor-pointer flex items-center gap-3 sm:gap-4 bg-slate-100/75 dark:bg-slate-800/35 p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-dashed border-slate-300 dark:border-slate-700 opacity-85"
+                                        ref={isActive ? activeDraftRef : undefined}
+                                        role="button"
+                                        tabIndex={0}
+                                        onClick={(e) => {
+                                            if (ignoreNextClickRef.current) {
+                                                ignoreNextClickRef.current = false;
+                                                return;
+                                            }
+                                            if (isActive) {
+                                                setActiveDraftId(null);
+                                                return;
+                                            }
+                                            handleDraftResume(draft);
+                                        }}
+                                        onTouchStart={() => {
+                                            longPressTimerRef.current = setTimeout(() => {
+                                                setActiveDraftId(draft.id);
+                                                ignoreNextClickRef.current = true;
+                                                longPressTimerRef.current = null;
+                                            }, 450);
+                                        }}
+                                        onTouchEnd={() => {
+                                            if (longPressTimerRef.current) {
+                                                clearTimeout(longPressTimerRef.current);
+                                                longPressTimerRef.current = null;
+                                            }
+                                        }}
+                                        onTouchMove={() => {
+                                            if (longPressTimerRef.current) {
+                                                clearTimeout(longPressTimerRef.current);
+                                                longPressTimerRef.current = null;
+                                            }
+                                        }}
+                                        onContextMenu={(e) => e.preventDefault()}
+                                        className={`cursor-pointer flex items-center gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 border border-dashed border-slate-300 dark:border-slate-700 opacity-85 select-none
+                                            ${isActive
+                                                ? 'bg-slate-200 dark:bg-slate-700/80 sm:bg-slate-100/75 sm:dark:bg-slate-800/35'
+                                                : 'bg-slate-100/75 dark:bg-slate-800/35'}`}
                                     >
                                         <div className="flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-300 shrink-0 size-10 sm:size-12 font-bold text-lg bg-slate-200 dark:bg-slate-700/70">
                                             <span className="material-symbols-outlined text-[20px] sm:text-[24px]">draft</span>
@@ -196,7 +248,11 @@ const Projects: React.FC = () => {
                                         <div className="flex flex-col justify-center flex-grow min-w-0">
                                             <div className="flex items-center gap-2">
                                                 <p className="text-slate-800 dark:text-slate-100 text-[15px] sm:text-base font-semibold leading-normal line-clamp-1">{draftTitle}</p>
-                                                <span className="text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                                                <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap ${
+                                                    isActive
+                                                        ? 'bg-slate-600 text-slate-200 dark:bg-slate-500 dark:text-slate-200'
+                                                        : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
+                                                }`}>
                                                     {t('Roboczy', 'Draft')}
                                                 </span>
                                             </div>
@@ -204,18 +260,30 @@ const Projects: React.FC = () => {
                                                 {getDraftSubtitle(draft)}
                                             </p>
                                         </div>
-                                        <div className="shrink-0 group relative hidden sm:flex items-center gap-1">
+                                        <div className={`shrink-0 group relative items-center gap-1 ${isActive ? 'flex' : 'hidden sm:flex'}`}>
                                             <button
+                                                type="button"
                                                 onClick={(event) => {
                                                     event.stopPropagation();
+                                                    setActiveDraftId(null);
                                                     handleDraftDelete(draft.id);
                                                 }}
                                                 className="text-red-500 hover:text-red-700 flex size-8 items-center justify-center rounded-full hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors mt-[0.2px]"
                                                 title={t('Usuń wersję roboczą', 'Delete draft')}
+                                                aria-label={t('Usuń wersję roboczą', 'Delete draft')}
                                             >
                                                 <span className="material-symbols-outlined">delete</span>
                                             </button>
-                                            <button className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary flex size-8 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+                                            <button
+                                                type="button"
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    setActiveDraftId(null);
+                                                    handleDraftResume(draft);
+                                                }}
+                                                className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary flex size-8 items-center justify-center rounded-full hover:bg-primary/10 transition-colors"
+                                                aria-label={t('Edytuj', 'Edit')}
+                                            >
                                                 <span className="material-symbols-outlined">edit</span>
                                             </button>
                                         </div>
