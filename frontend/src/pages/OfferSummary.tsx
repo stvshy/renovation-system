@@ -270,7 +270,7 @@ const OfferSummary: React.FC = () => {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-3 sm:p-4 sm:items-center">
                     <div>
-                        <p className="text-[#0d141b] dark:text-white text-[34px] font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
+                        <p className="text-[#0d141b] dark:text-white text-[28px] sm:text-[34px] font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
                         <div className="mt-1 flex items-center gap-2">
                             <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">{effectiveProjectName}</p>
                             <button
@@ -297,7 +297,7 @@ const OfferSummary: React.FC = () => {
                                 {t('Klient:', 'Client:')} <span className="font-semibold text-gray-700 dark:text-slate-200">{clientData.firstName} {clientData.lastName}</span>
                             </p>
                         )}
-                        <div className="flex flex-wrap gap-2 mt-3">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
                             <button
                                 type="button"
                                 onClick={() =>
@@ -312,7 +312,7 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 1', 'Step 1')}
                             </button>
@@ -330,7 +330,7 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 2', 'Step 2')}
                             </button>
@@ -348,13 +348,13 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 3', 'Step 3')}
                             </button>
                             <button
                                 type="button"
-                                className="text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary print:hidden"
+                                className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-primary print:hidden"
                             >
                                 {t('Krok 4', 'Step 4')}
                             </button>
@@ -374,8 +374,8 @@ const OfferSummary: React.FC = () => {
                 {/* Grand Total Card */}
                 <div className="p-3 sm:p-4 @container print:break-inside-avoid">
                     <div className="print-total-card flex flex-col items-center justify-center rounded-xl shadow-[0_4px_20px_rgba(17,115,212,0.18)] bg-gradient-to-r from-sky-500 to-dependable-blue p-5 sm:p-8 print:bg-white print:shadow-none print:border print:border-gray-200">
-                        <p className="text-white/80 text-base sm:text-lg font-normal leading-normal font-display text-center print:text-gray-600">{t('Szacowany koszt całkowity', 'Estimated total cost')}</p>
-                        <p className="text-white text-3xl sm:text-6xl font-black leading-tight tracking-[0.03em] mt-2 font-display text-center break-words print-total-amount print:text-primary">{finalProjectTotal.toFixed(2)} {currencyCode}</p>
+                        <p className="text-white/80 text-sm sm:text-lg font-normal leading-normal font-display text-center print:text-gray-600">{t('Szacowany koszt całkowity', 'Estimated total cost')}</p>
+                        <p className="text-white text-[28px] sm:text-6xl font-black leading-tight tracking-[0.03em] mt-2 font-display text-center break-words print-total-amount print:text-primary">{finalProjectTotal.toFixed(2)} {currencyCode}</p>
                         <p className="text-white/70 text-sm mt-2 text-center print:text-gray-500">{t('Robocizna + Materiały + Koszty dodatkowe', 'Labor + Materials + Additional costs')}</p>
                         {projectDates && (
                             <p className="text-xs text-white mt-4 font-bold bg-white/20 px-3 py-1 rounded-full inline-flex flex-wrap items-center justify-center text-center print:bg-primary/10 print:text-primary">
@@ -649,24 +649,24 @@ const OfferSummary: React.FC = () => {
 
                         {shoppingListItems.length > 0 && (
                         <div className="overflow-x-auto print:overflow-visible">
-                            <table className="w-full min-w-[720px] print:min-w-0 text-sm text-left text-gray-600 dark:text-gray-300">
-                                <thead className="text-xs uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <table className="w-full min-w-0 sm:min-w-[720px] print:min-w-0 text-xs sm:text-sm text-left text-gray-600 dark:text-gray-300">
+                                <thead className="text-[10px] sm:text-xs uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                     <tr>
-                                        <th className="px-4 py-3">{t('Materiał', 'Material')}</th>
-                                        <th className="px-4 py-3 text-right">{t('Potrzebne', 'Required')}</th>
-                                        <th className="px-4 py-3 text-right">{t('W magazynie', 'In stock')}</th>
-                                        <th className="px-4 py-3 text-right">{t('Do dokupienia', 'To buy')}</th>
-                                        <th className="px-4 py-3 text-right">{t('Koszt zakupu', 'Purchase cost')}</th>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3">{t('Materiał', 'Material')}</th>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Potrzebne', 'Required')}</th>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('W magazynie', 'In stock')}</th>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Do dokupienia', 'To buy')}</th>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Koszt zakupu', 'Purchase cost')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {shoppingListItems.map((item) => (
                                         <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
-                                            <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">{item.materialName}</td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-900 dark:text-white break-words">{item.materialName}</td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -677,7 +677,7 @@ const OfferSummary: React.FC = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 px-3 sm:px-4 py-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
+                <div className="flex flex-row sm:flex-row sm:flex-wrap items-center justify-between sm:justify-between gap-3 sm:gap-4 px-3 sm:px-4 py-4 mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
                     <button
                         onClick={() =>
                             navigate("/projects/new/services", {
@@ -691,7 +691,7 @@ const OfferSummary: React.FC = () => {
                                 },
                             })
                         }
-                        className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-colors"
+                        className="flex w-auto sm:w-auto min-w-0 sm:min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-9 sm:h-10 px-3 sm:px-4 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-colors"
                     >
                         <span className="truncate">{t('Wróć do edycji usług', 'Back to services')}</span>
                     </button>
@@ -699,7 +699,7 @@ const OfferSummary: React.FC = () => {
                         <button
                             onClick={handleSubmitProject}
                             disabled={isSaving}
-                            className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
+                            className="flex w-auto sm:w-auto min-w-0 sm:min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 sm:h-10 px-3 sm:px-4 bg-primary text-white text-xs sm:text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
                         >
                             <span className="truncate">{isSaving ? t('Zapisywanie...', 'Saving...') : t('Zatwierdz i Zapisz Projekt', 'Confirm and Save Project')}</span>
                         </button>

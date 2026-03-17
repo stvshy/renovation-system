@@ -685,14 +685,14 @@ const ServiceForm: React.FC = () => {
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4 pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <div>
-                            <p className="text-text-dark dark:text-off-white text-[34px] font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
+                            <p className="text-text-dark dark:text-off-white text-[28px] sm:text-[34px] font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
                             <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">
                                 <span>{t('OKREŚLANIE PRAC PROJEKTOWYCH', 'DEFINING PROJECT WORK')}</span>
                             </span>
                         </div>
                         <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
                     </div>
-                    <div className="flex flex-wrap gap-2 pt-1">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
                         <button
                             type="button"
                             onClick={() =>
@@ -707,7 +707,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 1', 'Step 1')}
                         </button>
@@ -725,13 +725,13 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 2', 'Step 2')}
                         </button>
                         <button
                             type="button"
-                            className="text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-primary"
                         >
                             {t('Krok 3', 'Step 3')}
                         </button>
@@ -749,7 +749,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 4', 'Step 4')}
                         </button>
@@ -804,7 +804,7 @@ const ServiceForm: React.FC = () => {
 
                         {/* Configurator Card */}
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-lg">
-                            <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                            <h3 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
                                 <span className="material-symbols-outlined">settings_suggest</span>
                                 {t('Parametry usługi', 'Service parameters')}
                             </h3>
@@ -1122,14 +1122,14 @@ const ServiceForm: React.FC = () => {
                     {/* RIGHT COLUMN: Live Summary */}
                     <div className="lg:col-span-5 flex flex-col gap-4 min-h-[500px]">
                         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex flex-col min-h-[320px] max-h-[700px]">
-                            <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
+                        <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 rounded-t-2xl">
                                 <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary">receipt_long</span>
                                     {activeRoom.name}
                                 </h3>
                                 <div className="flex justify-between items-end mt-2">
                                     <p className="text-xs text-slate-500">{activeRoom.tasks.length} {t('pozycji w kosztorysie', 'items in estimate')}</p>
-                                    <p className="text-xl font-black text-primary">{activeRoom.calculateTotalRoomCost().toFixed(2)} {currencyCode}</p>
+                                    <p className="text-lg sm:text-xl font-black text-primary">{activeRoom.calculateTotalRoomCost().toFixed(2)} {currencyCode}</p>
                                 </div>
                             </div>
 
@@ -1365,7 +1365,7 @@ const ServiceForm: React.FC = () => {
 
                 {/* Footer Navigation */}
                 {isEditMode ? (
-                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4">
+                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4">
                         <button
                             onClick={() =>
                                 navigate("/projects/new/room", {
@@ -1379,7 +1379,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
+                            className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                         >
                             <span className="material-symbols-outlined">arrow_back</span>
                             {t('Pokoje', 'Rooms')}
@@ -1387,14 +1387,14 @@ const ServiceForm: React.FC = () => {
 
                         <button
                             onClick={handleFinish}
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
+                            className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                         >
                             {t('Podsumowanie', 'Summary')}
                             <span className="material-symbols-outlined">arrow_forward</span>
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4">
+                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4">
                         <button
                             onClick={() =>
                                 navigate("/projects/new/room", {
@@ -1408,7 +1408,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
+                            className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                         >
                             <span className="material-symbols-outlined">arrow_back</span>
                             {t('Edytuj Pokoje', 'Edit Rooms')}
@@ -1416,7 +1416,7 @@ const ServiceForm: React.FC = () => {
 
                         <button
                             onClick={handleFinish}
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
+                            className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                         >
                             <span className="material-symbols-outlined">assignment_turned_in</span>
                             {t('Przejdź do podsumowania', 'Go to Summary')}

@@ -321,35 +321,35 @@ const ClientForm: React.FC = () => {
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4 pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <div>
-                            <p className="text-text-dark dark:text-off-white text-[34px] font-black leading-tight">{t('Dane Klienta', 'Client Data')}</p>
+                            <p className="text-text-dark dark:text-off-white text-[28px] sm:text-[34px] font-black leading-tight">{t('Dane Klienta', 'Client Data')}</p>
                             <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">
                                 <span>{t('WPROWADZANIE DANYCH KLIENTA', 'ENTERING CLIENT DATA')}</span>
                             </span>
                         </div>
                         <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
                     </div>
-                    <div className="flex flex-wrap gap-2 pt-1">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
                         <button type="button" className="text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary">
                             {t('Krok 1', 'Step 1')}
                         </button>
                         <button
                             type="button"
                             onClick={() => navigate('/projects/new/room', { state: buildWizardState() })}
-                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 2', 'Step 2')}
                         </button>
                         <button
                             type="button"
                             onClick={() => navigate('/projects/new/services', { state: buildWizardState() })}
-                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 3', 'Step 3')}
                         </button>
                         <button
                             type="button"
                             onClick={() => navigate('/projects/new/offer', { state: buildWizardState() })}
-                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 4', 'Step 4')}
                         </button>
@@ -363,13 +363,13 @@ const ClientForm: React.FC = () => {
                         <div className="flex p-0.5 bg-[rgba(17,115,212,0.1)] rounded-lg divide-x divide-primary/20">
                             <button
                                 onClick={() => { setMode('new'); setSelectedClientId(''); setFirstName(''); setLastName(''); setErrors({}); }}
-                                className={`flex-1 px-4 py-[8.5px] rounded-md text-sm font-bold leading-5 transition-all ${mode === 'new' ? 'bg-white text-primary shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+                                className={`flex-1 px-4 py-1.5 sm:py-[8.5px] rounded-md text-sm font-bold leading-5 transition-all ${mode === 'new' ? 'bg-white text-primary shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
                             >
                                 {t('Nowy Klient', 'New Client')}
                             </button>
                             <button
                                 onClick={() => { setMode('existing'); setErrors({}); }}
-                                className={`flex-1 px-4 py-[8.5px] rounded-md text-sm font-bold leading-5 transition-all ${mode === 'existing' ? 'bg-white text-primary shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
+                                className={`flex-1 px-4 py-1.5 sm:py-[8.5px] rounded-md text-sm font-bold leading-5 transition-all ${mode === 'existing' ? 'bg-white text-primary shadow-sm' : 'text-slate-600 hover:text-slate-800'}`}
                             >
                                 {t('Wybierz z listy', 'Select from list')}
                             </button>
@@ -384,7 +384,7 @@ const ClientForm: React.FC = () => {
                                     handleChange(setSelectedClientId, 'clientSelection')(e);
                                     setIsEditingSelectedClient(false);
                                 }}
-                                className={`form-select w-full h-[42px] rounded-lg border bg-background-light dark:bg-slate-800 px-3 
+                                className={`form-select w-full h-[44px] rounded-lg border bg-background-light dark:bg-slate-800 px-3 text-sm
                                     ${errors.clientSelection ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-700'}`}
                             >
                                 <option value="">-- {t('Wybierz klienta', 'Select client')} --</option>
@@ -420,7 +420,7 @@ const ClientForm: React.FC = () => {
                     <div className={`transition-opacity duration-300 ${mode === 'existing' && !selectedClientId ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
                         <div className="flex flex-col md:flex-row gap-4">
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Imię*', 'First name*')}</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('Imię*', 'First name*')}</p>
                                 <input 
                                     value={firstName} 
                                     onChange={handleChange(setFirstName, 'firstName')} 
@@ -432,7 +432,7 @@ const ClientForm: React.FC = () => {
                                 {errors.firstName && <p className="mt-1 text-xs text-red-500 font-medium">{errors.firstName}</p>}
                             </label>
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Nazwisko*', 'Last name*')}</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('Nazwisko*', 'Last name*')}</p>
                                 <input 
                                     value={lastName} 
                                     onChange={handleChange(setLastName, 'lastName')}
@@ -447,7 +447,7 @@ const ClientForm: React.FC = () => {
                         
                         <div className="flex flex-col mt-4">
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Ulica i numer domu', 'Street and house number')}</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('Ulica i numer domu', 'Street and house number')}</p>
                                 <input 
                                     value={address} 
                                     onChange={(e) => setAddress(e.target.value)} 
@@ -460,7 +460,7 @@ const ClientForm: React.FC = () => {
 
                         <div className="flex flex-col md:flex-row gap-4 mt-4">
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Miasto', 'City')}</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('Miasto', 'City')}</p>
                                 <input 
                                     value={city} 
                                     onChange={(e) => setCity(e.target.value)} 
@@ -470,7 +470,7 @@ const ClientForm: React.FC = () => {
                                 />
                             </label>
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Kod pocztowy', 'Postal code')}</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('Kod pocztowy', 'Postal code')}</p>
                                 <input 
                                     value={zipCode} 
                                     onChange={(e) => setZipCode(e.target.value)} 
@@ -483,7 +483,7 @@ const ClientForm: React.FC = () => {
 
                         <div className="flex flex-col md:flex-row gap-4 mt-4">
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Telefon', 'Phone')}</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('Telefon', 'Phone')}</p>
                                 <input 
                                     value={phone} 
                                     onChange={(e) => setPhone(e.target.value)} 
@@ -494,7 +494,7 @@ const ClientForm: React.FC = () => {
                                 />
                             </label>
                             <label className="flex flex-col flex-1">
-                                <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('E-mail', 'Email')}</p>
+                                <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('E-mail', 'Email')}</p>
                                 <input 
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
@@ -508,10 +508,10 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {/* Section: Project Dates */}
-                    <h2 className="text-xl font-bold text-primary border-b border-gray-200 dark:border-gray-700 pb-2 mt-3">{t('Czas trwania projektu', 'Project timeline')}</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-primary border-b border-gray-200 dark:border-gray-700 pb-2 mt-3">{t('Czas trwania projektu', 'Project timeline')}</h2>
                     <div className="flex flex-col md:flex-row gap-4">
                         <label className="flex flex-col flex-1">
-                            <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Data rozpoczęcia*', 'Start date*')}</p>
+                            <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('Data rozpoczęcia*', 'Start date*')}</p>
                             <input 
                                 type="date" 
                                 value={startDate} 
@@ -522,7 +522,7 @@ const ClientForm: React.FC = () => {
                             {errors.startDate && <p className="mt-1 text-xs text-red-500 font-medium">{errors.startDate}</p>}
                         </label>
                         <label className="flex flex-col flex-1">
-                            <p className="text-slate-700 dark:text-slate-300 text-base font-medium leading-normal pb-2">{t('Data zakończenia*', 'End date*')}</p>
+                            <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t('Data zakończenia*', 'End date*')}</p>
                             <input 
                                 type="date" 
                                 value={endDate} 
@@ -535,21 +535,21 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {isEditMode ? (
-                        <div className="flex justify-end px-3 sm:px-4 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
+                        <div className="flex justify-end px-4 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
                             <button
                                 onClick={handleNext}
-                                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
+                                className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
                             >
                                 <span>{t('Pokoje', 'Rooms')}</span>
                                 <span className="material-symbols-outlined">arrow_forward</span>
                             </button>
                         </div>
                     ) : (
-                        <div className="flex flex-col md:flex-row gap-3 px-3 sm:px-4 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full justify-end md:items-center">
-                            <button onClick={() => navigate('/projects')} className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all">
+                        <div className="flex flex-row md:flex-row gap-3 px-3 sm:px-4 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full justify-between md:justify-end md:items-center">
+                            <button onClick={() => navigate('/projects')} className="w-auto md:w-auto flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all">
                                 {t('Anuluj', 'Cancel')}
                             </button>
-                            <button onClick={handleNext} className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:ml-auto">
+                            <button onClick={handleNext} className="w-auto md:w-auto flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:ml-auto">
                                 {t('Zapisz i Dalej', 'Save and Continue')}
                             </button>
                         </div>

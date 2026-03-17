@@ -777,7 +777,7 @@ const RoomForm: React.FC = () => {
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4 pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                         <div>
-                            <p className="text-text-dark dark:text-off-white text-[34px] font-black leading-tight tracking-[-0.033em]">
+                            <p className="text-text-dark dark:text-off-white text-[28px] sm:text-[34px] font-black leading-tight tracking-[-0.033em]">
                                 {editingRoomIndex !== null ? t("Edycja Pokoju", "Edit Room") : t("Definicja Pokoju", "Room Definition")}
                             </p>
                             <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">
@@ -786,17 +786,17 @@ const RoomForm: React.FC = () => {
                         </div>
                         <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
                     </div>
-                    <div className="flex flex-wrap gap-2 pt-1">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
                         <button
                             type="button"
                             onClick={handleGoToClientStep}
-                            className="text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 1', 'Step 1')}
                         </button>
                         <button
                             type="button"
-                            className="text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary"
+                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-primary"
                         >
                             {t('Krok 2', 'Step 2')}
                         </button>
@@ -804,7 +804,7 @@ const RoomForm: React.FC = () => {
                             type="button"
                             onClick={() => handleProceedWithAutoSave("services")}
                             disabled={!canNavigateToNextSteps}
-                            className={`text-[11.9px] font-bold rounded-lg border px-[10.3px] py-[4.4px] transition-colors ${
+                            className={`text-[11px] sm:text-[11.9px] font-bold rounded-lg border px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] transition-colors ${
                                 canNavigateToNextSteps
                                     ? 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                                     : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
@@ -816,7 +816,7 @@ const RoomForm: React.FC = () => {
                             type="button"
                             onClick={handleGoToSummaryStep}
                             disabled={!canNavigateToNextSteps}
-                            className={`text-[11.9px] font-bold rounded-lg border px-[10.3px] py-[4.4px] transition-colors ${
+                            className={`text-[11px] sm:text-[11.9px] font-bold rounded-lg border px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] transition-colors ${
                                 canNavigateToNextSteps
                                     ? 'border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                                     : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed opacity-60'
@@ -855,7 +855,7 @@ const RoomForm: React.FC = () => {
 
                                             handleEditRoom(idx);
                                         }}
-                                        className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm border transition-all 
+                                        className={`flex items-center gap-2 px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm border transition-all 
                                             ${
                                                 editingRoomIndex === idx
                                                     ? hoveredRoomIndex === idx
@@ -902,11 +902,11 @@ const RoomForm: React.FC = () => {
                 {/* 1. Room Name & Mode */}
                 <div className="p-4 flex flex-col gap-6">
                     <div className="flex flex-col">
-                        <label className="text-text-dark dark:text-off-white text-base font-medium leading-normal pb-2">{t("Nazwa Pokoju", "Room Name")}</label>
+                        <label className="text-text-dark dark:text-off-white text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t("Nazwa Pokoju", "Room Name")}</label>
                         <input
                             value={roomName}
                             onChange={(e) => setRoomName(e.target.value)}
-                            className="form-input w-full rounded-lg border border-neutral-gray/50 dark:border-neutral-gray/70 bg-off-white dark:bg-background-dark p-3"
+                            className="form-input w-full rounded-lg border border-neutral-gray/50 dark:border-neutral-gray/70 bg-off-white dark:bg-background-dark p-2.5 sm:p-3 text-sm"
                             placeholder={t("np. Salon, Sypialnia", "e.g. Living room, Bedroom")}
                         />
                     </div>
@@ -915,7 +915,7 @@ const RoomForm: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => handleModeChange("standard")}
-                            className={`w-full sm:flex-1 px-4 py-1.5 rounded-md text-sm font-bold leading-5 transition-all ${
+                            className={`w-full sm:flex-1 px-3 sm:px-4 py-1.5 sm:py-1.5 rounded-md text-xs sm:text-sm font-bold leading-5 transition-all ${
                                 mode === "standard"
                                     ? "bg-white shadow-sm text-primary"
                                     : "text-slate-600 hover:text-slate-800"
@@ -926,7 +926,7 @@ const RoomForm: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => handleModeChange("custom")}
-                            className={`w-full sm:flex-1 px-4 py-1.5 rounded-md text-sm font-bold leading-5 transition-all ${
+                            className={`w-full sm:flex-1 px-3 sm:px-4 py-1.5 sm:py-1.5 rounded-md text-xs sm:text-sm font-bold leading-5 transition-all ${
                                 mode === "custom"
                                     ? "bg-white shadow-sm text-primary"
                                     : "text-slate-600 hover:text-slate-800"
@@ -940,7 +940,7 @@ const RoomForm: React.FC = () => {
                 {/* 2. Dimensions Input (Standard Mode) */}
                 {mode === "standard" && (
                     <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl mx-4 border border-slate-200 dark:border-slate-700 animate-fade-in">
-                        <h2 className="text-lg font-bold text-dependable-blue dark:text-primary mb-4">{t("Wymiary całkowite", "Overall dimensions")}</h2>
+                        <h2 className="text-base sm:text-lg font-bold text-dependable-blue dark:text-primary mb-4">{t("Wymiary całkowite", "Overall dimensions")}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <label className="flex flex-col">
                                 <span className="mb-1 text-sm font-medium">{t("Długość (m)", "Length (m)")}</span>
@@ -982,8 +982,8 @@ const RoomForm: React.FC = () => {
                 {/* 3. Surface List & Management */}
                 <div className="p-4 mt-4 space-y-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-                        <h2 className="text-xl font-bold text-dependable-blue dark:text-primary">{t("Lista Powierzchni", "Surface List")}</h2>
-                        <div className="text-right text-sm text-gray-500 ">
+                        <h2 className="text-lg sm:text-xl font-bold text-dependable-blue dark:text-primary">{t("Lista Powierzchni", "Surface List")}</h2>
+                        <div className="text-left sm:text-right sm:ml-auto text-[13.5px] sm:text-sm text-gray-500 ">
                             <p>{t("Ściany", "Walls")}: <span className="font-bold">{getTotalArea(SurfaceType.WALL).toFixed(2)} m²</span></p>
                             <p>{t("Podłoga", "Floor")}: <span className="font-bold">{getTotalArea(SurfaceType.FLOOR).toFixed(2)} m²</span></p>
                         </div>
@@ -993,19 +993,19 @@ const RoomForm: React.FC = () => {
                         <div className="flex flex-wrap gap-2 mb-4 animate-fade-in">
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.WALL)}
-                                className="btn-secondary text-sm px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
                                 + {t("Ściana", "Wall")}
                             </button>
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.FLOOR)}
-                                className="btn-secondary text-sm px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
                                 + {t("Podłoga", "Floor")}
                             </button>
                             <button
                                 onClick={() => handleAddSurface(SurfaceType.CEILING)}
-                                className="btn-secondary text-sm px-3 py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                             >
                                 + {t("Sufit", "Ceiling")}
                             </button>
@@ -1020,17 +1020,26 @@ const RoomForm: React.FC = () => {
                                 return (
                             <div
                                 key={index}
-                                className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm relative group"
+                                className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 shadow-sm relative group"
                             >
-                                <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                                <div className="flex flex-col md:flex-row gap-3 sm:gap-4 items-start md:items-center justify-between">
                                     <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-2 items-center w-full">
                                         <div className="md:col-span-3 flex items-center">
                                             {mode === "custom" ? (
-                                                <input
-                                                    value={surface.name}
-                                                    onChange={(e) => handleUpdateSurface(index, "name", e.target.value)}
-                                                    className="bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary font-semibold"
-                                                />
+                                                <div className="flex items-center gap-2 w-full">
+                                                    <input
+                                                        value={surface.name}
+                                                        onChange={(e) => handleUpdateSurface(index, "name", e.target.value)}
+                                                        className="bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary font-semibold pr-2"
+                                                    />
+                                                    <button
+                                                        onClick={() => handleRemoveSurface(index)}
+                                                        className="text-red-400 hover:text-red-600 px-1 shrink-0"
+                                                        aria-label={t("Usuń powierzchnię", "Delete surface")}
+                                                    >
+                                                        <span className="material-symbols-outlined text-[17px]">delete</span>
+                                                    </button>
+                                                </div>
                                             ) : (
                                                 <span className="font-bold flex items-center gap-2 min-w-0">
                                                     <img
@@ -1044,8 +1053,8 @@ const RoomForm: React.FC = () => {
                                         </div>
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
-                                        <div className="md:col-span-7 flex flex-row items-center gap-2 md:gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide">
-                                            <div className="flex items-center gap-1 shrink-0">
+                                        <div className="md:col-span-7 flex flex-wrap items-center gap-2 md:gap-4 pb-2 md:pb-0">
+                                            <div className="flex items-center gap-1">
                                                 <label className="text-xs font-semibold text-gray-500 whitespace-nowrap">{t("Szer", "W")}: </label>
                                                 <input
                                                     type="number"
@@ -1058,7 +1067,7 @@ const RoomForm: React.FC = () => {
                                                 />
                                                 <span className="text-xs text-gray-500 whitespace-nowrap">m</span>
                                             </div>
-                                            <div className="flex items-center gap-1 shrink-0">
+                                            <div className="flex items-center gap-1">
                                                 <label className="text-xs font-semibold text-gray-500 whitespace-nowrap">{t("Wys/Dł", "H/L")}: </label>
                                                 <input
                                                     type="number"
@@ -1072,7 +1081,9 @@ const RoomForm: React.FC = () => {
                                                 <span className="text-xs text-gray-500 whitespace-nowrap">m</span>
                                             </div>
                                             {mode === "custom" && (
-                                                <div className="flex items-center gap-2 shrink-0">
+                                                <>
+                                                {/* Desktop/tablet layout */}
+                                                <div className="hidden sm:flex items-center gap-2">
                                                     <label className="text-xs text-primary font-bold whitespace-nowrap">{t("lub m²:", "or m²:")}</label>
                                                     <input
                                                         type="number"
@@ -1084,10 +1095,27 @@ const RoomForm: React.FC = () => {
                                                         className="w-16 p-1 text-sm border border-primary/30 rounded bg-primary/5 dark:bg-slate-900"
                                                     />
                                                 </div>
+                                                {/* Mobile layout: Auto (left) + total area (right) in one line */}
+                                                <div className="flex sm:hidden w-full items-center justify-between pt-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <label className="text-xs text-primary font-bold whitespace-nowrap">{t("or Auto", "or Auto")}</label>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="any"
+                                                            placeholder="Auto"
+                                                            value={surfaceDrafts[index]?.area ?? ""}
+                                                            onChange={(e) => handleUpdateSurface(index, "area", e.target.value)}
+                                                            className="w-16 p-1 text-sm border border-primary/30 rounded bg-primary/5 dark:bg-slate-900"
+                                                        />
+                                                    </div>
+                                                    <span className="font-bold text-base text-primary -mt-0.5">{surface.getNetArea().toFixed(2)} m²</span>
+                                                </div>
+                                                </>
                                             )}
                                         </div>
 
-                                        <div className="md:col-span-2 text-right whitespace-nowrap">
+                                        <div className="hidden sm:block md:col-span-2 text-right whitespace-nowrap">
                                             <span className="font-bold text-lg text-primary">{surface.getNetArea().toFixed(2)} m²</span>
                                             {surface.openings.length > 0 && (
                                                 <span className="text-xs text-red-400 block">
@@ -1097,11 +1125,7 @@ const RoomForm: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {mode === "custom" && (
-                                        <button onClick={() => handleRemoveSurface(index)} className="text-red-400 hover:text-red-600 px-2 shrink-0 mt-[7px]">
-                                            <span className="material-symbols-outlined text-[17px]">delete</span>
-                                        </button>
-                                    )}
+                                    {/* delete button moved next to name input on mobile */}
                                 </div>
 
                                 {/* Openings Section */}
@@ -1200,7 +1224,7 @@ const RoomForm: React.FC = () => {
 
                     {surfaces.length === 0 && (
                         <div className="text-center py-10 bg-gray-50 dark:bg-slate-800/50 rounded-lg border border-dashed border-gray-300">
-                            <p className="text-gray-500">
+                            <p className="text-gray-500 text-xs sm:text-base">
                                 {t('Brak zdefiniowanych powierzchni.', 'No surfaces defined.')} {mode === "standard" ? t('Wprowadź wymiary powyżej.', 'Enter dimensions above.') : t('Dodaj ściany ręcznie.', 'Add walls manually.')}
                             </p>
                         </div>
@@ -1209,10 +1233,10 @@ const RoomForm: React.FC = () => {
 
                 {/* Footer Buttons */}
                 {isEditMode ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 px-3 sm:px-4 py-8 gap-4 items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-row md:grid md:grid-cols-2 px-3 sm:px-4 py-6 sm:py-8 gap-3 sm:gap-4 items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 justify-between">
                         <button
                             onClick={handleGoToClientStep}
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:justify-self-start"
+                            className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:justify-self-start"
                         >
                             <span className="material-symbols-outlined">arrow_back</span>
                             {t('Dane klienta', 'Client details')}
@@ -1221,20 +1245,20 @@ const RoomForm: React.FC = () => {
                         <button
                             onClick={handleSaveAndProceedToServices}
                             disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed md:justify-self-end"
+                            className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed md:justify-self-end"
                         >
                             {t('Usługi', 'Services')}
                             <span className="material-symbols-outlined">arrow_forward</span>
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-col md:flex-row px-3 sm:px-4 py-8 justify-end gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-row md:flex-row px-3 sm:px-4 py-6 sm:py-8 justify-between md:justify-end gap-3 sm:gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         {showManualSaveInCreate ? (
                             <>
                                 <button
                                     onClick={handleSaveAndAddNext}
                                     disabled={surfaces.length === 0 || (editingRoomIndex !== null && !hasUnsavedChanges)}
-                                    className="flex items-center gap-2 justify-center px-4 py-2.5 rounded-xl border text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent border-primary/70 text-primary hover:bg-primary/5"
+                                    className="flex items-center gap-1.5 justify-center px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border text-xs sm:text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-transparent border-primary/70 text-primary hover:bg-primary/5"
                                 >
                                     {t('Dodaj kolejny pokój', 'Add another room')}
                                     <span className="material-symbols-outlined">add_circle</span>
@@ -1243,7 +1267,7 @@ const RoomForm: React.FC = () => {
                                 <button
                                     onClick={handleSaveAndProceedToServices}
                                     disabled={!canGoToServicesWithoutSaving && surfaces.length === 0}
-                                    className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center gap-1.5 justify-center px-3 sm:px-6 py-2 sm:py-3 rounded-lg bg-primary text-white text-xs sm:text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {canGoToServicesWithoutSaving ? t('Usługi', 'Services') : t('Zapisz i przejdź do usług', 'Save and proceed to services')}
                                     <span className="material-symbols-outlined">arrow_forward</span>
@@ -1254,7 +1278,7 @@ const RoomForm: React.FC = () => {
                                 <button
                                     onClick={handleAddNextRoomAuto}
                                     disabled={!currentDraftRoom}
-                                    className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg border-2 border-primary text-primary font-bold bg-white dark:bg-transparent hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center gap-1.5 justify-center px-3 sm:px-6 py-2 sm:py-3 rounded-lg border-2 border-primary text-primary text-xs sm:text-sm font-bold bg-white dark:bg-transparent hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {t('Dodaj kolejny pokój', 'Add next room')}
                                     <span className="material-symbols-outlined">add_circle</span>
@@ -1263,7 +1287,7 @@ const RoomForm: React.FC = () => {
                                 <button
                                     onClick={handleSaveAndProceedToServices}
                                     disabled={!canNavigateToNextSteps}
-                                    className="flex items-center gap-2 justify-center px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center gap-1.5 justify-center px-3 sm:px-6 py-2 sm:py-3 rounded-lg bg-primary text-white text-xs sm:text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {t('Przejdź do usług', 'Go to services')}
                                     <span className="material-symbols-outlined">arrow_forward</span>
