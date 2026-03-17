@@ -1177,7 +1177,7 @@ const RoomForm: React.FC = () => {
                                             <ScrollableSelect
                                                 value={openingDims.type}
                                                 onChange={(e) => setOpeningDims({ ...openingDims, type: e.target.value as OpeningType })}
-                                                className="form-select text-xs px-2 py-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800 min-w-[90px]"
+                                                className="form-select text-xs !h-8 !min-h-0 !py-0 !px-2 leading-none rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800 min-w-[90px]"
                                             >
                                                 <option value="okno">{t("Okno", "Window")}</option>
                                                 <option value="drzwi">{t("Drzwi", "Door")}</option>
@@ -1200,18 +1200,23 @@ const RoomForm: React.FC = () => {
                                                 onChange={(e) => handleOpeningDimensionChange("h", e.target.value)}
                                                 className="w-16 text-xs p-1 h-8 rounded border-gray-300 dark:border-gray-600 dark:bg-slate-800"
                                             />
-                                            <button
-                                                onClick={() => handleAddOpening(index)}
-                                                className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 h-8 rounded font-bold"
-                                            >
-                                                {t("Dodaj", "Add")}
-                                            </button>
-                                            <button onClick={() => setActiveSurfaceIndex(null)} className="text-gray-500 hover:text-gray-700 text-xs px-2">
-                                                {t("Anuluj", "Cancel")}
-                                            </button>
+                                            <div className="flex items-center gap-2 ml-auto sm:ml-0">
+                                                <button
+                                                    onClick={() => handleAddOpening(index)}
+                                                    className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 h-8 rounded font-bold"
+                                                >
+                                                    {t("Dodaj", "Add")}
+                                                </button>
+                                                <button
+                                                    onClick={() => setActiveSurfaceIndex(null)}
+                                                    className="text-gray-500 hover:text-gray-700 text-xs px-2 h-8"
+                                                >
+                                                    {t("Anuluj", "Cancel")}
+                                                </button>
+                                            </div>
                                         </div>
                                     ) : (
-                                        <div className="mt-2 flex items-center justify-between gap-3">
+                                        <div className="mt-4 flex items-center justify-between gap-3">
                                             <button
                                                 onClick={() => setActiveSurfaceIndex(index)}
                                                 className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full flex items-center gap-1 transition-colors"
