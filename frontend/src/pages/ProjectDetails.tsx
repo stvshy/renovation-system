@@ -700,9 +700,9 @@ const ProjectDetails: React.FC = () => {
                     <div className="rounded-xl sm:rounded-2xl border border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-white dark:from-blue-950/30 dark:to-slate-900 p-3 sm:p-5 shadow-sm">
                         <div className="flex items-start justify-between gap-2 sm:gap-3">
                             <div className="min-w-0">
-                                <p className="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-blue-500">{t("Krok 1", "Step 1")}</p>
-                                <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{t("Dane klienta i terminy", "Client and timeline")}</h3>
-                                <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1 line-clamp-2 sm:line-clamp-none">
+                                <p className="text-[10.5px] sm:text-xs uppercase tracking-wide font-semibold text-blue-500">{t("Krok 1", "Step 1")}</p>
+                                <h3 className="text-[14.8px] sm:text-lg font-bold text-gray-900 dark:text-white">{t("Dane klienta i terminy", "Client and timeline")}</h3>
+                                <p className="text-[11px] sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1 line-clamp-2 sm:line-clamp-none">
                                     {project.clientName} | {project.startDate || "-"} - {project.endDate || "-"}
                                 </p>
                             </div>
@@ -720,9 +720,9 @@ const ProjectDetails: React.FC = () => {
                     <div className="rounded-xl sm:rounded-2xl border border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-white dark:from-green-950/30 dark:to-slate-900 p-3 sm:p-5 shadow-sm">
                         <div className="flex items-start justify-between gap-2 sm:gap-3">
                             <div className="min-w-0">
-                                <p className="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-green-600 dark:text-green-400">{t("Krok 2", "Step 2")}</p>
-                                <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{t("Zakres i pomieszczenia", "Scope and rooms")}</h3>
-                                <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1">
+                                <p className="text-[10.5px] sm:text-xs uppercase tracking-wide font-semibold text-green-600 dark:text-green-400">{t("Krok 2", "Step 2")}</p>
+                                <h3 className="text-[14.8px] sm:text-lg font-bold text-gray-900 dark:text-white">{t("Zakres i pomieszczenia", "Scope and rooms")}</h3>
+                                <p className="text-[11px] sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1">
                                     {t("Liczba pomieszczeń", "Rooms")}: {hydratedRooms.length}
                                 </p>
                             </div>
@@ -740,9 +740,9 @@ const ProjectDetails: React.FC = () => {
                     <div className="rounded-xl sm:rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/30 dark:to-slate-900 p-3 sm:p-5 shadow-sm">
                         <div className="flex items-start justify-between gap-2 sm:gap-3">
                             <div className="min-w-0">
-                                <p className="text-[10px] sm:text-xs uppercase tracking-wide font-semibold text-amber-500">{t("Krok 3", "Step 3")}</p>
-                                <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{t("Usługi i materiały", "Services and materials")}</h3>
-                                <p className="text-xs sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1">
+                                <p className="text-[10.5px] sm:text-xs uppercase tracking-wide font-semibold text-amber-500">{t("Krok 3", "Step 3")}</p>
+                                <h3 className="text-[14.8px] sm:text-lg font-bold text-gray-900 dark:text-white">{t("Usługi i materiały", "Services and materials")}</h3>
+                                <p className="text-[11px] sm:text-sm text-gray-600 dark:text-slate-300 mt-0.5 sm:mt-1">
                                     {t("Pozycje materiałowe", "Material lines")}: {materialSummary.length}
                                 </p>
                             </div>
@@ -785,10 +785,10 @@ const ProjectDetails: React.FC = () => {
                                     className="w-full text-left rounded-lg pt-1 pb-1.5 sm:py-2 px-1.5 sm:px-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/40 disabled:cursor-default"
                                 >
                                     <div className="flex flex-col justify-center space-y-1 sm:space-y-2">
-                                        <p className="font-bold text-base sm:text-lg text-gray-800 dark:text-white">{project.clientName}</p>
-                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{project.clientData.phone}</p>
-                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 break-all">{project.clientData.email}</p>
-                                        <p className="text-xs sm:text-sm text-gray-500 italic mt-1 sm:mt-2">{project.address}</p>
+                                        <p className="font-bold text-[14px] sm:text-lg text-gray-800 dark:text-white">{project.clientName}</p>
+                                        <p className="text-[12px] sm:text-sm text-gray-600 dark:text-gray-300">{project.clientData.phone}</p>
+                                        <p className="text-[12px] sm:text-sm text-gray-600 dark:text-gray-300 break-all">{project.clientData.email}</p>
+                                        <p className="text-[12px] sm:text-sm text-gray-500 italic mt-1 sm:mt-2">{project.address}</p>
                                     </div>
                                 </button>
                             </div>
@@ -822,8 +822,8 @@ const ProjectDetails: React.FC = () => {
                         </div>
                         <div className="flex-1 flex flex-col justify-center">
                             <div className="flex justify-between items-center mb-1.5 sm:mb-2">
-                                <span className="text-[10px] sm:text-xs text-gray-500">{t('Start', 'Start')}</span>
-                                <span className="font-bold text-sm sm:text-base text-gray-800 dark:text-white">{project.startDate || "-"}</span>
+                                <span className="text-[11.9px] sm:text-xs text-gray-500">{t('Start', 'Start')}</span>
+                                <span className="font-bold text-[13.4px] sm:text-base text-gray-800 dark:text-white">{project.startDate || "-"}</span>
                             </div>
                             <div className="w-full h-1.5 sm:h-2 bg-gray-100 dark:bg-gray-700 rounded-full mb-1.5 sm:mb-2 overflow-hidden flex">
                                 <div
@@ -836,13 +836,13 @@ const ProjectDetails: React.FC = () => {
                                 ></div>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-[10px] sm:text-xs text-gray-500">{t('Koniec', 'End')}</span>
-                                <span className="font-bold text-sm sm:text-base text-gray-800 dark:text-white">{project.endDate || "-"}</span>
+                                <span className="text-[11.9px] sm:text-xs text-gray-500">{t('Koniec', 'End')}</span>
+                                <span className="font-bold text-[13.4px] sm:text-base text-gray-800 dark:text-white">{project.endDate || "-"}</span>
                             </div>
                         </div>
                         {timelineInfoText && (
                             <div className="mt-auto translate-y-1 pt-3 sm:pt-4 border-t border-gray-100 dark:border-slate-700">
-                                <p className={`text-xs sm:text-[14px] font-bold inline-flex items-center gap-1 sm:gap-1.5 ${timelineInfoClass}`}>
+                                <p className={`text-[12.7px] sm:text-[14px] font-bold inline-flex items-center gap-1 sm:gap-1.5 ${timelineInfoClass}`}>
                                     <span className="material-symbols-outlined text-sm sm:text-base">{timelineInfoIcon}</span>
                                     {timelineInfoText}
                                 </p>
@@ -869,7 +869,7 @@ const ProjectDetails: React.FC = () => {
                             </div>
                             <div className="space-y-0.5 sm:space-y-1">
                                 <p className="text-xs sm:text-sm text-gray-500">{t('Wartość całkowita', 'Total value')}</p>
-                                <p className="text-2xl sm:text-3xl font-black text-primary">{project.value.toLocaleString()} {currencyCode}</p>
+                                <p className="text-[20.6px] sm:text-3xl font-black text-primary mt-[-0.5px]">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
                             {additionalCosts.length > 0 && (
                                 <div className="mt-2 sm:mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-200/70 dark:border-amber-800/70 bg-amber-50/40 dark:bg-amber-900/10 px-2 sm:px-2.5 py-1 sm:py-1.5">
@@ -890,12 +890,12 @@ const ProjectDetails: React.FC = () => {
 
                         <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-1.5 sm:gap-2">
                             <div className="flex justify-between items-center">
-                                <span className="text-[10px] sm:text-xs text-gray-500">{t('Powierzchnia:', 'Area:')}</span>
-                                <span className="text-[10px] sm:text-xs font-bold text-gray-700 dark:text-gray-300">{project.area.toFixed(0)} m²</span>
+                                <span className="text-[11.9px] sm:text-xs text-gray-500">{t('Powierzchnia:', 'Area:')}</span>
+                                <span className="text-[11.9px] sm:text-xs font-bold text-gray-700 dark:text-gray-300">{project.area.toFixed(0)} m²</span>
                             </div>
 
                             <div className="flex justify-between items-center min-h-[28px] sm:h-8">
-                                <span className="text-[10px] sm:text-xs text-gray-500">{t('Opłacono:', 'Paid:')}</span>
+                                <span className="text-[11.9px] sm:text-xs text-gray-500">{t('Opłacono:', 'Paid:')}</span>
                                 {isEditingPaid ? (
                                     <div className="flex items-center gap-1 animate-fade-in">
                                         <input
@@ -914,7 +914,7 @@ const ProjectDetails: React.FC = () => {
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer" onClick={handleEditPaidClick}>
-                                        <span className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} {currencyCode}</span>
+                                        <span className="text-[11.9px] sm:text-xs text-green-600 dark:text-green-400 font-bold">{paidAmount.toLocaleString()} {currencyCode}</span>
                                         <span className="material-symbols-outlined text-xs sm:text-[14px] text-gray-300 group-hover:text-primary transition-colors">
                                             edit
                                         </span>
@@ -924,8 +924,8 @@ const ProjectDetails: React.FC = () => {
 
                             {remainingAmount > 0 && (
                                 <div className="flex justify-between items-center pt-1 border-t border-dashed border-gray-100 dark:border-gray-700">
-                                    <span className="text-[10px] sm:text-xs text-gray-400">{t('Pozostało:', 'Remaining:')}</span>
-                                    <span className="text-[10px] sm:text-xs font-bold text-amber-500 dark:text-amber-400">{remainingAmount.toLocaleString()} {currencyCode}</span>
+                                    <span className="text-[11.9px] sm:text-xs text-gray-400">{t('Pozostało:', 'Remaining:')}</span>
+                                    <span className="text-[11.9px] sm:text-xs font-bold text-amber-500 dark:text-amber-400">{remainingAmount.toLocaleString()} {currencyCode}</span>
                                 </div>
                             )}
                         </div>
@@ -1016,7 +1016,62 @@ const ProjectDetails: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        <div className="p-0 overflow-x-auto border-t border-gray-100 dark:border-slate-700">
+                                        {/* Mobile: cards (no horizontal scroll) */}
+                                        <div className="border-t border-gray-100 dark:border-slate-700 sm:hidden">
+                                            {room.tasks.length === 0 ? (
+                                                <div className="px-3 py-4 text-xs text-gray-500 dark:text-slate-400">
+                                                    {t("Brak prac w tym pomieszczeniu.", "No work items in this room.")}
+                                                </div>
+                                            ) : (
+                                                <div className="p-3 space-y-2">
+                                                    {room.tasks.map((task, tIdx) => (
+                                                        <div
+                                                            key={tIdx}
+                                                            className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900/40 p-3"
+                                                        >
+                                                            <div className="flex items-start justify-between gap-3">
+                                                                <div className="min-w-0">
+                                                                    <p className="text-xs font-bold text-gray-900 dark:text-white break-words">
+                                                                        {task.description}
+                                                                    </p>
+                                                                    <p className="mt-0.5 text-[11px] text-gray-500 dark:text-slate-400 break-words">
+                                                                        {t("Materiał", "Material")}:{" "}
+                                                                        <span className="font-semibold text-gray-700 dark:text-slate-200">{task.material.name}</span>
+                                                                    </p>
+                                                                </div>
+                                                                <div className="shrink-0 text-right">
+                                                                    <p className="text-xs font-black text-primary">
+                                                                        {task.calculateTotalCost().toFixed(2)} {currencyCode}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="mt-2 grid grid-cols-2 gap-2">
+                                                                <div className="rounded-lg bg-gray-100 dark:bg-slate-800/80 px-2.5 py-2">
+                                                                    <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                                                                        {t("Ilość", "Quantity")}
+                                                                    </p>
+                                                                    <p className="text-xs font-bold text-gray-800 dark:text-slate-100">
+                                                                        {task.calculateMaterialQuantity().toFixed(2)} {unitLabel(task.material.unit)}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="rounded-lg bg-gray-100 dark:bg-slate-800/80 px-2.5 py-2">
+                                                                    <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                                                                        {t("Stawka rob.", "Labor")}
+                                                                    </p>
+                                                                    <p className="text-xs font-bold text-gray-800 dark:text-slate-100">
+                                                                        {task.laborRate.toFixed(2)}%
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Desktop: table */}
+                                        <div className="hidden sm:block p-0 overflow-x-auto border-t border-gray-100 dark:border-slate-700">
                                             <table className="w-full text-xs sm:text-sm text-left text-gray-500 dark:text-gray-400">
                                                 <thead className="text-[10px] sm:text-xs text-gray-700 uppercase bg-gray-50/50 dark:bg-gray-800 dark:text-gray-400">
                                                     <tr>
@@ -1093,7 +1148,94 @@ const ProjectDetails: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                    {/* Mobile: cards (no horizontal scroll) */}
+                    <div className="sm:hidden">
+                        {materialSummary.length === 0 ? (
+                            <div className="rounded-xl border border-dashed border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-xs text-gray-500 dark:text-slate-400 text-center">
+                                {t("Brak pozycji materiałowych dla tego projektu.", "No material rows for this project.")}
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {materialSummary.map((material) => {
+                                    const toBuyPositive = material.toBuy > 0;
+                                    const costPositive = material.shortageCost > 0;
+                                    return (
+                                        <div
+                                            key={`${material.materialName}-${material.unit}`}
+                                            className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900/40 p-3"
+                                        >
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div className="min-w-0">
+                                                    <p className="text-xs font-black text-gray-900 dark:text-white break-words">{material.materialName}</p>
+                                                    <p className="text-[10px] text-gray-500 dark:text-slate-400">{unitLabel(material.unit)}</p>
+                                                </div>
+                                                <div className="shrink-0 text-right">
+                                                    <p className="text-[10px] text-gray-500 dark:text-slate-400">{t("Koszt zakupu", "Purchase cost")}</p>
+                                                    <p className={`text-xs font-black ${costPositive ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+                                                        {material.shortageCost.toFixed(2)} {currencyCode}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-2 grid grid-cols-2 gap-2">
+                                                <div className="rounded-lg bg-gray-100 dark:bg-slate-800/80 px-2.5 py-2">
+                                                    <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                                                        {t("Potrzebne", "Required")}
+                                                    </p>
+                                                    <p className="text-xs font-semibold text-gray-800 dark:text-slate-100">
+                                                        {material.required.toFixed(2)} {unitLabel(material.unit)}
+                                                    </p>
+                                                </div>
+                                                <div className="rounded-lg bg-gray-100 dark:bg-slate-800/80 px-2.5 py-2">
+                                                    <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                                                        {t("W magazynie", "In stock")}
+                                                    </p>
+                                                    <p className="text-xs font-semibold text-gray-800 dark:text-slate-100">
+                                                        {material.available.toFixed(2)} {unitLabel(material.unit)}
+                                                    </p>
+                                                </div>
+                                                <div className="rounded-lg bg-gray-100 dark:bg-slate-800/80 px-2.5 py-2 col-span-2">
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                                                            {t("Do dokupienia", "To buy")}
+                                                        </p>
+                                                        <p className={`text-xs font-black ${toBuyPositive ? "text-amber-500 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-500"}`}>
+                                                            {material.toBuy.toFixed(2)} {unitLabel(material.unit)}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-2">
+                                                <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                                                    {t("Do jakich prac", "Used for")}
+                                                </p>
+                                                {material.workItems.length === 0 ? (
+                                                    <p className="text-[11px] text-gray-500 dark:text-slate-400">{t("Brak powiązań.", "No usage details.")}</p>
+                                                ) : (
+                                                    <div className="mt-1 space-y-0.5">
+                                                        {material.workItems.slice(0, 6).map((workItem, index) => (
+                                                            <p key={`${workItem.roomName}-${index}`} className="text-[11px] text-gray-700 dark:text-slate-200 break-words">
+                                                                <span className="font-semibold text-gray-900 dark:text-slate-50">{workItem.roomName}</span>: {workItem.taskName}
+                                                            </p>
+                                                        ))}
+                                                        {material.workItems.length > 6 && (
+                                                            <p className="text-[11px] text-gray-500 dark:text-slate-400">
+                                                                {t(`+${material.workItems.length - 6} więcej`, `+${material.workItems.length - 6} more`)}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Desktop: table */}
+                    <div className="hidden sm:block overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
                         <table className="w-full min-w-[640px] sm:min-w-[900px] text-xs sm:text-sm text-left text-gray-600 dark:text-slate-300">
                             <thead className="text-[10px] sm:text-xs uppercase bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400">
                                 <tr>
