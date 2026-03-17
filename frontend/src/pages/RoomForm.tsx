@@ -981,35 +981,51 @@ const RoomForm: React.FC = () => {
                 )}
 
                 {/* 3. Surface List & Management */}
-                <div className="p-4 -mt-2 sm:mt-4 space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                <div className="p-4 -mt-2 sm:mt-2 space-y-4">
+                    <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
                         <h2 className="text-lg sm:text-xl font-bold text-dependable-blue dark:text-primary">{t("Lista Powierzchni", "Surface List")}</h2>
-                        <div className="text-left sm:text-right sm:ml-auto text-[13.5px] sm:text-sm text-gray-500 ">
+                        {/* Mobile: keep stats under the title */}
+                        <div className="text-left sm:hidden text-[13.5px] text-gray-500 ">
                             <p>{t("Ściany", "Walls")}: <span className="font-bold">{getTotalArea(SurfaceType.WALL).toFixed(2)} m²</span></p>
                             <p>{t("Podłoga", "Floor")}: <span className="font-bold">{getTotalArea(SurfaceType.FLOOR).toFixed(2)} m²</span></p>
                         </div>
                     </div>
 
-                     {mode === "custom" && (
-                        <div className="flex flex-wrap gap-2 mb-4 animate-fade-in">
-                            <button
-                                onClick={() => handleAddSurface(SurfaceType.WALL)}
-                                className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
-                            >
-                                + {t("Ściana", "Wall")}
-                            </button>
-                            <button
-                                onClick={() => handleAddSurface(SurfaceType.FLOOR)}
-                                className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
-                            >
-                                + {t("Podłoga", "Floor")}
-                            </button>
-                            <button
-                                onClick={() => handleAddSurface(SurfaceType.CEILING)}
-                                className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
-                            >
-                                + {t("Sufit", "Ceiling")}
-                            </button>
+                     {mode === "custom" ? (
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 animate-fade-in">
+                            <div className="flex flex-wrap gap-2">
+                                <button
+                                    onClick={() => handleAddSurface(SurfaceType.WALL)}
+                                    className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                >
+                                    + {t("Ściana", "Wall")}
+                                </button>
+                                <button
+                                    onClick={() => handleAddSurface(SurfaceType.FLOOR)}
+                                    className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                >
+                                    + {t("Podłoga", "Floor")}
+                                </button>
+                                <button
+                                    onClick={() => handleAddSurface(SurfaceType.CEILING)}
+                                    className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                >
+                                    + {t("Sufit", "Ceiling")}
+                                </button>
+                            </div>
+
+                            {/* Desktop: stats to the right of add buttons, vertically centered */}
+                            <div className="hidden sm:flex flex-col items-end justify-center text-sm text-gray-500">
+                                <p>{t("Ściany", "Walls")}: <span className="font-bold">{getTotalArea(SurfaceType.WALL).toFixed(2)} m²</span></p>
+                                <p>{t("Podłoga", "Floor")}: <span className="font-bold">{getTotalArea(SurfaceType.FLOOR).toFixed(2)} m²</span></p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="hidden sm:flex justify-end -mt-2 text-sm text-gray-500">
+                            <div className="flex flex-col items-end justify-center">
+                                <p>{t("Ściany", "Walls")}: <span className="font-bold">{getTotalArea(SurfaceType.WALL).toFixed(2)} m²</span></p>
+                                <p>{t("Podłoga", "Floor")}: <span className="font-bold">{getTotalArea(SurfaceType.FLOOR).toFixed(2)} m²</span></p>
+                            </div>
                         </div>
                     )}
 
@@ -1054,7 +1070,7 @@ const RoomForm: React.FC = () => {
                                         </div>
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
-                                        <div className="md:col-span-7 mt-2.5 md:mt-0 flex flex-wrap items-center gap-2 md:gap-4 pb-2 md:pb-0">
+                                        <div className="md:col-span-7 mt-2.5 md:mt-0 flex flex-wrap items-center gap-2 md:gap-4 pb-2 md:pb-0 md:justify-center">
                                             <div className="flex items-center gap-1">
                                                 <label className="text-xs font-semibold text-gray-500 whitespace-nowrap">{t("Szer", "W")}: </label>
                                                 <input
