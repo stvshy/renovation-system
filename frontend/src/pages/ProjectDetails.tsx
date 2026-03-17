@@ -762,7 +762,7 @@ const ProjectDetails: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                     {/* Client Info */}
                     <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col">
-                        <div className="mb-3 sm:mb-4 flex items-center justify-between">
+                        <div className="mb-1.5 sm:mb-3 flex items-center justify-between">
                             <h3 className="text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
                                 <span className="material-symbols-outlined text-base sm:text-lg">person</span>
                                 {t('Dane Klienta', 'Client Details')}
@@ -782,7 +782,7 @@ const ProjectDetails: React.FC = () => {
                                     type="button"
                                     onClick={() => project.clientId && navigate(`/clients/${project.clientId}`)}
                                     disabled={!project.clientId}
-                                    className="w-full text-left rounded-lg p-1.5 sm:p-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/40 disabled:cursor-default"
+                                    className="w-full text-left rounded-lg pt-1 pb-1.5 sm:py-2 px-1.5 sm:px-2 transition-colors hover:bg-gray-50 dark:hover:bg-slate-700/40 disabled:cursor-default"
                                 >
                                     <div className="flex flex-col justify-center space-y-1 sm:space-y-2">
                                         <p className="font-bold text-base sm:text-lg text-gray-800 dark:text-white">{project.clientName}</p>
@@ -1256,10 +1256,10 @@ const ProjectDetails: React.FC = () => {
                     <button
                         type="button"
                         onClick={() => setIsDeleteProjectModalOpen(true)}
-                        className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg border border-red-300 dark:border-red-800 bg-red-50 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                        className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg border border-red-300 dark:border-red-700 bg-red-600 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600"
                     >
                         <span className="material-symbols-outlined text-sm sm:text-base">delete</span>
-                        {t("Usuń projekt", "Delete project")}
+                        <span>{t("Usuń projekt", "Delete project")}</span>
                     </button>
                 </div>
             </div>
