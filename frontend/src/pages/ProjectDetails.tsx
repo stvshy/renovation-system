@@ -678,7 +678,7 @@ const ProjectDetails: React.FC = () => {
                         <ScrollableSelect
                             value={project.status}
                             onChange={(e) => handleStatusChange(e.target.value as any)}
-                            className="form-select flex-1 min-w-0 sm:w-auto rounded-lg border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-xs sm:text-sm py-1.5 sm:py-2 pl-2.5 sm:pl-3 pr-7 sm:pr-8"
+                            className="form-select flex-1 min-w-0 sm:w-auto min-w-[40px] sm:min-w-0 rounded-lg border-gray-300 dark:border-gray-700 dark:bg-slate-800 text-xs sm:text-sm py-1.5 sm:py-2 pl-2.5 sm:pl-3 pr-9 sm:pr-8"
                         >
                             <option value="Planned">{t('Planowany', 'Planned')}</option>
                             <option value="In Progress">{t('W trakcie', 'In Progress')}</option>
@@ -1052,88 +1052,88 @@ const ProjectDetails: React.FC = () => {
 
                 {/* Materials and Inventory Dashboard */}
                 <div className="mt-2">
-                    <div className="flex items-center justify-between gap-3 mb-4">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('Materiały i Magazyn', 'Materials and inventory')}</h2>
-                        <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
+                        <h2 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">{t('Materiały i Magazyn', 'Materials and inventory')}</h2>
+                        <div className="flex items-center gap-1.5 sm:gap-2">
                             <button
                                 type="button"
                                 onClick={() => navigate("/inventory")}
-                                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
                             >
-                                <span className="material-symbols-outlined text-base">warehouse</span>
-                                {t("Magazyn", "Inventory")}
+                                <span className="material-symbols-outlined text-sm sm:text-base">warehouse</span>
+                                <span className="hidden sm:inline">{t("Magazyn", "Inventory")}</span>
                             </button>
                             <button
                                 type="button"
                                 onClick={handleEditServicesStep}
-                                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                                className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-slate-700 px-2 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
                             >
-                                <span className="material-symbols-outlined text-base">edit</span>
-                                {t("Edytuj", "Edit")}
+                                <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
+                                <span className="hidden sm:inline">{t("Edytuj", "Edit")}</span>
                             </button>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-                            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Pozycje materiałowe", "Material lines")}</p>
-                            <p className="text-2xl font-black text-gray-900 dark:text-white mt-1">{materialSummary.length}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-3 sm:mb-4">
+                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 sm:p-4">
+                            <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Pozycje materiałowe", "Material lines")}</p>
+                            <p className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white mt-0.5 sm:mt-1">{materialSummary.length}</p>
                         </div>
-                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-                            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Materiały do dokupienia", "Items to buy")}</p>
-                            <p className="text-2xl font-black text-[rgb(245,159,11)] dark:text-amber-400 mt-1">
+                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 sm:p-4">
+                            <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Materiały do dokupienia", "Items to buy")}</p>
+                            <p className="text-xl sm:text-2xl font-black text-[rgb(245,159,11)] dark:text-amber-400 mt-0.5 sm:mt-1">
                                 {materialSummary.filter((item) => item.toBuy > 0).length}
                             </p>
                         </div>
-                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-                            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Łączny koszt zakupu", "Total purchase cost")}</p>
-                            <p className={`text-2xl font-black mt-1 ${totalShoppingCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+                        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 sm:p-4">
+                            <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Łączny koszt zakupu", "Total purchase cost")}</p>
+                            <p className={`text-xl sm:text-2xl font-black mt-0.5 sm:mt-1 ${totalShoppingCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
                                 {totalShoppingCost.toFixed(2)} {currencyCode}
                             </p>
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-                        <table className="w-full min-w-[900px] text-sm text-left text-gray-600 dark:text-slate-300">
-                            <thead className="text-xs uppercase bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400">
+                    <div className="overflow-x-auto rounded-lg sm:rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                        <table className="w-full min-w-[640px] sm:min-w-[900px] text-xs sm:text-sm text-left text-gray-600 dark:text-slate-300">
+                            <thead className="text-[10px] sm:text-xs uppercase bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400">
                                 <tr>
-                                    <th className="px-4 py-3">{t("Materiał", "Material")}</th>
-                                    <th className="px-4 py-3">{t("Do jakich prac", "Used for")}</th>
-                                    <th className="px-4 py-3 text-right">{t("Potrzebne", "Required")}</th>
-                                    <th className="px-4 py-3 text-right">{t("W magazynie", "In stock")}</th>
-                                    <th className="px-4 py-3 text-right">{t("Do dokupienia", "To buy")}</th>
-                                    <th className="px-4 py-3 text-right">{t("Koszt zakupu", "Purchase cost")}</th>
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3">{t("Materiał", "Material")}</th>
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3">{t("Do jakich prac", "Used for")}</th>
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t("Potrzebne", "Required")}</th>
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t("W magazynie", "In stock")}</th>
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t("Do dokupienia", "To buy")}</th>
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t("Koszt zakupu", "Purchase cost")}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {materialSummary.map((material) => (
                                     <tr key={`${material.materialName}-${material.unit}`} className="border-t border-gray-100 dark:border-slate-800 align-top">
-                                        <td className="px-4 py-3">
-                                            <p className="font-semibold text-gray-900 dark:text-white">{material.materialName}</p>
-                                            <p className="text-xs text-gray-500 dark:text-slate-400">{unitLabel(material.unit)}</p>
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3">
+                                            <p className="font-semibold text-gray-900 dark:text-white text-xs sm:text-sm">{material.materialName}</p>
+                                            <p className="text-[10px] sm:text-xs text-gray-500 dark:text-slate-400">{unitLabel(material.unit)}</p>
                                         </td>
-                                        <td className="px-4 py-3">
-                                            <div className="space-y-1">
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3">
+                                            <div className="space-y-0.5 sm:space-y-1">
                                                 {material.workItems.map((workItem, index) => (
-                                                    <p key={`${workItem.roomName}-${index}`} className="text-xs">
+                                                    <p key={`${workItem.roomName}-${index}`} className="text-[10px] sm:text-xs">
                                                         <span className="font-semibold">{workItem.roomName}</span>: {workItem.taskName}
                                                     </p>
                                                 ))}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3 text-right whitespace-nowrap font-semibold">
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap font-semibold text-xs sm:text-sm">
                                             {material.required.toFixed(2)} {unitLabel(material.unit)}
                                         </td>
-                                        <td className="px-4 py-3 text-right whitespace-nowrap">
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-xs sm:text-sm">
                                             {material.available.toFixed(2)} {unitLabel(material.unit)}
                                         </td>
-                                        <td className="px-4 py-3 text-right whitespace-nowrap font-bold">
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap font-bold text-xs sm:text-sm">
                                             <span className={material.toBuy > 0 ? "text-amber-500 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-500"}>
                                                 {material.toBuy.toFixed(2)} {unitLabel(material.unit)}
                                             </span>
                                         </td>
                                         <td
-                                            className={`px-4 py-3 text-right whitespace-nowrap font-bold ${
+                                            className={`px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap font-bold text-xs sm:text-sm ${
                                                 material.shortageCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"
                                             }`}
                                         >
@@ -1143,7 +1143,7 @@ const ProjectDetails: React.FC = () => {
                                 ))}
                                 {materialSummary.length === 0 && (
                                     <tr>
-                                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500 dark:text-slate-400">
+                                        <td colSpan={6} className="px-3 sm:px-4 py-6 sm:py-8 text-center text-gray-500 dark:text-slate-400 text-xs sm:text-sm">
                                             {t("Brak pozycji materiałowych dla tego projektu.", "No material rows for this project.")}
                                         </td>
                                     </tr>
@@ -1153,15 +1153,15 @@ const ProjectDetails: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5">
-                    <div className="flex items-center justify-between gap-3 mb-4">
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t("Notatki projektowe", "Project notes")}</h2>
-                        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
+                <div className="mt-3 sm:mt-4 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 sm:p-5">
+                    <div className="flex items-center justify-between gap-2 sm:gap-3 mb-3 sm:mb-4">
+                        <h2 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">{t("Notatki projektowe", "Project notes")}</h2>
+                        <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
                             {t("Liczba notatek", "Total notes")}: {projectNotes.length}
                         </span>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2 sm:space-y-3">
                         <label className="flex flex-col gap-1">
                             <textarea
                                 value={newProjectNoteInput}
@@ -1170,43 +1170,43 @@ const ProjectDetails: React.FC = () => {
                                     "Wpisz treść notatki.",
                                     "Type your content here."
                                 )}
-                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[96px]"
+                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[80px] sm:min-h-[96px] text-sm"
                             />
                         </label>
                         <div className="flex justify-end">
                             <button
                                 type="button"
                                 onClick={handleAddProjectNote}
-                                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
+                                className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg bg-primary px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white hover:bg-primary/90"
                             >
-                                <span className="material-symbols-outlined text-base">note_add</span>
+                                <span className="material-symbols-outlined text-sm sm:text-base">note_add</span>
                                 {t("Dodaj notatkę", "Add note")}
                             </button>
                         </div>
                     </div>
 
-                    <div className="mt-5 space-y-3">
+                    <div className="mt-4 sm:mt-5 space-y-2 sm:space-y-3">
                         {projectNotes.length === 0 && (
-                            <div className="rounded-lg border border-dashed border-gray-300 dark:border-slate-600 p-4 text-sm text-gray-500 dark:text-slate-400 text-center">
+                            <div className="rounded-lg border border-dashed border-gray-300 dark:border-slate-600 p-3 sm:p-4 text-xs sm:text-sm text-gray-500 dark:text-slate-400 text-center">
                                 {t("Brak notatek dla tego projektu.", "No notes for this project yet.")}
                             </div>
                         )}
 
                         {projectNotes.map((note) => (
-                            <article key={note.id} className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/70 dark:bg-slate-900/40 p-4">
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="flex-1">
+                            <article key={note.id} className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/70 dark:bg-slate-900/40 p-3 sm:p-4">
+                                <div className="flex items-start justify-between gap-2 sm:gap-3">
+                                    <div className="flex-1 min-w-0">
                                         {editingNoteId === note.id ? (
                                             <textarea
                                                 value={editingNoteContent}
                                                 onChange={(e) => setEditingNoteContent(e.target.value)}
-                                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[96px]"
+                                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[80px] sm:min-h-[96px] text-sm"
                                             />
                                         ) : (
-                                            <p className="text-sm text-gray-800 dark:text-slate-100 whitespace-pre-wrap">{note.content}</p>
+                                            <p className="text-xs sm:text-sm text-gray-800 dark:text-slate-100 whitespace-pre-wrap break-words">{note.content}</p>
                                         )}
                                     </div>
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
                                         {editingNoteId === note.id ? (
                                             <>
                                                 <button
@@ -1215,7 +1215,7 @@ const ProjectDetails: React.FC = () => {
                                                     className="inline-flex items-center justify-center rounded-md p-1 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20"
                                                     title={t("Zapisz notatkę", "Save note")}
                                                 >
-                                                    <span className="material-symbols-outlined text-base">check</span>
+                                                    <span className="material-symbols-outlined text-sm sm:text-base">check</span>
                                                 </button>
                                                 <button
                                                     type="button"
@@ -1223,7 +1223,7 @@ const ProjectDetails: React.FC = () => {
                                                     className="inline-flex items-center justify-center rounded-md p-1 text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700"
                                                     title={t("Anuluj edycję", "Cancel editing")}
                                                 >
-                                                    <span className="material-symbols-outlined text-base">close</span>
+                                                    <span className="material-symbols-outlined text-sm sm:text-base">close</span>
                                                 </button>
                                             </>
                                         ) : (
@@ -1233,7 +1233,7 @@ const ProjectDetails: React.FC = () => {
                                                 className="inline-flex items-center justify-center rounded-md p-1 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
                                                 title={t("Edytuj notatkę", "Edit note")}
                                             >
-                                                <span className="material-symbols-outlined text-base">edit</span>
+                                                <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
                                             </button>
                                         )}
                                         <button
@@ -1242,23 +1242,23 @@ const ProjectDetails: React.FC = () => {
                                             className="inline-flex items-center justify-center rounded-md p-1 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
                                             title={t("Usuń notatkę", "Delete note")}
                                         >
-                                            <span className="material-symbols-outlined text-base">delete</span>
+                                            <span className="material-symbols-outlined text-sm sm:text-base">delete</span>
                                         </button>
                                     </div>
                                 </div>
-                                <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">{formatNoteDate(note.createdAt)}</p>
+                                <p className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-gray-500 dark:text-slate-400">{formatNoteDate(note.createdAt)}</p>
                             </article>
                         ))}
                     </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700 flex justify-end">
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-slate-700 flex justify-end">
                     <button
                         type="button"
                         onClick={() => setIsDeleteProjectModalOpen(true)}
-                        className="inline-flex items-center gap-2 rounded-lg border border-red-300 dark:border-red-800 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
+                        className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg border border-red-300 dark:border-red-800 bg-red-50 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/30"
                     >
-                        <span className="material-symbols-outlined text-base">delete</span>
+                        <span className="material-symbols-outlined text-sm sm:text-base">delete</span>
                         {t("Usuń projekt", "Delete project")}
                     </button>
                 </div>

@@ -49,7 +49,7 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({ value, onChange, cl
   const rootRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const [panelStyle, setPanelStyle] = useState<{ left: number; top: number; width: number; maxHeight: number }>({
+  const [panelStyle, setPanelStyle] = useState<{ left: number; top: number; width: number; maxHeight: number; maxPanelWidth?: number }>({
     left: 0,
     top: 0,
     width: 0,
@@ -99,11 +99,13 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({ value, onChange, cl
       const gap = 8;
       const availableBelow = Math.max(120, window.innerHeight - rect.bottom - gap - viewportPadding);
 
+      const maxPanelWidth = window.innerWidth - 2 * viewportPadding;
       setPanelStyle({
         left: Math.max(viewportPadding, rect.left),
         top: rect.bottom + gap,
         width: rect.width,
         maxHeight: availableBelow,
+        maxPanelWidth,
       });
     };
 
@@ -144,11 +146,12 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({ value, onChange, cl
         createPortal(
           <div
             ref={panelRef}
-            className="fixed z-[9999] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl"
+            className="fixed z-[9999] w-max min-w-0 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl"
             style={{
               left: panelStyle.left,
               top: panelStyle.top,
-              width: panelStyle.width,
+              minWidth: panelStyle.width,
+              maxWidth: panelStyle.maxPanelWidth ?? undefined,
             }}
           >
             <ul role="listbox" className="overflow-y-auto py-1" style={{ maxHeight: panelStyle.maxHeight }}>
@@ -166,13 +169,13 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({ value, onChange, cl
                       onClick={() => {
                         if (!option.disabled) handleSelect(option.value);
                       }}
-                      className={`w-full rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                      className={`w-full rounded-lg px-3 py-2 text-left text-xs sm:text-sm transition-colors whitespace-nowrap ${
                         isSelected
                           ? "bg-primary text-white"
                           : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                       } ${option.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     >
-                      <span className="block truncate">{option.label}</span>
+                      <span className="block">{option.label}</span>
                     </div>
                   </li>
                 );
