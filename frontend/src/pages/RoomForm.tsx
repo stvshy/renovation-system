@@ -49,7 +49,8 @@ const createSurfaceDraft = (surface: Surface): SurfaceDraft => ({
 });
 
 const getSurfaceIconSrc = (surfaceType: SurfaceType) => {
-    const base = import.meta.env.BASE_URL;
+    const baseRaw = String((import.meta as any).env?.BASE_URL ?? "/");
+    const base = baseRaw.endsWith("/") ? baseRaw : `${baseRaw}/`;
     if (surfaceType === SurfaceType.WALL) return `${base}icons/siding.png`;
     if (surfaceType === SurfaceType.FLOOR) return `${base}icons/draws.png`;
     return `${base}icons/ceiling.png`;
@@ -980,7 +981,7 @@ const RoomForm: React.FC = () => {
                 )}
 
                 {/* 3. Surface List & Management */}
-                <div className="p-4 mt-4 space-y-4">
+                <div className="p-4 -mt-2 sm:mt-4 space-y-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
                         <h2 className="text-lg sm:text-xl font-bold text-dependable-blue dark:text-primary">{t("Lista Powierzchni", "Surface List")}</h2>
                         <div className="text-left sm:text-right sm:ml-auto text-[13.5px] sm:text-sm text-gray-500 ">
@@ -1030,14 +1031,14 @@ const RoomForm: React.FC = () => {
                                                     <input
                                                         value={surface.name}
                                                         onChange={(e) => handleUpdateSurface(index, "name", e.target.value)}
-                                                        className="bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary font-semibold pr-2"
+                                                        className="bg-transparent border-b border-dashed border-gray-300 w-full focus:outline-none focus:border-primary font-semibold text-[13.5px] sm:text-base pr-2"
                                                     />
                                                     <button
                                                         onClick={() => handleRemoveSurface(index)}
-                                                        className="text-red-400 hover:text-red-600 px-1 shrink-0"
+                                                        className="text-red-400 hover:text-red-600 px-1 shrink-0 mt-1 sm:mt-[6px]"
                                                         aria-label={t("Usuń powierzchnię", "Delete surface")}
                                                     >
-                                                        <span className="material-symbols-outlined text-[17px]">delete</span>
+                                                        <span className="material-symbols-outlined text-[16px] sm:text-[17px]">delete</span>
                                                     </button>
                                                 </div>
                                             ) : (
@@ -1053,7 +1054,7 @@ const RoomForm: React.FC = () => {
                                         </div>
 
                                         {/* Dimension Inputs - Revised Layout for Single Line */}
-                                        <div className="md:col-span-7 flex flex-wrap items-center gap-2 md:gap-4 pb-2 md:pb-0">
+                                        <div className="md:col-span-7 mt-2.5 md:mt-0 flex flex-wrap items-center gap-2 md:gap-4 pb-2 md:pb-0">
                                             <div className="flex items-center gap-1">
                                                 <label className="text-xs font-semibold text-gray-500 whitespace-nowrap">{t("Szer", "W")}: </label>
                                                 <input
@@ -1096,9 +1097,9 @@ const RoomForm: React.FC = () => {
                                                     />
                                                 </div>
                                                 {/* Mobile layout: Auto (left) + total area (right) in one line */}
-                                                <div className="flex sm:hidden w-full items-center justify-between pt-1">
+                                                <div className="flex sm:hidden w-full items-center justify-between pt-2 mt-1">
                                                     <div className="flex items-center gap-2">
-                                                        <label className="text-xs text-primary font-bold whitespace-nowrap">{t("or Auto", "or Auto")}</label>
+                                                        <label className="text-xs text-primary font-bold whitespace-nowrap">{t("lub m²:", "or m²:")}</label>
                                                         <input
                                                             type="number"
                                                             min="0"
