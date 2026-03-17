@@ -1135,19 +1135,19 @@ const RoomForm: React.FC = () => {
                             <div className="flex flex-wrap gap-2">
                                 <button
                                     onClick={() => handleAddSurface(SurfaceType.WALL)}
-                                    className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                    className="btn-secondary text-[13px] sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                                 >
                                     + {t("Ściana", "Wall")}
                                 </button>
                                 <button
                                     onClick={() => handleAddSurface(SurfaceType.FLOOR)}
-                                    className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                    className="btn-secondary text-[13px] sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                                 >
                                     + {t("Podłoga", "Floor")}
                                 </button>
                                 <button
                                     onClick={() => handleAddSurface(SurfaceType.CEILING)}
-                                    className="btn-secondary text-xs sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+                                    className="btn-secondary text-[13px] sm:text-sm px-3 py-1.5 sm:py-2 bg-slate-200 rounded hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
                                 >
                                     + {t("Sufit", "Ceiling")}
                                 </button>
