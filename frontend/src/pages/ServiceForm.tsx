@@ -1253,13 +1253,13 @@ const ServiceForm: React.FC = () => {
                                             key={item.key}
                                             className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-2.5 sm:p-3"
                                         >
-                                            <div className="flex flex-col gap-1.5">
+                                            <div className="flex flex-col gap-[4px] sm:gap-1.5">
                                                 {/* Top row: material name + quantity to buy */}
                                                 <div className="flex items-baseline justify-between gap-3">
                                                     <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white">
                                                         {item.materialName}
                                                     </p>
-                                                    <p className="text-[13px] sm:text-sm font-black text-amber-600 dark:text-amber-400">
+                                                    <p className="text-[13.5px] sm:text-[13.5px] font-black text-amber-600 dark:text-amber-400">
                                                         {item.toBuy.toFixed(2)} {localizeUnit(item.unit)}
                                                     </p>
                                                 </div>
