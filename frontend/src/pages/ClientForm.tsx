@@ -535,7 +535,7 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {isEditMode ? (
-                        <div className="flex justify-end px-4 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
+                        <div className="flex justify-end px-0 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full">
                             <button
                                 onClick={handleNext}
                                 className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
@@ -545,7 +545,7 @@ const ClientForm: React.FC = () => {
                             </button>
                         </div>
                     ) : (
-                        <div className="flex flex-row md:flex-row gap-3 px-3 sm:px-4 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full justify-between md:justify-end md:items-center">
+                        <div className="flex flex-row md:flex-row gap-3 px-0 py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-6 w-full justify-between md:justify-end md:items-center">
                             <button onClick={() => navigate('/projects')} className="w-auto md:w-auto flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all">
                                 {t('Anuluj', 'Cancel')}
                             </button>

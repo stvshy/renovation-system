@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
     Room,
@@ -32,6 +32,8 @@ type PendingSaveAction = {
     updatedRooms: any[];
     removedTaskCount: number;
 } | null;
+type OpeningTemplate = { width: number; height: number; type: OpeningType };
+type PendingStandardConversion = { wallOpenings: OpeningTemplate[][] } | null;
 
 const NON_NEGATIVE_NUMBER_PATTERN = /^\d*(\.\d*)?$/;
 
@@ -257,6 +259,7 @@ const RoomForm: React.FC = () => {
     const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
     const [pendingSaveAction, setPendingSaveAction] = useState<PendingSaveAction>(null);
     const [removedSurfaceNames, setRemovedSurfaceNames] = useState<string[]>([]);
+    const pendingStandardConversionRef = useRef<PendingStandardConversion>(null);
 
     const savedRoomsWithSurfaces = existingRooms.filter((room) => Array.isArray(room.surfaces) && room.surfaces.length > 0);
     const defaultNewRoomName = `${t("Pokój", "Room")} ${existingRooms.length + 1}`;
@@ -384,6 +387,20 @@ const RoomForm: React.FC = () => {
             nextSurfaces.push(new Surface("Ściana 2", SurfaceType.WALL, l, h));
             nextSurfaces.push(new Surface("Ściana 3", SurfaceType.WALL, w, h));
             nextSurfaces.push(new Surface("Ściana 4", SurfaceType.WALL, w, h));
+
+            const pendingConversion = pendingStandardConversionRef.current;
+            if (pendingConversion?.wallOpenings?.length === 4) {
+                pendingConversion.wallOpenings.forEach((wallOpenings, wallIndex) => {
+                    const targetSurface = nextSurfaces[2 + wallIndex];
+                    if (!targetSurface || targetSurface.type !== SurfaceType.WALL) return;
+                    wallOpenings.forEach((opening) => {
+                        if (opening.width > 0 && opening.height > 0) {
+                            targetSurface.addOpening(new Opening(opening.width, opening.height, opening.type));
+                        }
+                    });
+                });
+                pendingStandardConversionRef.current = null;
+            }
 
             setSurfacesWithDrafts(nextSurfaces);
         } else {
@@ -534,16 +551,125 @@ const RoomForm: React.FC = () => {
         resetRoomForm(existingRooms.length);
     };
 
+    const deriveStandardRoomFromCustom = (customSurfaces: Surface[]) => {
+        const floorArea = customSurfaces.filter((s) => s.type === SurfaceType.FLOOR).reduce((sum, s) => sum + s.getNetArea(), 0);
+        const ceilingArea = customSurfaces.filter((s) => s.type === SurfaceType.CEILING).reduce((sum, s) => sum + s.getNetArea(), 0);
+        const targetFloorArea = Math.max(floorArea, ceilingArea);
+
+        const walls = customSurfaces.filter((s) => s.type === SurfaceType.WALL);
+        const targetWallNetArea = walls.reduce((sum, wall) => sum + wall.getNetArea(), 0);
+        const openingTemplates = walls.flatMap((wall) =>
+            wall.openings
+                .map((opening) => ({ width: opening.width, height: opening.height, type: opening.type }))
+                .filter((opening) => opening.width > 0 && opening.height > 0)
+        );
+        const totalOpeningArea = openingTemplates.reduce((sum, opening) => sum + opening.width * opening.height, 0);
+        const targetWallGrossArea = targetWallNetArea + totalOpeningArea;
+
+        const wallHeightCandidates = walls
+            .map((w) => {
+                if (w.height > 0) return w.height;
+                const grossArea = w.customArea !== undefined ? w.customArea : w.width * w.height;
+                if (w.width > 0 && grossArea > 0) return grossArea / w.width;
+                return 0;
+            })
+            .filter((v) => v > 0);
+        const heightEstimate =
+            wallHeightCandidates.length > 0
+                ? wallHeightCandidates.reduce((sum, v) => sum + v, 0) / wallHeightCandidates.length
+                : 2.6;
+
+        const safeArea = targetFloorArea > 0 ? targetFloorArea : 0;
+        const wallWidths = walls.map((w) => (Number.isFinite(w.width) ? w.width : 0)).filter((v) => v > 0);
+        const sortedWallWidths = [...wallWidths].sort((a, b) => b - a);
+        const fallbackRatioRaw = sortedWallWidths.length >= 2 && sortedWallWidths[1] > 0 ? sortedWallWidths[0] / sortedWallWidths[1] : 1.4;
+        const fallbackRatio = Number.isFinite(fallbackRatioRaw) ? Math.min(4, Math.max(1, fallbackRatioRaw)) : 1.4;
+
+        let length = safeArea > 0 ? Math.sqrt(safeArea * fallbackRatio) : 0;
+        let width = safeArea > 0 && length > 0 ? safeArea / length : 0;
+        let height = heightEstimate;
+
+        if (safeArea > 0 && targetWallGrossArea > 0) {
+            const minSumForArea = 2 * Math.sqrt(safeArea);
+            const maxHeightForRealRectangle = targetWallGrossArea / (2 * minSumForArea);
+            const boundedHeight = maxHeightForRealRectangle > 0 ? Math.min(heightEstimate, maxHeightForRealRectangle) : heightEstimate;
+            height = Math.max(0.1, boundedHeight);
+
+            const sumLW = targetWallGrossArea / (2 * height);
+            const discriminant = sumLW * sumLW - 4 * safeArea;
+            if (sumLW > 0 && discriminant >= 0) {
+                const root = Math.sqrt(discriminant);
+                const l1 = (sumLW + root) / 2;
+                const l2 = (sumLW - root) / 2;
+                length = Math.max(l1, l2);
+                width = Math.min(l1, l2);
+            }
+        }
+
+        const wallOpenings: OpeningTemplate[][] = [[], [], [], []];
+        if (length > 0 && width > 0 && height > 0 && openingTemplates.length > 0) {
+            const wallGrossAreas = [length * height, length * height, width * height, width * height];
+            const grossSum = wallGrossAreas.reduce((sum, value) => sum + value, 0) || 1;
+            const targetOpeningsPerWall = wallGrossAreas.map((gross) => (gross / grossSum) * totalOpeningArea);
+            const assignedOpeningsArea = [0, 0, 0, 0];
+
+            const sortedOpenings = [...openingTemplates].sort((a, b) => b.width * b.height - a.width * a.height);
+            sortedOpenings.forEach((opening) => {
+                const area = opening.width * opening.height;
+
+                let chosenIndex = -1;
+                let bestScore = -Infinity;
+                for (let index = 0; index < 4; index += 1) {
+                    const remainingCapacity = wallGrossAreas[index] - assignedOpeningsArea[index];
+                    if (remainingCapacity < area) continue;
+                    const closenessScore = targetOpeningsPerWall[index] - assignedOpeningsArea[index];
+                    if (closenessScore > bestScore) {
+                        bestScore = closenessScore;
+                        chosenIndex = index;
+                    }
+                }
+
+                if (chosenIndex === -1) {
+                    let fallbackIndex = 0;
+                    for (let index = 1; index < 4; index += 1) {
+                        const currentCapacity = wallGrossAreas[index] - assignedOpeningsArea[index];
+                        const fallbackCapacity = wallGrossAreas[fallbackIndex] - assignedOpeningsArea[fallbackIndex];
+                        if (currentCapacity > fallbackCapacity) fallbackIndex = index;
+                    }
+                    chosenIndex = fallbackIndex;
+                }
+
+                wallOpenings[chosenIndex].push(opening);
+                assignedOpeningsArea[chosenIndex] += area;
+            });
+        }
+
+        return { length, width, height, wallOpenings };
+    };
+
     const handleConfirmSwitchToStandard = () => {
         setConfirmAction(null);
+        const { length: nextLength, width: nextWidth, height: nextHeight, wallOpenings } = deriveStandardRoomFromCustom(surfaces);
+        const formatDimension = (value: number) => value.toFixed(6).replace(/\.?0+$/, "");
+
         setMode("standard");
-        setLength("");
-        setWidth("");
-        setHeight("");
-        setSurfaces([]);
-        setSurfaceDrafts([]);
+        setRemovedSurfaceNames([]);
         setOpeningDims({ w: "", h: "", type: "okno" });
         setActiveSurfaceIndex(null);
+
+        if (nextLength > 0 && nextWidth > 0 && nextHeight > 0) {
+            pendingStandardConversionRef.current = { wallOpenings };
+            setLength(formatDimension(nextLength));
+            setWidth(formatDimension(nextWidth));
+            setHeight(formatDimension(nextHeight));
+        } else {
+            pendingStandardConversionRef.current = null;
+            setLength("");
+            setWidth("");
+            setHeight("");
+            setSurfaces([]);
+            setSurfaceDrafts([]);
+        }
     };
 
     const handleDeleteRoom = (roomIndex: number) => {
@@ -1345,16 +1471,16 @@ const RoomForm: React.FC = () => {
                 {confirmAction && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
                         <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 shadow-2xl overflow-hidden">
-                            <div className="flex items-start justify-between px-6 py-5 border-b border-gray-100 dark:border-slate-800">
-                                <div>
-                                    <h3 className="text-lg font-black text-gray-900 dark:text-white">
+                            <div className="flex items-start justify-between px-5 pt-4 pb-3">
+                                <div className="pr-3">
+                                    <h3 className="text-lg font-black text-gray-900 dark:text-white leading-snug">
                                         {confirmAction.type === "delete-room"
                                             ? t("Usunąć pokój?", "Delete room?")
                                             : confirmAction.type === "delete-surface"
                                             ? t("Usunąć powierzchnię?", "Delete surface?")
                                             : t("Zmienić typ pokoju?", "Change room type?")}
                                     </h3>
-                                    <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
+                                    <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">
                                         {confirmAction.type === "delete-room"
                                             ? t(
                                                   "Ten pokój zostanie usunięty z projektu. Tej operacji nie można cofnąć.",
@@ -1371,25 +1497,25 @@ const RoomForm: React.FC = () => {
                                                                                                     "Switching from irregular to standard will recalculate downstream work items using the new dimensions. If a surface disappears, work assigned to it will be removed after an additional warning."
                                                                                             )
                                                                                         : t(
-                                                                                                    "Zmiana trybu usunie aktualnie wprowadzone powierzchnie i otwory z trybu nieregularnego. W trybie standardowym trzeba podać wymiary od nowa.",
-                                                                                                    "Switching mode will remove the currently entered custom surfaces and openings. In standard mode, dimensions must be entered again."
+                                                                                                    "Zmiana typu przeliczy obecny pokój nieregularny na pokój prostokątny, zachowując łączne pola powierzchni i przenosząc otwory.",
+                                                                                                    "Switching type will convert the current irregular room to a rectangular room, preserving total surface areas and transferring openings."
                                                                                             )}
                                     </p>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => setConfirmAction(null)}
-                                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 -mt-0.5"
                                 >
-                                    <span className="material-symbols-outlined">close</span>
+                                    <span className="material-symbols-outlined text-[20px] leading-none">close</span>
                                 </button>
                             </div>
 
-                            <div className="px-6 py-5 flex justify-end gap-3">
+                            <div className="px-5 pt-2 pb-4 flex justify-end gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setConfirmAction(null)}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
+                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-700 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800"
                                 >
                                     {t("Anuluj", "Cancel")}
                                 </button>
@@ -1419,7 +1545,7 @@ const RoomForm: React.FC = () => {
 
                                         handleConfirmSwitchToStandard();
                                     }}
-                                    className={`px-4 py-2 rounded-lg font-bold text-white ${
+                                    className={`px-4 py-2 rounded-lg text-sm font-semibold text-white ${
                                         confirmAction.type === "delete-room"
                                             ? "bg-red-600 hover:bg-red-700"
                                             : confirmAction.type === "delete-surface"
