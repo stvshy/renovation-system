@@ -917,8 +917,8 @@ const ServiceForm: React.FC = () => {
                             {/* Material Selection / Add Material */}
                             <div className="mb-4 sm:mb-5">
                                 <div className="mb-2 sm:mb-2 flex items-center justify-between gap-2">
-                                    <label className="relative top-[1px] text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
-                                        {t('Wybór materiału', 'Material selection')} {isAddingNewMaterial ? t('(Dodawanie)', '(Adding)') : t('(Magazyn)', '(Inventory)')}
+                                    <label className="relative top-[6.7px] sm:top-[3.5px] text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                                        {t('Wybór materiału', 'Material selection')} {isAddingNewMaterial ? t('(Dodawanie)', '(Adding)') : ''}
                                     </label>
                                     <button
                                         onClick={() => {
