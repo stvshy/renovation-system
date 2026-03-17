@@ -10,6 +10,7 @@ type ScrollableSelectProps = {
   disabled?: boolean;
   children: React.ReactNode;
   ariaLabel?: string;
+  placeholder?: string;
 };
 
 type FlatOption = {
@@ -44,7 +45,15 @@ const flattenOptions = (children: React.ReactNode, group?: string): FlatOption[]
   return result;
 };
 
-const ScrollableSelect: React.FC<ScrollableSelectProps> = ({ value, onChange, className = "", disabled = false, children, ariaLabel }) => {
+const ScrollableSelect: React.FC<ScrollableSelectProps> = ({
+  value,
+  onChange,
+  className = "",
+  disabled = false,
+  children,
+  ariaLabel,
+  placeholder,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -59,9 +68,12 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({ value, onChange, cl
 
   const options = useMemo(() => flattenOptions(children), [children]);
 
+  const hasPlaceholderState = Boolean(placeholder) && value === "";
+
   const selectedOption = useMemo(() => {
+    if (hasPlaceholderState) return undefined;
     return options.find((opt) => opt.value === value) ?? options.find((opt) => !opt.disabled) ?? options[0];
-  }, [options, value]);
+  }, [hasPlaceholderState, options, value]);
 
   useEffect(() => {
     const onDocumentMouseDown = (event: MouseEvent) => {
@@ -124,6 +136,8 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({ value, onChange, cl
     setIsOpen(false);
   };
 
+  const displayLabel = hasPlaceholderState ? placeholder : selectedOption?.label ?? "-";
+
   return (
     <div ref={rootRef} className="relative">
       <button
@@ -134,9 +148,10 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({ value, onChange, cl
         aria-label={ariaLabel}
         disabled={disabled}
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`w-full min-h-11 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 bg-none px-3 pr-10 text-left text-slate-900 dark:text-slate-100 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-60 disabled:cursor-not-allowed ${normalizedClassName}`}
+        className={`w-full min-h-11 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 bg-none px-3 pr-10 text-left text-slate-900 dark:text-slate-100 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-60 disabled:cursor-not-allowed ${
+          hasPlaceholderState ? "!text-slate-400 dark:!text-slate-500" : ""        } ${normalizedClassName}`}
       >
-        <span className="block truncate">{selectedOption?.label ?? "-"}</span>
+        <span className="block truncate">{displayLabel}</span>
         <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-500 dark:text-slate-300">
           <span className={`material-symbols-outlined text-[20px] transition-transform ${isOpen ? "rotate-180" : ""}`}>expand_more</span>
         </span>

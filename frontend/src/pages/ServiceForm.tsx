@@ -93,7 +93,11 @@ const ServiceForm: React.FC = () => {
 
     const currencyCode = language === "en" ? "EUR" : "PLN";
     const currencySymbol = language === "en" ? "EUR" : "zł";
-    const localizeUnit = (unit: string) => (language === "en" && unit === "szt" ? "pcs" : unit);
+    const localizeUnit = (unit: string) => {
+        if (unit === "m2") return "m²";
+        if (language === "en" && unit === "szt") return "pcs";
+        return unit;
+    };
 
     const localizeCategory = (category: string) => {
         const map: Record<string, string> = {
@@ -192,7 +196,7 @@ const ServiceForm: React.FC = () => {
     const [newMatScope, setNewMatScope] = useState<"project" | "inventory">(draftServiceForm?.newMatScope || "project");
     const [customMatName, setCustomMatName] = useState(draftServiceForm?.customMatName || "");
     const [customMatPrice, setCustomMatPrice] = useState(draftServiceForm?.customMatPrice || "");
-    const [customMatUnit, setCustomMatUnit] = useState<Unit>((draftServiceForm?.customMatUnit as Unit) || Unit.M2);
+    const [customMatUnit, setCustomMatUnit] = useState<string>(draftServiceForm?.customMatUnit || "");
     const [customMatCoverage, setCustomMatCoverage] = useState(draftServiceForm?.customMatCoverage || "");
     const [customMatInitialStock, setCustomMatInitialStock] = useState(draftServiceForm?.customMatInitialStock || "");
 
@@ -342,7 +346,7 @@ const ServiceForm: React.FC = () => {
         setNewMatScope(draftServiceForm.newMatScope || "project");
         setCustomMatName(draftServiceForm.customMatName || "");
         setCustomMatPrice(draftServiceForm.customMatPrice || "");
-        setCustomMatUnit((draftServiceForm.customMatUnit as Unit) || Unit.M2);
+        setCustomMatUnit(draftServiceForm.customMatUnit || "");
         setCustomMatCoverage(draftServiceForm.customMatCoverage || "");
         setCustomMatInitialStock(draftServiceForm.customMatInitialStock || "");
         setScopeType(draftServiceForm.scopeType || "global");
@@ -447,6 +451,10 @@ const ServiceForm: React.FC = () => {
             }
 
             let invId: string | undefined = undefined;
+            const resolvedUnit: Unit =
+                (Object.values(Unit).includes(customMatUnit as Unit) ? (customMatUnit as Unit) : undefined) ||
+                (selectedTemplate?.materials?.[0]?.unit as Unit) ||
+                Unit.M2;
 
             // If saving to inventory, create the item first
             if (newMatScope === "inventory") {
@@ -454,7 +462,7 @@ const ServiceForm: React.FC = () => {
                     id: crypto.randomUUID(),
                     name: customMatName,
                     pricePerUnit: parseFloat(customMatPrice),
-                    unit: customMatUnit,
+                    unit: resolvedUnit,
                     quantity: parseFloat(customMatInitialStock) || 0,
                     category: selectedCategory,
                 };
@@ -464,7 +472,7 @@ const ServiceForm: React.FC = () => {
                 invId = newItem.id;
             }
 
-            material = new Material(customMatName, parseFloat(customMatPrice), customMatUnit, undefined, invId, selectedCategory);
+            material = new Material(customMatName, parseFloat(customMatPrice), resolvedUnit, undefined, invId, selectedCategory);
         } else {
             // Find selected item in Inventory
             // Fallback: If selectedMaterialId is empty but inventory has items, try picking the first one now
@@ -858,7 +866,7 @@ const ServiceForm: React.FC = () => {
                                                         : t("Na sztuki", "Per item")}
                                                 </p>
                                             </div>
-                                            <p className="mt-1 text-slate-600 dark:text-slate-400 leading-relaxed text-[10px] sm:text-[11px]">
+                                            <p className="mt-1 text-slate-600 dark:text-slate-400 leading-relaxed text-[11px] sm:text-[11.5px]">
                                                 {selectedTemplate.defaultStrategy === "consumption" &&
                                                     t(
                                                         `System obliczy ilość materiału dzieląc powierzchnię przez wydajność (np. m²/litr). Robocizna naliczana za m². Domyślna wydajność: ${selectedTemplate.defaultParam} jednostek/m².`,
@@ -908,13 +916,22 @@ const ServiceForm: React.FC = () => {
 
                             {/* Material Selection / Add Material */}
                             <div className="mb-4 sm:mb-5">
-                                <div className="mb-1.5 sm:mb-2 flex items-center justify-between gap-2">
-                                    <label className="text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                                <div className="mb-2 sm:mb-2 flex items-center justify-between gap-2">
+                                    <label className="relative top-[1px] text-[11px] sm:text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                                         {t('Wybór materiału', 'Material selection')} {isAddingNewMaterial ? t('(Dodawanie)', '(Adding)') : t('(Magazyn)', '(Inventory)')}
                                     </label>
                                     <button
-                                        onClick={() => setIsAddingNewMaterial(!isAddingNewMaterial)}
-                                        className={`rounded-full px-2.5 sm:px-3 py-1 text-[10px] sm:text-[11px] font-bold transition-all whitespace-nowrap ${
+                                        onClick={() => {
+                                            setIsAddingNewMaterial((prev) => {
+                                                const next = !prev;
+                                                if (next) {
+                                                    // reset unit to show placeholder when entering Add Material
+                                                    setCustomMatUnit("");
+                                                }
+                                                return next;
+                                            });
+                                        }}
+                                        className={`rounded-full px-3 sm:px-3 py-1.5 sm:py-1 text-[10.5px] sm:text-[11px] font-bold transition-all whitespace-nowrap ${
                                             isAddingNewMaterial ? "bg-gray-200 text-gray-700" : "bg-primary/10 text-primary hover:bg-primary/20"
                                         }`}
                                     >
@@ -950,7 +967,7 @@ const ServiceForm: React.FC = () => {
                                         <div className="mb-1 flex rounded-lg border border-slate-200 bg-white p-1 dark:border-slate-800 dark:bg-slate-900">
                                             <button
                                                 onClick={() => setNewMatScope("inventory")}
-                                                className={`flex-1 rounded-md py-1.5 text-[10px] sm:text-[11px] font-bold transition-colors ${
+                                                className={`flex-1 rounded-md py-[5px] sm:py-1.5 text-[11px] sm:text-[11px] font-bold transition-colors ${
                                                     newMatScope === "inventory" ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                 }`}
                                             >
@@ -958,7 +975,7 @@ const ServiceForm: React.FC = () => {
                                             </button>
                                             <button
                                                 onClick={() => setNewMatScope("project")}
-                                                className={`flex-1 rounded-md py-1.5 text-[10px] sm:text-[11px] font-bold transition-colors ${
+                                                className={`flex-1 rounded-md py-[6px] sm:py-1.5 text-[11px] sm:text-[11px] font-bold transition-colors ${
                                                     newMatScope === "project" ? "bg-primary text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
                                                 }`}
                                             >
@@ -989,8 +1006,9 @@ const ServiceForm: React.FC = () => {
                                             </div>
                                             <ScrollableSelect
                                                 value={customMatUnit}
-                                                onChange={(e) => setCustomMatUnit(e.target.value as Unit)}
-                                                className="form-select w-full rounded-lg border-slate-200 text-[13px] sm:text-sm dark:bg-slate-800"
+                                                onChange={(e) => setCustomMatUnit(e.target.value)}
+                                                placeholder={t('Jednostka', 'Unit')}
+                                                className="form-select !h-[41.6px] sm:!h-[37.6px] !min-h-[41.6px] sm:!min-h-[37.6px] !py-0 w-full rounded-lg border-slate-200 text-[13px] sm:text-sm dark:bg-slate-800"
                                             >
                                                 {Object.values(Unit).map((u) => (
                                                     <option key={u} value={u}>
@@ -1002,7 +1020,6 @@ const ServiceForm: React.FC = () => {
 
                                         {newMatScope === "inventory" && (
                                             <div>
-                                                <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">{t('Stan początkowy', 'Initial stock')}</label>
                                                 <input
                                                     type="number"
                                                     min="0"
@@ -1016,17 +1033,16 @@ const ServiceForm: React.FC = () => {
 
                                         {selectedTemplate?.defaultStrategy === "consumption" && (
                                             <div>
-                                                <label className="block text-[10px] uppercase font-bold text-slate-500 mb-1">{t('Wydajność (opcjonalnie)', 'Coverage (optional)')}</label>
-                                                <div className="relative">
+                                                <div className="flex items-center">
                                                     <input
                                                         type="number"
                                                         min="0"
-                                                        placeholder={t('np. 10', 'e.g. 10')}
+                                                        placeholder={t('Wydajność (opcjonalnie), np. 10', 'Coverage (optional), e.g. 10')}
                                                         value={customMatCoverage}
                                                         onChange={(e) => setCustomMatCoverage(e.target.value)}
-                                                    className="form-input w-full rounded-lg border-slate-200 pr-14 sm:pr-16 text-[13px] sm:text-sm dark:bg-slate-800"
+                                                        className="form-input !h-[41.6px] sm:!h-[37.6px] w-full rounded-l-lg border-slate-200 text-[13px] sm:text-sm dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary"
                                                     />
-                                                    <span className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">
+                                                    <span className="flex !h-[41.6px] sm:!h-[37.6px] min-w-[63px] sm:min-w-[62px] items-center justify-center rounded-r-lg border border-l-0 border-slate-200 bg-slate-100 px-2 text-[11px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
                                                         m² / {localizeUnit(customMatUnit)}
                                                     </span>
                                                 </div>
@@ -1091,8 +1107,11 @@ const ServiceForm: React.FC = () => {
                                             disabled={scopeType !== "manual"}
                                             onChange={(e) => setManualQuantity(e.target.value)}
                                         />
-                                        <span className="flex h-11 items-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-2.5 sm:px-3 text-[10px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
-                                            {localizeUnit(getInputDimensionUnit())}
+                                        <span className="flex h-11 items-center rounded-r-xl border border-l-0 border-slate-200 bg-slate-100 px-2.5 sm:px-3 text-[11px] sm:text-xs font-bold text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+                                            {(() => {
+                                                const unitLabel = localizeUnit(getInputDimensionUnit());
+                                                return unitLabel === "m2" ? "m²" : unitLabel;
+                                            })()}
                                         </span>
                                     </div>
                                 </div>
