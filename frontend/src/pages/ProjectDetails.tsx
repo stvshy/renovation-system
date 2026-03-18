@@ -1411,7 +1411,7 @@ const ProjectDetails: React.FC = () => {
                                     "Wpisz treść notatki.",
                                     "Type your content here."
                                 )}
-                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[80px] sm:min-h-[96px] text-sm placeholder:text-xs sm:placeholder:text-sm"
+                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[80px] sm:min-h-[96px] text-xs sm:text-sm placeholder:text-xs sm:placeholder:text-sm"
                             />
                         </label>
                         <div className="flex justify-end">
@@ -1441,7 +1441,7 @@ const ProjectDetails: React.FC = () => {
                                             <textarea
                                                 value={editingNoteContent}
                                                 onChange={(e) => setEditingNoteContent(e.target.value)}
-                                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[80px] sm:min-h-[96px] text-sm"
+                                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-900 min-h-[80px] sm:min-h-[96px] text-xs sm:text-sm"
                                             />
                                         ) : (
                                             <p className="text-xs sm:text-sm text-gray-800 dark:text-slate-100 whitespace-pre-wrap break-words">{note.content}</p>
@@ -1453,18 +1453,18 @@ const ProjectDetails: React.FC = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => handleSaveEditedProjectNote(note.id)}
-                                                    className="inline-flex items-center justify-center rounded-md p-1 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20"
+                                                    className="inline-flex items-center justify-center rounded-md p-1.5 sm:p-1 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20"
                                                     title={t("Zapisz notatkę", "Save note")}
                                                 >
-                                                    <span className="material-symbols-outlined text-sm sm:text-base">check</span>
+                                                    <span className="material-symbols-outlined text-base sm:text-base">check</span>
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={handleCancelEditProjectNote}
-                                                    className="inline-flex items-center justify-center rounded-md p-1 text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700"
+                                                    className="inline-flex items-center justify-center rounded-md p-1.5 sm:p-1 text-gray-600 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700"
                                                     title={t("Anuluj edycję", "Cancel editing")}
                                                 >
-                                                    <span className="material-symbols-outlined text-sm sm:text-base">close</span>
+                                                    <span className="material-symbols-outlined text-base sm:text-base">close</span>
                                                 </button>
                                             </>
                                         ) : (
