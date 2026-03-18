@@ -268,7 +268,7 @@ const OfferSummary: React.FC = () => {
         <div className="offer-summary-page px-3 sm:px-4 md:px-10 lg:px-20 print:px-4 flex flex-1 justify-center py-4 sm:py-5 print:py-0 print:block print:overflow-visible print:bg-white">
             <div className="layout-content-container flex flex-col max-w-[1280px] print:max-w-none w-full flex-1 print:block print:overflow-visible print:bg-white">
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-3 sm:p-4 sm:items-center">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-2 sm:p-4 sm:items-center">
                     <div>
                         <p className="text-[#0d141b] dark:text-white text-[28px] sm:text-[34px] font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
                         <div className="mt-1 flex items-center gap-2">
@@ -372,8 +372,8 @@ const OfferSummary: React.FC = () => {
                 </div>
 
                 {/* Grand Total Card */}
-                <div className="p-3 sm:p-4 @container print:break-inside-avoid">
-                    <div className="print-total-card flex flex-col items-center justify-center rounded-xl shadow-[0_4px_20px_rgba(17,115,212,0.18)] bg-gradient-to-r from-sky-500 to-dependable-blue p-5 sm:p-8 print:bg-white print:shadow-none print:border print:border-gray-200">
+                <div className="px-0 sm:px-4 py-3 sm:py-4 @container print:break-inside-avoid">
+                    <div className="print-total-card mx-2 sm:mx-0 flex flex-col items-center justify-center rounded-xl shadow-[0_4px_20px_rgba(17,115,212,0.18)] bg-gradient-to-r from-sky-500 to-dependable-blue p-5 sm:p-8 print:bg-white print:shadow-none print:border print:border-gray-200">
                         <p className="text-white/80 text-sm sm:text-lg font-normal leading-normal font-display text-center print:text-gray-600">{t('Szacowany koszt całkowity', 'Estimated total cost')}</p>
                         <p className="text-white text-[28px] sm:text-6xl font-black leading-tight tracking-[0.03em] mt-2 font-display text-center break-words print-total-amount print:text-primary">{finalProjectTotal.toFixed(2)} {currencyCode}</p>
                         <p className="text-white/70 text-sm mt-2 text-center print:text-gray-500">{t('Robocizna + Materiały + Koszty dodatkowe', 'Labor + Materials + Additional costs')}</p>
@@ -573,7 +573,7 @@ const OfferSummary: React.FC = () => {
                     );
                 })}
 
-                <div className={`px-3 sm:px-4 mt-14 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6 print:px-0`}>
+                <div className={`px-2 sm:px-4 mt-14 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6 print:px-0`}>
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none print:border print:border-gray-300 ${additionalCosts.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-rose-200 dark:border-rose-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 print:bg-white print:border-b print:border-gray-200 ${additionalCosts.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10'}`}>
                             <div>
@@ -619,7 +619,7 @@ const OfferSummary: React.FC = () => {
                     </div>
                 </div>
 
-                <div className={`px-3 sm:px-4 mt-14 print:hidden ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
+                <div className={`px-2 sm:px-4 mt-14 print:hidden ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
                             <div>
@@ -677,7 +677,7 @@ const OfferSummary: React.FC = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-row sm:flex-row sm:flex-wrap items-center justify-between sm:justify-between gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4 mt-6 sm:mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
+                <div className="flex flex-row sm:flex-row sm:flex-wrap items-center justify-between sm:justify-between gap-3 sm:gap-4 px-2 sm:px-4 py-3 sm:py-4 mt-6 sm:mt-8 border-t border-gray-200 dark:border-gray-700 print:hidden">
                     <button
                         onClick={() =>
                             navigate("/projects/new/services", {
