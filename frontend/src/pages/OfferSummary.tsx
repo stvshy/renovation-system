@@ -585,16 +585,28 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="ml-auto grid grid-cols-[120px_170px] gap-x-3 text-sm">
-                                <div className="text-right">
+                            <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-2 sm:grid-cols-[120px_170px] gap-x-3 text-sm">
+                                <div className="text-left sm:text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400 print:text-xs print:font-normal print:text-black">{t('Pozycje', 'Items')}</p>
-                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold text-gray-600 dark:text-gray-300' : 'text-lg font-black text-rose-600 dark:text-rose-400'} print:text-xs print:font-bold print:text-black`}>
+                                    <p
+                                        className={`font-black ${
+                                            additionalCosts.length === 0
+                                                ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
+                                                : 'text-[16.5px] sm:text-lg text-amber-600 dark:text-amber-400'
+                                        } print:text-xs print:font-bold print:text-black`}
+                                    >
                                         {additionalCosts.length === 0 ? '–' : additionalCosts.length}
                                     </p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400 print:text-xs print:font-normal print:text-black">{t('Suma', 'Total')}</p>
-                                    <p className={`${additionalCosts.length === 0 ? 'text-sm font-bold text-gray-600 dark:text-gray-300' : 'text-lg font-black text-red-600 dark:text-red-400'} print:text-sm print:font-bold print:text-primary`}>
+                                    <p
+                                        className={`font-black ${
+                                            additionalCosts.length === 0
+                                                ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
+                                                : 'text-[16.5px] sm:text-lg text-red-600 dark:text-red-400'
+                                        } print:text-sm print:text-primary`}
+                                    >
                                         {additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
                                     </p>
                                 </div>
@@ -645,16 +657,28 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="ml-auto grid grid-cols-[120px_170px] gap-x-3 text-sm">
-                                <div className="text-right">
+                            <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-2 sm:grid-cols-[120px_170px] gap-x-3 text-sm">
+                                <div className="text-left sm:text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
-                                    <p className={`${shoppingListItems.length === 0 ? 'text-sm font-bold' : 'text-lg font-black'} ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-amber-600 dark:text-amber-400'}`}>
+                                    <p
+                                        className={`font-black ${
+                                            shoppingListItems.length === 0
+                                                ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
+                                                : 'text-[16.5px] sm:text-lg text-amber-600 dark:text-amber-400'
+                                        }`}
+                                    >
                                         {shoppingListItems.length === 0 ? '–' : shoppingListItems.length}
                                     </p>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Do kupienia', 'To buy')}</p>
-                                    <p className={`${shoppingListItems.length === 0 ? 'text-sm font-bold' : 'text-lg font-black'} ${shoppingListItems.length === 0 ? 'text-gray-600 dark:text-gray-300' : 'text-red-600 dark:text-red-400'}`}>
+                                    <p
+                                        className={`font-black ${
+                                            shoppingListItems.length === 0
+                                                ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
+                                                : 'text-[16.5px] sm:text-lg text-red-600 dark:text-red-400'
+                                        }`}
+                                    >
                                         {shoppingListItems.length === 0 ? '–' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
                                     </p>
                                 </div>
