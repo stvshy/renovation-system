@@ -660,18 +660,42 @@ const ProjectDetails: React.FC = () => {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 border-b border-gray-200 dark:border-gray-700 pb-4 sm:pb-6">
                     <div className="min-w-0 w-full">
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                            <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-gray-900 dark:text-white break-words">{project.name}</h1>
+                        <div className="flex flex-wrap items-start sm:items-center gap-2 sm:gap-3">
+                            <h1 className="min-w-0 text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-gray-900 dark:text-white break-words [text-wrap:balance] sm:[text-wrap:normal]">
+                                {project.name}
+                            </h1>
+
                             <button
                                 type="button"
                                 onClick={() => setIsEditingNameModalOpen(true)}
-                                className="inline-flex items-center justify-center rounded-md p-1 sm:p-1.5 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+                                className="hidden sm:inline-flex items-center justify-center rounded-md p-1 sm:p-1.5 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
                                 title={t("Edytuj nazwę projektu", "Edit project name")}
                             >
                                 <span className="material-symbols-outlined text-sm sm:text-base">edit</span>
                             </button>
 
-                            <span className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
+                            <span className={`hidden sm:inline-flex px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
+                                {project.status === "In Progress"
+                                    ? t('W trakcie', 'In Progress')
+                                    : project.status === "Planned"
+                                    ? t('Planowany', 'Planned')
+                                    : project.status === "Completed"
+                                    ? t('Zakończony', 'Completed')
+                                    : project.status}
+                            </span>
+                        </div>
+
+                        <div className="mt-1 flex w-full items-center justify-start gap-2 sm:hidden">
+                            <button
+                                type="button"
+                                onClick={() => setIsEditingNameModalOpen(true)}
+                                className="inline-flex items-center justify-center rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-primary dark:text-slate-300 dark:hover:bg-slate-800"
+                                title={t("Edytuj nazwę projektu", "Edit project name")}
+                            >
+                                <span className="material-symbols-outlined text-sm">edit</span>
+                            </button>
+
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${getStatusColor(project.status)}`}>
                                 {project.status === "In Progress"
                                     ? t('W trakcie', 'In Progress')
                                     : project.status === "Planned"
@@ -681,7 +705,7 @@ const ProjectDetails: React.FC = () => {
                                     : project.status}
                             </span>
 
-                            <div className="relative sm:hidden" data-project-menu-root>
+                            <div className="relative" data-project-menu-root>
                                 <button
                                     type="button"
                                     onClick={() => setIsProjectMenuOpen((prev) => !prev)}
@@ -692,19 +716,17 @@ const ProjectDetails: React.FC = () => {
                                 </button>
 
                                 {isProjectMenuOpen && (
-                                    <div className="absolute left-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+                                    <div className="absolute left-0 top-full z-50 mt-2 w-fit min-w-[8.75rem] max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 setIsProjectMenuOpen(false);
                                                 setIsDeleteProjectModalOpen(true);
                                             }}
-                                            className="w-full px-3 py-2.5 text-left text-sm font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                            className="inline-flex items-center gap-1.5 px-2.5 py-2 text-left text-[13px] font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
                                         >
-                                            <span className="inline-flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                                                {t("Usuń projekt", "Delete project")}
-                                            </span>
+                                            <span className="material-symbols-outlined translate-y-[-0.5px] text-[16px]">delete</span>
+                                            <span>{t("Usuń projekt", "Delete project")}</span>
                                         </button>
                                     </div>
                                 )}
