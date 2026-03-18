@@ -78,6 +78,137 @@ const getAdditionalCostsFromSource = (clientData: any, editProjectMeta: any): Ad
 
 const sumAdditionalCosts = (costs: AdditionalCost[]) => costs.reduce((sum, item) => sum + item.amount, 0);
 
+type ShoppingListItem = {
+    key: string;
+    materialName: string;
+    toBuy: number;
+    unit: string;
+    required: number;
+    available: number;
+    shortageCost: number;
+};
+
+type ShoppingListCardProps = {
+    item: ShoppingListItem;
+    requiredLabel: string;
+    inStockLabel: string;
+    currencyCode: string;
+    localizeUnit: (unit: string) => string;
+};
+
+const ShoppingListCard: React.FC<ShoppingListCardProps> = ({ item, requiredLabel, inStockLabel, currencyCode, localizeUnit }) => {
+    const rowRef = useRef<HTMLDivElement | null>(null);
+    const detailsMeasureRef = useRef<HTMLSpanElement | null>(null);
+    const costMeasureRef = useRef<HTMLSpanElement | null>(null);
+    const [useCompactDesktopMeta, setUseCompactDesktopMeta] = useState(false);
+
+    const unitLabel = localizeUnit(item.unit);
+    const requiredValueText = `${item.required.toFixed(2)} ${unitLabel}`;
+    const availableValueText = `${item.available.toFixed(2)} ${unitLabel}`;
+    const desktopDetailsText = `${requiredLabel}: ${requiredValueText} ${inStockLabel}: ${availableValueText}`;
+    const shortageCostText = `${item.shortageCost.toFixed(2)} ${currencyCode}`;
+
+    useEffect(() => {
+        const evaluateLayout = () => {
+            if (window.innerWidth < 640) {
+                setUseCompactDesktopMeta(false);
+                return;
+            }
+
+            const rowEl = rowRef.current;
+            const detailsEl = detailsMeasureRef.current;
+            const costEl = costMeasureRef.current;
+
+            if (!rowEl || !detailsEl || !costEl) return;
+
+            const gapPx = 12; // Tailwind gap-3
+            const safetyBufferPx = 24; // Trigger compact mode a bit earlier to avoid edge wrapping.
+            const requiredWidth = detailsEl.scrollWidth + costEl.scrollWidth + gapPx + safetyBufferPx;
+            setUseCompactDesktopMeta(requiredWidth > rowEl.clientWidth);
+        };
+
+        evaluateLayout();
+
+        const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(evaluateLayout) : null;
+        if (observer && rowRef.current) observer.observe(rowRef.current);
+        window.addEventListener("resize", evaluateLayout);
+
+        return () => {
+            observer?.disconnect();
+            window.removeEventListener("resize", evaluateLayout);
+        };
+    }, [desktopDetailsText, shortageCostText]);
+
+    return (
+        <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-2.5 sm:p-3">
+            <div className="flex flex-col gap-[4px] sm:gap-1.5">
+                {/* Top row: material name + quantity to buy */}
+                <div className="flex items-baseline justify-between gap-3">
+                    <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white">
+                        {item.materialName}
+                    </p>
+                    <p className="text-[13.5px] sm:text-[13.5px] font-black text-amber-600 dark:text-amber-400">
+                        {item.toBuy.toFixed(2)} {unitLabel}
+                    </p>
+                </div>
+
+                {/* Bottom row: required / in stock + cost */}
+                <div ref={rowRef} className="relative flex items-baseline justify-between gap-3">
+                    <div className="hidden sm:block absolute inset-x-0 top-0 h-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden="true">
+                        <span ref={detailsMeasureRef} className="absolute whitespace-nowrap text-[11px] sm:text-xs">
+                            {desktopDetailsText}
+                        </span>
+                        <span ref={costMeasureRef} className="absolute whitespace-nowrap text-[11px] sm:text-xs font-bold">
+                            {shortageCostText}
+                        </span>
+                    </div>
+
+                    <p className="min-w-0 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                        <span>
+                            {requiredLabel}:
+                        </span>
+                        <span className="sm:hidden ml-1 text-[11px] font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                            {requiredValueText}
+                        </span>
+
+                        <span className="sm:hidden ml-1 text-[11px] text-slate-900 dark:text-slate-100">/</span>
+                        <span className="sm:hidden ml-1 text-[11px] text-slate-900 dark:text-slate-100 whitespace-nowrap">
+                            {availableValueText}
+                        </span>
+
+                        {useCompactDesktopMeta ? (
+                            <span className="hidden sm:inline ml-1 whitespace-nowrap">
+                                <span className="text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
+                                    {requiredValueText}
+                                </span>
+                                <span className="ml-1 text-[11px] sm:text-xs text-slate-900 dark:text-slate-100">/</span>
+                                <span className="ml-1 text-[11px] sm:text-xs text-slate-900 dark:text-slate-100">
+                                    {availableValueText}
+                                </span>
+                            </span>
+                        ) : (
+                            <span className="hidden sm:inline ml-1 whitespace-nowrap">
+                                <span className="text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
+                                    {requiredValueText}
+                                </span>
+                                <span className="ml-1">
+                                    {inStockLabel}:
+                                </span>
+                                <span className="ml-1 text-[11px] sm:text-xs font-bold text-amber-600 dark:text-amber-400">
+                                    {availableValueText}
+                                </span>
+                            </span>
+                        )}
+                    </p>
+                    <p className="shrink-0 whitespace-nowrap text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
+                        {shortageCostText}
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ServiceForm: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -1249,54 +1380,14 @@ const ServiceForm: React.FC = () => {
                                     </div>
                                 ) : (
                                     shoppingListItems.map((item) => (
-                                        <div
+                                        <ShoppingListCard
                                             key={item.key}
-                                            className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/40 dark:bg-amber-900/10 p-2.5 sm:p-3"
-                                        >
-                                            <div className="flex flex-col gap-[4px] sm:gap-1.5">
-                                                {/* Top row: material name + quantity to buy */}
-                                                <div className="flex items-baseline justify-between gap-3">
-                                                    <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white">
-                                                        {item.materialName}
-                                                    </p>
-                                                    <p className="text-[13.5px] sm:text-[13.5px] font-black text-amber-600 dark:text-amber-400">
-                                                        {item.toBuy.toFixed(2)} {localizeUnit(item.unit)}
-                                                    </p>
-                                                </div>
-
-                                                {/* Bottom row: required / in stock + cost */}
-                                                <div className="flex items-baseline justify-between gap-3">
-                                                    <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
-                                                        <span>
-                                                            {t('Potrzebne', 'Required')}:
-                                                        </span>
-                                                        <span className="sm:hidden ml-1 text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                                                            {item.required.toFixed(2)} {localizeUnit(item.unit)}
-                                                        </span>
-                                                        <span className="hidden sm:inline ml-1 text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
-                                                            {item.required.toFixed(2)} {localizeUnit(item.unit)}
-                                                        </span>
-
-                                                        {/* Mobile: show "/ available" in black */}
-                                                        <span className="sm:hidden ml-1 text-[11px] text-slate-900 dark:text-slate-100">/</span>
-                                                        <span className="sm:hidden ml-1 text-[11px] text-slate-900 dark:text-slate-100">
-                                                            {item.available.toFixed(2)} {localizeUnit(item.unit)}
-                                                        </span>
-
-                                                        {/* Desktop: keep "In stock: ..." */}
-                                                        <span className="hidden sm:inline ml-1">
-                                                            {t('Magazyn', 'In stock')}:
-                                                        </span>
-                                                        <span className="hidden sm:inline ml-1 text-[11px] sm:text-xs font-bold text-amber-600 dark:text-amber-400">
-                                                            {item.available.toFixed(2)} {localizeUnit(item.unit)}
-                                                        </span>
-                                                    </p>
-                                                    <p className="text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
-                                                        {item.shortageCost.toFixed(2)} {currencyCode}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            item={item}
+                                            requiredLabel={t('Potrzebne', 'Required')}
+                                            inStockLabel={t('Magazyn', 'In stock')}
+                                            currencyCode={currencyCode}
+                                            localizeUnit={localizeUnit}
+                                        />
                                     ))
                                 )}
                             </div>
