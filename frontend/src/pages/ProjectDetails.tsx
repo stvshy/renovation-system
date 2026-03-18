@@ -1700,7 +1700,7 @@ const ProjectDetails: React.FC = () => {
                                 return (
                                     <div key={cost.id} className="rounded-xl border border-gray-200 dark:border-slate-700 p-4 space-y-3">
                                         <label className="flex flex-col gap-1">
-                                            <span className="text-xs font-bold text-gray-500 uppercase">{t("Kwota", "Amount")}</span>
+                                            <span className="text-[11px] font-bold text-gray-500 uppercase">{t("Kwota", "Amount")}</span>
                                             <div className="relative">
                                                 <input
                                                     type="number"
@@ -1712,14 +1712,14 @@ const ProjectDetails: React.FC = () => {
                                                             [cost.id]: { ...edit, amount: e.target.value },
                                                         }))
                                                     }
-                                                    className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 pr-14"
+                                                    className="form-input w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 pr-14 text-[14px]"
                                                 />
                                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 dark:text-slate-400">{currencyCode}</span>
                                             </div>
                                         </label>
 
                                         <label className="flex flex-col gap-1">
-                                            <span className="text-xs font-bold text-gray-500 uppercase">{t("Notatka", "Note")}</span>
+                                            <span className="text-[11px] font-bold text-gray-500 uppercase">{t("Notatka", "Note")}</span>
                                             <textarea
                                                 value={edit.note}
                                                 onChange={(e) =>
@@ -1728,7 +1728,7 @@ const ProjectDetails: React.FC = () => {
                                                         [cost.id]: { ...edit, note: e.target.value },
                                                     }))
                                                 }
-                                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 min-h-[90px]"
+                                                className="form-textarea w-full rounded-lg border-gray-300 dark:border-slate-700 dark:bg-slate-800 min-h-[90px] text-[14px]"
                                             />
                                         </label>
 
