@@ -180,7 +180,7 @@ const ClientDetails: React.FC = () => {
                                                 {project.name[0]}
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-white group-hover:text-primary transition-colors">
+                                                <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-white sm:group-hover:text-primary transition-colors">
                                                     {project.name}
                                                 </h3>
                                                 <p className="text-[11px] sm:text-xs text-gray-500">
@@ -189,8 +189,8 @@ const ClientDetails: React.FC = () => {
                                             </div>
                                         </div>
                                         <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-end text-left sm:text-right w-full sm:w-auto">
-                                            <p className="text-sm sm:text-base font-bold text-gray-800 dark:text-white">{project.value.toLocaleString()} {currencyCode}</p>
-                                            <span className="material-symbols-outlined text-sm sm:text-base text-gray-900 sm:text-gray-300 group-hover:text-primary ml-2 sm:ml-0 mt-0 sm:mt-1">arrow_forward</span>
+                                            <p className="text-sm sm:text-base font-bold text-[#1173d4] sm:text-gray-800 dark:text-[#1173d4] sm:dark:text-white">{project.value.toLocaleString()} {currencyCode}</p>
+                                            <span className="material-symbols-outlined text-sm sm:text-base text-gray-700 dark:text-gray-200 sm:text-gray-300 sm:dark:text-gray-300 sm:group-hover:text-primary ml-2 sm:ml-0 mt-0 sm:mt-1">arrow_forward</span>
                                         </div>
                                     </div>
                                 ))}

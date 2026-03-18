@@ -950,7 +950,7 @@ const ProjectDetails: React.FC = () => {
                             </div>
                             <div className="flex flex-col">
                                 <p className="text-xs sm:text-sm text-gray-500 mb-0.5 sm:mb-1">{t('Wartość całkowita', 'Total value')}</p>
-                                <p className="text-[18px] sm:text-3xl font-black text-primary mt-[-0.65px]">{project.value.toLocaleString()} {currencyCode}</p>
+                                <p className="text-[16px] sm:text-3xl font-black text-primary mt-[-0.65px]">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
                             {additionalCosts.length > 0 && (
                                 <div className="mt-2 sm:mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-200/70 dark:border-amber-800/70 bg-amber-50/40 dark:bg-amber-900/10 px-2 sm:px-2.5 py-1 sm:py-1.5">
@@ -1223,7 +1223,7 @@ const ProjectDetails: React.FC = () => {
                         </div>
                         <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 sm:p-4">
                             <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">{t("Łączny koszt zakupu", "Total purchase cost")}</p>
-                            <p className={`text-[18px] sm:text-2xl font-black mt-0.5 sm:mt-1 ${totalShoppingCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+                            <p className={`text-[16px] sm:text-2xl font-black mt-0.5 sm:mt-1 ${totalShoppingCost > 0 ? "text-red-600 dark:text-red-400" : "text-emerald-600 dark:text-emerald-400"}`}>
                                 {totalShoppingCost.toFixed(2)} {currencyCode}
                             </p>
                         </div>
