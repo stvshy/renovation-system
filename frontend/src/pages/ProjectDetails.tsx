@@ -923,7 +923,7 @@ const ProjectDetails: React.FC = () => {
                         </div>
                         <div className="flex-1 flex flex-col justify-center">
                             <div className="flex justify-between items-center mb-1.5 sm:mb-2">
-                                <span className="text-[11.9px] sm:text-xs text-gray-500">{t('Start', 'Start')}</span>
+                                <span className="text-[11.9px] sm:text-[14px] text-gray-500">{t('Start', 'Start')}</span>
                                 <span className="font-bold text-[13.4px] sm:text-base text-gray-800 dark:text-white">{project.startDate || "-"}</span>
                             </div>
                             <div className="w-full h-1.5 sm:h-2 bg-gray-100 dark:bg-gray-700 rounded-full mb-1.5 sm:mb-2 overflow-hidden flex">
@@ -937,7 +937,7 @@ const ProjectDetails: React.FC = () => {
                                 ></div>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-[11.9px] sm:text-xs text-gray-500">{t('Koniec', 'End')}</span>
+                                <span className="text-[11.9px] sm:text-[14px] text-gray-500">{t('Koniec', 'End')}</span>
                                 <span className="font-bold text-[13.4px] sm:text-base text-gray-800 dark:text-white">{project.endDate || "-"}</span>
                             </div>
                         </div>
@@ -970,7 +970,7 @@ const ProjectDetails: React.FC = () => {
                             </div>
                             <div className="flex flex-col">
                                 <p className="text-xs sm:text-sm text-gray-500 mb-0.5 sm:mb-1">{t('Wartość całkowita', 'Total value')}</p>
-                                <p className="text-[16px] sm:text-3xl font-black text-primary mt-[-0.65px]">{project.value.toLocaleString()} {currencyCode}</p>
+                                <p className="text-[16px] sm:text-[24px] font-black text-primary mt-[-0.65px] sm:mt-[-4.8px]">{project.value.toLocaleString()} {currencyCode}</p>
                             </div>
                             {additionalCosts.length > 0 && (
                                 <div className="mt-2 sm:mt-3 flex items-center justify-between gap-2 rounded-md border border-amber-200/70 dark:border-amber-800/70 bg-amber-50/40 dark:bg-amber-900/10 px-2 sm:px-2.5 py-1 sm:py-1.5">
