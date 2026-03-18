@@ -1215,7 +1215,7 @@ const ServiceForm: React.FC = () => {
                                         </h3>
 
                                         {shoppingListItems.length > 0 && (
-                                            <p className="text-base sm:text-lg font-black text-red-600 dark:text-red-400 leading-none shrink-0">
+                                            <p className="text-[14.5px] sm:text-lg font-black text-red-600 dark:text-red-400 leading-none shrink-0">
                                                 {shoppingListItems.length === 0 ? '-' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
                                             </p>
                                         )}
@@ -1231,7 +1231,7 @@ const ServiceForm: React.FC = () => {
                                         {shoppingListItems.length > 0 && (
                                             <p className="text-right shrink-0 leading-none">
                                                 <span className="text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400">
-                                                    {t('Liczba sztuk: ', 'Items: ')}
+                                                    {t('Sztuki: ', 'Items: ')}
                                                 </span>
                                                 <span className="text-[12px] sm:text-xs font-bold text-amber-600 dark:text-amber-400 ml-0.5">
                                                     {shoppingListItems.length === 0 ? '-' : shoppingListItems.length}
@@ -1280,7 +1280,7 @@ const ServiceForm: React.FC = () => {
                                                             {item.available.toFixed(2)} {localizeUnit(item.unit)}
                                                         </span>
                                                     </p>
-                                                    <p className="text-xs font-bold text-red-600 dark:text-red-400">
+                                                    <p className="text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
                                                         {item.shortageCost.toFixed(2)} {currencyCode}
                                                     </p>
                                                 </div>
@@ -1312,7 +1312,7 @@ const ServiceForm: React.FC = () => {
 
                                         {additionalCosts.length > 0 && (
                                             <p
-                                                className={`text-base sm:text-lg font-black leading-none shrink-0 ${
+                                                className={`text-[14.5px] sm:text-lg font-black leading-none shrink-0 ${
                                                     additionalCostsTotal > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'
                                                 }`}
                                             >
@@ -1323,7 +1323,7 @@ const ServiceForm: React.FC = () => {
 
                                     <div className="flex items-baseline justify-between gap-3">
                                         <p className="min-w-0 text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400 leading-snug">
-                                            {t('Niestandardowe koszty w ramach projektu.', 'Custom costs related to the project.')}
+                                            {t('Niestandardowe koszty w projekcie.', 'Custom costs related to the project.')}
                                         </p>
                                         {additionalCosts.length > 0 && (
                                             <p className="text-right shrink-0 leading-none">
@@ -1351,12 +1351,12 @@ const ServiceForm: React.FC = () => {
                                             className="rounded-lg border border-rose-200 dark:border-rose-800 bg-rose-50/40 dark:bg-rose-900/10 p-2.5 sm:p-3"
                                         >
                                             {/* Mobile layout: title full width on top, date left, amount + delete right */}
-                                            <div className="flex flex-col gap-[2px] sm:hidden">
+                                            <div className="flex flex-col gap-[1px] sm:hidden">
                                                 <p className="font-bold text-[13px] sm:text-sm text-slate-900 dark:text-white break-words leading-tight">
                                                     {cost.note}
                                                 </p>
-                                                <div className="flex items-center justify-between gap-2">
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                                <div className="flex items-baseline justify-between gap-2">
+                                                    <p className="text-xs leading-tight text-slate-500 dark:text-slate-400">
                                                         {new Date(cost.createdAt).toLocaleDateString()}
                                                     </p>
                                                     <div className="flex items-baseline gap-2">
