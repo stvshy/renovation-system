@@ -1488,7 +1488,7 @@ const ServiceForm: React.FC = () => {
 
                 {/* Footer Navigation */}
                 {isEditMode ? (
-                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4">
+                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-2 sm:px-4">
                         <button
                             onClick={() =>
                                 navigate("/projects/new/room", {
@@ -1517,7 +1517,7 @@ const ServiceForm: React.FC = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-3 sm:px-4">
+                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 px-0 sm:px-4">
                         <button
                             onClick={() =>
                                 navigate("/projects/new/room", {
