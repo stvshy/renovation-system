@@ -1412,7 +1412,7 @@ const ServiceForm: React.FC = () => {
                                                             delete
                                                         </span>
                                                     </button>
-                                                </div>
+o                                                </div>
                                             </div>
                                         </div>
                                     ))

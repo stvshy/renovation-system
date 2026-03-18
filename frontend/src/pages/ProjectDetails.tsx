@@ -655,7 +655,7 @@ const ProjectDetails: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-1 justify-center p-3 sm:p-6 md:p-8">
+        <div className="flex flex-1 justify-center px-3 pt-3 pb-0 sm:p-6 md:p-8">
             <div className="layout-content-container flex flex-col w-full max-w-7xl gap-4 sm:gap-6">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 border-b border-gray-200 dark:border-gray-700 pb-4 sm:pb-6">
@@ -844,7 +844,7 @@ const ProjectDetails: React.FC = () => {
                     {/* Client Info */}
                     <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col">
                         <div className="mb-1.5 sm:mb-3 flex items-center justify-between">
-                            <h3 className="text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
+                            <h3 className="-ml-[2px] sm:ml-0 text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
                                 <span className="material-symbols-outlined text-base sm:text-lg">person</span>
                                 {t('Dane Klienta', 'Client Details')}
                             </h3>
@@ -858,7 +858,7 @@ const ProjectDetails: React.FC = () => {
                             </button>
                         </div>
                         {project.clientData ? (
-                            <div className="flex-1 flex items-center">
+                            <div className="-ml-px sm:ml-0 flex-1 flex items-center">
                                 <button
                                     type="button"
                                     onClick={() => project.clientId && navigate(`/clients/${project.clientId}`)}
@@ -874,11 +874,11 @@ const ProjectDetails: React.FC = () => {
                                 </button>
                             </div>
                         ) : (
-                            <div className="flex-1 flex items-center">
+                            <div className="-ml-px sm:ml-0 flex-1 flex items-center">
                                 <p className="text-gray-500 text-sm sm:text-base">{t('Brak szczegółowych danych klienta', 'No detailed client data')}</p>
                             </div>
                         )}
-                        <div className="mt-auto pt-3 sm:pt-4 border-t border-gray-100 dark:border-slate-700">
+                        <div className="-ml-px sm:ml-0 mt-auto pt-3 sm:pt-4 border-t border-gray-100 dark:border-slate-700">
                             <p className="text-xs sm:text-[14px] text-gray-500 dark:text-slate-400">
                                 {t("Przypisane projekty", "Assigned projects")}: <span className="font-bold text-gray-700 dark:text-slate-200">{clientProjectCount}</span>
                             </p>
@@ -888,7 +888,7 @@ const ProjectDetails: React.FC = () => {
                     {/* Timeline */}
                     <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
                         <div className="mb-3 sm:mb-4 flex items-center justify-between">
-                            <h3 className="text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
+                            <h3 className="-ml-[2px] sm:ml-0 text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
                                 <span className="material-symbols-outlined text-base sm:text-lg">schedule</span>
                                 {t('Termin Realizacji', 'Project Timeline')}
                             </h3>
@@ -935,7 +935,7 @@ const ProjectDetails: React.FC = () => {
                     <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
                         <div>
                             <div className="mb-3 sm:mb-4 flex items-center justify-between">
-                                <h3 className="text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
+                                <h3 className="-ml-[3.5px] sm:ml-0 text-xs sm:text-sm font-bold text-gray-400 uppercase flex items-center gap-1.5 sm:gap-2">
                                     <span className="material-symbols-outlined text-base sm:text-lg">attach_money</span>
                                     {t('Finanse', 'Finances')}
                                 </h3>
@@ -1473,7 +1473,7 @@ const ProjectDetails: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="mt-6 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-slate-700 flex justify-center sm:justify-end">
+                <div className="mt-0 sm:mt-6 pt-0 sm:pt-6 flex justify-center sm:justify-end">
                     <button
                         type="button"
                         onClick={() => setIsDeleteProjectModalOpen(true)}
