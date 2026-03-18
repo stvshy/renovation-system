@@ -1266,17 +1266,28 @@ const ServiceForm: React.FC = () => {
 
                                                 {/* Bottom row: required / in stock + cost */}
                                                 <div className="flex items-baseline justify-between gap-3">
-                                                    <p className="text-[11.5px] sm:text-xs text-slate-500 dark:text-slate-400">
+                                                    <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
                                                         <span>
                                                             {t('Potrzebne', 'Required')}:
                                                         </span>
-                                                        <span className="ml-1 text-[12px] sm:text-xs font-bold text-red-600 dark:text-red-400">
+                                                        <span className="sm:hidden ml-1 text-[11px] font-bold text-amber-600 dark:text-amber-400">
                                                             {item.required.toFixed(2)} {localizeUnit(item.unit)}
                                                         </span>
-                                                        <span className="ml-1">
+                                                        <span className="hidden sm:inline ml-1 text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
+                                                            {item.required.toFixed(2)} {localizeUnit(item.unit)}
+                                                        </span>
+
+                                                        {/* Mobile: show "/ available" in black */}
+                                                        <span className="sm:hidden ml-1 text-[11px] text-slate-900 dark:text-slate-100">/</span>
+                                                        <span className="sm:hidden ml-1 text-[11px] text-slate-900 dark:text-slate-100">
+                                                            {item.available.toFixed(2)} {localizeUnit(item.unit)}
+                                                        </span>
+
+                                                        {/* Desktop: keep "In stock: ..." */}
+                                                        <span className="hidden sm:inline ml-1">
                                                             {t('Magazyn', 'In stock')}:
                                                         </span>
-                                                        <span className="ml-1 text-[12px] sm:text-xs font-bold text-amber-600 dark:text-amber-400">
+                                                        <span className="hidden sm:inline ml-1 text-[11px] sm:text-xs font-bold text-amber-600 dark:text-amber-400">
                                                             {item.available.toFixed(2)} {localizeUnit(item.unit)}
                                                         </span>
                                                     </p>
