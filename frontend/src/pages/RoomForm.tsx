@@ -977,8 +977,8 @@ const RoomForm: React.FC = () => {
                     {/* List of Existing Rooms */}
                     {existingRooms.length > 0 && (
                         <div className="mt-4">
-                            <p className="text-xs font-bold text-gray-500 uppercase mb-2">{t("Pokoje w projekcie", "Rooms in project")}:</p>
-                            <div className="flex flex-wrap gap-2">
+                            <p className="text-xs font-bold text-gray-500 uppercase mb-2 -ml-[3px] sm:ml-0">{t("Pokoje w projekcie", "Rooms in project")}:</p>
+                            <div className="flex flex-wrap gap-2 -ml-[6px] sm:ml-0">
                                 {existingRooms.map((r, idx) => (
                                     <button
                                         key={idx}
@@ -1040,7 +1040,7 @@ const RoomForm: React.FC = () => {
                 </div>
 
                 {/* 1. Room Name & Mode */}
-                <div className="p-4 flex flex-col gap-6">
+                <div className="flex flex-col gap-6 px-2 sm:px-4 py-4">
                     <div className="flex flex-col">
                         <label className="text-text-dark dark:text-off-white text-sm sm:text-base font-medium leading-normal pb-1.5 sm:pb-2">{t("Nazwa Pokoju", "Room Name")}</label>
                         <input
@@ -1079,7 +1079,7 @@ const RoomForm: React.FC = () => {
 
                 {/* 2. Dimensions Input (Standard Mode) */}
                 {mode === "standard" && (
-                    <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl mx-4 border border-slate-200 dark:border-slate-700 animate-fade-in">
+                    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 animate-fade-in px-2 sm:px-4 py-4">
                         <h2 className="text-base sm:text-lg font-bold text-dependable-blue dark:text-primary mb-4">{t("Wymiary całkowite", "Overall dimensions")}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <label className="flex flex-col">
@@ -1120,7 +1120,7 @@ const RoomForm: React.FC = () => {
                 )}
 
                 {/* 3. Surface List & Management */}
-                <div className="p-4 -mt-2 sm:mt-2 space-y-4">
+                <div className="space-y-4 px-2 sm:px-4 pt-2 sm:pt-4 pb-4">
                     <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
                         <h2 className="text-lg sm:text-xl font-bold text-dependable-blue dark:text-primary">{t("Lista Powierzchni", "Surface List")}</h2>
                         {/* Mobile: keep stats under the title */}
@@ -1417,7 +1417,7 @@ const RoomForm: React.FC = () => {
 
                 {/* Footer Buttons */}
                 {isEditMode ? (
-                    <div className="flex flex-row md:grid md:grid-cols-2 px-3 sm:px-4 py-6 sm:py-8 gap-3 sm:gap-4 items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 justify-between">
+                    <div className="flex flex-row md:grid md:grid-cols-2 px-2 sm:px-4 py-3 sm:py-6 gap-3 sm:gap-4 items-center mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700 justify-between">
                         <button
                             onClick={handleGoToClientStep}
                             className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:justify-self-start"
@@ -1436,7 +1436,7 @@ const RoomForm: React.FC = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-row md:flex-row px-3 sm:px-4 py-6 sm:py-8 justify-between md:justify-end gap-3 sm:gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-row md:flex-row px-2 sm:px-4 py-3 sm:py-6 justify-between md:justify-end gap-3 sm:gap-4 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 dark:border-gray-700">
                         {showManualSaveInCreate ? (
                             <>
                                 <button
