@@ -3,6 +3,23 @@ import { createPortal } from "react-dom";
 
 type ChangeLikeEvent = { target: { value: string } };
 
+const extractTextFromNode = (node: React.ReactNode): string => {
+  if (node === null || node === undefined || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractTextFromNode).join("");
+  if (React.isValidElement<any>(node)) return extractTextFromNode(node.props.children);
+  return "";
+};
+
+const getFontShorthand = (el: HTMLElement) => {
+  const s = window.getComputedStyle(el);
+  // `font` can be empty depending on browser; build a reasonable shorthand fallback.
+  return (
+    s.font ||
+    `${s.fontStyle} ${s.fontVariant} ${s.fontWeight} ${s.fontSize}/${s.lineHeight} ${s.fontFamily}`.replace(/\s+/g, " ").trim()
+  );
+};
+
 type ScrollableSelectProps = {
   value: string;
   onChange: (event: ChangeLikeEvent) => void;
@@ -112,10 +129,32 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({
       const availableBelow = Math.max(120, window.innerHeight - rect.bottom - gap - viewportPadding);
 
       const maxPanelWidth = window.innerWidth - 2 * viewportPadding;
+      const isMobile = window.innerWidth < 640;
+
+      let shouldExpandToViewport = false;
+      if (isMobile) {
+        // Measure the widest option label (plus optgroup labels) and decide if it fits the trigger width.
+        // If it doesn't fit, expand the panel to viewport width (prevents horizontal overflow on mobile).
+        const font = getFontShorthand(trigger);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.font = font;
+
+          const optionTexts = options.map((o) => extractTextFromNode(o.label));
+          const groupTexts = Array.from(new Set(options.map((o) => o.group).filter(Boolean) as string[]));
+          const candidates = [...optionTexts, ...groupTexts].map((s) => (s ?? "").trim()).filter(Boolean);
+
+          const widest = candidates.reduce((max, text) => Math.max(max, ctx.measureText(text).width), 0);
+          // Approximate paddings & chevron; keep conservative to avoid edge overflow.
+          const horizontalChrome = 16 /* list item px-3 */ * 2 + 24 /* breathing room */;
+          shouldExpandToViewport = widest + horizontalChrome > rect.width;
+        }
+      }
       setPanelStyle({
-        left: Math.max(viewportPadding, rect.left),
+        left: isMobile && shouldExpandToViewport ? viewportPadding : Math.max(viewportPadding, rect.left),
         top: rect.bottom + gap,
-        width: rect.width,
+        width: isMobile && shouldExpandToViewport ? maxPanelWidth : rect.width,
         maxHeight: availableBelow,
         maxPanelWidth,
       });
@@ -161,11 +200,11 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({
         createPortal(
           <div
             ref={panelRef}
-            className="fixed z-[9999] w-max min-w-0 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl"
+            className="fixed z-[9999] min-w-0 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl"
             style={{
               left: panelStyle.left,
               top: panelStyle.top,
-              minWidth: panelStyle.width,
+              width: panelStyle.width,
               maxWidth: panelStyle.maxPanelWidth ?? undefined,
             }}
           >
@@ -177,20 +216,20 @@ const ScrollableSelect: React.FC<ScrollableSelectProps> = ({
 
                 return (
                   <li key={`${option.group || "nogroup"}-${option.value}-${index}`} className="px-1">
-                    {showGroup && <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">{option.group}</div>}
+                    {showGroup && <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-500 truncate">{option.group}</div>}
                     <div
                       role="option"
                       aria-selected={isSelected}
                       onClick={() => {
                         if (!option.disabled) handleSelect(option.value);
                       }}
-                      className={`w-full rounded-lg px-3 py-2 text-left text-xs sm:text-sm transition-colors whitespace-nowrap ${
+                      className={`w-full min-w-0 rounded-lg px-3 py-2 text-left text-xs sm:text-sm transition-colors ${
                         isSelected
                           ? "bg-primary text-white"
                           : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                       } ${option.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                     >
-                      <span className="block">{option.label}</span>
+                      <span className="block truncate">{option.label}</span>
                     </div>
                   </li>
                 );
