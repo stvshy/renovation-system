@@ -691,7 +691,7 @@ const OfferSummary: React.FC = () => {
                                 },
                             })
                         }
-                        className="flex w-auto sm:w-auto min-w-0 sm:min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-9 sm:h-10 px-3 sm:px-4 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-colors"
+                        className="flex w-auto sm:w-auto min-w-0 sm:min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-[41.6px] sm:h-[45.6px] px-3 sm:px-4 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-colors"
                     >
                         <span className="truncate">{t('Wróć do edycji usług', 'Back to services')}</span>
                     </button>
@@ -699,9 +699,18 @@ const OfferSummary: React.FC = () => {
                         <button
                             onClick={handleSubmitProject}
                             disabled={isSaving}
-                            className="flex w-auto sm:w-auto min-w-0 sm:min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 sm:h-10 px-3 sm:px-4 bg-primary text-white text-xs sm:text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
+                            className="flex w-auto sm:w-auto min-w-0 sm:min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-[41.6px] sm:h-[45.6px] px-3 sm:px-4 bg-primary text-white text-xs sm:text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-primary/90 transition-colors disabled:opacity-50"
                         >
-                            <span className="truncate">{isSaving ? t('Zapisywanie...', 'Saving...') : t('Zatwierdz i Zapisz Projekt', 'Confirm and Save Project')}</span>
+                            <span className="truncate">
+                                {isSaving ? (
+                                    t('Zapisywanie...', 'Saving...')
+                                ) : (
+                                    <>
+                                        <span className="sm:hidden">{t('Zatwierdź i Zapisz', 'Confirm & Save')}</span>
+                                        <span className="hidden sm:inline">{t('Zatwierdz i Zapisz Projekt', 'Confirm and Save Project')}</span>
+                                    </>
+                                )}
+                            </span>
                         </button>
                     </div>
                 </div>
