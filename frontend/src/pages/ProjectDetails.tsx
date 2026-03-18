@@ -749,19 +749,17 @@ const ProjectDetails: React.FC = () => {
                                 </button>
 
                                 {isProjectMenuOpen && (
-                                    <div className="absolute left-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+                                    <div className="absolute left-0 top-full z-50 mt-2 w-fit min-w-[10.5rem] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 setIsProjectMenuOpen(false);
                                                 setIsDeleteProjectModalOpen(true);
                                             }}
-                                            className="w-full px-3 py-2.5 text-left text-sm font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                                            className="inline-flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm font-semibold text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
                                         >
-                                            <span className="inline-flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-[18px]">delete</span>
-                                                {t("Usuń projekt", "Delete project")}
-                                            </span>
+                                            <span className="material-symbols-outlined -translate-y-[0.5px] text-[18px]">delete</span>
+                                            <span>{t("Usuń projekt", "Delete project")}</span>
                                         </button>
                                     </div>
                                 )}
