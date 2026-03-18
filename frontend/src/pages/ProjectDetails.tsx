@@ -787,8 +787,11 @@ const ProjectDetails: React.FC = () => {
                             <option value="Archived">{t('Zarchiwizowany', 'Archived')}</option>
                         </ScrollableSelect>
                         <button
-                            onClick={() => navigate("/calendar")}
-                            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 font-bold text-xs sm:text-sm transition-colors"
+                            onClick={() => {
+                                const focusDate = project.startDate || project.endDate || new Date().toISOString().slice(0, 10);
+                                navigate("/calendar", { state: { focusProjectId: project.id, focusDate } });
+                            }}
+                            className="inline-flex items-center justify-center size-9 sm:size-auto sm:h-[42px] gap-0 sm:gap-2 sm:px-4 bg-transparent sm:bg-gray-200 dark:sm:bg-gray-700 text-gray-500 sm:text-gray-800 dark:text-gray-300 dark:sm:text-gray-100 rounded-lg hover:bg-gray-100 sm:hover:bg-gray-300 dark:hover:bg-slate-800 dark:sm:hover:bg-gray-600 hover:text-primary dark:hover:text-primary font-bold text-xs sm:text-sm transition-colors"
                         >
                             <span className="material-symbols-outlined text-sm">calendar_month</span>
                             <span className="hidden sm:inline">{t('Kalendarz', 'Calendar')}</span>

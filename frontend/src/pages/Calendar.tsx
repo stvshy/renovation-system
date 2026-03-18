@@ -1,14 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getProjects } from '../lib/storage';
 import { Project } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 
+type CalendarNavState = {
+    focusProjectId?: string;
+    focusDate?: string; // YYYY-MM-DD
+};
+
 const Calendar: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { language, t } = useLanguage();
     const [projects, setProjects] = useState<Project[]>([]);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [highlightProjectId, setHighlightProjectId] = useState<string | null>(null);
+
+    const navState = location.state as CalendarNavState | null;
+    const navFocusProjectId = navState?.focusProjectId;
+    const navFocusDate = navState?.focusDate;
+
+    const focusMonthDate = useMemo(() => {
+        if (!navFocusDate) return null;
+        const d = new Date(`${navFocusDate}T00:00:00`);
+        if (Number.isNaN(d.getTime())) return null;
+        return new Date(d.getFullYear(), d.getMonth(), 1);
+    }, [navFocusDate]);
 
     useEffect(() => {
         const load = async () => {
@@ -17,6 +35,17 @@ const Calendar: React.FC = () => {
         };
         load();
     }, []);
+
+    useEffect(() => {
+        const hasFocus = Boolean(navFocusProjectId || focusMonthDate);
+        if (!hasFocus) return;
+
+        if (focusMonthDate) setCurrentDate(focusMonthDate);
+        if (navFocusProjectId) setHighlightProjectId(navFocusProjectId);
+
+        navigate(location.pathname, { replace: true, state: null });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [navFocusProjectId, focusMonthDate]);
 
     // Calendar logic
     const year = currentDate.getFullYear();
@@ -145,14 +174,19 @@ const Calendar: React.FC = () => {
                                         </div>
                                         
                                         <div className="flex flex-col gap-1">
-                                            {activeProjects.map((proj, idx) => (
+                                            {activeProjects.map((proj, idx) => {
+                                                const isHighlighted = highlightProjectId && proj.id === highlightProjectId;
+                                                return (
                                                 <div 
                                                     key={idx}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         navigate(`/projects/${proj.id}`);
                                                     }}
-                                                    className="px-1.5 sm:px-2 h-5 sm:h-6 flex items-center text-[9px] sm:text-[10px] font-bold rounded shadow-sm border-l-4 truncate cursor-pointer hover:opacity-80 transition-opacity text-slate-800"
+                                                    className={[
+                                                        "px-1.5 sm:px-2 h-5 sm:h-6 flex items-center text-[9px] sm:text-[10px] font-bold rounded shadow-sm border-l-4 truncate cursor-pointer hover:opacity-80 transition-opacity text-slate-800",
+                                                        isHighlighted ? "ring-2 ring-primary ring-offset-1 ring-offset-white dark:ring-offset-slate-900" : "",
+                                                    ].join(" ")}
                                                     style={{ 
                                                         backgroundColor: proj.color ? `${proj.color}40` : '#e2e8f0', // 25% opacity
                                                         borderLeftColor: proj.color || '#94a3b8',
@@ -162,7 +196,8 @@ const Calendar: React.FC = () => {
                                                 >
                                                     {proj.name}
                                                 </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 );
