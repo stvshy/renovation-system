@@ -643,7 +643,7 @@ const OfferSummary: React.FC = () => {
                                 {additionalCosts.map((cost) => (
                                     <div key={cost.id} className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 print:border-gray-300 print:bg-white">
                                         <div className="flex flex-col gap-1 sm:hidden">
-                                            <p className="font-bold text-sm text-slate-900 dark:text-white break-words leading-tight print:text-black">
+                                            <p className="font-semibold text-sm text-slate-900 dark:text-white break-words leading-tight print:text-black">
                                                 {cost.note}
                                             </p>
                                             <div className="flex items-baseline justify-between gap-2 mt-0.5">
@@ -658,7 +658,7 @@ const OfferSummary: React.FC = () => {
 
                                         <div className="hidden sm:flex items-start justify-between gap-3">
                                             <div className="space-y-1.5">
-                                                <p className="font-bold text-sm text-slate-900 dark:text-white break-words print:text-black">{cost.note}</p>
+                                                <p className="font-semibold text-sm text-slate-900 dark:text-white break-words print:text-black">{cost.note}</p>
                                                 <p className="text-xs text-slate-500 dark:text-slate-400 print:text-black">{new Date(cost.createdAt).toLocaleDateString(language === "en" ? "en-US" : "pl-PL")}</p>
                                             </div>
                                             <p className="text-sm font-bold text-red-600 dark:text-red-400 whitespace-nowrap print:text-black">+{cost.amount.toFixed(2)} {currencyCode}</p>
