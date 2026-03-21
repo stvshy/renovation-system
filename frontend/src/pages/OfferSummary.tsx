@@ -577,7 +577,23 @@ const OfferSummary: React.FC = () => {
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none print:border print:border-gray-300 ${additionalCosts.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-rose-200 dark:border-rose-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 print:bg-white print:border-b print:border-gray-200 ${additionalCosts.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10'}`}>
                             <div>
-                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white print:text-black">{t('Koszty dodatkowe', 'Additional costs')}</h2>
+                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white print:text-black">
+                                    {t('Koszty dodatkowe', 'Additional costs')}
+                                    <span className="hidden sm:inline print:inline">
+                                        {" "}
+                                        <span className="font-medium">(</span>
+                                        <span
+                                            className={
+                                                additionalCosts.length === 0
+                                                    ? "text-gray-600 dark:text-gray-300 print:text-black"
+                                                    : "text-amber-600 dark:text-amber-400 print:text-black"
+                                            }
+                                        >
+                                            {additionalCosts.length}
+                                        </span>
+                                        <span className="font-medium">)</span>
+                                    </span>
+                                </h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                     {additionalCosts.length === 0
                                         ? t('Brak niestandardowych kosztów w ramach projektu.', 'No custom project costs.')
@@ -585,15 +601,15 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-2 sm:grid-cols-[120px_170px] gap-x-3 text-sm">
-                                <div className="text-left sm:text-right">
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400 print:text-xs print:font-normal print:text-black">{t('Pozycje', 'Items')}</p>
+                            <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-2 sm:grid-cols-1 gap-x-3 text-sm">
+                                <div className="text-left sm:hidden">
+                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p
                                         className={`font-black ${
                                             additionalCosts.length === 0
-                                                ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
-                                                : 'text-[16.5px] sm:text-lg text-amber-600 dark:text-amber-400'
-                                        } print:text-xs print:font-bold print:text-black`}
+                                                ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
+                                                : 'text-[16.5px] text-amber-600 dark:text-amber-400'
+                                        }`}
                                     >
                                         {additionalCosts.length === 0 ? '–' : additionalCosts.length}
                                     </p>
@@ -649,7 +665,23 @@ const OfferSummary: React.FC = () => {
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
                             <div>
-                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white">{t('Lista zakupów', 'Shopping list')}</h2>
+                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white">
+                                    {t('Lista zakupów', 'Shopping list')}
+                                    <span className="hidden sm:inline">
+                                        {" "}
+                                        <span className="font-medium">(</span>
+                                        <span
+                                            className={
+                                                shoppingListItems.length === 0
+                                                    ? "text-gray-600 dark:text-gray-300"
+                                                    : "text-amber-600 dark:text-amber-400"
+                                            }
+                                        >
+                                            {shoppingListItems.length}
+                                        </span>
+                                        <span className="font-medium">)</span>
+                                    </span>
+                                </h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                     {shoppingListItems.length === 0
                                         ? t('Magazyn pokrywa wszystkie materiały z projektu.', 'Inventory covers all materials for this project.')
@@ -657,14 +689,14 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-2 sm:grid-cols-[120px_170px] gap-x-3 text-sm">
-                                <div className="text-left sm:text-right">
+                            <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-2 sm:grid-cols-1 gap-x-3 text-sm">
+                                <div className="text-left sm:hidden">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p
                                         className={`font-black ${
                                             shoppingListItems.length === 0
-                                                ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
-                                                : 'text-[16.5px] sm:text-lg text-amber-600 dark:text-amber-400'
+                                                ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
+                                                : 'text-[16.5px] text-amber-600 dark:text-amber-400'
                                         }`}
                                     >
                                         {shoppingListItems.length === 0 ? '–' : shoppingListItems.length}
