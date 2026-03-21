@@ -575,7 +575,7 @@ const OfferSummary: React.FC = () => {
 
                 <div className={`px-2 sm:px-4 mt-14 ${additionalCostsTotal <= 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6 print:px-0`}>
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none print:border print:border-gray-300 ${additionalCosts.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-rose-200 dark:border-rose-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
-                        <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 print:bg-white print:border-b print:border-gray-200 ${additionalCosts.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10'}`}>
+                        <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0 sm:gap-3 print:bg-white print:border-b print:border-gray-200 ${additionalCosts.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10'}`}>
                             <div>
                                 <h2 className="text-lg font-bold text-[#0d141b] dark:text-white print:text-black">
                                     {t('Koszty dodatkowe', 'Additional costs')}
@@ -602,7 +602,7 @@ const OfferSummary: React.FC = () => {
                                 </p>
                             </div>
                             {/* Mobile: 2×2 grid — labels in one row, values in the next (aligned columns) */}
-                            <div className="w-full grid grid-cols-2 gap-x-3 gap-y-0 text-sm sm:hidden">
+                            <div className="w-full grid grid-cols-2 gap-x-3 gap-y-0 text-sm sm:hidden mt-1.5 border-t border-slate-200 dark:border-slate-500 pt-1.5">
                                 <p className="text-[11px] uppercase text-gray-500 dark:text-gray-400 leading-tight">{t('Pozycje', 'Items')}</p>
                                 <p className="text-right text-[11px] uppercase text-gray-500 dark:text-gray-400 leading-tight">{t('Suma', 'Total')}</p>
                                 <p
@@ -642,11 +642,11 @@ const OfferSummary: React.FC = () => {
                             <div className="p-4 space-y-3">
                                 {additionalCosts.map((cost) => (
                                     <div key={cost.id} className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 print:border-gray-300 print:bg-white">
-                                        <div className="flex flex-col gap-1 sm:hidden">
-                                            <p className="font-semibold text-sm text-slate-900 dark:text-white break-words leading-tight print:text-black">
+                                        <div className="flex flex-col sm:hidden">
+                                            <p className="font-semibold text-sm text-slate-900 dark:text-white break-words leading-snug print:text-black">
                                                 {cost.note}
                                             </p>
-                                            <div className="flex items-baseline justify-between gap-2 mt-0.5">
+                                            <div className="mt-2 flex items-baseline justify-between gap-2 border-t border-slate-100 dark:border-slate-700 pt-2">
                                                 <p className="text-xs leading-tight text-slate-500 dark:text-slate-400 print:text-black">
                                                     {new Date(cost.createdAt).toLocaleDateString(language === "en" ? "en-US" : "pl-PL")}
                                                 </p>
@@ -672,7 +672,7 @@ const OfferSummary: React.FC = () => {
 
                 <div className={`px-2 sm:px-4 mt-14 print:hidden ${shoppingListItems.length === 0 ? 'print:hidden' : ''} print:break-inside-avoid print:mt-6`}>
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
-                        <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
+                        <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0 sm:gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
                             <div>
                                 <h2 className="text-lg font-bold text-[#0d141b] dark:text-white">
                                     {t('Lista zakupów', 'Shopping list')}
@@ -698,7 +698,7 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="w-full grid grid-cols-2 gap-x-3 gap-y-0 text-sm sm:hidden">
+                            <div className="w-full grid grid-cols-2 gap-x-3 gap-y-0 text-sm sm:hidden mt-2 border-t border-slate-200 dark:border-slate-500 pt-2">
                                 <p className="text-[11px] uppercase text-gray-500 dark:text-gray-400 leading-tight">{t('Pozycje', 'Items')}</p>
                                 <p className="text-right text-[11px] uppercase text-gray-500 dark:text-gray-400 leading-tight">{t('Do kupienia', 'To buy')}</p>
                                 <p
@@ -734,30 +734,55 @@ const OfferSummary: React.FC = () => {
                         </div>
 
                         {shoppingListItems.length > 0 && (
-                        <div className="overflow-x-auto print:overflow-visible">
-                            <table className="w-full min-w-0 sm:min-w-[720px] print:min-w-0 text-xs sm:text-sm text-left text-gray-600 dark:text-gray-300">
-                                <thead className="text-[10px] sm:text-xs uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th className="px-2 sm:px-4 py-2 sm:py-3">{t('Materiał', 'Material')}</th>
-                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Potrzebne', 'Required')}</th>
-                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('W magazynie', 'In stock')}</th>
-                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Do dokupienia', 'To buy')}</th>
-                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Koszt zakupu', 'Purchase cost')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {shoppingListItems.map((item) => (
-                                        <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
-                                            <td className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-900 dark:text-white break-words">{item.materialName}</td>
-                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-gray-900 dark:text-white">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
+                        <>
+                            {/* Mobile: kafelki zamiast tabeli (jak karty kosztów dodatkowych) */}
+                            <div className="sm:hidden space-y-3 px-4 pb-4 pt-6">
+                                {shoppingListItems.map((item) => (
+                                    <div
+                                        key={item.key}
+                                        className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3"
+                                    >
+                                        <p className="font-semibold text-sm text-slate-900 dark:text-white break-words leading-snug">
+                                            {item.materialName}
+                                        </p>
+                                        <div className="mt-1.5 grid grid-cols-2 gap-3 border-t border-slate-100 dark:border-slate-700 pt-1.5">
+                                            <p className="min-w-0 text-sm font-bold text-amber-700 dark:text-amber-300 leading-tight">
+                                                {item.toBuy.toFixed(2)} {localizeUnit(item.unit)}
+                                            </p>
+                                            <p className="min-w-0 text-right text-sm font-bold text-red-600 dark:text-red-400 leading-tight whitespace-nowrap">
+                                                {item.shortageCost.toFixed(2)} {currencyCode}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Tablet / desktop: tabela */}
+                            <div className="hidden sm:block overflow-x-auto print:overflow-visible">
+                                <table className="w-full min-w-[720px] print:min-w-0 text-xs sm:text-sm text-left text-gray-600 dark:text-gray-300">
+                                    <thead className="text-[10px] sm:text-xs uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                        <tr>
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3">{t('Materiał', 'Material')}</th>
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Potrzebne', 'Required')}</th>
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('W magazynie', 'In stock')}</th>
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Do dokupienia', 'To buy')}</th>
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-right">{t('Koszt zakupu', 'Purchase cost')}</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {shoppingListItems.map((item) => (
+                                            <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-900 dark:text-white break-words">{item.materialName}</td>
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-gray-900 dark:text-white">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
                         )}
                     </div>
                 </div>
