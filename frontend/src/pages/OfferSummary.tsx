@@ -424,7 +424,7 @@ const OfferSummary: React.FC = () => {
                                     {shoppingListItems.map((item) => (
                                         <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
                                             <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">{item.materialName}</td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap text-gray-900 dark:text-white">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
                                             <td className="px-4 py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
                                             <td className="px-4 py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
                                             <td className="px-4 py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
@@ -605,7 +605,7 @@ const OfferSummary: React.FC = () => {
                                 <div className="text-left sm:hidden">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p
-                                        className={`font-black ${
+                                        className={`font-bold ${
                                             additionalCosts.length === 0
                                                 ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
                                                 : 'text-[16.5px] text-amber-600 dark:text-amber-400'
@@ -615,13 +615,13 @@ const OfferSummary: React.FC = () => {
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400 print:text-xs print:font-normal print:text-black">{t('Suma', 'Total')}</p>
+                                    <p className="sm:hidden print:hidden text-[11px] uppercase text-gray-500 dark:text-gray-400">{t('Suma', 'Total')}</p>
                                     <p
-                                        className={`font-black ${
+                                        className={`font-bold ${
                                             additionalCosts.length === 0
                                                 ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
                                                 : 'text-[16.5px] sm:text-lg text-red-600 dark:text-red-400'
-                                        } print:text-sm print:text-primary`}
+                                        } print:text-lg print:text-primary`}
                                     >
                                         {additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
                                     </p>
@@ -641,7 +641,7 @@ const OfferSummary: React.FC = () => {
                                                 <p className="text-xs leading-tight text-slate-500 dark:text-slate-400 print:text-black">
                                                     {new Date(cost.createdAt).toLocaleDateString(language === "en" ? "en-US" : "pl-PL")}
                                                 </p>
-                                                <p className="text-sm font-black text-red-600 dark:text-red-400 leading-tight whitespace-nowrap print:text-black">
+                                                <p className="text-sm font-bold text-red-600 dark:text-red-400 leading-tight whitespace-nowrap print:text-black">
                                                     +{cost.amount.toFixed(2)} {currencyCode}
                                                 </p>
                                             </div>
@@ -652,7 +652,7 @@ const OfferSummary: React.FC = () => {
                                                 <p className="font-bold text-sm text-slate-900 dark:text-white break-words print:text-black">{cost.note}</p>
                                                 <p className="text-xs text-slate-500 dark:text-slate-400 print:text-black">{new Date(cost.createdAt).toLocaleDateString(language === "en" ? "en-US" : "pl-PL")}</p>
                                             </div>
-                                            <p className="text-sm font-black text-red-600 dark:text-red-400 whitespace-nowrap print:text-black">+{cost.amount.toFixed(2)} {currencyCode}</p>
+                                            <p className="text-sm font-bold text-red-600 dark:text-red-400 whitespace-nowrap print:text-black">+{cost.amount.toFixed(2)} {currencyCode}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -693,7 +693,7 @@ const OfferSummary: React.FC = () => {
                                 <div className="text-left sm:hidden">
                                     <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
                                     <p
-                                        className={`font-black ${
+                                        className={`font-bold ${
                                             shoppingListItems.length === 0
                                                 ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
                                                 : 'text-[16.5px] text-amber-600 dark:text-amber-400'
@@ -703,9 +703,9 @@ const OfferSummary: React.FC = () => {
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Do kupienia', 'To buy')}</p>
+                                    <p className="sm:hidden text-[11px] uppercase text-gray-500 dark:text-gray-400">{t('Do kupienia', 'To buy')}</p>
                                     <p
-                                        className={`font-black ${
+                                        className={`font-bold ${
                                             shoppingListItems.length === 0
                                                 ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
                                                 : 'text-[16.5px] sm:text-lg text-red-600 dark:text-red-400'
@@ -733,7 +733,7 @@ const OfferSummary: React.FC = () => {
                                     {shoppingListItems.map((item) => (
                                         <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
                                             <td className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-900 dark:text-white break-words">{item.materialName}</td>
-                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-gray-900 dark:text-white">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
                                             <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
                                             <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
                                             <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
