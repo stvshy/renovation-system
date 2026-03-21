@@ -601,31 +601,40 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-2 sm:grid-cols-1 gap-x-3 text-sm">
-                                <div className="text-left sm:hidden">
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
-                                    <p
-                                        className={`font-bold ${
-                                            additionalCosts.length === 0
-                                                ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
-                                                : 'text-[16.5px] text-amber-600 dark:text-amber-400'
-                                        }`}
-                                    >
-                                        {additionalCosts.length === 0 ? '–' : additionalCosts.length}
-                                    </p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="sm:hidden print:hidden text-[11px] uppercase text-gray-500 dark:text-gray-400">{t('Suma', 'Total')}</p>
-                                    <p
-                                        className={`font-bold ${
-                                            additionalCosts.length === 0
-                                                ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
-                                                : 'text-[16.5px] sm:text-lg text-red-600 dark:text-red-400'
-                                        } print:text-lg print:text-primary`}
-                                    >
-                                        {additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
-                                    </p>
-                                </div>
+                            {/* Mobile: 2×2 grid — labels in one row, values in the next (aligned columns) */}
+                            <div className="w-full grid grid-cols-2 gap-x-3 gap-y-0 text-sm sm:hidden">
+                                <p className="text-[11px] uppercase text-gray-500 dark:text-gray-400 leading-tight">{t('Pozycje', 'Items')}</p>
+                                <p className="text-right text-[11px] uppercase text-gray-500 dark:text-gray-400 leading-tight">{t('Suma', 'Total')}</p>
+                                <p
+                                    className={`font-bold leading-tight ${
+                                        additionalCosts.length === 0
+                                            ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
+                                            : 'text-[16.5px] text-amber-600 dark:text-amber-400'
+                                    }`}
+                                >
+                                    {additionalCosts.length === 0 ? '–' : additionalCosts.length}
+                                </p>
+                                <p
+                                    className={`text-right font-bold leading-tight ${
+                                        additionalCosts.length === 0
+                                            ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
+                                            : 'text-[16.5px] text-red-600 dark:text-red-400'
+                                    }`}
+                                >
+                                    {additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
+                                </p>
+                            </div>
+                            {/* Desktop + print: tylko kwota (etykiety w tytule / ukryte) */}
+                            <div className="hidden sm:block text-right">
+                                <p
+                                    className={`font-bold ${
+                                        additionalCosts.length === 0
+                                            ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
+                                            : 'text-[16.5px] sm:text-lg text-red-600 dark:text-red-400'
+                                    } print:text-lg print:text-primary`}
+                                >
+                                    {additionalCosts.length === 0 ? '–' : `+${additionalCostsTotal.toFixed(2)} ${currencyCode}`}
+                                </p>
                             </div>
                         </div>
 
@@ -689,31 +698,38 @@ const OfferSummary: React.FC = () => {
                                     }
                                 </p>
                             </div>
-                            <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-2 sm:grid-cols-1 gap-x-3 text-sm">
-                                <div className="text-left sm:hidden">
-                                    <p className="text-xs uppercase text-gray-500 dark:text-gray-400">{t('Pozycje', 'Items')}</p>
-                                    <p
-                                        className={`font-bold ${
-                                            shoppingListItems.length === 0
-                                                ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
-                                                : 'text-[16.5px] text-amber-600 dark:text-amber-400'
-                                        }`}
-                                    >
-                                        {shoppingListItems.length === 0 ? '–' : shoppingListItems.length}
-                                    </p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="sm:hidden text-[11px] uppercase text-gray-500 dark:text-gray-400">{t('Do kupienia', 'To buy')}</p>
-                                    <p
-                                        className={`font-bold ${
-                                            shoppingListItems.length === 0
-                                                ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
-                                                : 'text-[16.5px] sm:text-lg text-red-600 dark:text-red-400'
-                                        }`}
-                                    >
-                                        {shoppingListItems.length === 0 ? '–' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
-                                    </p>
-                                </div>
+                            <div className="w-full grid grid-cols-2 gap-x-3 gap-y-0 text-sm sm:hidden">
+                                <p className="text-[11px] uppercase text-gray-500 dark:text-gray-400 leading-tight">{t('Pozycje', 'Items')}</p>
+                                <p className="text-right text-[11px] uppercase text-gray-500 dark:text-gray-400 leading-tight">{t('Do kupienia', 'To buy')}</p>
+                                <p
+                                    className={`font-bold leading-tight ${
+                                        shoppingListItems.length === 0
+                                            ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
+                                            : 'text-[16.5px] text-amber-600 dark:text-amber-400'
+                                    }`}
+                                >
+                                    {shoppingListItems.length === 0 ? '–' : shoppingListItems.length}
+                                </p>
+                                <p
+                                    className={`text-right font-bold leading-tight ${
+                                        shoppingListItems.length === 0
+                                            ? 'text-[16.5px] text-gray-600 dark:text-gray-300'
+                                            : 'text-[16.5px] text-red-600 dark:text-red-400'
+                                    }`}
+                                >
+                                    {shoppingListItems.length === 0 ? '–' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
+                                </p>
+                            </div>
+                            <div className="hidden sm:block text-right">
+                                <p
+                                    className={`font-bold ${
+                                        shoppingListItems.length === 0
+                                            ? 'text-[16.5px] sm:text-sm text-gray-600 dark:text-gray-300'
+                                            : 'text-[16.5px] sm:text-lg text-red-600 dark:text-red-400'
+                                    }`}
+                                >
+                                    {shoppingListItems.length === 0 ? '–' : `${materialPlan.totalShortageCost.toFixed(2)} ${currencyCode}`}
+                                </p>
                             </div>
                         </div>
 
