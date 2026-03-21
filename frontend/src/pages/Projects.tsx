@@ -24,6 +24,8 @@ const Projects: React.FC = () => {
     const activeDraftRef = useRef<HTMLDivElement | null>(null);
     const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const ignoreNextClickRef = useRef(false);
+    const baseDevicePixelRatioRef = useRef<number | null>(null);
+    const [isPageZoomChanged, setIsPageZoomChanged] = useState(false);
 
     const currencyCode = language === 'en' ? 'EUR' : 'PLN';
 
@@ -47,6 +49,27 @@ const Projects: React.FC = () => {
         };
         load();
     }, [isDemoMode, demoRevision]);
+
+    useEffect(() => {
+        const updateZoomState = () => {
+            const currentDevicePixelRatio = window.devicePixelRatio || 1;
+            if (baseDevicePixelRatioRef.current == null) {
+                baseDevicePixelRatioRef.current = currentDevicePixelRatio;
+                setIsPageZoomChanged(false);
+                return;
+            }
+            setIsPageZoomChanged(Math.abs(currentDevicePixelRatio - baseDevicePixelRatioRef.current) > 0.01);
+        };
+
+        updateZoomState();
+        window.addEventListener('resize', updateZoomState);
+        window.visualViewport?.addEventListener('resize', updateZoomState);
+
+        return () => {
+            window.removeEventListener('resize', updateZoomState);
+            window.visualViewport?.removeEventListener('resize', updateZoomState);
+        };
+    }, []);
 
     const parseProjectDate = (value?: string) => {
         if (!value) return Number.MAX_SAFE_INTEGER;
@@ -253,7 +276,7 @@ const Projects: React.FC = () => {
                                                         ? 'bg-slate-600 text-slate-200 dark:bg-slate-500 dark:text-slate-200'
                                                         : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
                                                 }`}>
-                                                    <span className="2xl:translate-y-[1.5px]">{t('Roboczy', 'Draft')}</span>
+                                                    <span className={isPageZoomChanged ? '' : '2xl:translate-y-[1.5px]'}>{t('Roboczy', 'Draft')}</span>
                                                 </span>
                                             </div>
                                             <p className="text-slate-500 dark:text-slate-400 text-[13px] sm:text-sm font-normal leading-normal line-clamp-2">
@@ -315,7 +338,7 @@ const Projects: React.FC = () => {
                                                   project.status === 'Archived' ? 'bg-gray-100 text-gray-600' :
                                                   'bg-blue-100 text-blue-700'}`}
                                             >
-                                                <span className="block max-w-full truncate whitespace-nowrap 2xl:translate-y-[1.5px]">
+                                                <span className={`block max-w-full truncate whitespace-nowrap ${isPageZoomChanged ? '' : '2xl:translate-y-[1.5px]'}`}>
                                                     {statuses.find(s => s.value === project.status)?.label || project.status}
                                                 </span>
                                             </span>
@@ -325,7 +348,7 @@ const Projects: React.FC = () => {
                                                   project.status === 'Archived' ? 'bg-gray-100 text-gray-600' :
                                                   'bg-blue-100 text-blue-700'}`}
                                             >
-                                                <span className="2xl:translate-y-[1.5px]">{statuses.find(s => s.value === project.status)?.label || project.status}</span>
+                                                <span className={isPageZoomChanged ? '' : '2xl:translate-y-[1.5px]'}>{statuses.find(s => s.value === project.status)?.label || project.status}</span>
                                             </span>
                                         </div>
                                         <p className="text-slate-500 dark:text-slate-400 text-[13px] sm:text-sm font-normal leading-normal line-clamp-2">
