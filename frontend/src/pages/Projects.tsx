@@ -246,9 +246,9 @@ const Projects: React.FC = () => {
                                             <span className="material-symbols-outlined text-[20px] sm:text-[24px]">draft</span>
                                         </div>
                                         <div className="flex flex-col justify-center flex-grow min-w-0">
-                                            <div className="flex items-center gap-2">
-                                                <p className="text-slate-800 dark:text-slate-100 text-[15px] sm:text-base font-semibold leading-normal line-clamp-1">{draftTitle}</p>
-                                                <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap ${
+                                            <div className="flex w-full min-w-0 items-center gap-[9px] sm:gap-2">
+                                                <p className="min-w-0 flex-1 sm:flex-none text-slate-800 dark:text-slate-100 text-[15px] sm:text-base font-semibold leading-normal line-clamp-1">{draftTitle}</p>
+                                                <span className={`ml-auto sm:ml-0 inline-flex items-center text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap ${
                                                     isActive
                                                         ? 'bg-slate-600 text-slate-200 dark:bg-slate-500 dark:text-slate-200'
                                                         : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'
@@ -304,10 +304,22 @@ const Projects: React.FC = () => {
                                     >
                                         {project.name.charAt(0).toUpperCase()}
                                     </div>
-                                    <div className="flex flex-col justify-center flex-grow">
-                                        <div className="flex items-center gap-2">
-                                            <p className="text-slate-900 dark:text-slate-50 text-[15px] sm:text-base font-semibold leading-normal line-clamp-1">{project.name}</p>
-                                            <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap
+                                    <div className="flex flex-col justify-center flex-grow min-w-0">
+                                        <div className="flex w-full min-w-0 items-center gap-[9px] sm:gap-2">
+                                            <p className="min-w-0 flex-1 sm:flex-none text-slate-900 dark:text-slate-50 text-[15px] sm:text-base font-semibold leading-normal truncate sm:line-clamp-1">
+                                                {project.name}
+                                            </p>
+                                            <span className={`sm:hidden ml-auto inline-flex min-w-0 max-w-[45%] items-center justify-center text-[10px] px-2 py-0.5 rounded-full uppercase font-bold
+                                                ${project.status === 'Completed' ? 'bg-green-100 text-green-700' :
+                                                  project.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
+                                                  project.status === 'Archived' ? 'bg-gray-100 text-gray-600' :
+                                                  'bg-blue-100 text-blue-700'}`}
+                                            >
+                                                <span className="block max-w-full truncate whitespace-nowrap">
+                                                    {statuses.find(s => s.value === project.status)?.label || project.status}
+                                                </span>
+                                            </span>
+                                            <span className={`hidden sm:inline-flex items-center text-[10px] px-2 py-0.5 rounded-full uppercase font-bold whitespace-nowrap
                                                 ${project.status === 'Completed' ? 'bg-green-100 text-green-700' :
                                                   project.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
                                                   project.status === 'Archived' ? 'bg-gray-100 text-gray-600' :
