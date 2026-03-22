@@ -164,7 +164,7 @@ const Login: React.FC = () => {
                 <div className="flex w-full min-h-0 flex-1 flex-col items-center justify-center px-4 py-8 max-sm:min-h-[calc(100svh-6rem)] max-sm:overflow-y-auto max-sm:py-4 sm:min-h-0 sm:px-6 sm:py-10 lg:py-14">
                     <div className="w-full max-w-md space-y-5 pt-1 max-sm:-translate-y-6 sm:translate-y-0 sm:space-y-7 sm:pt-2">
                         <div className="flex flex-col items-center gap-3 sm:gap-4">
-                            <div className="flex items-center justify-center gap-4">
+                            <div className="flex items-center justify-center gap-[15px]">
                                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#005ea2] to-[#0177ca] shadow-lg shadow-[#005ea2]/25 sm:h-12 sm:w-12">
                                     <span className="material-symbols-outlined text-3xl text-off-white">construction</span>
                                 </div>
