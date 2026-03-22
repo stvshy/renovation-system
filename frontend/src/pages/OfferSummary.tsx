@@ -424,8 +424,8 @@ const OfferSummary: React.FC = () => {
                                     {shoppingListItems.map((item) => (
                                         <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
                                             <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">{item.materialName}</td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap text-gray-900 dark:text-white">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                            <td className="px-4 py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap font-normal text-amber-600 dark:text-amber-400">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                            <td className="px-4 py-3 text-right whitespace-nowrap font-normal text-slate-900 dark:text-slate-100">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
                                             <td className="px-4 py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
                                             <td className="px-4 py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
                                         </tr>
@@ -787,8 +787,8 @@ const OfferSummary: React.FC = () => {
                                         {shoppingListItems.map((item) => (
                                             <tr key={item.key} className="border-t border-gray-100 dark:border-gray-700">
                                                 <td className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-900 dark:text-white break-words">{item.materialName}</td>
-                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-gray-900 dark:text-white">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap font-normal text-amber-600 dark:text-amber-400">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap font-normal text-slate-700 dark:text-slate-100">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
                                                 <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-amber-600 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
                                                 <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
                                             </tr>

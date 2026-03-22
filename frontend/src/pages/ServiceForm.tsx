@@ -105,7 +105,7 @@ const ShoppingListCard: React.FC<ShoppingListCardProps> = ({ item, requiredLabel
     const unitLabel = localizeUnit(item.unit);
     const requiredValueText = `${item.required.toFixed(2)} ${unitLabel}`;
     const availableValueText = `${item.available.toFixed(2)} ${unitLabel}`;
-    const desktopDetailsText = `${requiredLabel}: ${requiredValueText} ${inStockLabel}: ${availableValueText}`;
+    const desktopDetailsText = `${requiredLabel}: ${requiredValueText} / ${inStockLabel}: ${availableValueText}`;
     const shortageCostText = `${item.shortageCost.toFixed(2)} ${currencyCode}`;
 
     useEffect(() => {
@@ -167,7 +167,7 @@ const ShoppingListCard: React.FC<ShoppingListCardProps> = ({ item, requiredLabel
                         <span>
                             {requiredLabel}:
                         </span>
-                        <span className="sm:hidden ml-1 text-[11px] font-bold text-amber-600 dark:text-amber-400 whitespace-nowrap">
+                        <span className="sm:hidden ml-1 text-[11px] font-normal text-amber-600 dark:text-amber-400 whitespace-nowrap">
                             {requiredValueText}
                         </span>
 
@@ -178,7 +178,7 @@ const ShoppingListCard: React.FC<ShoppingListCardProps> = ({ item, requiredLabel
 
                         {useCompactDesktopMeta ? (
                             <span className="hidden sm:inline ml-1 whitespace-nowrap">
-                                <span className="text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
+                                <span className="text-[11px] sm:text-xs font-normal text-amber-600 dark:text-amber-400">
                                     {requiredValueText}
                                 </span>
                                 <span className="ml-1 text-[11px] sm:text-xs text-slate-900 dark:text-slate-100">/</span>
@@ -188,13 +188,14 @@ const ShoppingListCard: React.FC<ShoppingListCardProps> = ({ item, requiredLabel
                             </span>
                         ) : (
                             <span className="hidden sm:inline ml-1 whitespace-nowrap">
-                                <span className="text-[11px] sm:text-xs font-bold text-red-600 dark:text-red-400">
+                                <span className="text-[11px] sm:text-xs font-normal text-amber-600 dark:text-amber-400">
                                     {requiredValueText}
                                 </span>
+                                <span className="ml-1 text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">{'/'}</span>
                                 <span className="ml-1">
                                     {inStockLabel}:
                                 </span>
-                                <span className="ml-1 text-[11px] sm:text-xs font-bold text-amber-600 dark:text-amber-400">
+                                <span className="ml-1 text-[11px] sm:text-xs text-slate-900 dark:text-slate-100">
                                     {availableValueText}
                                 </span>
                             </span>
