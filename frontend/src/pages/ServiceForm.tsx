@@ -819,7 +819,7 @@ const ServiceForm: React.FC = () => {
     };
 
     return (
-        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
+        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center pt-4 pb-2 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[1280px] flex-1 gap-4 sm:gap-6">
                 {/* Header */}
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pt-0 pb-4 px-2 sm:pt-4 sm:px-4">
@@ -1580,7 +1580,7 @@ const ServiceForm: React.FC = () => {
 
                 {/* Footer Navigation */}
                 {isEditMode ? (
-                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-2 pt-6 pb-2 border-t border-slate-200 dark:border-slate-800 px-2 sm:px-4 sm:mt-2 sm:pt-8 sm:pb-3">
+                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-2 pt-6 pb-0 border-t border-slate-200 dark:border-slate-800 px-2 sm:px-4 sm:mt-2 sm:pt-8 sm:pb-3">
                         <button
                             onClick={() =>
                                 navigate("/projects/new/room", {
@@ -1609,7 +1609,7 @@ const ServiceForm: React.FC = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-2 pt-6 pb-2 border-t border-slate-200 dark:border-slate-800 px-0 sm:px-4 sm:mt-2 sm:pt-8 sm:pb-3">
+                    <div className="flex flex-row sm:flex-row justify-between items-center gap-3 mt-2 pt-6 pb-0 border-t border-slate-200 dark:border-slate-800 px-0 sm:px-4 sm:mt-2 sm:pt-8 sm:pb-3">
                         <button
                             onClick={() =>
                                 navigate("/projects/new/room", {

@@ -265,7 +265,7 @@ const OfferSummary: React.FC = () => {
     };
 
     return (
-        <div className="offer-summary-page px-3 sm:px-4 md:px-10 lg:px-20 print:px-4 flex flex-1 justify-center py-4 sm:py-5 print:py-0 print:block print:overflow-visible print:bg-white">
+        <div className="offer-summary-page px-3 sm:px-4 md:px-10 lg:px-20 print:px-4 flex flex-1 justify-center pt-4 pb-2 sm:py-5 print:py-0 print:block print:overflow-visible print:bg-white">
             <div className="layout-content-container flex flex-col max-w-[1280px] print:max-w-none w-full flex-1 print:block print:overflow-visible print:bg-white">
                 {/* Header: mobile = Back → title → pills → Print; desktop = title block | Back + Print side by side */}
                 <div className="flex flex-col gap-y-1 pt-0 pb-2 px-2 sm:pt-4 sm:pb-4 sm:px-4">
@@ -821,7 +821,7 @@ const OfferSummary: React.FC = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-row sm:flex-row sm:flex-wrap items-center justify-between sm:justify-between gap-3 sm:gap-4 px-2 sm:px-4 mt-6 pt-6 pb-2 sm:mt-8 sm:pt-8 sm:pb-3 border-t border-gray-200 dark:border-gray-700 print:hidden">
+                <div className="flex flex-row sm:flex-row sm:flex-wrap items-center justify-between sm:justify-between gap-3 sm:gap-4 px-2 sm:px-4 mt-6 pt-6 pb-0 sm:mt-8 sm:pt-8 sm:pb-3 border-t border-gray-200 dark:border-gray-700 print:hidden">
                     <button
                         onClick={() =>
                             navigate("/projects/new/services", {

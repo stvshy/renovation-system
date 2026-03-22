@@ -911,7 +911,7 @@ const RoomForm: React.FC = () => {
     };
 
     return (
-        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
+        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center pt-4 pb-2 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[1280px] flex-1">
                 {/* Header with Project Context */}
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pt-0 pb-4 px-2 sm:pt-4 sm:px-4">
@@ -1417,7 +1417,7 @@ const RoomForm: React.FC = () => {
 
                 {/* Footer Buttons */}
                 {isEditMode ? (
-                    <div className="flex flex-row md:grid md:grid-cols-2 px-2 sm:px-4 gap-3 sm:gap-4 items-center mt-6 pt-6 pb-2 sm:mt-4 sm:pt-8 sm:pb-3 border-t border-gray-200 dark:border-gray-700 justify-between">
+                    <div className="flex flex-row md:grid md:grid-cols-2 px-2 sm:px-4 gap-3 sm:gap-4 items-center mt-6 pt-6 pb-0 sm:mt-4 sm:pt-8 sm:pb-3 border-t border-gray-200 dark:border-gray-700 justify-between">
                         <button
                             onClick={handleGoToClientStep}
                             className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all md:justify-self-start"
@@ -1436,7 +1436,7 @@ const RoomForm: React.FC = () => {
                         </button>
                     </div>
                 ) : (
-                    <div className="flex flex-row md:flex-row px-2 sm:px-4 justify-between md:justify-end gap-3 sm:gap-4 mt-6 pt-6 pb-2 sm:mt-4 sm:pt-8 sm:pb-3 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-row md:flex-row px-2 sm:px-4 justify-between md:justify-end gap-3 sm:gap-4 mt-6 pt-6 pb-0 sm:mt-4 sm:pt-8 sm:pb-3 border-t border-gray-200 dark:border-gray-700">
                         {showManualSaveInCreate ? (
                             <>
                                 <button

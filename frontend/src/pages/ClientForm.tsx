@@ -316,7 +316,7 @@ const ClientForm: React.FC = () => {
     };
 
     return (
-        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
+        <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center pt-4 pb-2 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[1280px] flex-1">
                 <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pt-0 pb-4 px-2 sm:pt-4 sm:px-4">
                     <div className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2 items-start">
@@ -543,7 +543,7 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {isEditMode ? (
-                        <div className="flex justify-end px-0 mt-2 pt-6 pb-2 border-t border-gray-200 dark:border-gray-700 w-full sm:mt-4 sm:pt-8 sm:pb-3">
+                        <div className="flex justify-end px-0 mt-2 pt-6 pb-0 border-t border-gray-200 dark:border-gray-700 w-full sm:mt-4 sm:pt-8 sm:pb-3">
                             <button
                                 onClick={handleNext}
                                 className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
@@ -553,7 +553,7 @@ const ClientForm: React.FC = () => {
                             </button>
                         </div>
                     ) : (
-                        <div className="flex flex-row md:flex-row gap-3 px-3 sm:px-4 mt-2 pt-6 pb-2 border-t border-gray-200 dark:border-gray-700 w-full justify-between md:justify-end md:items-center sm:mt-4 sm:pt-8 sm:pb-3">
+                        <div className="flex flex-row md:flex-row gap-3 px-3 sm:px-4 mt-2 pt-6 pb-0 border-t border-gray-200 dark:border-gray-700 w-full justify-between md:justify-end md:items-center sm:mt-4 sm:pt-8 sm:pb-3">
                             <button onClick={() => navigate('/projects')} className="w-auto md:w-auto flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all">
                                 {t('Anuluj', 'Cancel')}
                             </button>
