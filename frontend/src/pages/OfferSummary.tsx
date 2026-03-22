@@ -370,7 +370,7 @@ const OfferSummary: React.FC = () => {
                             </button>
                         </div>
                         </div>
-                        <div className="flex w-full sm:w-auto flex-col sm:flex-row sm:items-center gap-2 print:hidden mt-4 sm:mt-0">
+                        <div className="flex w-full sm:w-auto flex-col sm:flex-row sm:items-center gap-2 print:hidden mt-2 sm:mt-0">
                             {isEditMode && (
                                 <div className="hidden sm:block print:hidden">
                                     <EditWizardExitControl

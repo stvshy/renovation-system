@@ -966,7 +966,7 @@ const RoomForm: React.FC = () => {
                         </button>
                     </div>
                     {clientData && (
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 ml-[0.8px] sm:ml-0">
                             {t("Projekt dla", "Project for")}:{" "}
                             <span className="font-semibold">
                                 {clientData.firstName} {clientData.lastName}
@@ -976,9 +976,9 @@ const RoomForm: React.FC = () => {
 
                     {/* List of Existing Rooms */}
                     {existingRooms.length > 0 && (
-                        <div className="mt-4">
-                            <p className="text-xs font-bold text-gray-500 uppercase mb-2 -ml-[3px] sm:ml-0">{t("Pokoje w projekcie", "Rooms in project")}:</p>
-                            <div className="flex flex-wrap gap-2 -ml-[6px] sm:ml-0">
+                        <div className="mt-2.5 sm:mt-4">
+                            <p className="text-xs font-bold text-gray-500 uppercase mb-2 ml-[0.8px] sm:ml-0">{t("Pokoje w projekcie", "Rooms in project")}:</p>
+                            <div className="flex flex-wrap gap-2 -ml-[0.5px] sm:ml-0">
                                 {existingRooms.map((r, idx) => (
                                     <button
                                         key={idx}
