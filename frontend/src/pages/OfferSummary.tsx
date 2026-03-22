@@ -760,7 +760,7 @@ const OfferSummary: React.FC = () => {
                                             {item.materialName}
                                         </p>
                                         <div className="mt-1.5 grid grid-cols-2 gap-3 border-t border-slate-100 dark:border-slate-700 pt-1.5">
-                                            <p className="min-w-0 text-sm font-bold text-amber-700 dark:text-amber-300 leading-tight">
+                                            <p className="min-w-0 text-sm font-bold text-amber-600 dark:text-amber-300 leading-tight">
                                                 {item.toBuy.toFixed(2)} {localizeUnit(item.unit)}
                                             </p>
                                             <p className="min-w-0 text-right text-sm font-bold text-red-600 dark:text-red-400 leading-tight whitespace-nowrap">
@@ -789,7 +789,7 @@ const OfferSummary: React.FC = () => {
                                                 <td className="px-2 sm:px-4 py-2 sm:py-3 font-semibold text-gray-900 dark:text-white break-words">{item.materialName}</td>
                                                 <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-gray-900 dark:text-white">{item.required.toFixed(2)} {localizeUnit(item.unit)}</td>
                                                 <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap">{item.available.toFixed(2)} {localizeUnit(item.unit)}</td>
-                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-amber-700 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-amber-600 dark:text-amber-300 font-bold">{item.toBuy.toFixed(2)} {localizeUnit(item.unit)}</td>
                                                 <td className="px-2 sm:px-4 py-2 sm:py-3 text-right whitespace-nowrap text-red-600 dark:text-red-400 font-bold">{item.shortageCost.toFixed(2)} {currencyCode}</td>
                                             </tr>
                                         ))}
