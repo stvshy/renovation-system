@@ -152,7 +152,7 @@ const Login: React.FC = () => {
                         style={{ animation: "demo-gradient-shift 3.4s linear infinite" }}
                     />
                     <div
-                        className="relative rounded-full bg-[linear-gradient(110deg,#7dd3fc,#38bdf8,#0ea5e9,#005ea2,#0ea5e9,#38bdf8,#7dd3fc)] bg-[length:230%_100%] p-[1.5px] transition-transform duration-200 group-hover:scale-105 group-active:scale-[0.98]"
+                        className="relative rounded-full bg-[linear-gradient(110deg,#7dd3fc,#38bdf8,#0ea5e9,#005ea2,#0ea5e9,#38bdf8,#7dd3fc)] bg-[length:230%_100%] p-[1.5px] transition-all duration-200 group-hover:scale-105 group-hover:p-px group-active:scale-[0.98]"
                         style={{ animation: "demo-gradient-shift 3.4s linear infinite" }}
                     >
                         <button
@@ -253,7 +253,7 @@ const Login: React.FC = () => {
                                         )}
                                     </div>
                                 </div>
-                                <div>
+                                <div className="max-sm:!mt-4">
                                     <label
                                         className="block pb-2 text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100"
                                         htmlFor="password"
