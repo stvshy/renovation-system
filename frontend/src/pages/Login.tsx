@@ -72,7 +72,7 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 font-body text-text-dark">
+        <div className="relative flex min-h-dvh sm:min-h-screen w-full flex-col overflow-x-hidden bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 font-body text-text-dark">
             {/* Demo button – fixed pill at the top centre */}
             <div className="pointer-events-none fixed inset-x-0 top-5 z-50 flex justify-center">
                 <button

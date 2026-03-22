@@ -25,7 +25,7 @@ const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
 
   if (loading && !isDemoMode) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">{t("Ładowanie...", "Loading...")}</div>
+      <div className="flex h-dvh sm:h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">{t("Ładowanie...", "Loading...")}</div>
     );
   }
 
@@ -43,7 +43,7 @@ const PublicRoute = ({ children }: { children?: React.ReactNode }) => {
 
   if (loading && !isDemoMode) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">{t("Ładowanie...", "Loading...")}</div>
+      <div className="flex h-dvh sm:h-screen items-center justify-center bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">{t("Ładowanie...", "Loading...")}</div>
     );
   }
 

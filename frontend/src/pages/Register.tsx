@@ -90,7 +90,7 @@ const Register: React.FC = () => {
     };
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-background-light font-body text-text-light dark:bg-background-dark dark:text-text-dark">
+        <div className="relative min-h-dvh sm:min-h-screen overflow-hidden bg-background-light font-body text-text-light dark:bg-background-dark dark:text-text-dark">
             <div className="absolute inset-0 lg:hidden">
                 <img
                     className="h-full w-full object-cover"
@@ -101,9 +101,9 @@ const Register: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/50 to-slate-950/85"></div>
             </div>
 
-            <div className="relative z-10 flex min-h-screen w-full flex-col lg:flex-row">
-                <section className="flex min-h-screen w-full lg:min-h-screen lg:w-1/2 lg:border-r lg:border-slate-200 lg:bg-white dark:lg:border-slate-800 dark:lg:bg-slate-950">
-                    <div className="flex min-h-screen w-full flex-col px-4 py-4 sm:px-6 sm:py-6 lg:h-full lg:min-h-0 lg:px-10 lg:pb-12 lg:pt-8 xl:px-14">
+            <div className="relative z-10 flex min-h-dvh sm:min-h-screen w-full flex-col lg:flex-row">
+                <section className="flex min-h-dvh sm:min-h-screen w-full lg:min-h-screen lg:w-1/2 lg:border-r lg:border-slate-200 lg:bg-white dark:lg:border-slate-800 dark:lg:bg-slate-950">
+                    <div className="flex min-h-dvh sm:min-h-screen w-full flex-col px-4 py-4 sm:px-6 sm:py-6 lg:h-full lg:min-h-0 lg:px-10 lg:pb-12 lg:pt-8 xl:px-14">
                         <header className="flex items-center gap-4 text-white lg:text-slate-900 dark:text-off-white">
                             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/35 lg:h-14 lg:w-14">
                                 <span className="material-symbols-outlined text-[30px] lg:text-[34px]">construction</span>
