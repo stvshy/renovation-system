@@ -1341,7 +1341,7 @@ const ServiceForm: React.FC = () => {
                                 <div className="space-y-0.5">
                                     <div className="flex items-baseline justify-between gap-3">
                                         <h3 className="min-w-0 font-bold text-[15px] sm:text-base text-slate-800 dark:text-white flex items-baseline gap-1.5 sm:gap-2">
-                                            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[18px] sm:text-[24px] shrink-0 relative top-[3px] sm:top-[5px]">shopping_cart</span>
+                                            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[18px] sm:text-[23px] shrink-0 relative top-[3px] sm:top-[5px]">shopping_cart</span>
                                             <span className="truncate">{t('Lista zakupów projektu', 'Project shopping list')}</span>
                                         </h3>
 
@@ -1399,7 +1399,7 @@ const ServiceForm: React.FC = () => {
                                     <div className="flex items-baseline justify-between gap-3">
                                         <div className="min-w-0 flex items-baseline gap-2">
                                             <h3 className="min-w-0 font-bold text-[15px] sm:text-base text-slate-800 dark:text-white flex items-baseline gap-1.5 sm:gap-2">
-                                                <span className="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[18px] sm:text-[24px] shrink-0 relative top-[3px] sm:top-[5.5px]">request_quote</span>
+                                                <span className="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[18px] sm:text-[23px] shrink-0 relative top-[3px] sm:top-[5.5px]">request_quote</span>
                                                 <span className="truncate">{t('Koszty dodatkowe', 'Additional costs')}</span>
                                             </h3>
                                             <button

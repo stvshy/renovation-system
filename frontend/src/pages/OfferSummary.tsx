@@ -577,21 +577,29 @@ const OfferSummary: React.FC = () => {
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none print:border print:border-gray-300 ${additionalCosts.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-rose-200 dark:border-rose-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0 sm:gap-3 print:bg-white print:border-b print:border-gray-200 ${additionalCosts.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-rose-100 dark:border-rose-900/40 bg-rose-50/70 dark:bg-rose-900/10'}`}>
                             <div>
-                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white print:text-black">
-                                    {t('Koszty dodatkowe', 'Additional costs')}
-                                    <span className="hidden sm:inline print:inline">
-                                        {" "}
-                                        <span className="font-medium">(</span>
-                                        <span
-                                            className={
-                                                additionalCosts.length === 0
-                                                    ? "text-gray-600 dark:text-gray-300 print:text-black"
-                                                    : "text-amber-600 dark:text-amber-400 print:text-black"
-                                            }
-                                        >
-                                            {additionalCosts.length}
+                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white print:text-black flex items-start sm:items-center gap-2">
+                                    <span
+                                        className="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[21.5px] sm:text-[23px] shrink-0 relative top-[3px] sm:-top-[1.4px] print:hidden"
+                                        aria-hidden
+                                    >
+                                        request_quote
+                                    </span>
+                                    <span className="min-w-0">
+                                        {t('Koszty dodatkowe', 'Additional costs')}
+                                        <span className="hidden sm:inline print:inline">
+                                            {" "}
+                                            <span className="font-medium">(</span>
+                                            <span
+                                                className={
+                                                    additionalCosts.length === 0
+                                                        ? "text-gray-600 dark:text-gray-300 print:text-black"
+                                                        : "text-amber-600 dark:text-amber-400 print:text-black"
+                                                }
+                                            >
+                                                {additionalCosts.length}
+                                            </span>
+                                            <span className="font-medium">)</span>
                                         </span>
-                                        <span className="font-medium">)</span>
                                     </span>
                                 </h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -674,21 +682,29 @@ const OfferSummary: React.FC = () => {
                     <div className={`rounded-xl bg-white dark:bg-background-dark/50 overflow-hidden print:shadow-none ${shoppingListItems.length === 0 ? 'border border-slate-200 dark:border-slate-700 shadow-[0_0_10px_rgba(0,0,0,0.08)]' : 'border border-amber-200 dark:border-amber-800 shadow-[0_0_10px_rgba(0,0,0,0.08)]'}`}>
                         <div className={`px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0 sm:gap-3 ${shoppingListItems.length === 0 ? 'bg-white dark:bg-background-dark/50' : 'border-b border-amber-100 dark:border-amber-900/40 bg-amber-50/70 dark:bg-amber-900/10'}`}>
                             <div>
-                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white">
-                                    {t('Lista zakupów', 'Shopping list')}
-                                    <span className="hidden sm:inline">
-                                        {" "}
-                                        <span className="font-medium">(</span>
-                                        <span
-                                            className={
-                                                shoppingListItems.length === 0
-                                                    ? "text-gray-600 dark:text-gray-300"
-                                                    : "text-amber-600 dark:text-amber-400"
-                                            }
-                                        >
-                                            {shoppingListItems.length}
+                                <h2 className="text-lg font-bold text-[#0d141b] dark:text-white flex items-start sm:items-center gap-2">
+                                    <span
+                                        className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[21.5px] sm:text-[23px] shrink-0 relative top-[2.7px] sm:-top-[2px] print:hidden"
+                                        aria-hidden
+                                    >
+                                        shopping_cart
+                                    </span>
+                                    <span className="min-w-0">
+                                        {t('Lista zakupów', 'Shopping list')}
+                                        <span className="hidden sm:inline">
+                                            {" "}
+                                            <span className="font-medium">(</span>
+                                            <span
+                                                className={
+                                                    shoppingListItems.length === 0
+                                                        ? "text-gray-600 dark:text-gray-300"
+                                                        : "text-amber-600 dark:text-amber-400"
+                                                }
+                                            >
+                                                {shoppingListItems.length}
+                                            </span>
+                                            <span className="font-medium">)</span>
                                         </span>
-                                        <span className="font-medium">)</span>
                                     </span>
                                 </h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
