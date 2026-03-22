@@ -822,8 +822,8 @@ const ServiceForm: React.FC = () => {
         <div className="px-3 sm:px-4 md:px-10 lg:px-20 flex flex-1 justify-center py-4 sm:py-5">
             <div className="layout-content-container flex flex-col w-full max-w-[1280px] flex-1 gap-4 sm:gap-6">
                 {/* Header */}
-                <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4 pb-4">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                <div className="flex flex-col gap-2 border-b border-gray-200 dark:border-gray-700 pt-0 pb-4 px-2 sm:pt-4 sm:px-4">
+                    <div className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2 items-start">
                         <div>
                             <p className="text-text-dark dark:text-off-white text-[28px] sm:text-[34px] font-black leading-tight">{t('Konfiguracja Prac', 'Work Configuration')}</p>
                             <span className="mt-2 inline-flex flex-col bg-primary/10 text-primary text-[10.5px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider w-fit leading-tight">
@@ -832,7 +832,7 @@ const ServiceForm: React.FC = () => {
                         </div>
                         <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
                     </div>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1.5 sm:pt-1">
                         <button
                             type="button"
                             onClick={() =>
@@ -847,7 +847,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11.5px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 1', 'Step 1')}
                         </button>
@@ -865,13 +865,13 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11.5px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 2', 'Step 2')}
                         </button>
                         <button
                             type="button"
-                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-primary"
+                            className="text-[11.5px] sm:text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary"
                         >
                             {t('Krok 3', 'Step 3')}
                         </button>
@@ -889,7 +889,7 @@ const ServiceForm: React.FC = () => {
                                     },
                                 })
                             }
-                            className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                            className="text-[11.5px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             {t('Krok 4', 'Step 4')}
                         </button>

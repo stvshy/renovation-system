@@ -21,9 +21,11 @@ interface EditWizardExitControlProps {
     visible: boolean;
     onSaveAndExit: () => Promise<void> | void;
     onExitWithoutSaving: () => void;
+    /** Applied to the wrapper around the trigger button (e.g. grid placement). */
+    className?: string;
 }
 
-const EditWizardExitControl: React.FC<EditWizardExitControlProps> = ({ visible, onSaveAndExit, onExitWithoutSaving }) => {
+const EditWizardExitControl: React.FC<EditWizardExitControlProps> = ({ visible, onSaveAndExit, onExitWithoutSaving, className }) => {
     const { t, language } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -48,17 +50,21 @@ const EditWizardExitControl: React.FC<EditWizardExitControlProps> = ({ visible, 
 
     if (!visible) return null;
 
+    const triggerButton = (
+        <button
+            type="button"
+            onClick={handleOpenExit}
+            disabled={isChecking}
+            className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg pl-0 pr-2 py-1.5 sm:pl-3 sm:pr-3 sm:py-2 -mt-0.5 sm:mt-0 text-sm font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white transition-colors"
+        >
+            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span>{isChecking ? t('Sprawdzanie...', 'Checking...') : t('Wróć', 'Back')}</span>
+        </button>
+    );
+
     return (
         <>
-            <button
-                type="button"
-                onClick={handleOpenExit}
-                disabled={isChecking}
-                className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white transition-colors"
-            >
-                <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                <span>{isChecking ? t('Sprawdzanie...', 'Checking...') : t('Wyjdź', 'Exit')}</span>
-            </button>
+            {className ? <div className={className}>{triggerButton}</div> : triggerButton}
 
             {isOpen &&
                 createPortal(

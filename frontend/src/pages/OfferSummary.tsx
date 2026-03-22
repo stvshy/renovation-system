@@ -267,9 +267,19 @@ const OfferSummary: React.FC = () => {
     return (
         <div className="offer-summary-page px-3 sm:px-4 md:px-10 lg:px-20 print:px-4 flex flex-1 justify-center py-4 sm:py-5 print:py-0 print:block print:overflow-visible print:bg-white">
             <div className="layout-content-container flex flex-col max-w-[1280px] print:max-w-none w-full flex-1 print:block print:overflow-visible print:bg-white">
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:flex-wrap justify-between gap-3 sm:gap-4 p-2 sm:p-4 sm:items-center">
-                    <div>
+                {/* Header: mobile = Back → title → pills → Print; desktop = title block | Back + Print side by side */}
+                <div className="flex flex-col gap-y-1 pt-0 pb-2 px-2 sm:pt-4 sm:pb-4 sm:px-4">
+                    {isEditMode && (
+                        <div className="sm:hidden print:hidden">
+                            <EditWizardExitControl
+                                visible={isEditMode}
+                                onSaveAndExit={handleSaveAndExit}
+                                onExitWithoutSaving={handleExitWithoutSaving}
+                            />
+                        </div>
+                    )}
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-between gap-3 sm:gap-4 sm:items-center">
+                        <div className="min-w-0 flex-1">
                         <p className="text-[#0d141b] dark:text-white text-[28px] sm:text-[34px] font-black leading-tight tracking-[-0.033em] font-display">{t('Kosztorys Projektu', 'Project Estimate')}</p>
                         <div className="mt-1 flex items-center gap-2">
                             <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">{effectiveProjectName}</p>
@@ -297,7 +307,7 @@ const OfferSummary: React.FC = () => {
                                 {t('Klient:', 'Client:')} <span className="font-semibold text-gray-700 dark:text-slate-200">{clientData.firstName} {clientData.lastName}</span>
                             </p>
                         )}
-                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-3.5 sm:mt-3">
                             <button
                                 type="button"
                                 onClick={() =>
@@ -312,7 +322,7 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11.5px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 1', 'Step 1')}
                             </button>
@@ -330,7 +340,7 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11.5px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 2', 'Step 2')}
                             </button>
@@ -348,26 +358,35 @@ const OfferSummary: React.FC = () => {
                                         },
                                     })
                                 }
-                                className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
+                                className="text-[11.5px] sm:text-[11.9px] font-bold rounded-lg border border-slate-300 dark:border-slate-600 px-[10.3px] py-[4.4px] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 print:hidden"
                             >
                                 {t('Krok 3', 'Step 3')}
                             </button>
                             <button
                                 type="button"
-                                className="text-[11px] sm:text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-2.5 sm:px-[10.3px] py-1 sm:py-[4.4px] text-primary print:hidden"
+                                className="text-[11.5px] sm:text-[11.9px] font-bold rounded-lg border border-primary bg-white dark:bg-slate-900 px-[10.3px] py-[4.4px] text-primary print:hidden"
                             >
                                 {t('Krok 4', 'Step 4')}
                             </button>
                         </div>
-                    </div>
-                    <div className="flex w-full sm:w-auto flex-col sm:flex-row gap-2 print:hidden">
-                        <EditWizardExitControl visible={isEditMode} onSaveAndExit={handleSaveAndExit} onExitWithoutSaving={handleExitWithoutSaving} />
-                        <button
-                            onClick={handlePrint}
-                            className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                        >
-                            <span className="truncate">{t('Drukuj / Pobierz PDF', 'Print / Download PDF')}</span>
-                        </button>
+                        </div>
+                        <div className="flex w-full sm:w-auto flex-col sm:flex-row sm:items-center gap-2 print:hidden mt-4 sm:mt-0">
+                            {isEditMode && (
+                                <div className="hidden sm:block print:hidden">
+                                    <EditWizardExitControl
+                                        visible={isEditMode}
+                                        onSaveAndExit={handleSaveAndExit}
+                                        onExitWithoutSaving={handleExitWithoutSaving}
+                                    />
+                                </div>
+                            )}
+                            <button
+                                onClick={handlePrint}
+                                className="flex w-full sm:w-auto min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] font-display hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                            >
+                                <span className="truncate">{t('Drukuj / Pobierz PDF', 'Print / Download PDF')}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
