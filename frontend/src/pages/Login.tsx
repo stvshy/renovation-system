@@ -133,20 +133,42 @@ const Login: React.FC = () => {
 
     return (
         <div className="relative flex min-h-dvh sm:min-h-screen w-full flex-col overflow-x-hidden bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 font-body text-text-dark">
+            <style>{`
+                @keyframes demo-gradient-shift {
+                    0% {
+                        background-position: 0% 50%;
+                    }
+                    100% {
+                        background-position: 200% 50%;
+                    }
+                }
+            `}</style>
             {/* Demo: bottom on mobile, top centre from sm */}
             <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center sm:bottom-auto sm:top-5">
-                <button
-                    onClick={handleViewDemo}
-                    className="pointer-events-auto group flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/90 px-5 py-2.5 text-sm shadow-lg shadow-sky-200/40 backdrop-blur-md transition-all duration-200 hover:scale-105 hover:border-sky-300 hover:bg-white hover:shadow-sky-300/50 active:scale-[0.98] [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] sm:px-4 sm:py-2"
-                >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-dependable-blue text-[10px] font-bold text-white shadow-sm sm:h-5 sm:w-5">
-                        ▶
-                    </span>
-                    <span className="font-semibold text-slate-700 group-hover:text-dependable-blue transition-colors">
-                        {t("Zobacz demo", "View Demo")}
-                    </span>
-                    <span className="text-dependable-blue transition-transform duration-200 group-hover:translate-x-0.5">→</span>
-                </button>
+                <div className="pointer-events-auto group relative isolate">
+                    <span
+                        aria-hidden
+                        className="pointer-events-none absolute -inset-2 -z-20 rounded-full bg-[linear-gradient(110deg,#7dd3fc,#38bdf8,#0ea5e9,#005ea2,#0ea5e9,#38bdf8,#7dd3fc)] bg-[length:230%_100%] opacity-35 blur-lg transition-transform duration-200 group-hover:scale-105"
+                        style={{ animation: "demo-gradient-shift 3.4s linear infinite" }}
+                    />
+                    <div
+                        className="relative rounded-full bg-[linear-gradient(110deg,#7dd3fc,#38bdf8,#0ea5e9,#005ea2,#0ea5e9,#38bdf8,#7dd3fc)] bg-[length:230%_100%] p-[1.5px] transition-transform duration-200 group-hover:scale-105 group-active:scale-[0.98]"
+                        style={{ animation: "demo-gradient-shift 3.4s linear infinite" }}
+                    >
+                        <button
+                            onClick={handleViewDemo}
+                            className="relative flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/90 px-5 py-2.5 text-sm shadow-lg shadow-sky-200/35 backdrop-blur-md transition-all duration-200 hover:border-sky-300 hover:bg-white hover:shadow-sky-300/45 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] sm:px-4 sm:py-2"
+                        >
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-dependable-blue text-[10px] font-bold text-white shadow-sm sm:h-5 sm:w-5">
+                                ▶
+                            </span>
+                            <span className="font-semibold text-slate-700 group-hover:text-dependable-blue transition-colors">
+                                {t("Zobacz demo", "View Demo")}
+                            </span>
+                            <span className="text-dependable-blue transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(56,189,248,0.24),transparent_34%),radial-gradient(circle_at_84%_78%,rgba(14,165,233,0.2),transparent_36%),radial-gradient(circle_at_72%_22%,rgba(125,211,252,0.2),transparent_30%)]" />
