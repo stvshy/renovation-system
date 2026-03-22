@@ -148,7 +148,7 @@ const Login: React.FC = () => {
                 <div className="pointer-events-auto group relative isolate">
                     <span
                         aria-hidden
-                        className="pointer-events-none absolute -inset-2 -z-20 rounded-full bg-[linear-gradient(110deg,#7dd3fc,#38bdf8,#0ea5e9,#005ea2,#0ea5e9,#38bdf8,#7dd3fc)] bg-[length:230%_100%] opacity-35 blur-lg transition-transform duration-200 group-hover:scale-105"
+                        className="pointer-events-none absolute -inset-1.5 -z-20 rounded-full bg-[linear-gradient(110deg,#7dd3fc,#38bdf8,#0ea5e9,#005ea2,#0ea5e9,#38bdf8,#7dd3fc)] bg-[length:230%_100%] opacity-20 blur-md transition-transform duration-200 group-hover:scale-105"
                         style={{ animation: "demo-gradient-shift 3.4s linear infinite" }}
                     />
                     <div
@@ -157,7 +157,7 @@ const Login: React.FC = () => {
                     >
                         <button
                             onClick={handleViewDemo}
-                            className="relative flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/90 px-5 py-2.5 text-sm shadow-lg shadow-sky-200/35 backdrop-blur-md transition-all duration-200 hover:border-sky-300 hover:bg-white hover:shadow-sky-300/45 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] sm:px-4 sm:py-2"
+                            className="relative flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/90 px-4 py-2 text-sm shadow-md shadow-sky-200/32 backdrop-blur-md transition-all duration-200 hover:border-sky-300 hover:bg-white hover:shadow-sky-300/45 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] sm:px-4 sm:py-2 sm:shadow-lg sm:shadow-sky-200/35"
                         >
                             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-dependable-blue text-[10px] font-bold text-white shadow-sm sm:h-5 sm:w-5">
                                 ▶
