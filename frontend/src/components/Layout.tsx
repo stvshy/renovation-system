@@ -22,7 +22,7 @@ const Layout: React.FC = () => {
                     <div className="print-color-exact z-40 flex items-center justify-between gap-3 bg-gradient-to-r from-sky-500 to-dependable-blue px-4 py-2 text-white shadow-md sm:sticky sm:top-0 print:relative print:top-auto print:mb-3 print:rounded-lg print:px-3 print:py-2 print:shadow-none">
                         <div className="flex items-center gap-2 text-sm font-medium">
                             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-[10px] font-bold print:bg-white/25">
-                                <span className="print:hidden">▶</span>
+                                <span className="ml-[1.7px] print:hidden">▶</span>
                                 <span className="hidden print:inline material-symbols-outlined text-xs leading-none">construction</span>
                             </span>
                             <span className="print:hidden sm:hidden">{t('Tryb Demo', 'Demo Mode')}</span>

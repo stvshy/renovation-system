@@ -101,26 +101,33 @@ const Login: React.FC = () => {
                     <div className="w-full max-w-md space-y-5 pt-1 sm:space-y-7 sm:pt-2">
                         <div className="flex flex-col items-center gap-3 sm:gap-4">
                             <div className="flex items-center justify-center gap-3">
-                                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-dependable-blue shadow-lg shadow-dependable-blue/25 dark:bg-primary sm:h-12 sm:w-12">
+                                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#005ea2] to-[#0177ca] shadow-lg shadow-[#005ea2]/25 sm:h-12 sm:w-12">
                                     <span className="material-symbols-outlined text-3xl text-off-white">construction</span>
                                 </div>
-                                <h1 className="font-display text-3xl font-bold tracking-tight text-text-dark dark:text-off-white sm:text-4xl">Renovation System</h1>
+                                <h1 className="font-display text-3xl font-bold tracking-tight text-text-dark dark:text-off-white sm:text-4xl">
+                                    Renovation System
+                                </h1>
                             </div>
-                            <p className="mt-1 px-4 text-center text-sm text-neutral-gray sm:text-base">{t("Zaloguj się, aby zarządzać swoimi projektami.", "Sign in to manage your projects.")}</p>
+                            <p className="mt-1 px-4 text-center text-sm text-neutral-gray sm:text-base">
+                                {t("Zaloguj się, aby zarządzać swoimi projektami.", "Sign in to manage your projects.")}
+                            </p>
                         </div>
-                        <div className="rounded-2xl border border-slate-300/70 bg-white/85 p-5 shadow-xl backdrop-blur-sm sm:p-8 dark:border-slate-700 dark:bg-slate-900/70">
+                        <div className="relative rounded-xl border border-[#c0c7d3]/10 bg-white/90 p-5 shadow-2xl shadow-[#111c2d]/5 backdrop-blur-sm dark:border-slate-600/20 dark:bg-slate-900/90 sm:p-8">
                             <form className="space-y-6" onSubmit={handleLogin}>
                                 {error && <div className="p-3 text-sm text-red-500 bg-red-100 dark:bg-red-900/30 rounded-lg">{error}</div>}
                                 <div>
-                                    <label className="text-sm font-semibold uppercase tracking-wide text-primary pb-2 block dark:text-slate-100" htmlFor="email">
+                                    <label
+                                        className="block pb-2 text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100"
+                                        htmlFor="email"
+                                    >
                                         {t("E-mail", "Email")}
                                     </label>
                                     <input
                                         autoComplete="email"
-                                        className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-neutral-gray/45 bg-off-white p-3 font-body text-sm font-medium leading-normal text-text-dark placeholder:text-neutral-gray focus:border-dependable-blue focus:outline-0 focus:ring-2 focus:ring-dependable-blue/20 dark:border-neutral-gray/70 dark:bg-background-dark dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:border-primary dark:focus:ring-primary/25 sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
+                                        className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-0 bg-off-white p-3 font-body text-sm font-medium leading-normal text-text-dark ring-1 ring-inset ring-[#c0c7d3]/20 placeholder:text-neutral-gray transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-800/80 dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:bg-slate-900 dark:focus:ring-primary sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
                                         id="email"
                                         name="email"
-                                        placeholder={t("Wprowadź swój e-mail", "Enter your email")}
+                                        placeholder={t("Wprowadź swój e-mail", "Enter your e-mail")}
                                         required
                                         type="email"
                                         value={email}
@@ -128,13 +135,16 @@ const Login: React.FC = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-sm font-semibold uppercase tracking-wide text-primary pb-2 block dark:text-slate-100" htmlFor="password">
+                                    <label
+                                        className="block pb-2 text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100"
+                                        htmlFor="password"
+                                    >
                                         {t("Hasło", "Password")}
                                     </label>
                                     <div className="relative flex w-full items-center">
                                         <input
                                             autoComplete="current-password"
-                                            className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border border-neutral-gray/45 bg-off-white p-3 pr-10 font-body text-sm font-medium leading-normal text-text-dark placeholder:text-neutral-gray focus:border-dependable-blue focus:outline-0 focus:ring-2 focus:ring-dependable-blue/20 dark:border-neutral-gray/70 dark:bg-background-dark dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:border-primary dark:focus:ring-primary/25 sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
+                                            className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-0 bg-off-white p-3 pr-10 font-body text-sm font-medium leading-normal text-text-dark ring-1 ring-inset ring-[#c0c7d3]/20 placeholder:text-neutral-gray transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-800/80 dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:bg-slate-900 dark:focus:ring-primary sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
                                             id="password"
                                             name="password"
                                             placeholder={t("Wprowadź swoje hasło", "Enter your password")}
@@ -146,7 +156,7 @@ const Login: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 text-gray-500 transition-colors hover:text-dependable-blue dark:text-gray-400 dark:hover:text-primary focus:outline-none"
+                                            className="absolute right-3 text-neutral-gray transition-colors hover:text-text-dark focus:outline-none dark:text-slate-400 dark:hover:text-off-white"
                                         >
                                             <span className="material-symbols-outlined text-xl">{showPassword ? "visibility_off" : "visibility"}</span>
                                         </button>
@@ -155,11 +165,14 @@ const Login: React.FC = () => {
 
                                 <div className="pt-4 sm:pt-5">
                                     <button
-                                        className="flex h-12 w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-dependable-blue px-5 font-display text-base font-bold leading-normal tracking-[0.015em] text-off-white transition-all hover:scale-[0.995] hover:bg-dependable-blue/90 disabled:opacity-50 dark:bg-primary dark:hover:bg-primary/90"
+                                        className="group flex h-12 w-full min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#005ea2] to-[#0177ca] px-5 font-display text-base font-bold leading-normal tracking-[0.015em] text-white shadow-lg shadow-[#005ea2]/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-[#005ea2]/30 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                                         type="submit"
                                         disabled={loading}
                                     >
                                         <span className="truncate">{loading ? t("Logowanie...", "Signing in...") : t("Zaloguj się", "Sign in")}</span>
+                                        {!loading && (
+                                            <span className="material-symbols-outlined text-xl transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                        )}
                                     </button>
                                 </div>
                             </form>

@@ -137,7 +137,7 @@ const Register: React.FC = () => {
                                             <input
                                                 autoComplete="email"
                                                 className={authInputClassName}
-                                                placeholder={t('Wprowadź swój e-mail', 'Enter your email')}
+                                                placeholder={t('Wprowadź swój e-mail', 'Enter your e-mail')}
                                                 type="text"
                                                 inputMode="email"
                                                 required
