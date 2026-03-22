@@ -821,7 +821,7 @@ const OfferSummary: React.FC = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-row sm:flex-row sm:flex-wrap items-center justify-between sm:justify-between gap-3 sm:gap-4 px-2 sm:px-4 mt-6 pt-6 pb-2 sm:mt-8 sm:py-4 border-t border-gray-200 dark:border-gray-700 print:hidden">
+                <div className="flex flex-row sm:flex-row sm:flex-wrap items-center justify-between sm:justify-between gap-3 sm:gap-4 px-2 sm:px-4 mt-6 pt-6 pb-2 sm:mt-8 sm:pt-8 sm:pb-3 border-t border-gray-200 dark:border-gray-700 print:hidden">
                     <button
                         onClick={() =>
                             navigate("/projects/new/services", {
