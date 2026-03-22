@@ -586,7 +586,7 @@ const OfferSummary: React.FC = () => {
                                     </span>
                                     <span className="min-w-0">
                                         {t('Koszty dodatkowe', 'Additional costs')}
-                                        <span className="hidden sm:inline print:inline sm:ml-[7.4px] print:ml-2">
+                                        <span className="hidden sm:inline print:inline sm:ml-[7.4px] print:ml-1.5">
                                             <span className="font-medium">(</span>
                                             <span
                                                 className={
