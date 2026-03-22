@@ -296,8 +296,8 @@ const Login: React.FC = () => {
                                     }}
                                     className={`flex items-center gap-2 text-xs transition-colors [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 sm:focus-visible:ring-2 sm:focus-visible:ring-primary sm:focus-visible:ring-offset-1 dark:sm:focus-visible:ring-offset-slate-900 ${
                                         language === "pl"
-                                            ? "font-bold text-primary hover:text-sky-400 dark:text-primary dark:hover:text-sky-300"
-                                            : "font-medium text-neutral-gray hover:text-primary dark:text-slate-500 dark:hover:text-primary"
+                                            ? "font-bold text-primary sm:hover:text-sky-400 dark:text-primary sm:dark:hover:text-sky-300"
+                                            : "font-medium text-neutral-gray sm:hover:text-primary dark:text-slate-500 sm:dark:hover:text-primary"
                                     }`}
                                 >
                                     <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15">
@@ -315,8 +315,8 @@ const Login: React.FC = () => {
                                     }}
                                     className={`flex items-center gap-2 text-xs transition-colors [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 sm:focus-visible:ring-2 sm:focus-visible:ring-primary sm:focus-visible:ring-offset-1 dark:sm:focus-visible:ring-offset-slate-900 ${
                                         language === "en"
-                                            ? "font-bold text-primary hover:text-sky-400 dark:text-primary dark:hover:text-sky-300"
-                                            : "font-medium text-neutral-gray hover:text-primary dark:text-slate-500 dark:hover:text-primary"
+                                            ? "font-bold text-primary sm:hover:text-sky-400 dark:text-primary sm:dark:hover:text-sky-300"
+                                            : "font-medium text-neutral-gray sm:hover:text-primary dark:text-slate-500 sm:dark:hover:text-primary"
                                     }`}
                                 >
                                     ENGLISH
