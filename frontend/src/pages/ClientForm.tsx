@@ -356,7 +356,7 @@ const ClientForm: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-4 px-2 sm:px-4 py-4">
+                <div className="flex flex-col gap-4 px-2 sm:px-4 pt-4 pb-0 sm:py-4">
                     
                     {/* Mode Selection */}
                     <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
@@ -543,7 +543,7 @@ const ClientForm: React.FC = () => {
                     </div>
 
                     {isEditMode ? (
-                        <div className="flex justify-end px-0 py-3 sm:py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6 w-full">
+                        <div className="flex justify-end px-0 mt-2 pt-6 pb-2 border-t border-gray-200 dark:border-gray-700 w-full sm:mt-6 sm:py-4 sm:pt-6">
                             <button
                                 onClick={handleNext}
                                 className="inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all"
@@ -553,7 +553,7 @@ const ClientForm: React.FC = () => {
                             </button>
                         </div>
                     ) : (
-                        <div className="flex flex-row md:flex-row gap-3 px-3 sm:px-4 py-3 sm:py-4 mt-4 border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6 w-full justify-between md:justify-end md:items-center">
+                        <div className="flex flex-row md:flex-row gap-3 px-3 sm:px-4 mt-2 pt-6 pb-2 border-t border-gray-200 dark:border-gray-700 w-full justify-between md:justify-end md:items-center sm:mt-6 sm:py-4 sm:pt-6">
                             <button onClick={() => navigate('/projects')} className="w-auto md:w-auto flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs sm:text-sm hover:bg-slate-100/70 dark:hover:bg-slate-800/50 transition-all">
                                 {t('Anuluj', 'Cancel')}
                             </button>
