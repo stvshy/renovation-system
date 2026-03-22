@@ -92,7 +92,7 @@ const Login: React.FC = () => {
         navigate("/projects");
     };
 
-    /** iOS / mobile Safari often applies focus after click; blur in the same tick is ignored. */
+    /** iOS / mobile Safari often applies focus after tap; blur after paint + prevent mousedown focus. */
     const finalizeLanguageChoice = (el: HTMLElement) => {
         const runBlur = () => {
             el.blur();
@@ -100,8 +100,13 @@ const Login: React.FC = () => {
             if (active instanceof HTMLElement && active === el) active.blur();
         };
         queueMicrotask(runBlur);
+        requestAnimationFrame(() => {
+            runBlur();
+            requestAnimationFrame(runBlur);
+        });
         window.setTimeout(runBlur, 0);
-        window.setTimeout(runBlur, 80);
+        window.setTimeout(runBlur, 100);
+        window.setTimeout(runBlur, 250);
     };
 
     const handleEmailIconClick = () => {
@@ -167,13 +172,17 @@ const Login: React.FC = () => {
                                     Renovation System
                                 </h1>
                             </div>
-                            <p className="mt-1 px-4 text-center text-sm text-neutral-gray sm:text-base">
-                                {t("Zaloguj się, aby zarządzać swoimi projektami.", "Sign in to manage your projects.")}
+                            <p
+                                className={`mt-1 px-4 text-center text-sm sm:text-base ${
+                                    error ? "text-red-600 dark:text-red-400" : "text-neutral-gray"
+                                }`}
+                                aria-live="polite"
+                            >
+                                {error ?? t("Zaloguj się, aby zarządzać swoimi projektami.", "Sign in to manage your projects.")}
                             </p>
                         </div>
                         <div className="relative rounded-xl border border-[#c0c7d3]/10 bg-white/90 p-5 shadow-2xl shadow-[#111c2d]/5 backdrop-blur-sm dark:border-slate-600/20 dark:bg-slate-900/90 sm:p-8">
                             <form className="space-y-6" onSubmit={handleLogin}>
-                                {error && <div className="p-3 text-sm text-red-500 bg-red-100 dark:bg-red-900/30 rounded-lg">{error}</div>}
                                 <div>
                                     <label
                                         className="block pb-2 text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100"
@@ -280,6 +289,7 @@ const Login: React.FC = () => {
                             <div className="flex items-center gap-4 rounded-full border border-[#c0c7d3]/10 bg-[#f0f3ff]/50 px-4 py-2 backdrop-blur-sm dark:border-slate-600/30 dark:bg-slate-800/50">
                                 <button
                                     type="button"
+                                    onMouseDown={(e) => e.preventDefault()}
                                     onClick={(e) => {
                                         setLanguage("pl");
                                         finalizeLanguageChoice(e.currentTarget);
@@ -298,6 +308,7 @@ const Login: React.FC = () => {
                                 <div className="h-3.5 w-px bg-slate-400/75 dark:bg-slate-500/80" aria-hidden />
                                 <button
                                     type="button"
+                                    onMouseDown={(e) => e.preventDefault()}
                                     onClick={(e) => {
                                         setLanguage("en");
                                         finalizeLanguageChoice(e.currentTarget);
