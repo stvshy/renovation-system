@@ -205,12 +205,12 @@ const Login: React.FC = () => {
         }
         if (isValidEmail(trimmed)) {
             setEmailCheckPopover({
-                message: t("Adres e-mail wygląda na poprawny.", "This email address looks valid."),
+                message: t("Adres e-mail wygląda na poprawny", "This email address looks valid"),
                 variant: "ok",
             });
         } else {
             setEmailCheckPopover({
-                message: t("Podaj poprawny adres e-mail.", "Please enter a valid email address."),
+                message: t("Podaj poprawny adres e-mail", "Please enter a valid email address"),
                 variant: "invalid",
             });
         }
@@ -401,13 +401,35 @@ const Login: React.FC = () => {
                                         {emailCheckPopover && (
                                             <div
                                                 role="status"
-                                                className={`absolute right-0 bottom-[calc(100%+0.35rem)] z-20 max-w-[min(100%,18rem)] rounded-lg border px-3 py-2 text-left text-sm shadow-lg ${
+                                                className={`absolute right-0 bottom-[calc(100%+0.5rem)] z-20 w-fit max-w-[min(100%,26rem)] rounded-lg border bg-white px-3 py-2 text-left text-[0.8rem] shadow-lg ${
                                                     emailCheckPopover.variant === "ok"
-                                                        ? "border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-800/60 dark:bg-emerald-950/80 dark:text-emerald-100"
-                                                        : "border-red-200 bg-red-50 text-red-800 dark:border-red-800/60 dark:bg-red-950/80 dark:text-red-100"
+                                                        ? "border-emerald-500 text-emerald-700"
+                                                        : "border-red-500 text-red-700"
                                                 }`}
                                             >
-                                                {emailCheckPopover.message}
+                                                <span
+                                                    aria-hidden="true"
+                                                    className={`absolute right-[0.975rem] top-full h-3 w-3 -translate-y-1/2 rotate-45 border-b border-r bg-white ${
+                                                        emailCheckPopover.variant === "ok"
+                                                            ? "border-emerald-500"
+                                                            : "border-red-500"
+                                                    }`}
+                                                />
+                                                <div className="flex items-start">
+                                                    <p className="pr-6">{emailCheckPopover.message}</p>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setEmailCheckPopover(null)}
+                                                        className={`absolute right-[0.6rem] top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded p-0.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 ${
+                                                            emailCheckPopover.variant === "ok"
+                                                                ? "text-emerald-700 hover:text-emerald-900 focus-visible:ring-emerald-500"
+                                                                : "text-red-700 hover:text-red-900 focus-visible:ring-red-500"
+                                                        }`}
+                                                        aria-label={t("Zamknij komunikat", "Close message")}
+                                                    >
+                                                        <span className="material-symbols-outlined text-[18px] leading-none">close</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
