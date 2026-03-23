@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import LanguageToggleButton from '../components/LanguageToggleButton';
@@ -16,11 +16,102 @@ const Register: React.FC = () => {
     // State for password visibility
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [emailCheckPopover, setEmailCheckPopover] = useState<{ message: string; variant: 'ok' | 'invalid' } | null>(null);
+    const emailFieldRowRef = useRef<HTMLDivElement>(null);
 
     const authInputClassName =
         'auth-input-stable form-input flex !h-12 !min-h-12 !max-h-12 w-full min-w-0 flex-1 resize-none overflow-hidden appearance-none rounded-lg border border-slate-300 bg-white/95 p-3 pr-10 font-body text-base font-medium leading-normal text-slate-900 placeholder:text-slate-500 focus:border-primary focus:outline-0 focus:ring-2 focus:ring-primary/25 dark:border-slate-500 dark:bg-slate-800/95 dark:text-white dark:placeholder:text-slate-300';
 
-    const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+    const isValidEmail = (value: string) => {
+        const emailValue = value.trim();
+        if (!emailValue) return false;
+        if (emailValue.length > 254) return false;
+
+        const atIndex = emailValue.indexOf('@');
+        if (atIndex <= 0 || atIndex !== emailValue.lastIndexOf('@')) return false;
+
+        const localPart = emailValue.slice(0, atIndex);
+        const domainPart = emailValue.slice(atIndex + 1);
+
+        if (!localPart || !domainPart) return false;
+        if (localPart.length > 64) return false;
+        if (localPart.startsWith('.') || localPart.endsWith('.') || localPart.includes('..')) return false;
+        if (!/^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+$/.test(localPart)) return false;
+
+        if (!domainPart.includes('.') || domainPart.includes('..')) return false;
+        if (!/^[A-Za-z0-9.-]+$/.test(domainPart)) return false;
+
+        const labels = domainPart.split('.');
+        if (labels.some((label) => !label)) return false;
+        if (labels.some((label) => label.startsWith('-') || label.endsWith('-'))) return false;
+        if (labels.some((label) => label.length > 63)) return false;
+        if (labels.some((label) => !/^[A-Za-z0-9-]+$/.test(label))) return false;
+
+        const topLevelDomain = labels[labels.length - 1];
+        if (!/^[A-Za-z]{2,63}$/.test(topLevelDomain)) return false;
+
+        return true;
+    };
+
+    const getEmailPopoverState = (value: string) => {
+        const trimmed = value.trim();
+        if (!trimmed) {
+            return {
+                message: t('Wpisz adres e-mail.', 'Enter an email address.'),
+                variant: 'invalid' as const,
+            };
+        }
+
+        if (isValidEmail(trimmed)) {
+            return {
+                message: t('Adres e-mail wygląda na poprawny', 'This email address looks valid'),
+                variant: 'ok' as const,
+            };
+        }
+
+        return {
+            message: t('Podaj poprawny adres e-mail', 'Please enter a valid email address'),
+            variant: 'invalid' as const,
+        };
+    };
+
+    useEffect(() => {
+        if (!emailCheckPopover) return;
+
+        const onPointerDown = (e: PointerEvent) => {
+            if (emailFieldRowRef.current?.contains(e.target as Node)) return;
+            setEmailCheckPopover(null);
+        };
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setEmailCheckPopover(null);
+        };
+
+        document.addEventListener('pointerdown', onPointerDown);
+        document.addEventListener('keydown', onKeyDown);
+        return () => {
+            document.removeEventListener('pointerdown', onPointerDown);
+            document.removeEventListener('keydown', onKeyDown);
+        };
+    }, [emailCheckPopover]);
+
+    useEffect(() => {
+        if (!emailCheckPopover) return;
+        const nextPopover = getEmailPopoverState(email);
+        if (nextPopover.message !== emailCheckPopover.message || nextPopover.variant !== emailCheckPopover.variant) {
+            setEmailCheckPopover(nextPopover);
+        }
+    }, [email, emailCheckPopover]);
+
+    const handleEmailIconClick = () => {
+        if (emailCheckPopover) {
+            setEmailCheckPopover(null);
+            return;
+        }
+        setEmailCheckPopover(getEmailPopoverState(email));
+    };
+    const preventFocus = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+    };
 
     const getLocalizedRegisterError = (errorMessage: string) => {
         const normalizedMessage = errorMessage.toLowerCase();
@@ -34,7 +125,7 @@ const Register: React.FC = () => {
         }
 
         if (normalizedMessage.includes('invalid email')) {
-            return t('Podaj poprawny adres e-mail.', 'Please provide a valid email address.');
+            return t('Podaj poprawny adres e-mail', 'Please provide a valid email address.');
         }
 
         if (normalizedMessage.includes('signup is disabled')) {
@@ -144,7 +235,7 @@ const Register: React.FC = () => {
 
                                     <label className="flex flex-col gap-2">
                                         <p className="text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100">{t('E-mail', 'Email')}</p>
-                                        <div className="relative flex w-full items-center">
+                                        <div ref={emailFieldRowRef} className="relative flex w-full items-center">
                                             <input
                                                 autoComplete="email"
                                                 className={authInputClassName}
@@ -155,12 +246,53 @@ const Register: React.FC = () => {
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
                                             />
-                                            <span
-                                                aria-hidden="true"
-                                                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-gray dark:text-slate-400"
+                                            <button
+                                                type="button"
+                                                onClick={handleEmailIconClick}
+                                                onPointerDown={preventFocus}
+                                                onMouseDown={preventFocus}
+                                                className={`absolute right-3 top-1/2 -translate-y-1/2 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] ${
+                                                    emailCheckPopover
+                                                        ? 'text-primary dark:text-primary'
+                                                        : 'text-neutral-gray [@media(hover:hover)]:hover:text-primary dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary'
+                                                }`}
+                                                aria-label={t('Sprawdź poprawność adresu e-mail', 'Check email address validity')}
+                                                aria-expanded={Boolean(emailCheckPopover)}
                                             >
                                                 <span className="material-symbols-outlined text-xl">alternate_email</span>
-                                            </span>
+                                            </button>
+                                            {emailCheckPopover && (
+                                                <div
+                                                    role="status"
+                                                    className={`absolute right-0 bottom-[calc(100%+0.5rem)] z-20 w-fit max-w-[min(100%,26rem)] rounded-lg border bg-slate-900 px-3 py-2 text-left text-[0.92rem] shadow-lg ${
+                                                        emailCheckPopover.variant === 'ok'
+                                                            ? 'border-emerald-500 text-emerald-300'
+                                                            : 'border-red-500 text-red-300'
+                                                    }`}
+                                                >
+                                                    <span
+                                                        aria-hidden="true"
+                                                        className={`absolute right-[0.975rem] top-full h-3 w-3 -translate-y-1/2 rotate-45 border-b border-r bg-slate-900 ${
+                                                            emailCheckPopover.variant === 'ok' ? 'border-emerald-500' : 'border-red-500'
+                                                        }`}
+                                                    />
+                                                    <div className="flex items-start">
+                                                        <p className="pr-8">{emailCheckPopover.message}</p>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setEmailCheckPopover(null)}
+                                                            className={`absolute right-[0.6rem] top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded p-0.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 ${
+                                                                emailCheckPopover.variant === 'ok'
+                                                                    ? 'text-emerald-300 hover:text-emerald-200 focus-visible:ring-emerald-500'
+                                                                    : 'text-red-300 hover:text-red-200 focus-visible:ring-red-500'
+                                                            }`}
+                                                            aria-label={t('Zamknij komunikat', 'Close message')}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[16px] leading-none">close</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </label>
 
@@ -177,9 +309,11 @@ const Register: React.FC = () => {
                                                 onChange={(e) => setPassword(e.target.value)}
                                             />
                                             <button
-                                                className="absolute right-3 text-slate-500 outline-none transition-colors hover:text-primary focus:text-primary dark:text-slate-400"
+                                                className="absolute right-3 text-slate-500 outline-none transition-colors [@media(hover:hover)]:hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:text-slate-400 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent]"
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
+                                                onPointerDown={preventFocus}
+                                                onMouseDown={preventFocus}
                                             >
                                                 <span className="material-symbols-outlined text-xl">{showPassword ? 'visibility_off' : 'visibility'}</span>
                                             </button>
@@ -199,9 +333,11 @@ const Register: React.FC = () => {
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                             />
                                             <button
-                                                className="absolute right-3 text-slate-500 outline-none transition-colors hover:text-primary focus:text-primary dark:text-slate-400"
+                                                className="absolute right-3 text-slate-500 outline-none transition-colors [@media(hover:hover)]:hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:text-slate-400 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent]"
                                                 type="button"
                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                onPointerDown={preventFocus}
+                                                onMouseDown={preventFocus}
                                             >
                                                 <span className="material-symbols-outlined text-xl">{showConfirmPassword ? 'visibility_off' : 'visibility'}</span>
                                             </button>

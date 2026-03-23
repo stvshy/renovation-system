@@ -257,6 +257,10 @@ const Login: React.FC = () => {
         requestAnimationFrame(() => el.blur());
     };
 
+    const preventFocus = (e: React.SyntheticEvent) => {
+        e.preventDefault();
+    };
+
     const handleEmailIconClick = () => {
         if (emailCheckPopover) {
             setEmailCheckPopover(null);
@@ -436,10 +440,12 @@ const Login: React.FC = () => {
                                             <button
                                                 type="button"
                                                 onClick={handleEmailIconClick}
-                                                className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:focus-visible:ring-offset-slate-900 ${
+                                                onPointerDown={preventFocus}
+                                                onMouseDown={preventFocus}
+                                                className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] ${
                                                     emailCheckPopover
                                                         ? "text-primary dark:text-primary"
-                                                        : "text-neutral-gray hover:text-primary focus-visible:text-primary dark:text-slate-400 dark:hover:text-primary dark:focus-visible:text-primary"
+                                                        : "text-neutral-gray [@media(hover:hover)]:hover:text-primary dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary"
                                                 }`}
                                                 aria-label={t("Sprawdź poprawność adresu e-mail", "Check email address validity")}
                                                 aria-expanded={Boolean(emailCheckPopover)}
@@ -514,7 +520,9 @@ const Login: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-gray transition-colors hover:text-primary focus:outline-none focus-visible:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:text-slate-400 dark:hover:text-primary dark:focus-visible:text-primary dark:focus-visible:ring-offset-slate-900"
+                                            onPointerDown={preventFocus}
+                                            onMouseDown={preventFocus}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-gray transition-colors [@media(hover:hover)]:hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent]"
                                         >
                                             <span className="material-symbols-outlined text-xl">{showPassword ? "visibility_off" : "visibility"}</span>
                                         </button>
