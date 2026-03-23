@@ -113,9 +113,9 @@ const Register: React.FC = () => {
 
                         <div className="flex flex-1 items-center justify-center pt-2 sm:pt-4 lg:items-center lg:justify-center lg:pt-0 lg:pb-0">
                             <div className="w-full max-w-xl rounded-3xl bg-white/92 p-5 shadow-2xl backdrop-blur-xl sm:min-h-0 sm:p-8 lg:w-full lg:max-w-lg lg:rounded-none lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-0 dark:bg-slate-900/84 dark:lg:bg-transparent">
-                                <div className="flex w-full flex-col gap-2 pb-7 sm:pb-9 lg:pb-10">
-                                    <h1 className="font-display text-[25.5px] font-bold leading-tight tracking-tight text-white sm:text-[2.05rem] lg:text-[2.35rem] dark:text-white">{t('Utwórz nowe konto', 'Create a new account')}</h1>
-                                    <p className="text-[14px] text-slate-400 sm:text-base lg:hidden dark:text-slate-300">{t('Zacznij zarządzać projektami remontowymi w jednym miejscu.', 'Start managing renovation projects in one place.')}</p>
+                                <div className="flex w-full flex-col gap-2 pb-6 sm:pb-9 lg:pb-10">
+                                    <h1 className="font-display text-[24.5px] font-bold leading-tight tracking-tight text-white sm:text-[2.05rem] lg:text-[2.35rem] dark:text-white">{t('Utwórz nowe konto', 'Create a new account')}</h1>
+                                    <p className="text-[13.5px] text-slate-400 sm:text-base lg:hidden dark:text-slate-300">{t('Zacznij zarządzać projektami remontowymi w jednym miejscu.', 'Start managing renovation projects in one place.')}</p>
                                 </div>
 
                                 <form className="flex w-full flex-col gap-[1.35rem] sm:gap-7 lg:max-w-lg lg:gap-6" onSubmit={handleRegister}>
@@ -144,7 +144,12 @@ const Register: React.FC = () => {
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
                                             />
-                                            <span aria-hidden="true" className="pointer-events-none absolute right-3 h-5 w-5 opacity-0" />
+                                            <span
+                                                aria-hidden="true"
+                                                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-gray dark:text-slate-400"
+                                            >
+                                                <span className="material-symbols-outlined text-xl">alternate_email</span>
+                                            </span>
                                         </div>
                                     </label>
 
