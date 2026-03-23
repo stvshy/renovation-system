@@ -256,7 +256,7 @@ const Login: React.FC = () => {
                   all main content. Desktop: unchanged centered layout in the flex area.
                 */}
                 <div className="flex w-full min-h-0 flex-1 flex-col items-center justify-center px-4 py-8 max-sm:min-h-[calc(100svh-6rem)] max-sm:overflow-y-auto max-sm:py-4 sm:min-h-0 sm:px-6 sm:py-10 lg:py-14">
-                    <div className="w-full max-w-md space-y-5 pt-1 max-sm:-translate-y-[34px] sm:translate-y-0 sm:space-y-7 sm:pt-2">
+                    <div className="w-full max-w-md space-y-5 pt-1 max-sm:-translate-y-[34px] sm:-translate-y-3 sm:space-y-7 sm:pt-2">
                         <div className="flex flex-col items-center gap-3 sm:gap-4">
                             <div className="flex items-center justify-center gap-[15px]">
                                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#005ea2] to-[#0177ca] shadow-lg shadow-[#005ea2]/25 sm:h-12 sm:w-12">
@@ -368,7 +368,7 @@ const Login: React.FC = () => {
                                     </button>
                                 </div>
                             </form>
-                            <div className="mt-3 flex flex-col items-center gap-3 border-t border-[#e7eeff] pt-3 dark:border-slate-600/50">
+                            <div className="mt-3 flex flex-col items-center gap-3 border-t border-[#e7eeff] pt-3 dark:border-slate-600/50 sm:-mb-1.5">
                                 <p className="text-center text-sm text-neutral-gray dark:text-slate-400">
                                     {t("Nie masz jeszcze konta?", "Don't have an account yet?")}{" "}
                                     <Link
@@ -381,7 +381,7 @@ const Login: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex justify-center">
-                            <div className="flex w-full items-center justify-center gap-4 sm:gap-5 rounded-b-xl border border-white/40 bg-[#e4ecfb]/86 px-[19.5px] py-[11.5px] shadow-sm shadow-[#0177ca]/40 backdrop-blur-md dark:border-slate-400/20 dark:bg-slate-800/70 dark:shadow-[#0177ca]/28">
+                            <div className="flex w-full items-center justify-center gap-4 sm:gap-5 rounded-b-xl border border-white/40 bg-[#e4ecfb]/86 px-[19.5px] py-[11.5px] shadow-sm shadow-[#0177ca]/30 backdrop-blur-md dark:border-slate-400/20 dark:bg-slate-800/70 dark:shadow-[#0177ca]/28">
                                 <button
                                     type="button"
                                     onMouseDown={(e) => e.preventDefault()}
