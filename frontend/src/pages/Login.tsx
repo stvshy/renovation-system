@@ -171,6 +171,10 @@ const Login: React.FC = () => {
                 </div>
             </div>
             <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute inset-0 hidden sm:block">
+                    <div className="absolute inset-0 scale-[1.04] bg-[url('/tlo-desktop1.webp')] bg-cover bg-center bg-no-repeat opacity-10" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 via-white/30 to-slate-100/56" />
+                </div>
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(17,115,212,0.17),transparent_34%),radial-gradient(circle_at_84%_78%,rgba(17,115,212,0.11),transparent_36%),radial-gradient(circle_at_72%_22%,rgba(17,115,212,0.08),transparent_30%)]" />
                 <div className="absolute -left-24 top-[-72px] h-72 w-72 rounded-full bg-primary/18 blur-3xl" />
                 <div className="absolute -right-24 bottom-[-80px] h-80 w-80 rounded-full bg-primary/14 blur-3xl" />
