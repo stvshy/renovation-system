@@ -581,11 +581,14 @@ const Login: React.FC = () => {
                                     onClick={(e) => {
                                         handleLanguageSwitch("pl", e.currentTarget);
                                     }}
-                                    className={`flex items-center gap-2 text-[11.5px] transition-colors duration-[900ms] ease-out sm:duration-0 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${getLanguageButtonClassName(
+                                    className={`flex items-center gap-2.5 text-[11.5px] leading-none transition-colors duration-[900ms] ease-out sm:duration-0 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${getLanguageButtonClassName(
                                         "pl"
                                     )}`}
                                 >
-                                    <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15 max-sm:h-[15.5px] max-sm:w-[15.5px]">
+                                    <span
+                                        className="flex h-4 w-4 shrink-0 self-center overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15 max-sm:h-[15.5px] max-sm:w-[15.5px]"
+                                        style={{ transform: "translateY(-1.0px)" }}
+                                    >
                                         <img src="https://flagcdn.com/w40/pl.png" alt="" className="h-full w-full object-cover" />
                                     </span>
                                     POLSKI
@@ -597,12 +600,15 @@ const Login: React.FC = () => {
                                     onClick={(e) => {
                                         handleLanguageSwitch("en", e.currentTarget);
                                     }}
-                                    className={`flex items-center gap-2 text-[11.5px] transition-colors duration-[900ms] ease-out sm:duration-0 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${getLanguageButtonClassName(
+                                    className={`flex items-center gap-2.5 text-[11.5px] leading-none transition-colors duration-[900ms] ease-out sm:duration-0 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${getLanguageButtonClassName(
                                         "en"
                                     )}`}
                                 >
                                     ENGLISH
-                                    <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15 max-sm:h-[15.5px] max-sm:w-[15.5px]">
+                                    <span
+                                        className="flex h-4 w-4 shrink-0 self-center overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15 max-sm:h-[15.5px] max-sm:w-[15.5px]"
+                                        style={{ transform: "translateY(-1.0px)" }}
+                                    >
                                         <img src="https://flagcdn.com/w40/gb.png" alt="" className="h-full w-full object-cover" />
                                     </span>
                                 </button>
