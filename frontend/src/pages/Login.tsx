@@ -355,12 +355,17 @@ const Login: React.FC = () => {
                             className="relative flex items-center gap-2 rounded-full border border-sky-200/80 bg-white/90 px-4 py-2 text-sm shadow-md shadow-sky-200/32 backdrop-blur-md transition-all duration-200 hover:border-sky-300 hover:bg-white hover:shadow-sky-300/45 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] sm:px-4 sm:py-2 sm:shadow-lg sm:shadow-sky-200/35"
                         >
                             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-400 to-dependable-blue text-[10px] font-bold text-white shadow-sm sm:h-5 sm:w-5">
-                                ▶
+                                <span style={{ transform: "translateX(0.5px)" }}>▶</span>
                             </span>
                             <span className="font-semibold text-slate-700 group-hover:text-dependable-blue transition-colors">
                                 {t("Zobacz demo", "View Demo")}
                             </span>
-                            <span className="text-dependable-blue transition-transform duration-200 group-hover:translate-x-0.5">→</span>
+                            <span
+                                className="material-symbols-outlined text-[16px] sm:text-[15px] leading-none transition-transform transition-colors group-hover:translate-x-1 text-slate-700 group-hover:text-dependable-blue"
+                                aria-hidden="true"
+                            >
+                                arrow_forward
+                            </span>
                         </button>
                     </div>
                 </div>
