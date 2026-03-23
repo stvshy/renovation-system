@@ -204,7 +204,7 @@ const Login: React.FC = () => {
                   all main content. Desktop: unchanged centered layout in the flex area.
                 */}
                 <div className="flex w-full min-h-0 flex-1 flex-col items-center justify-center px-4 py-8 max-sm:min-h-[calc(100svh-6rem)] max-sm:overflow-y-auto max-sm:py-4 sm:min-h-0 sm:px-6 sm:py-10 lg:py-14">
-                    <div className="w-full max-w-md space-y-5 pt-1 max-sm:-translate-y-[29px] sm:translate-y-0 sm:space-y-7 sm:pt-2">
+                    <div className="w-full max-w-md space-y-5 pt-1 max-sm:-translate-y-[34px] sm:translate-y-0 sm:space-y-7 sm:pt-2">
                         <div className="flex flex-col items-center gap-3 sm:gap-4">
                             <div className="flex items-center justify-center gap-[15px]">
                                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#005ea2] to-[#0177ca] shadow-lg shadow-[#005ea2]/25 sm:h-12 sm:w-12">
@@ -302,7 +302,7 @@ const Login: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="pt-4 sm:pt-5">
+                                <div className="pt-4 max-sm:pt-3 sm:pt-5">
                                     <button
                                         className="group flex h-12 w-full min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#005ea2] to-[#0177ca] px-5 font-display text-base font-bold leading-normal tracking-[0.015em] text-white shadow-lg shadow-[#005ea2]/25 transition-all duration-300 hover:scale-[1.02] hover:shadow-[#005ea2]/30 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                                         type="submit"
@@ -328,7 +328,7 @@ const Login: React.FC = () => {
                             </div>
                         </div>
                         <div className="mt-6 flex justify-center max-sm:!mt-0 max-sm:translate-y-0">
-                            <div className="flex items-center gap-4 rounded-full border border-[#c0c7d3]/10 bg-[#f0f3ff]/50 px-4 py-2 backdrop-blur-sm dark:border-slate-600/30 dark:bg-slate-800/50 max-sm:w-full max-sm:justify-center max-sm:rounded-t-none max-sm:rounded-b-xl max-sm:border-0 max-sm:border-transparent max-sm:bg-[#deecff]/92 max-sm:px-5 max-sm:py-3 max-sm:shadow-lg max-sm:shadow-sky-300/40">
+                            <div className="flex items-center gap-4 rounded-full border border-[#c0c7d3]/10 bg-[#f0f3ff]/50 px-4 py-2 backdrop-blur-sm dark:border-slate-600/30 dark:bg-slate-800/50 max-sm:w-full max-sm:justify-center max-sm:rounded-t-none max-sm:rounded-b-xl max-sm:border-0 max-sm:border-transparent max-sm:bg-[#deecff]/92 max-sm:px-[19.5px] max-sm:py-[11.5px] max-sm:shadow-md max-sm:shadow-sky-300/25">
                                 <button
                                     type="button"
                                     onMouseDown={(e) => e.preventDefault()}
@@ -347,7 +347,7 @@ const Login: React.FC = () => {
                                     </span>
                                     POLSKI
                                 </button>
-                                <div className="h-3.5 w-px bg-slate-400/75 dark:bg-slate-500/80 max-sm:mx-1.5" aria-hidden />
+                                <div className="h-3.5 w-px bg-slate-400/75 dark:bg-slate-500/80 max-sm:mx-2.5" aria-hidden />
                                 <button
                                     type="button"
                                     onMouseDown={(e) => e.preventDefault()}
