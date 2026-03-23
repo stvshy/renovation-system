@@ -171,9 +171,9 @@ const Login: React.FC = () => {
                 </div>
             </div>
             <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(56,189,248,0.24),transparent_34%),radial-gradient(circle_at_84%_78%,rgba(14,165,233,0.2),transparent_36%),radial-gradient(circle_at_72%_22%,rgba(125,211,252,0.2),transparent_30%)]" />
-                <div className="absolute -left-24 top-[-72px] h-72 w-72 rounded-full bg-cyan-200/35 blur-3xl" />
-                <div className="absolute -right-24 bottom-[-80px] h-80 w-80 rounded-full bg-sky-200/35 blur-3xl" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(17,115,212,0.17),transparent_34%),radial-gradient(circle_at_84%_78%,rgba(17,115,212,0.11),transparent_36%),radial-gradient(circle_at_72%_22%,rgba(17,115,212,0.08),transparent_30%)]" />
+                <div className="absolute -left-24 top-[-72px] h-72 w-72 rounded-full bg-primary/18 blur-3xl" />
+                <div className="absolute -right-24 bottom-[-80px] h-80 w-80 rounded-full bg-primary/14 blur-3xl" />
                 <div className="absolute inset-y-0 left-0 w-24 bg-[radial-gradient(circle,rgba(100,116,139,0.28)_1px,transparent_1px)] [background-size:15px_15px] opacity-30" />
                 <div className="absolute inset-y-0 right-0 w-24 bg-[radial-gradient(circle,rgba(100,116,139,0.28)_1px,transparent_1px)] [background-size:15px_15px] opacity-25" />
             </div>
