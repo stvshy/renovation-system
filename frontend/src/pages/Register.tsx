@@ -103,16 +103,16 @@ const Register: React.FC = () => {
 
             <div className="relative z-10 flex min-h-dvh sm:min-h-screen w-full flex-col lg:flex-row">
                 <section className="flex min-h-dvh sm:min-h-screen w-full lg:min-h-screen lg:w-1/2 lg:border-r lg:border-slate-200 lg:bg-white dark:lg:border-slate-800 dark:lg:bg-slate-950">
-                    <div className="flex min-h-dvh sm:min-h-screen w-full flex-col px-4 py-4 sm:px-6 sm:py-6 lg:h-full lg:min-h-0 lg:px-10 lg:pb-12 lg:pt-8 xl:px-14">
-                        <header className="flex items-center gap-4 text-white lg:text-slate-900 dark:text-off-white">
+                    <div className="relative flex min-h-dvh sm:min-h-screen w-full flex-col px-4 py-4 sm:px-6 sm:py-6 lg:h-full lg:min-h-0 lg:px-10 lg:pb-12 lg:pt-8 xl:px-14">
+                        <header className="flex items-center gap-4 text-white lg:absolute lg:left-10 lg:right-10 lg:top-8 lg:text-slate-900 xl:left-14 xl:right-14 dark:text-off-white">
                             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/35 lg:h-14 lg:w-14">
                                 <span className="material-symbols-outlined text-[30px] lg:text-[34px]">construction</span>
                             </div>
                             <h2 className="font-display text-3xl font-extrabold leading-none tracking-tight sm:text-[2.05rem] lg:text-[2.15rem]">Renovation System</h2>
                         </header>
 
-                        <div className="flex flex-1 items-center justify-center pt-3 sm:pt-4 lg:items-start lg:justify-start lg:pt-14 lg:pb-0">
-                            <div className="w-full max-w-xl rounded-3xl bg-white/92 p-5 shadow-2xl backdrop-blur-xl sm:min-h-0 sm:p-8 lg:mt-4 lg:min-h-full lg:max-w-none lg:rounded-none lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-0 dark:bg-slate-900/84 dark:lg:bg-transparent">
+                        <div className="flex flex-1 items-center justify-center pt-3 sm:pt-4 lg:items-center lg:justify-center lg:pt-0 lg:pb-0">
+                            <div className="w-full max-w-xl rounded-3xl bg-white/92 p-5 shadow-2xl backdrop-blur-xl sm:min-h-0 sm:p-8 lg:w-full lg:max-w-lg lg:rounded-none lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-0 dark:bg-slate-900/84 dark:lg:bg-transparent">
                                 <div className="flex w-full flex-col gap-2 pb-7 sm:pb-9 lg:pb-10">
                                     <h1 className="font-display text-[1.72rem] font-bold leading-tight tracking-tight text-white sm:text-[2.05rem] lg:text-[2.35rem] dark:text-white">{t('Utwórz nowe konto', 'Create a new account')}</h1>
                                     <p className="text-sm text-slate-400 sm:text-base lg:hidden dark:text-slate-300">{t('Zacznij zarządzać projektami remontowymi w jednym miejscu.', 'Start managing renovation projects in one place.')}</p>
