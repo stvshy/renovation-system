@@ -132,7 +132,7 @@ const Login: React.FC = () => {
     };
 
     const baseUrl = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? "/";
-    const mobileBackgroundUrl = `${baseUrl}tlo-mobile1.webp`;
+    const mobileBackgroundUrl = `${baseUrl}tlo-mobile3.webp`;
     const desktopBackgroundUrl = `${baseUrl}tlo-desktop1.webp`;
 
     return (
@@ -181,8 +181,8 @@ const Login: React.FC = () => {
                         alt=""
                         className="absolute inset-0 h-full w-full object-cover object-center saturate-100"
                     />
-                    <div className="absolute inset-0 bg-white/80" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-sky-200/40 via-sky-100/50 to-blue-200/58" />
+                    <div className="absolute inset-0 bg-white/50" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-sky-300/20 via-sky-100/50 to-blue-200/58" />
                 </div>
                 <div className="absolute inset-0 hidden sm:block">
                     <div
