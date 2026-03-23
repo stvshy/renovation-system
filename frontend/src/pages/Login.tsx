@@ -29,7 +29,62 @@ const Login: React.FC = () => {
     const [emailCheckPopover, setEmailCheckPopover] = useState<{ message: string; variant: "ok" | "invalid" } | null>(null);
     const emailFieldRowRef = useRef<HTMLDivElement>(null);
 
-    const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+    const isValidEmail = (value: string) => {
+        const emailValue = value.trim();
+        if (!emailValue) return false;
+        if (emailValue.length > 254) return false;
+
+        // Must contain exactly one @.
+        const atIndex = emailValue.indexOf("@");
+        if (atIndex <= 0 || atIndex !== emailValue.lastIndexOf("@")) return false;
+
+        const localPart = emailValue.slice(0, atIndex);
+        const domainPart = emailValue.slice(atIndex + 1);
+
+        if (!localPart || !domainPart) return false;
+        if (localPart.length > 64) return false;
+
+        // Local part cannot start/end with dot or contain consecutive dots.
+        if (localPart.startsWith(".") || localPart.endsWith(".") || localPart.includes("..")) return false;
+        // Unquoted local-part conservative character set.
+        if (!/^[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+$/.test(localPart)) return false;
+
+        // Domain must contain at least one dot and no consecutive dots.
+        if (!domainPart.includes(".") || domainPart.includes("..")) return false;
+        if (!/^[A-Za-z0-9.-]+$/.test(domainPart)) return false;
+
+        const labels = domainPart.split(".");
+        if (labels.some((label) => !label)) return false;
+        if (labels.some((label) => label.startsWith("-") || label.endsWith("-"))) return false;
+        if (labels.some((label) => label.length > 63)) return false;
+        if (labels.some((label) => !/^[A-Za-z0-9-]+$/.test(label))) return false;
+
+        const topLevelDomain = labels[labels.length - 1];
+        if (!/^[A-Za-z]{2,63}$/.test(topLevelDomain)) return false;
+
+        return true;
+    };
+    const getEmailPopoverState = (value: string) => {
+        const trimmed = value.trim();
+        if (!trimmed) {
+            return {
+                message: t("Wpisz adres e-mail.", "Enter an email address."),
+                variant: "invalid" as const,
+            };
+        }
+
+        if (isValidEmail(trimmed)) {
+            return {
+                message: t("Adres e-mail wygląda na poprawny", "This email address looks valid"),
+                variant: "ok" as const,
+            };
+        }
+
+        return {
+            message: t("Podaj poprawny adres e-mail", "Please enter a valid email address"),
+            variant: "invalid" as const,
+        };
+    };
 
     useEffect(() => {
         if (!emailCheckPopover) return;
@@ -49,6 +104,14 @@ const Login: React.FC = () => {
             document.removeEventListener("keydown", onKeyDown);
         };
     }, [emailCheckPopover]);
+
+    useEffect(() => {
+        if (!emailCheckPopover) return;
+        const nextPopover = getEmailPopoverState(email);
+        if (nextPopover.message !== emailCheckPopover.message || nextPopover.variant !== emailCheckPopover.variant) {
+            setEmailCheckPopover(nextPopover);
+        }
+    }, [email, emailCheckPopover]);
 
     useEffect(() => {
         return () => {
@@ -195,25 +258,11 @@ const Login: React.FC = () => {
     };
 
     const handleEmailIconClick = () => {
-        const trimmed = email.trim();
-        if (!trimmed) {
-            setEmailCheckPopover({
-                message: t("Wpisz adres e-mail.", "Enter an email address."),
-                variant: "invalid",
-            });
+        if (emailCheckPopover) {
+            setEmailCheckPopover(null);
             return;
         }
-        if (isValidEmail(trimmed)) {
-            setEmailCheckPopover({
-                message: t("Adres e-mail wygląda na poprawny", "This email address looks valid"),
-                variant: "ok",
-            });
-        } else {
-            setEmailCheckPopover({
-                message: t("Podaj poprawny adres e-mail", "Please enter a valid email address"),
-                variant: "invalid",
-            });
-        }
+        setEmailCheckPopover(getEmailPopoverState(email));
     };
 
     const handleLanguageSwitch = (nextLanguage: "pl" | "en", buttonElement: HTMLButtonElement) => {
@@ -427,7 +476,7 @@ const Login: React.FC = () => {
                                                         }`}
                                                         aria-label={t("Zamknij komunikat", "Close message")}
                                                     >
-                                                        <span className="material-symbols-outlined text-[18px] leading-none">close</span>
+                                                        <span className="material-symbols-outlined text-[16px] leading-none">close</span>
                                                     </button>
                                                 </div>
                                             </div>
