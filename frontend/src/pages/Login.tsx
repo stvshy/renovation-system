@@ -424,7 +424,7 @@ const Login: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={openResetModal}
-                                            className="text-[13px] font-medium text-primary underline-offset-4 transition-colors hover:underline dark:text-primary"
+                                            className="text-xs sm:text-[13px] font-medium text-primary underline-offset-4 transition-colors hover:underline dark:text-primary"
                                         >
                                             {t("Nie pamiętasz hasła?", "Forgot password?")}
                                         </button>
@@ -526,14 +526,14 @@ const Login: React.FC = () => {
                     }}
                 >
                     <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-900 sm:p-6">
-                        <div className="mb-5 flex items-center justify-between gap-4">
-                            <h2 id="reset-password-title" className="text-lg font-bold text-text-dark dark:text-off-white">
+                        <div className="mb-2.5 flex items-start justify-between gap-4">
+                            <h2 id="reset-password-title" className="text-[18.5px] font-bold leading-tight text-text-dark dark:text-off-white">
                                 {t("Reset hasła", "Forgot password?")}
                             </h2>
                             <button
                                 type="button"
                                 onClick={closeResetModal}
-                                className="rounded p-1 text-slate-500 transition-colors hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-slate-400 dark:hover:text-slate-200"
+                                className="inline-flex h-8 w-8 -translate-y-0.5 items-center justify-center self-start rounded p-1 text-slate-500 transition-colors hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-slate-400 dark:hover:text-slate-200"
                                 aria-label={t("Zamknij", "Close")}
                             >
                                 <span className="material-symbols-outlined text-xl">close</span>
@@ -551,12 +551,6 @@ const Login: React.FC = () => {
                                   )}
                         </p>
 
-                        <label
-                            className="block pb-2 text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100"
-                            htmlFor="reset-email"
-                        >
-                            {t("E-mail", "Email")}
-                        </label>
                         <input
                             id="reset-email"
                             type="email"
@@ -567,12 +561,12 @@ const Login: React.FC = () => {
                             className="auth-input-stable form-input flex h-[51px] w-full min-w-0 resize-none overflow-hidden rounded-lg border-0 bg-off-white p-3 font-body text-sm font-medium leading-normal text-text-dark ring-1 ring-inset ring-[#c0c7d3]/20 placeholder:text-neutral-gray transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-800/80 dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:bg-slate-900 dark:focus:ring-primary sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
                         />
 
-                        <div className="mt-5 flex items-center justify-between gap-3">
+                        <div className="mt-6 grid grid-cols-2 gap-3">
                             <button
                                 type="button"
                                 onClick={closeResetModal}
                                 disabled={resetLoading}
-                                className="flex h-11 min-w-[96px] items-center justify-center rounded-lg bg-slate-200 px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+                                className="flex h-11 w-full items-center justify-center rounded-lg border border-slate-300 bg-transparent px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-800/80"
                             >
                                 {t("Anuluj", "Cancel")}
                             </button>
@@ -580,7 +574,7 @@ const Login: React.FC = () => {
                                 type="button"
                                 onClick={handleResetPassword}
                                 disabled={resetLoading || resetCooldown > 0}
-                                className={`flex h-11 min-w-[150px] items-center justify-center gap-1.5 rounded-lg px-4 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                                className={`flex h-11 w-full items-center justify-center gap-1.5 rounded-lg px-4 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
                                     resetSent ? "bg-emerald-600 hover:bg-emerald-600" : "bg-primary hover:bg-[#0168b2]"
                                 }`}
                             >
@@ -594,7 +588,7 @@ const Login: React.FC = () => {
                                     </>
                                 ) : (
                                     <>
-                                        {t("Wyślij link", "Send reset")}
+                                        {t("Wyślij", "Send")}
                                         {resetCooldown > 0 ? ` (${resetCooldown}s)` : ""}
                                     </>
                                 )}
