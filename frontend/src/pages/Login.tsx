@@ -204,7 +204,7 @@ const Login: React.FC = () => {
                   all main content. Desktop: unchanged centered layout in the flex area.
                 */}
                 <div className="flex w-full min-h-0 flex-1 flex-col items-center justify-center px-4 py-8 max-sm:min-h-[calc(100svh-6rem)] max-sm:overflow-y-auto max-sm:py-4 sm:min-h-0 sm:px-6 sm:py-10 lg:py-14">
-                    <div className="w-full max-w-md space-y-5 pt-1 max-sm:-translate-y-6 sm:translate-y-0 sm:space-y-7 sm:pt-2">
+                    <div className="w-full max-w-md space-y-5 pt-1 max-sm:-translate-y-[29px] sm:translate-y-0 sm:space-y-7 sm:pt-2">
                         <div className="flex flex-col items-center gap-3 sm:gap-4">
                             <div className="flex items-center justify-center gap-[15px]">
                                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-[#005ea2] to-[#0177ca] shadow-lg shadow-[#005ea2]/25 sm:h-12 sm:w-12">
@@ -223,7 +223,7 @@ const Login: React.FC = () => {
                                 {error ?? t("Zaloguj się, aby zarządzać swoimi projektami.", "Sign in to manage your projects.")}
                             </p>
                         </div>
-                        <div className="relative rounded-xl border border-[#c0c7d3]/10 bg-white/90 p-5 shadow-2xl shadow-[#111c2d]/5 backdrop-blur-sm dark:border-slate-600/20 dark:bg-slate-900/90 sm:p-8">
+                        <div className="relative rounded-xl border border-[#c0c7d3]/10 bg-white/90 p-5 shadow-2xl shadow-[#111c2d]/5 backdrop-blur-sm dark:border-slate-600/20 dark:bg-slate-900/90 max-sm:rounded-b-none sm:p-8">
                             <form className="space-y-6" onSubmit={handleLogin}>
                                 <div>
                                     <label
@@ -327,8 +327,8 @@ const Login: React.FC = () => {
                                 </p>
                             </div>
                         </div>
-                        <div className="mt-6 flex justify-center">
-                            <div className="flex items-center gap-4 rounded-full border border-[#c0c7d3]/10 bg-[#f0f3ff]/50 px-4 py-2 backdrop-blur-sm dark:border-slate-600/30 dark:bg-slate-800/50">
+                        <div className="mt-6 flex justify-center max-sm:!mt-0 max-sm:translate-y-0">
+                            <div className="flex items-center gap-4 rounded-full border border-[#c0c7d3]/10 bg-[#f0f3ff]/50 px-4 py-2 backdrop-blur-sm dark:border-slate-600/30 dark:bg-slate-800/50 max-sm:w-full max-sm:justify-center max-sm:rounded-t-none max-sm:rounded-b-xl max-sm:border-0 max-sm:border-transparent max-sm:bg-[#deecff]/92 max-sm:px-5 max-sm:py-3 max-sm:shadow-lg max-sm:shadow-sky-300/40">
                                 <button
                                     type="button"
                                     onMouseDown={(e) => e.preventDefault()}
@@ -336,18 +336,18 @@ const Login: React.FC = () => {
                                         setLanguage("pl");
                                         finalizeLanguageChoice(e.currentTarget);
                                     }}
-                                    className={`flex items-center gap-2 text-xs transition-colors [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 sm:focus-visible:ring-2 sm:focus-visible:ring-primary sm:focus-visible:ring-offset-1 dark:sm:focus-visible:ring-offset-slate-900 ${
+                                    className={`flex items-center gap-2 text-xs max-sm:text-[11.5px] transition-colors [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${
                                         language === "pl"
                                             ? "font-bold text-primary sm:hover:text-sky-400 dark:text-primary sm:dark:hover:text-sky-300"
                                             : "font-medium text-neutral-gray sm:hover:text-primary dark:text-slate-500 sm:dark:hover:text-primary"
                                     }`}
                                 >
-                                    <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15">
+                                    <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15 max-sm:h-[15.5px] max-sm:w-[15.5px]">
                                         <img src="https://flagcdn.com/w40/pl.png" alt="" className="h-full w-full object-cover" />
                                     </span>
                                     POLSKI
                                 </button>
-                                <div className="h-3.5 w-px bg-slate-400/75 dark:bg-slate-500/80" aria-hidden />
+                                <div className="h-3.5 w-px bg-slate-400/75 dark:bg-slate-500/80 max-sm:mx-1.5" aria-hidden />
                                 <button
                                     type="button"
                                     onMouseDown={(e) => e.preventDefault()}
@@ -355,14 +355,14 @@ const Login: React.FC = () => {
                                         setLanguage("en");
                                         finalizeLanguageChoice(e.currentTarget);
                                     }}
-                                    className={`flex items-center gap-2 text-xs transition-colors [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 sm:focus-visible:ring-2 sm:focus-visible:ring-primary sm:focus-visible:ring-offset-1 dark:sm:focus-visible:ring-offset-slate-900 ${
+                                    className={`flex items-center gap-2 text-xs max-sm:text-[11.5px] transition-colors [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${
                                         language === "en"
                                             ? "font-bold text-primary sm:hover:text-sky-400 dark:text-primary sm:dark:hover:text-sky-300"
                                             : "font-medium text-neutral-gray sm:hover:text-primary dark:text-slate-500 sm:dark:hover:text-primary"
                                     }`}
                                 >
                                     ENGLISH
-                                    <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15">
+                                    <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15 max-sm:h-[15.5px] max-sm:w-[15.5px]">
                                         <img src="https://flagcdn.com/w40/gb.png" alt="" className="h-full w-full object-cover" />
                                     </span>
                                 </button>
