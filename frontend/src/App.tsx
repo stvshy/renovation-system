@@ -14,6 +14,7 @@ import ClientDetails from "./pages/ClientDetails";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import UpdatePassword from "./pages/UpdatePassword";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 import { DemoProvider, useDemo } from "./context/DemoContext";
@@ -78,6 +79,7 @@ const App: React.FC = () => {
                 </PublicRoute>
               }
             />
+            <Route path="/update-password" element={<UpdatePassword />} />
 
             {/* Protected Routes */}
             <Route

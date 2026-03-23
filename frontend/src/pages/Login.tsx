@@ -161,7 +161,7 @@ const Login: React.FC = () => {
         setResetLoading(true);
 
         const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.trim(), {
-            redirectTo: `${window.location.origin}/update-password`,
+            redirectTo: `${window.location.origin}/#/update-password`,
         });
 
         if (error) {
@@ -317,7 +317,6 @@ const Login: React.FC = () => {
                         alt=""
                         loading="eager"
                         decoding="async"
-                        fetchPriority="high"
                         className="absolute inset-0 h-full w-full object-cover object-center saturate-100"
                     />
                     <div className="absolute inset-0 bg-white/50" />

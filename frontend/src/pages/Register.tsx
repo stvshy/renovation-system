@@ -41,6 +41,17 @@ const Register: React.FC = () => {
             return t('Rejestracja jest obecnie wyłączona.', 'Registration is currently disabled.');
         }
 
+        if (
+            normalizedMessage.includes('too many requests') ||
+            normalizedMessage.includes('rate limit') ||
+            normalizedMessage.includes('over_email_send_rate_limit')
+        ) {
+            return t(
+                'Przekroczono limit prób rejestracji. Odczekaj chwilę i spróbuj ponownie.',
+                'Registration rate limit reached. Please wait a moment and try again.'
+            );
+        }
+
         return t('Nie udało się zarejestrować konta. Spróbuj ponownie.', 'Could not register the account. Please try again.');
     };
 
