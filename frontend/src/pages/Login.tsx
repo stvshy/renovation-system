@@ -381,7 +381,7 @@ const Login: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex justify-center">
-                            <div className="flex w-full items-center justify-center gap-4 sm:gap-5 rounded-b-xl border border-white/35 bg-[#e9ecf7]/82 px-[19.5px] py-[11.5px] shadow-sm shadow-primary/30 backdrop-blur-md dark:border-slate-500/20 dark:bg-slate-800/70 dark:shadow-primary/20">
+                            <div className="flex w-full items-center justify-center gap-4 sm:gap-5 rounded-b-xl border border-white/40 bg-[#e4ecfb]/86 px-[19.5px] py-[11.5px] shadow-sm shadow-[#0177ca]/40 backdrop-blur-md dark:border-slate-400/20 dark:bg-slate-800/70 dark:shadow-[#0177ca]/28">
                                 <button
                                     type="button"
                                     onMouseDown={(e) => e.preventDefault()}
