@@ -281,10 +281,12 @@ const Register: React.FC = () => {
                                                         <button
                                                             type="button"
                                                             onClick={() => setEmailCheckPopover(null)}
-                                                            className={`absolute right-[0.6rem] top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded p-0.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 ${
+                                                            onPointerDown={preventFocus}
+                                                            onMouseDown={preventFocus}
+                                                            className={`absolute right-[0.6rem] top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded p-0.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] ${
                                                                 emailCheckPopover.variant === 'ok'
-                                                                    ? 'text-emerald-300 hover:text-emerald-200 focus-visible:ring-emerald-500'
-                                                                    : 'text-red-300 hover:text-red-200 focus-visible:ring-red-500'
+                                                                    ? 'text-emerald-300 [@media(hover:hover)]:hover:text-emerald-200 focus-visible:ring-emerald-500'
+                                                                    : 'text-red-300 [@media(hover:hover)]:hover:text-red-200 focus-visible:ring-red-500'
                                                             }`}
                                                             aria-label={t('Zamknij komunikat', 'Close message')}
                                                         >
