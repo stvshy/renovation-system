@@ -264,15 +264,15 @@ const Register: React.FC = () => {
                                             {emailCheckPopover && (
                                                 <div
                                                     role="status"
-                                                    className={`absolute right-0 bottom-[calc(100%+0.5rem)] z-20 w-fit max-w-[min(100%,26rem)] rounded-lg border bg-slate-900 px-3 py-2 text-left text-[0.92rem] shadow-lg ${
+                                                    className={`absolute right-0 bottom-[calc(100%+0.5rem)] z-20 w-fit max-w-[min(100%,26rem)] rounded-lg border bg-slate-900 px-3 py-2 text-left text-[0.92rem] shadow-lg lg:bg-white ${
                                                         emailCheckPopover.variant === 'ok'
-                                                            ? 'border-emerald-500 text-emerald-300'
-                                                            : 'border-red-500 text-red-300'
+                                                            ? 'border-emerald-500 text-emerald-300 lg:text-emerald-700'
+                                                            : 'border-red-500 text-red-300 lg:text-red-700'
                                                     }`}
                                                 >
                                                     <span
                                                         aria-hidden="true"
-                                                        className={`absolute right-[0.975rem] top-full h-3 w-3 -translate-y-1/2 rotate-45 border-b border-r bg-slate-900 ${
+                                                        className={`absolute right-[0.975rem] top-full h-3 w-3 -translate-y-1/2 rotate-45 border-b border-r bg-slate-900 lg:bg-white ${
                                                             emailCheckPopover.variant === 'ok' ? 'border-emerald-500' : 'border-red-500'
                                                         }`}
                                                     />
@@ -285,8 +285,8 @@ const Register: React.FC = () => {
                                                             onMouseDown={preventFocus}
                                                             className={`absolute right-[0.6rem] top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded p-0.5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] ${
                                                                 emailCheckPopover.variant === 'ok'
-                                                                    ? 'text-emerald-300 [@media(hover:hover)]:hover:text-emerald-200 focus-visible:ring-emerald-500'
-                                                                    : 'text-red-300 [@media(hover:hover)]:hover:text-red-200 focus-visible:ring-red-500'
+                                                                    ? 'text-emerald-300 lg:text-emerald-700 [@media(hover:hover)]:hover:text-emerald-200 lg:[@media(hover:hover)]:hover:text-emerald-900 focus-visible:ring-emerald-500'
+                                                                    : 'text-red-300 lg:text-red-700 [@media(hover:hover)]:hover:text-red-200 lg:[@media(hover:hover)]:hover:text-red-900 focus-visible:ring-red-500'
                                                             }`}
                                                             aria-label={t('Zamknij komunikat', 'Close message')}
                                                         >
