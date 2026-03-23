@@ -372,7 +372,7 @@ const Login: React.FC = () => {
                                 <p className="text-center text-sm text-neutral-gray dark:text-slate-400">
                                     {t("Nie masz jeszcze konta?", "Don't have an account yet?")}{" "}
                                     <Link
-                                        className="ml-1 font-bold text-primary decoration-2 underline-offset-4 transition-colors hover:underline dark:text-primary"
+                                        className="ml-1 font-bold text-primary underline-offset-4 transition-colors hover:underline dark:text-primary"
                                         to="/register"
                                     >
                                         {t("Zarejestruj się", "Register")}

@@ -207,7 +207,7 @@ const Register: React.FC = () => {
 
                                     <p className="pt-1 text-center text-[14.5px] text-white lg:text-slate-800 dark:text-slate-200">
                                         {t('Masz już konto?', 'Already have an account?')}{' '}
-                                        <Link className="font-semibold text-primary hover:underline" to="/login">
+                                        <Link className="font-bold text-primary hover:underline" to="/login">
                                             {t('Zaloguj się', 'Sign in')}
                                         </Link>
                                     </p>
