@@ -25,6 +25,8 @@ const Login: React.FC = () => {
 
     // Password visibility state
     const [showPassword, setShowPassword] = useState(false);
+    const [emailFieldFocused, setEmailFieldFocused] = useState(false);
+    const [passwordFieldFocused, setPasswordFieldFocused] = useState(false);
 
     const [emailCheckPopover, setEmailCheckPopover] = useState<{ message: string; variant: "ok" | "invalid" } | null>(null);
     const emailFieldRowRef = useRef<HTMLDivElement>(null);
@@ -428,7 +430,7 @@ const Login: React.FC = () => {
                                         <div className="relative w-full">
                                             <input
                                                 autoComplete="email"
-                                                className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-0 bg-off-white p-3 pr-10 font-body text-sm font-medium leading-normal text-text-dark ring-1 ring-inset ring-[#c0c7d3]/20 placeholder:text-neutral-gray transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-800/80 dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:bg-slate-900 dark:focus:ring-primary sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
+                                                className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-0 bg-off-white p-3 pr-12 font-body text-sm font-medium leading-normal text-text-dark ring-1 ring-inset ring-[#c0c7d3]/20 placeholder:text-neutral-gray transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-800/80 dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:bg-slate-900 dark:focus:ring-primary sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
                                                 id="email"
                                                 name="email"
                                                 placeholder={t("Wprowadź swój e-mail", "Enter your e-mail")}
@@ -436,16 +438,20 @@ const Login: React.FC = () => {
                                                 type="email"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
+                                                onFocus={() => setEmailFieldFocused(true)}
+                                                onBlur={() => setEmailFieldFocused(false)}
                                             />
                                             <button
                                                 type="button"
                                                 onClick={handleEmailIconClick}
                                                 onPointerDown={preventFocus}
                                                 onMouseDown={preventFocus}
-                                                className={`absolute right-3 top-1/2 -translate-y-1/2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] ${
+                                                className={`absolute inset-y-0 right-0 z-10 flex w-12 min-w-12 items-center justify-center rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] lg:inset-y-auto lg:right-3 lg:top-1/2 lg:h-auto lg:w-auto lg:min-w-0 lg:-translate-y-1/2 lg:rounded ${
                                                     emailCheckPopover
                                                         ? "text-primary dark:text-primary"
-                                                        : "text-neutral-gray [@media(hover:hover)]:hover:text-primary dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary"
+                                                        : emailFieldFocused
+                                                          ? "text-neutral-gray max-lg:text-primary dark:text-slate-400 max-lg:dark:text-primary [@media(hover:hover)]:hover:text-primary dark:[@media(hover:hover)]:hover:text-primary"
+                                                          : "text-neutral-gray [@media(hover:hover)]:hover:text-primary dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary"
                                                 }`}
                                                 aria-label={t("Sprawdź poprawność adresu e-mail", "Check email address validity")}
                                                 aria-expanded={Boolean(emailCheckPopover)}
@@ -510,7 +516,7 @@ const Login: React.FC = () => {
                                     <div className="relative flex w-full items-center">
                                         <input
                                             autoComplete="current-password"
-                                            className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-0 bg-off-white p-3 pr-10 font-body text-sm font-medium leading-normal text-text-dark ring-1 ring-inset ring-[#c0c7d3]/20 placeholder:text-neutral-gray transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-800/80 dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:bg-slate-900 dark:focus:ring-primary sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
+                                            className="auth-input-stable form-input flex h-[51px] w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg border-0 bg-off-white p-3 pr-12 font-body text-sm font-medium leading-normal text-text-dark ring-1 ring-inset ring-[#c0c7d3]/20 placeholder:text-neutral-gray transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-800/80 dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:bg-slate-900 dark:focus:ring-primary sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
                                             id="password"
                                             name="password"
                                             placeholder={t("Wprowadź swoje hasło", "Enter your password")}
@@ -518,13 +524,19 @@ const Login: React.FC = () => {
                                             type={showPassword ? "text" : "password"}
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
+                                            onFocus={() => setPasswordFieldFocused(true)}
+                                            onBlur={() => setPasswordFieldFocused(false)}
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
                                             onPointerDown={preventFocus}
                                             onMouseDown={preventFocus}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-gray transition-colors [@media(hover:hover)]:hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent]"
+                                            className={`absolute inset-y-0 right-0 z-10 flex w-12 min-w-12 items-center justify-center rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] lg:inset-y-auto lg:right-3 lg:top-1/2 lg:h-auto lg:w-auto lg:min-w-0 lg:-translate-y-1/2 lg:rounded ${
+                                                passwordFieldFocused
+                                                    ? "text-neutral-gray max-lg:text-primary dark:text-slate-400 max-lg:dark:text-primary [@media(hover:hover)]:hover:text-primary dark:[@media(hover:hover)]:hover:text-primary"
+                                                    : "text-neutral-gray [@media(hover:hover)]:hover:text-primary dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary"
+                                            }`}
                                         >
                                             <span className="material-symbols-outlined text-xl">{showPassword ? "visibility_off" : "visibility"}</span>
                                         </button>

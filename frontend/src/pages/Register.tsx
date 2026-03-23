@@ -16,6 +16,9 @@ const Register: React.FC = () => {
     // State for password visibility
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [emailFieldFocused, setEmailFieldFocused] = useState(false);
+    const [passwordFieldFocused, setPasswordFieldFocused] = useState(false);
+    const [confirmPasswordFieldFocused, setConfirmPasswordFieldFocused] = useState(false);
     const [emailCheckPopover, setEmailCheckPopover] = useState<{ message: string; variant: 'ok' | 'invalid' } | null>(null);
     const emailFieldRowRef = useRef<HTMLDivElement>(null);
 
@@ -245,16 +248,20 @@ const Register: React.FC = () => {
                                                 required
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
+                                                onFocus={() => setEmailFieldFocused(true)}
+                                                onBlur={() => setEmailFieldFocused(false)}
                                             />
                                             <button
                                                 type="button"
                                                 onClick={handleEmailIconClick}
                                                 onPointerDown={preventFocus}
                                                 onMouseDown={preventFocus}
-                                                className={`absolute right-3 top-1/2 -translate-y-1/2 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] ${
+                                                className={`absolute inset-y-0 right-0 z-10 flex w-12 min-w-12 items-center justify-center rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] lg:inset-y-auto lg:right-3 lg:top-1/2 lg:h-auto lg:w-auto lg:min-w-0 lg:-translate-y-1/2 lg:rounded ${
                                                     emailCheckPopover
                                                         ? 'text-primary dark:text-primary'
-                                                        : 'text-neutral-gray [@media(hover:hover)]:hover:text-primary dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary'
+                                                        : emailFieldFocused
+                                                          ? 'text-neutral-gray max-lg:text-primary dark:text-slate-400 max-lg:dark:text-primary [@media(hover:hover)]:hover:text-primary dark:[@media(hover:hover)]:hover:text-primary'
+                                                          : 'text-neutral-gray [@media(hover:hover)]:hover:text-primary dark:text-slate-400 dark:[@media(hover:hover)]:hover:text-primary'
                                                 }`}
                                                 aria-label={t('Sprawdź poprawność adresu e-mail', 'Check email address validity')}
                                                 aria-expanded={Boolean(emailCheckPopover)}
@@ -309,9 +316,15 @@ const Register: React.FC = () => {
                                                 required
                                                 value={password}
                                                 onChange={(e) => setPassword(e.target.value)}
+                                                onFocus={() => setPasswordFieldFocused(true)}
+                                                onBlur={() => setPasswordFieldFocused(false)}
                                             />
                                             <button
-                                                className="absolute right-3 text-slate-500 outline-none transition-colors [@media(hover:hover)]:hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:text-slate-400 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent]"
+                                                className={`absolute inset-y-0 right-0 z-10 flex w-12 min-w-12 items-center justify-center rounded-md text-slate-500 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 dark:text-slate-400 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] lg:inset-y-auto lg:right-3 lg:top-1/2 lg:h-auto lg:w-auto lg:min-w-0 lg:-translate-y-1/2 lg:rounded ${
+                                                    passwordFieldFocused
+                                                        ? 'max-lg:text-primary max-lg:dark:text-primary [@media(hover:hover)]:hover:text-primary dark:[@media(hover:hover)]:hover:text-primary'
+                                                        : '[@media(hover:hover)]:hover:text-primary dark:[@media(hover:hover)]:hover:text-primary'
+                                                }`}
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
                                                 onPointerDown={preventFocus}
@@ -333,9 +346,15 @@ const Register: React.FC = () => {
                                                 required
                                                 value={confirmPassword}
                                                 onChange={(e) => setConfirmPassword(e.target.value)}
+                                                onFocus={() => setConfirmPasswordFieldFocused(true)}
+                                                onBlur={() => setConfirmPasswordFieldFocused(false)}
                                             />
                                             <button
-                                                className="absolute right-3 text-slate-500 outline-none transition-colors [@media(hover:hover)]:hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded dark:text-slate-400 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent]"
+                                                className={`absolute inset-y-0 right-0 z-10 flex w-12 min-w-12 items-center justify-center rounded-md text-slate-500 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 dark:text-slate-400 dark:focus-visible:ring-offset-slate-900 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] lg:inset-y-auto lg:right-3 lg:top-1/2 lg:h-auto lg:w-auto lg:min-w-0 lg:-translate-y-1/2 lg:rounded ${
+                                                    confirmPasswordFieldFocused
+                                                        ? 'max-lg:text-primary max-lg:dark:text-primary [@media(hover:hover)]:hover:text-primary dark:[@media(hover:hover)]:hover:text-primary'
+                                                        : '[@media(hover:hover)]:hover:text-primary dark:[@media(hover:hover)]:hover:text-primary'
+                                                }`}
                                                 type="button"
                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                 onPointerDown={preventFocus}
