@@ -12,6 +12,8 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [mobileTapLanguage, setMobileTapLanguage] = useState<"pl" | "en" | null>(null);
+    const mobileTapTimeoutRef = useRef<number | null>(null);
 
     // Password visibility state
     const [showPassword, setShowPassword] = useState(false);
@@ -39,6 +41,14 @@ const Login: React.FC = () => {
             document.removeEventListener("keydown", onKeyDown);
         };
     }, [emailCheckPopover]);
+
+    useEffect(() => {
+        return () => {
+            if (mobileTapTimeoutRef.current !== null) {
+                window.clearTimeout(mobileTapTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const getLocalizedLoginError = (errorMessage: string) => {
         const normalizedMessage = errorMessage.toLowerCase();
@@ -92,21 +102,9 @@ const Login: React.FC = () => {
         navigate("/projects");
     };
 
-    /** iOS / mobile Safari often applies focus after tap; blur after paint + prevent mousedown focus. */
     const finalizeLanguageChoice = (el: HTMLElement) => {
-        const runBlur = () => {
-            el.blur();
-            const active = document.activeElement;
-            if (active instanceof HTMLElement && active === el) active.blur();
-        };
-        queueMicrotask(runBlur);
-        requestAnimationFrame(() => {
-            runBlur();
-            requestAnimationFrame(runBlur);
-        });
-        window.setTimeout(runBlur, 0);
-        window.setTimeout(runBlur, 100);
-        window.setTimeout(runBlur, 250);
+        el.blur();
+        requestAnimationFrame(() => el.blur());
     };
 
     const handleEmailIconClick = () => {
@@ -131,9 +129,60 @@ const Login: React.FC = () => {
         }
     };
 
+    const handleLanguageSwitch = (nextLanguage: "pl" | "en", buttonElement: HTMLButtonElement) => {
+        setLanguage(nextLanguage);
+
+        if (window.matchMedia("(hover: none)").matches) {
+            if (mobileTapTimeoutRef.current !== null) {
+                window.clearTimeout(mobileTapTimeoutRef.current);
+            }
+            setMobileTapLanguage(nextLanguage);
+            // Wait for the blue to actually paint on screen, then start the fade to dark.
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    mobileTapTimeoutRef.current = window.setTimeout(() => {
+                        setMobileTapLanguage((current) => (current === nextLanguage ? null : current));
+                        mobileTapTimeoutRef.current = null;
+                    }, 350);
+                });
+            });
+        }
+
+        finalizeLanguageChoice(buttonElement);
+    };
+
+    const getLanguageButtonClassName = (buttonLanguage: "pl" | "en") => {
+        const isActive = language === buttonLanguage;
+        const isTemporarilyBlue = mobileTapLanguage === buttonLanguage;
+
+        if (isActive && isTemporarilyBlue) {
+            return "font-bold text-[#0284c7] dark:text-sky-400";
+        }
+
+        if (isActive) {
+            return "font-bold text-gray-900 dark:text-slate-100";
+        }
+
+        return "font-medium text-gray-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary";
+    };
+
     const baseUrl = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? "/";
     const mobileBackgroundUrl = `${baseUrl}tlo-mobile3.webp`;
     const desktopBackgroundUrl = `${baseUrl}tlo-desktop1.webp`;
+
+    useEffect(() => {
+        const isMobile = window.innerWidth < 640;
+        const url = isMobile ? mobileBackgroundUrl : desktopBackgroundUrl;
+        let link = document.querySelector<HTMLLinkElement>(`link[rel="preload"][href="${url}"]`);
+        if (!link) {
+            link = document.createElement("link");
+            link.rel = "preload";
+            link.as = "image";
+            link.type = "image/webp";
+            link.href = url;
+            document.head.appendChild(link);
+        }
+    }, []);
 
     return (
         <div className="relative flex min-h-dvh sm:min-h-screen w-full flex-col overflow-x-hidden max-sm:bg-slate-50 sm:bg-gradient-to-br sm:from-slate-50 sm:via-sky-50 sm:to-slate-100 font-body text-text-dark">
@@ -179,6 +228,9 @@ const Login: React.FC = () => {
                     <img
                         src={mobileBackgroundUrl}
                         alt=""
+                        loading="eager"
+                        decoding="async"
+                        fetchPriority="high"
                         className="absolute inset-0 h-full w-full object-cover object-center saturate-100"
                     />
                     <div className="absolute inset-0 bg-white/50" />
@@ -223,7 +275,8 @@ const Login: React.FC = () => {
                                 {error ?? t("Zaloguj się, aby zarządzać swoimi projektami.", "Sign in to manage your projects.")}
                             </p>
                         </div>
-                        <div className="relative rounded-xl border border-[#c0c7d3]/10 bg-white/90 p-5 shadow-2xl shadow-[#111c2d]/5 backdrop-blur-sm dark:border-slate-600/20 dark:bg-slate-900/90 max-sm:rounded-b-none sm:p-8">
+                        <div>
+                        <div className="relative rounded-xl rounded-b-none border border-[#c0c7d3]/10 bg-white/90 p-5 shadow-2xl shadow-[#111c2d]/5 backdrop-blur-sm dark:border-slate-600/20 dark:bg-slate-900/90 sm:p-8">
                             <form className="space-y-6" onSubmit={handleLogin}>
                                 <div>
                                     <label
@@ -327,39 +380,33 @@ const Login: React.FC = () => {
                                 </p>
                             </div>
                         </div>
-                        <div className="mt-6 flex justify-center max-sm:!mt-0 max-sm:translate-y-0">
-                            <div className="flex items-center gap-4 rounded-full border border-[#c0c7d3]/10 bg-[#f0f3ff]/50 px-4 py-2 backdrop-blur-sm dark:border-slate-600/30 dark:bg-slate-800/50 max-sm:w-full max-sm:justify-center max-sm:rounded-t-none max-sm:rounded-b-xl max-sm:border-0 max-sm:border-transparent max-sm:bg-[#deecff]/92 max-sm:px-[19.5px] max-sm:py-[11.5px] max-sm:shadow-md max-sm:shadow-sky-300/25">
+                        <div className="flex justify-center">
+                            <div className="flex w-full items-center justify-center gap-4 sm:gap-5 rounded-b-xl bg-[#e8f1fd]/85 px-[19.5px] py-[11.5px] backdrop-blur-sm dark:bg-slate-800/70">
                                 <button
                                     type="button"
                                     onMouseDown={(e) => e.preventDefault()}
                                     onClick={(e) => {
-                                        setLanguage("pl");
-                                        finalizeLanguageChoice(e.currentTarget);
+                                        handleLanguageSwitch("pl", e.currentTarget);
                                     }}
-                                    className={`flex items-center gap-2 text-xs max-sm:text-[11.5px] transition-colors [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${
-                                        language === "pl"
-                                            ? "font-bold text-primary sm:hover:text-sky-400 dark:text-primary sm:dark:hover:text-sky-300"
-                                            : "font-medium text-neutral-gray sm:hover:text-primary dark:text-slate-500 sm:dark:hover:text-primary"
-                                    }`}
+                                    className={`flex items-center gap-2 text-[11.5px] transition-colors duration-[900ms] ease-out sm:duration-0 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${getLanguageButtonClassName(
+                                        "pl"
+                                    )}`}
                                 >
                                     <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15 max-sm:h-[15.5px] max-sm:w-[15.5px]">
                                         <img src="https://flagcdn.com/w40/pl.png" alt="" className="h-full w-full object-cover" />
                                     </span>
                                     POLSKI
                                 </button>
-                                <div className="h-3.5 w-px bg-slate-400/75 dark:bg-slate-500/80 max-sm:mx-2.5" aria-hidden />
+                                <div className="h-3.5 w-px bg-slate-400/75 dark:bg-slate-500/80 mx-2.5 sm:mx-3" aria-hidden />
                                 <button
                                     type="button"
                                     onMouseDown={(e) => e.preventDefault()}
                                     onClick={(e) => {
-                                        setLanguage("en");
-                                        finalizeLanguageChoice(e.currentTarget);
+                                        handleLanguageSwitch("en", e.currentTarget);
                                     }}
-                                    className={`flex items-center gap-2 text-xs max-sm:text-[11.5px] transition-colors [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${
-                                        language === "en"
-                                            ? "font-bold text-primary sm:hover:text-sky-400 dark:text-primary sm:dark:hover:text-sky-300"
-                                            : "font-medium text-neutral-gray sm:hover:text-primary dark:text-slate-500 sm:dark:hover:text-primary"
-                                    }`}
+                                    className={`flex items-center gap-2 text-[11.5px] transition-colors duration-[900ms] ease-out sm:duration-0 [touch-action:manipulation] [-webkit-tap-highlight-color:transparent] outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 ${getLanguageButtonClassName(
+                                        "en"
+                                    )}`}
                                 >
                                     ENGLISH
                                     <span className="flex h-4 w-4 shrink-0 overflow-hidden rounded-full ring-1 ring-black/10 dark:ring-white/15 max-sm:h-[15.5px] max-sm:w-[15.5px]">
@@ -367,6 +414,7 @@ const Login: React.FC = () => {
                                     </span>
                                 </button>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
