@@ -4,6 +4,8 @@ import { supabase } from "../lib/supabaseClient";
 import { useLanguage } from "../context/LanguageContext";
 import { useDemo } from "../context/DemoContext";
 
+const RESET_PASSWORD_COOLDOWN_UNTIL_KEY = "reset-password-cooldown-until";
+
 const Login: React.FC = () => {
     const navigate = useNavigate();
     const { t, language, setLanguage } = useLanguage();
@@ -11,6 +13,12 @@ const Login: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [resetLoading, setResetLoading] = useState(false);
+    const [resetMessage, setResetMessage] = useState<string | null>(null);
+    const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+    const [resetEmail, setResetEmail] = useState("");
+    const [resetCooldown, setResetCooldown] = useState(0);
+    const [resetSent, setResetSent] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [mobileTapLanguage, setMobileTapLanguage] = useState<"pl" | "en" | null>(null);
     const mobileTapTimeoutRef = useRef<number | null>(null);
@@ -48,6 +56,37 @@ const Login: React.FC = () => {
                 window.clearTimeout(mobileTapTimeoutRef.current);
             }
         };
+    }, []);
+
+    useEffect(() => {
+        const syncResetCooldown = () => {
+            const savedUntil = window.localStorage.getItem(RESET_PASSWORD_COOLDOWN_UNTIL_KEY);
+            if (!savedUntil) {
+                setResetCooldown(0);
+                setResetSent(false);
+                return;
+            }
+
+            const until = Number(savedUntil);
+            if (!Number.isFinite(until)) {
+                window.localStorage.removeItem(RESET_PASSWORD_COOLDOWN_UNTIL_KEY);
+                setResetCooldown(0);
+                setResetSent(false);
+                return;
+            }
+
+            const remainingSeconds = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+            setResetCooldown(remainingSeconds);
+            setResetSent(remainingSeconds > 0);
+
+            if (remainingSeconds === 0) {
+                window.localStorage.removeItem(RESET_PASSWORD_COOLDOWN_UNTIL_KEY);
+            }
+        };
+
+        syncResetCooldown();
+        const intervalId = window.setInterval(syncResetCooldown, 1000);
+        return () => window.clearInterval(intervalId);
     }, []);
 
     const getLocalizedLoginError = (errorMessage: string) => {
@@ -95,6 +134,54 @@ const Login: React.FC = () => {
             // AuthContext will detect the change and App.tsx will redirect
             navigate("/projects");
         }
+    };
+
+    const openResetModal = () => {
+        setResetEmail(email.trim());
+        setError(null);
+        setIsResetModalOpen(true);
+    };
+
+    const closeResetModal = () => {
+        if (resetLoading) return;
+        setIsResetModalOpen(false);
+    };
+
+    const handleResetPassword = async () => {
+        if (resetCooldown > 0 || resetLoading) return;
+
+        setError(null);
+        setResetMessage(null);
+
+        if (!isValidEmail(resetEmail)) {
+            setError(t("Podaj poprawny adres e-mail, aby zresetować hasło.", "Provide a valid email to reset password."));
+            return;
+        }
+
+        setResetLoading(true);
+
+        const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.trim(), {
+            redirectTo: `${window.location.origin}/update-password`,
+        });
+
+        if (error) {
+            setError(t("Nie udało się wysłać linku. Spróbuj ponownie.", "Could not send reset link. Try again."));
+            setResetSent(false);
+        } else {
+            const cooldownUntil = Date.now() + 60 * 1000;
+            window.localStorage.setItem(RESET_PASSWORD_COOLDOWN_UNTIL_KEY, String(cooldownUntil));
+            setResetMessage(
+                t(
+                    "Jeśli e-mail istnieje w bazie, link do zmiany hasła został wysłany. Ponowna wysyłka za 60 s.",
+                    "If this email exists in the database, a password reset link has been sent. You can resend in 60s."
+                )
+            );
+            setResetSent(true);
+            setResetCooldown(60);
+            setEmail(resetEmail.trim());
+        }
+
+        setResetLoading(false);
     };
 
     const handleViewDemo = () => {
@@ -327,12 +414,21 @@ const Login: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="max-sm:!mt-4">
-                                    <label
-                                        className="block pb-2 text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100"
-                                        htmlFor="password"
-                                    >
-                                        {t("Hasło", "Password")}
-                                    </label>
+                                    <div className="flex items-center justify-between gap-2 pb-2">
+                                        <label
+                                            className="text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100"
+                                            htmlFor="password"
+                                        >
+                                            {t("Hasło", "Password")}
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={openResetModal}
+                                            className="text-[13px] font-medium text-primary underline-offset-4 transition-colors hover:underline dark:text-primary"
+                                        >
+                                            {t("Nie pamiętasz hasła?", "Forgot password?")}
+                                        </button>
+                                    </div>
                                     <div className="relative flex w-full items-center">
                                         <input
                                             autoComplete="current-password"
@@ -419,6 +515,94 @@ const Login: React.FC = () => {
                     </div>
                 </div>
             </div>
+            {isResetModalOpen && (
+                <div
+                    className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-900/45 px-4"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="reset-password-title"
+                    onMouseDown={(e) => {
+                        if (e.target === e.currentTarget) closeResetModal();
+                    }}
+                >
+                    <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-900 sm:p-6">
+                        <div className="mb-5 flex items-center justify-between gap-4">
+                            <h2 id="reset-password-title" className="text-lg font-bold text-text-dark dark:text-off-white">
+                                {t("Reset hasła", "Forgot password?")}
+                            </h2>
+                            <button
+                                type="button"
+                                onClick={closeResetModal}
+                                className="rounded p-1 text-slate-500 transition-colors hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:text-slate-400 dark:hover:text-slate-200"
+                                aria-label={t("Zamknij", "Close")}
+                            >
+                                <span className="material-symbols-outlined text-xl">close</span>
+                            </button>
+                        </div>
+                        <p className={`mb-4 text-sm ${resetSent ? "font-medium text-emerald-600 dark:text-emerald-400" : "text-neutral-gray dark:text-slate-300"}`}>
+                            {resetSent
+                                ? t(
+                                      `Jeśli e-mail istnieje w naszej bazie, link został wysłany. Ponowna wysyłka za ${resetCooldown}s.`,
+                                      `If your email exists in our database, the reset link has been sent. You can resend in ${resetCooldown}s.`
+                                  )
+                                : t(
+                                      "Jeśli e-mail istnieje w naszej bazie, wyślemy na niego link do zmiany hasła.",
+                                      "If your email exists in our database, we will send a password reset link to it."
+                                  )}
+                        </p>
+
+                        <label
+                            className="block pb-2 text-sm font-semibold uppercase tracking-wide text-primary dark:text-slate-100"
+                            htmlFor="reset-email"
+                        >
+                            {t("E-mail", "Email")}
+                        </label>
+                        <input
+                            id="reset-email"
+                            type="email"
+                            autoComplete="email"
+                            value={resetEmail}
+                            onChange={(e) => setResetEmail(e.target.value)}
+                            placeholder={t("Wprowadź swój e-mail", "Enter your e-mail")}
+                            className="auth-input-stable form-input flex h-[51px] w-full min-w-0 resize-none overflow-hidden rounded-lg border-0 bg-off-white p-3 font-body text-sm font-medium leading-normal text-text-dark ring-1 ring-inset ring-[#c0c7d3]/20 placeholder:text-neutral-gray transition-all duration-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary dark:bg-slate-800/80 dark:text-off-white dark:placeholder:text-neutral-gray dark:focus:bg-slate-900 dark:focus:ring-primary sm:h-12 sm:p-[13.4px] text-[13.9px] sm:text-[13.4px]"
+                        />
+
+                        <div className="mt-5 flex items-center justify-between gap-3">
+                            <button
+                                type="button"
+                                onClick={closeResetModal}
+                                disabled={resetLoading}
+                                className="flex h-11 min-w-[96px] items-center justify-center rounded-lg bg-slate-200 px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+                            >
+                                {t("Anuluj", "Cancel")}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleResetPassword}
+                                disabled={resetLoading || resetCooldown > 0}
+                                className={`flex h-11 min-w-[150px] items-center justify-center gap-1.5 rounded-lg px-4 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                                    resetSent ? "bg-emerald-600 hover:bg-emerald-600" : "bg-primary hover:bg-[#0168b2]"
+                                }`}
+                            >
+                                {resetLoading ? (
+                                    t("Wysyłanie...", "Sending...")
+                                ) : resetSent ? (
+                                    <>
+                                        <span className="material-symbols-outlined text-lg">check</span>
+                                        {t("Wysłano", "Sent")}
+                                        {resetCooldown > 0 ? ` (${resetCooldown}s)` : ""}
+                                    </>
+                                ) : (
+                                    <>
+                                        {t("Wyślij link", "Send reset")}
+                                        {resetCooldown > 0 ? ` (${resetCooldown}s)` : ""}
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
