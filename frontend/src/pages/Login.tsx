@@ -131,8 +131,12 @@ const Login: React.FC = () => {
         }
     };
 
+    const baseUrl = (import.meta as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? "/";
+    const mobileBackgroundUrl = `${baseUrl}tlo-mobile1.webp`;
+    const desktopBackgroundUrl = `${baseUrl}tlo-desktop1.webp`;
+
     return (
-        <div className="relative flex min-h-dvh sm:min-h-screen w-full flex-col overflow-x-hidden bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 font-body text-text-dark">
+        <div className="relative flex min-h-dvh sm:min-h-screen w-full flex-col overflow-x-hidden max-sm:bg-slate-50 sm:bg-gradient-to-br sm:from-slate-50 sm:via-sky-50 sm:to-slate-100 font-body text-text-dark">
             <style>{`
                 @keyframes demo-gradient-shift {
                     0% {
@@ -171,15 +175,27 @@ const Login: React.FC = () => {
                 </div>
             </div>
             <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute inset-0 sm:hidden">
+                    <img
+                        src={mobileBackgroundUrl}
+                        alt=""
+                        className="absolute inset-0 h-full w-full object-cover object-center saturate-100"
+                    />
+                    <div className="absolute inset-0 bg-white/80" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-sky-200/40 via-sky-100/50 to-blue-200/58" />
+                </div>
                 <div className="absolute inset-0 hidden sm:block">
-                    <div className="absolute inset-0 scale-[1.04] bg-[url('/tlo-desktop1.webp')] bg-cover bg-center bg-no-repeat opacity-10" />
+                    <div
+                        className="absolute inset-0 scale-[1.04] bg-cover bg-center bg-no-repeat opacity-10"
+                        style={{ backgroundImage: `url('${desktopBackgroundUrl}')` }}
+                    />
                     <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 via-white/30 to-slate-100/56" />
                 </div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(17,115,212,0.17),transparent_34%),radial-gradient(circle_at_84%_78%,rgba(17,115,212,0.11),transparent_36%),radial-gradient(circle_at_72%_22%,rgba(17,115,212,0.08),transparent_30%)]" />
-                <div className="absolute -left-24 top-[-72px] h-72 w-72 rounded-full bg-primary/18 blur-3xl" />
-                <div className="absolute -right-24 bottom-[-80px] h-80 w-80 rounded-full bg-primary/14 blur-3xl" />
-                <div className="absolute inset-y-0 left-0 w-24 bg-[radial-gradient(circle,rgba(100,116,139,0.28)_1px,transparent_1px)] [background-size:15px_15px] opacity-30" />
-                <div className="absolute inset-y-0 right-0 w-24 bg-[radial-gradient(circle,rgba(100,116,139,0.28)_1px,transparent_1px)] [background-size:15px_15px] opacity-25" />
+                <div className="absolute inset-0 hidden sm:block bg-[radial-gradient(circle_at_14%_18%,rgba(17,115,212,0.15),transparent_34%),radial-gradient(circle_at_84%_78%,rgba(17,115,212,0.095),transparent_36%),radial-gradient(circle_at_72%_22%,rgba(17,115,212,0.07),transparent_30%)]" />
+                <div className="absolute -left-24 top-[-72px] hidden h-72 w-72 rounded-full bg-primary/16 blur-3xl sm:block" />
+                <div className="absolute -right-24 bottom-[-80px] hidden h-80 w-80 rounded-full bg-primary/12 blur-3xl sm:block" />
+                <div className="absolute inset-y-0 left-0 hidden w-24 bg-[radial-gradient(circle,rgba(100,116,139,0.28)_1px,transparent_1px)] [background-size:15px_15px] opacity-30 sm:block" />
+                <div className="absolute inset-y-0 right-0 hidden w-24 bg-[radial-gradient(circle,rgba(100,116,139,0.28)_1px,transparent_1px)] [background-size:15px_15px] opacity-25 sm:block" />
             </div>
 
             <div className="layout-container relative z-10 flex min-h-dvh flex-1 flex-col sm:min-h-0">
