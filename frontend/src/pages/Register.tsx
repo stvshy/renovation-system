@@ -208,22 +208,22 @@ const Register: React.FC = () => {
 
             <div className="relative z-10 flex min-h-dvh max-sm:h-full max-sm:min-h-0 sm:min-h-screen w-full flex-col lg:flex-row">
                 <section className="flex min-h-dvh max-sm:h-full max-sm:min-h-0 sm:min-h-screen w-full lg:min-h-screen lg:w-1/2 lg:border-r lg:border-slate-200 lg:bg-white dark:lg:border-slate-800 dark:lg:bg-slate-950">
-                    <div className="relative flex min-h-dvh max-sm:h-full max-sm:min-h-0 sm:min-h-screen w-full flex-col px-4 py-4 sm:px-6 sm:py-6 lg:h-full lg:min-h-0 lg:px-10 lg:pb-12 lg:pt-8 xl:px-14">
-                        <header className="flex items-center gap-4 text-white lg:absolute lg:left-1/2 lg:top-8 lg:w-full lg:max-w-lg lg:-translate-x-1/2 lg:text-slate-900 dark:text-off-white">
+                    <div className="relative flex min-h-dvh max-sm:h-full max-sm:min-h-0 sm:min-h-screen w-full flex-col px-4 py-4 sm:px-6 sm:py-6 lg:min-h-full lg:flex-1 lg:-translate-y-4 lg:justify-center lg:px-10 lg:pt-8 lg:pb-20 xl:px-14">
+                        <header className="flex items-center gap-4 text-white lg:order-2 lg:mb-[57px] lg:w-full lg:max-w-lg lg:self-center lg:text-slate-900 dark:text-off-white">
                             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/35 lg:h-14 lg:w-14">
                                 <span className="material-symbols-outlined text-[30px] lg:text-[34px]">construction</span>
                             </div>
                             <h2 className="font-display text-3xl font-extrabold leading-none tracking-tight sm:text-[2.05rem] lg:text-[2.15rem]">Renovation System</h2>
                         </header>
 
-                        <div className="flex flex-1 items-center justify-center pt-2 sm:pt-4 lg:items-center lg:justify-center lg:pt-0 lg:pb-0">
-                            <div className="w-full max-w-xl rounded-3xl bg-white/92 p-5 shadow-2xl backdrop-blur-xl sm:min-h-0 sm:p-8 lg:w-full lg:max-w-lg lg:rounded-none lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-0 dark:bg-slate-900/84 dark:lg:bg-transparent">
-                                <div className="flex w-full flex-col gap-2 pb-6 sm:pb-9 lg:pb-10">
+                        <div className="order-2 flex flex-1 flex-col items-center justify-center pt-2 sm:pt-4 lg:contents lg:flex-none lg:pt-0">
+                            <div className="w-full max-w-xl rounded-3xl bg-white/92 p-5 shadow-2xl backdrop-blur-xl sm:min-h-0 sm:p-8 lg:contents lg:w-full lg:max-w-lg lg:rounded-none lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-0 dark:bg-slate-900/84 dark:lg:bg-transparent">
+                                <div className="flex w-full flex-col gap-2 pb-6 sm:pb-9 lg:order-1 lg:max-w-lg lg:self-center lg:pb-10">
                                     <h1 className="font-display text-[24px] font-bold leading-tight tracking-tight text-white sm:text-[2.05rem] lg:text-[2.35rem] dark:text-white">{t('Utwórz nowe konto', 'Create a new account')}</h1>
                                     <p className="text-[13px] text-slate-400 sm:text-base lg:hidden dark:text-slate-300">{t('Zacznij zarządzać projektami remontowymi w jednym miejscu.', 'Start managing renovation projects in one place.')}</p>
                                 </div>
 
-                                <form className="flex w-full flex-col gap-[1.35rem] sm:gap-7 lg:max-w-lg lg:gap-6" onSubmit={handleRegister}>
+                                <form className="flex w-full flex-col gap-[1.35rem] sm:gap-7 lg:order-3 lg:max-w-lg lg:gap-6 lg:self-center" onSubmit={handleRegister}>
                                     {error && (
                                         <div className="rounded-lg bg-red-100 p-3 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-300">
                                             {error}
