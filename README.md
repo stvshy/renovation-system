@@ -10,7 +10,7 @@
 ![Supabase](https://img.shields.io/badge/Supabase-Auth_&_DB-3ECF8E.svg?style=flat&logo=supabase)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0-06B6D4.svg?style=flat&logo=tailwindcss)
 
-🔗 **[Live Demo](https://stvshy.github.io/renovation-system/)** <br>
+🔗 **[Live Demo](https://renovation.stvshy.com/)** <br>
 
 **Renovation System** is a cloud-based Estimation & Project Management platform built for modern construction teams. It moves the renovation workflow out of spreadsheets and into a smart, integrated application.
 
